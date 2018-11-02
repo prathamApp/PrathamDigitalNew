@@ -5,8 +5,6 @@ import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewCompat;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
@@ -19,11 +17,11 @@ import android.widget.RelativeLayout;
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
@@ -31,7 +29,6 @@ import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import butterknife.BindView;
@@ -142,6 +139,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.download_badge)
     public void showDownloadList() {
+        DownloadListFragment fragment = new DownloadListFragment();
+        fragment.setCancelable(false);
+        fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
     @Override
