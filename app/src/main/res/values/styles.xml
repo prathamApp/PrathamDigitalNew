@@ -1,0 +1,143 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
+    <!--&lt;!&ndash; Customize your theme here. &ndash;&gt;-->
+    <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+    <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+    <!--<item name="colorAccent">@color/colorAccent</item>-->
+    <!--</style>-->
+    <!--Base application theme.-->
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/charcoal</item>
+        <item name="colorPrimaryDark">@color/charcoal</item>
+        <item name="colorAccent">@color/purple</item>
+        <!--<item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>-->
+        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="android:windowTranslucentStatus">true</item>
+    </style>
+
+    <style name="AppTheme.Transparent" parent="AppTheme">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!--<style name="PauseDialogAnimation">-->
+    <!--<item name="android:windowEnterAnimation">@anim/fade_in</item>-->
+    <!--<item name="android:windowExitAnimation">@android:anim/fade_out</item>-->
+    <!--</style>-->
+
+    <style name="MyDialog2" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@null</item>
+        <!--<item_menu name="android:buttonStyle">@style/CustomButton</item_menu>-->
+    </style>
+
+    <style name="AppTheme.Dialog" parent="AppTheme.NoActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@color/dialog_background_scrim</item>
+        <!--<item name="android:windowAnimationStyle">@null</item>-->
+        <!--<item name="android:windowContentTransitions">true</item>-->
+    </style>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="alert_dialog" parent="android:Theme.Dialog">
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+        <item name="android:windowBackground">@color/float_transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.4</item>
+    </style>
+
+    <style name="dialog_blue_button" parent="android:Widget.Button">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">31dp</item>
+        <item name="android:background">@drawable/blue_button_background</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:paddingLeft">21dp</item>
+        <item name="android:paddingRight">21dp</item>
+        <item name="android:textColor">@color/button_text_color</item>
+    </style>
+
+    <style name="cart_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+    <!--<style name="button" parent="@android:style/Widget.Button">-->
+    <!--<item name="com.firsteat.firsteat:font">fonts/Lato_Regular.ttf</item>-->
+    <!--</style>-->
+
+    <!--<style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">-->
+    <!--<item name="android:textSize">14sp</item>-->
+    <!--<item name="textAllCaps">true</item>-->
+    <!--</style>-->
+
+    <!--<style name="Custom" parent="android:Theme.DeviceDefault.Dialog">-->
+    <!--<item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>-->
+    <!--<item name="DialogTitleText">Please Wait</item>-->
+    <!--<item name="DialogSpotColor">@color/ghost_white</item>-->
+    <!--<item name="DialogSpotCount">6</item>-->
+    <!--</style>-->
+
+    <!--<style name="OrderDialogAnimation">-->
+    <!--<item name="android:windowEnterAnimation">@anim/enter_from_right</item>-->
+    <!--<item name="android:windowExitAnimation">@anim/exit_to_right</item>-->
+    <!--</style>-->
+
+    <!--<style name="AddDialogAnimation">-->
+    <!--<item name="android:windowEnterAnimation">@anim/pop_in</item>-->
+    <!--<item name="android:windowExitAnimation">@anim/pop_out</item>-->
+    <!--</style>-->
+    <!-- Animation for dialog box -->
+    <!--<style name="OrderDialog" parent="@android:style/Theme.Dialog">-->
+    <!--<item name="android:windowBackground">@null</item>-->
+    <!--<item name="android:windowFrame">@null</item>-->
+    <!--<item name="android:windowIsFloating">false</item>-->
+    <!--<item name="android:windowContentOverlay">@null</item>-->
+    <!--<item name="android:backgroundDimEnabled">false</item>-->
+    <!--<item name="android:background">@android:color/transparent</item>-->
+    <!--<item name="android:windowNoTitle">true</item>-->
+    <!--<item name="android:windowAnimationStyle">@style/OrderDialogAnimation</item>-->
+    <!--</style>-->
+
+    <!--<style name="AddDialog" parent="@android:style/Theme.Dialog">-->
+    <!--<item name="android:windowBackground">@null</item>-->
+    <!--<item name="android:windowFrame">@null</item>-->
+    <!--<item name="android:windowIsFloating">false</item>-->
+    <!--<item name="android:windowContentOverlay">@null</item>-->
+    <!--<item name="android:backgroundDimEnabled">false</item>-->
+    <!--<item name="android:background">@android:color/transparent</item>-->
+    <!--<item name="android:windowNoTitle">true</item>-->
+    <!--<item name="android:windowAnimationStyle">@style/AddDialogAnimation</item>-->
+    <!--</style>-->
+    <!--Credit and debit card footer style-->
+    <!--<style name="FooterStyle">-->
+    <!--<item name="android:textColor">@android:color/white</item>-->
+    <!--<item name="android:background">@color/dark_blue</item>-->
+    <!--<item name="android:textSize">16sp</item>-->
+    <!--<item name="android:padding">15dp</item>-->
+    <!--<item name="android:gravity">center</item>-->
+    <!--<item name="android:layout_width">match_parent</item>-->
+    <!--<item name="android:layout_height">wrap_content</item>-->
+    <!--<item name="android:clickable">true</item>-->
+    <!--</style>-->
+</resources>

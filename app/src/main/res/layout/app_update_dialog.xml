@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/_300sdp"
+    android:layout_height="@dimen/_300sdp"
+    android:layout_gravity="center"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    app:sc_shadowColor="#40444444">
+
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:layout_width="@dimen/_150sdp"
+        android:layout_height="@dimen/_150sdp"
+        app:lottie_autoPlay="true"
+        app:lottie_fileName="update.json"
+        app:lottie_loop="true" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Update App"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_14sdp"
+        android:textStyle="bold" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:gravity="center_horizontal"
+        android:text="@string/new_version_available"
+        android:textColor="@color/charcoal"
+        android:textSize="@dimen/_12sdp" />
+
+    <Button
+        android:id="@+id/btn_update"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_15sdp"
+        android:background="@drawable/update_button_round_bg"
+        android:elevation="@dimen/_8sdp"
+        android:gravity="center"
+        android:minWidth="@dimen/_120sdp"
+        android:minHeight="@dimen/_35sdp"
+        android:text="Update"
+        android:textColor="@android:color/white" />
+</com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer>

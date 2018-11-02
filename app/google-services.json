@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "157148656702",
+    "firebase_url": "https://pradigi-pratham.firebaseio.com",
+    "project_id": "pradigi-pratham",
+    "storage_bucket": "pradigi-pratham.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:157148656702:android:a8c99dfca0c44d61",
+        "android_client_info": {
+          "package_name": "com.pratham.prathamdigital"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "157148656702-l08bqcj7fvnthjo13ff3pubstu5spi4b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pratham.prathamdigital",
+            "certificate_hash": "5e9fa6ed6247b9ccf09f5c1e78a009782add290c"
+          }
+        },
+        {
+          "client_id": "157148656702-nspaths4vsmnene8dujsogdr54naii0o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYQB8dJyrU6dMRW6CejROyOMXJoQUOmtM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "157148656702-nspaths4vsmnene8dujsogdr54naii0o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

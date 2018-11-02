@@ -1,0 +1,87 @@
+<resources>
+    <string name="app_name">Pratham Digital</string>
+    <string name="child_name">Name</string>
+    <string name="share">Share</string>
+    <string name="recieve">Recieve</string>
+    <string name="age_3to7">Age 3-7</string>
+    <string name="age_8to14">Age 8-14</string>
+    <string name="pref_key_transition_time">pref_key_transition_time</string>
+    <string name="download">Download</string>
+    <string name="new_version_available">A new version of app is available over the playStore. Please update the app</string>
+    <string-array name="search_tags">
+        <item>English</item>
+        <item>Maths</item>
+        <item>Games</item>
+        <item>Science</item>
+        <item>Dekho or Seekho</item>
+    </string-array>
+    <string-array name="main_contents">
+        <item>Age 3–6\nKhelbadi</item>
+        <item>Age 6–10\nKhelpuri</item>
+        <item>Age 8–14\nDekho Aur Sikho</item>
+    </string-array>
+    <string-array name="languages">
+        <item>English</item>
+        <item>हिंदी</item>
+        <item>मराठी</item>
+        <item>ಕನ್ನಡ</item>
+        <item>తెలుగు</item>
+        <item>বাংলা</item>
+        <item>ગુજરાતી</item>
+        <item>ਪੰਜਾਬੀ</item>
+        <item>தமிழ்</item>
+        <item>অসমীয়</item>
+        <item>ଓଡ଼ିଆ</item>
+        <!--<item>മലയാളം</item>-->
+    </string-array>
+    <string-array name="main_languages">
+        <item>English</item>
+        <item>Hindi</item>
+        <item>Marathi</item>
+        <item>Kannada</item>
+        <item>Telugu</item>
+        <item>Bengali</item>
+        <item>Gujarati</item>
+        <item>Punjabi</item>
+        <item>Tamil</item>
+        <item>Assamese</item>
+        <item>Odiya</item>
+        <!--<item>Malayalam</item>-->
+    </string-array>
+    <string-array name="default_preview">
+        <item>#df5a55</item>
+        <item>#f9bb72</item>
+        <item>#76afcf</item>
+        <item>#dd6495</item>
+        <item>#72d3b4</item>
+    </string-array>
+    <string-array name="avatars">
+        <item>avatars/dino_dance.json</item>
+        <item>avatars/green_monster.json</item>
+        <item>avatars/pumped_up.json</item>
+        <item>avatars/personal_character.json</item>
+        <item>avatars/rabbit.json</item>
+        <item>avatars/funky_chicken.json</item>
+        <item>avatars/techno_penguin.json</item>
+        <item>avatars/biking_is_cool.json</item>
+        <item>avatars/acrobatics.json</item>
+    </string-array>
+    <string-array name="student_class">
+        <item>Class 3</item>
+        <item>Class 4</item>
+        <item>Class 5</item>
+        <item>Class 6</item>
+        <item>Class 7</item>
+        <item>Class 8</item>
+        <item>Class 9</item>
+    </string-array>
+    <string-array name="age">
+        <item>Age 3</item>
+        <item>Age 4</item>
+        <item>Age 5</item>
+        <item>Age 6</item>
+        <item>Age 7</item>
+        <item>Age 8</item>
+        <item>Age 9</item>
+    </string-array>
+</resources>

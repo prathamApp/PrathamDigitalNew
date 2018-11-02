@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<uk.co.jakelee.vidsta.VidstaPlayer xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/v_player"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:autoLoop="false"
+    app:autoPlay="false"
+    app:buttonTintColor="@color/light_orange"
+    app:fullScreenButtonEnabled="true"
+    app:fullScreenButtonVisible="true"
+    app:playVideoDrawable="@drawable/vid_play"
+    app:setFullScreen="true"
+    app:textColor="@color/dark_yellow" />

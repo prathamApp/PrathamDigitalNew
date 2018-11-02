@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_170sdp"
+    android:layout_height="@dimen/_200sdp"
+    android:background="@drawable/cat_loading_background">
+
+    <ImageView
+        android:id="@+id/mouse"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:src="@drawable/mouse" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <ImageView
+            android:id="@+id/cat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:src="@drawable/cat" />
+
+        <ImageView
+            android:id="@+id/eye_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:src="@drawable/eyes" />
+
+        <com.pratham.prathamdigital.custom.loading_view.EyelidView
+            android:id="@+id/eyelid_left"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_14sdp"
+            android:src="@drawable/eyes" />
+
+        <ImageView
+            android:id="@+id/eye_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:rotation="40"
+            android:src="@drawable/eyes" />
+
+        <com.pratham.prathamdigital.custom.loading_view.EyelidView
+            android:id="@+id/eyelid_right"
+            android:layout_width="@dimen/_24sdp"
+            android:layout_height="@dimen/_15sdp"
+            android:layout_marginLeft="@dimen/_35sdp"
+            android:layout_marginTop="@dimen/_15sdp"
+            android:src="@drawable/eyes" />
+    </RelativeLayout>
+
+    <com.pratham.prathamdigital.custom.loading_view.GraduallyTextView
+        android:id="@+id/graduallyTextView"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:text="L O A D I N G ..."
+        android:textColor="#ffffff"
+        android:textSize="15sp" />
+
+</RelativeLayout>
