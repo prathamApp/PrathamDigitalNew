@@ -1,6 +1,8 @@
 package com.pratham.prathamdigital.models;
 
-public class Modal_FileDownloading {
+import android.support.annotation.NonNull;
+
+public class Modal_FileDownloading implements Comparable {
     int downloadId;
     String filename;
     int progress;
@@ -36,5 +38,16 @@ public class Modal_FileDownloading {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        Modal_FileDownloading compare = (Modal_FileDownloading) o;
+        if (compare.getContentDetail().getNodeid() != null) {
+            if (compare.getDownloadId() == (this.downloadId) && compare.getProgress() == this.progress)
+                return 0;
+            else return 1;
+        } else
+            return 0;
     }
 }

@@ -16,20 +16,15 @@
         app:lottie_loop="true" />
     <!--app:lottie_fileName="main_bkgd/plane.json"-->
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+    <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
+    <com.pratham.prathamdigital.custom.GridRecyclerView
+        android:id="@+id/rv_content"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
-        <com.pratham.prathamdigital.custom.GridRecyclerView
-            android:id="@+id/rv_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:columnWidth="@dimen/_160sdp"
-            android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
-            android:scrollbars="vertical" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:columnWidth="@dimen/_160sdp"
+        android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
+        android:scrollbars="vertical" />
 
     <RelativeLayout
         android:id="@+id/content_header"

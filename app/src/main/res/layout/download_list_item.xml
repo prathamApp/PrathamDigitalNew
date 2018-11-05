@@ -19,7 +19,7 @@
             android:paddingLeft="@dimen/_10sdp" />
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/content_title"
+            android:id="@+id/download_content_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/number_progress"

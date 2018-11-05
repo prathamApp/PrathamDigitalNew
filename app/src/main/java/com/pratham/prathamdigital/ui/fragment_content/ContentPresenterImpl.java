@@ -18,6 +18,7 @@ import com.pratham.prathamdigital.models.Modal_Rasp_Content;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -218,15 +219,19 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         if (!totalContents.isEmpty()) {
             temp = new ArrayList<>();
             for (Modal_ContentDetail online : onlineContents) {
+                boolean found = false;
                 for (Modal_ContentDetail total : totalContents) {
-                    if (online.getNodeid().equalsIgnoreCase(total.getNodeid()))
-                        temp.add(total);                    //content is downloaded
-                    else
-                        temp.add(online);                   //content is not downloaded
+                    if (online.getNodeid().equalsIgnoreCase(total.getNodeid())) {
+                        found = true;
+                        temp.add(total);                    //content is downloaded}
+                        break;
+                    }
                 }
+                if (found) continue;
+                else temp.add(online);                   //content is not downloaded
             }
             if (!filesDownloading.isEmpty()) {
-                ArrayList<Modal_FileDownloading> mfd = (ArrayList<Modal_FileDownloading>) filesDownloading.values();
+                ArrayList<Modal_FileDownloading> mfd = new ArrayList<Modal_FileDownloading>(filesDownloading.values());
                 temp = removeIfCurrentlyDownloading(temp, mfd);
             }
             return temp;
@@ -238,13 +243,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                                                                         final ArrayList<Modal_FileDownloading> mfd) {
         ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
         for (Modal_ContentDetail c : content) {
+            boolean found = false;
             for (Modal_FileDownloading files : mfd) {
-                if (c.getNodeid().equalsIgnoreCase(files.getContentDetail().getNodeid()))
+                if (c.getNodeid().equalsIgnoreCase(files.getContentDetail().getNodeid())) {
                     //content is downloading, no need to add in list
-                    ;
-                else
-                    temp.add(c);
+                    found = true;
+                    break;
+                }
             }
+            if (found) continue;
+            else temp.add(c);
         }
         return temp;
     }
@@ -279,13 +287,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     @Override
     public void updateFileProgress(int downloadId, String filename, int progress) {
         Log.d(TAG, "updateFileProgress: " + downloadId + ":::" + filename + ":::" + progress);
-        Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
-        modal_fileDownloading.setDownloadId(downloadId);
-        modal_fileDownloading.setFilename(filename);
-        modal_fileDownloading.setProgress(progress);
-        modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
-        filesDownloading.put(downloadId, modal_fileDownloading);
-        contentView.updateDownloadList(filesDownloading);
+        if (filesDownloading.get(downloadId) != null && filesDownloading.get(downloadId).getProgress() != progress) {
+            Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+            modal_fileDownloading.setDownloadId(downloadId);
+            modal_fileDownloading.setFilename(filename);
+            modal_fileDownloading.setProgress(progress);
+            modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
+            filesDownloading.put(downloadId, modal_fileDownloading);
+//        contentView.updateDownloadList(filesDownloading)
+            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        }
     }
 
     @Override
@@ -302,6 +313,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             BaseActivity.modalContentDao.addContent(temp_content);
         }
         filesDownloading.remove(downloadId);
+        if (filesDownloading.size() == 0) {
+            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        }
         contentView.decreaseNotification(filesDownloading.size());
     }
 
@@ -330,10 +344,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     public ArrayList<Modal_ContentDetail> getUpdatedList(Modal_ContentDetail contentDetail) {
-        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-        temp.addAll(totalContents);
-        temp.remove(contentDetail);
-        return temp;
+//        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+//        temp.addAll(totalContents);
+        totalContents.remove(contentDetail);
+        return totalContents;
     }
 
     private class GetDownloadedContent extends AsyncTask {

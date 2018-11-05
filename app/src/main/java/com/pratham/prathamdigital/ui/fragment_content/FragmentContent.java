@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -54,8 +53,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     LottieAnimationView lottie_content_bkgd;
     @BindView(R.id.rv_content)
     RecyclerView rv_content;
-    @BindView(R.id.swipe_refresh)
-    SwipeRefreshLayout swipe_refresh;
     @BindView(R.id.content_back)
     ImageView content_back;
     @BindView(R.id.content_title)
@@ -124,7 +121,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onResume() {
         super.onResume();
-        if (modal_contents.isEmpty()) {
+        if (((ActivityMain) getActivity()).avatar_shape.getVisibility() == View.VISIBLE) {
             BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
             contentPresenter.getContent(null);
         }
@@ -189,20 +186,23 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
 //        contentAdapter.updateList(getUpdatedList(contentDetail));
-        contentPresenter.downloadContent(contentDetail);
         contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
+        contentPresenter.downloadContent(contentDetail);
     }
 
     @Override
     public void hideViews() {
-        hideViewUp(((ActivityMain) getActivity()).main_tab);
+//        hideViewUp(((ActivityMain) getActivity()).main_tab);
         hideViewSide(((ActivityMain) getActivity()).avatar_shape);
+        hideViewSide(((ActivityMain) getActivity()).search_shape);
+        content_header.setVisibility(View.VISIBLE);
     }
 
     @Override
     public void showViews() {
-        showViewDown(((ActivityMain) getActivity()).main_tab);
+//        showViewDown(((ActivityMain) getActivity()).main_tab);
         showViewSide(((ActivityMain) getActivity()).avatar_shape);
+        showViewSide(((ActivityMain) getActivity()).search_shape);
         content_header.setVisibility(View.GONE);
     }
 
@@ -225,6 +225,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @OnClick(R.id.content_back)
     public void setContent_back() {
+        BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
         contentPresenter.showPreviousContent();
     }
 

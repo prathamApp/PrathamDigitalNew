@@ -14,6 +14,10 @@ public class PD_Constant {
     public static final String GAME = "Game";
     public static final String VIDEO = "Video";
     public static final String PDF = "Pdf";
+    public static final String VIEW_TYPE = "VIEW_TYPE";
+    public static final String DOWNLOAD = "DOWNLOAD";
+    public static final String SETTINGS = "SETTINGS";
+    public static final String SHARE = "SHARE";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

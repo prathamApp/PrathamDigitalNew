@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_settings_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/charcoal">
+
+    <RelativeLayout
+        android:id="@+id/rl_tab"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_50sdp">
+
+        <ImageView
+            android:id="@+id/settings_back"
+            android:layout_width="@dimen/_70sdp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/_10sdp"
+            android:src="@drawable/settings_back_arrow" />
+
+        <LinearLayout
+            android:id="@+id/main_tab"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/setting_download"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_8sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="download.json"
+                app:lottie_loop="true" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/setting_language"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_8sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="letter_b_monster.json"
+                app:lottie_loop="true" />
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/setting_share"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_8sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="share.json"
+                app:lottie_loop="true" />
+
+            <!--<com.airbnb.lottie.LottieAnimationView-->
+            <!--android:id="@+id/lottie_connect"-->
+            <!--android:layout_width="0dp"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:layout_weight="1"-->
+            <!--android:scaleType="centerInside"-->
+            <!--app:lottie_fileName="wifi_intro.json" />-->
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <com.pratham.prathamdigital.ui.CustomSwipeableViewPager
+        android:id="@+id/settings_vp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/rl_tab" />
+</RelativeLayout>

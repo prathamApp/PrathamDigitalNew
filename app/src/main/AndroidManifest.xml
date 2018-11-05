@@ -103,6 +103,12 @@
             android:configChanges="orientation|screenSize"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ui.settings_activity.SettingsActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.Transparent"
+            android:screenOrientation="sensorLandscape"
+            android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver android:name=".util.NetworkChangeReceiver">
             <intent-filter>
