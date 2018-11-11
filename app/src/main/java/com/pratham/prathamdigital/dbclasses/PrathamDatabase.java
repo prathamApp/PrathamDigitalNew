@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.dbclasses;
 
-import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteOpenHelper;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.DatabaseConfiguration;
@@ -9,7 +8,6 @@ import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -24,7 +22,7 @@ import com.pratham.prathamdigital.models.Modal_Village;
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class, Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class}, version = 1, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
-    private static final String DB_NAME = "pradigi.db";
+    public static final String DB_NAME = "pradigi";
 
     public abstract AttendanceDao getAttendanceDao();
 

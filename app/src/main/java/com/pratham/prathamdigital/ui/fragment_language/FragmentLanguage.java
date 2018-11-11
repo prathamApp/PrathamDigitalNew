@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.RelativeLayout;
 
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -124,6 +125,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage {
 
     @Override
     public void languageSelected(int position) {
+        PrathamApplication.bubble_mp.start();
         Modal_Language language = adapter.getitem(position);
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));

@@ -13,15 +13,19 @@ import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,12 +35,18 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.SearchView;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.services.LocationService;
+import com.pratham.prathamdigital.socket.entity.Users;
+import com.pratham.prathamdigital.socket.udp.IPMSGConst;
+import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
+import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 import com.pratham.prathamdigital.util.WifiUtils;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -47,7 +57,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FragmentShareRecieve extends FragmentManagePermission {
+import static com.pratham.prathamdigital.util.PD_Utility.getPhoneModel;
+
+public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView, UDPMessageListener.OnNewMsgListener {
 
     @BindView(R.id.root_share)
     LinearLayout root_share;
@@ -65,8 +77,23 @@ public class FragmentShareRecieve extends FragmentManagePermission {
     TextView status;
     @BindView(R.id.searchView)
     SearchView searchView;
+    @BindView(R.id.rl_share_block)
+    RelativeLayout rl_share_block;
+    @BindView(R.id.rl_recieve_block)
+    RelativeLayout rl_recieve_block;
+    @BindView(R.id.rv_files)
+    RecyclerView rv_files;
+    @BindView(R.id.btn_send_files)
+    Button btn_send_files;
 
     private List<String> mList = new ArrayList<>();
+    private UDPMessageListener mUDPListener;
+    private boolean share = false;
+    private Timer connectTimer;
+    private String localIPaddress;
+    private String serverIPaddres;
+    SharePresenter sharePresenter;
+    FileListAdapter fileListAdapter;
 
     public static FragmentShareRecieve newInstance(int centerX, int centerY, int color) {
         Bundle args = new Bundle();
@@ -110,6 +137,7 @@ public class FragmentShareRecieve extends FragmentManagePermission {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        sharePresenter = new SharePresenter(getActivity(), this);
     }
 
     @Override
@@ -119,14 +147,52 @@ public class FragmentShareRecieve extends FragmentManagePermission {
 
     @OnClick(R.id.rl_share)
     public void setRl_share() {
+        share = true;
         if (isPermissionsGranted(getActivity(),
                 new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            TransitionManager.beginDelayedTransition(root_share);
-            ViewGroup.LayoutParams params = rl_share.getLayoutParams();
-            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-            rl_share.requestLayout();
-            createHotspot();
+            if (new LocationService(getActivity()).checkLocationEnabled()) {
+                TransitionManager.beginDelayedTransition(root_share);
+                ViewGroup.LayoutParams params = rl_share.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                rl_share.requestLayout();
+                rl_recieve.setVisibility(View.GONE);
+                createHotspot();
+            } else {
+                new LocationService(getActivity()).checkLocation();
+            }
+        } else {
+            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
+                    PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
+        }
+    }
+
+    @OnClick(R.id.rl_recieve)
+    public void setRl_recieve() {
+        share = false;
+        if (isPermissionsGranted(getActivity(),
+                new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
+            if (new LocationService(getActivity()).checkLocationEnabled()) {
+                TransitionManager.beginDelayedTransition(root_share);
+                ViewGroup.LayoutParams params = rl_recieve.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                rl_recieve.requestLayout();
+                rl_share.setVisibility(View.GONE);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (Settings.System.canWrite(getActivity())) {
+                        connectHotspotAndRecieve();
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                        startActivityForResult(intent, 1);
+                    }
+                } else {
+                    connectHotspotAndRecieve();
+                }
+            } else {
+                new LocationService(getActivity()).checkLocation();
+            }
         } else {
             askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
                     PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
@@ -136,7 +202,8 @@ public class FragmentShareRecieve extends FragmentManagePermission {
     PermissionResult locationPermissionResult = new PermissionResult() {
         @Override
         public void permissionGranted() {
-            setRl_share();
+            if (share) setRl_share();
+            else setRl_recieve();
         }
 
         @Override
@@ -151,6 +218,7 @@ public class FragmentShareRecieve extends FragmentManagePermission {
     };
 
     private void createHotspot() {
+        rl_share_block.setVisibility(View.GONE);
         startCreateAnim();
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -178,7 +246,7 @@ public class FragmentShareRecieve extends FragmentManagePermission {
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                startActivity(intent);
+                startActivityForResult(intent, 1);
             }
         } else {
             WifiUtils.startWifiAp(PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName(), PD_Constant.WIFI_AP_PASSWORD, mHandler);
@@ -198,9 +266,9 @@ public class FragmentShareRecieve extends FragmentManagePermission {
                     ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
                     status.setText(ss);
                     circleProgress.finishAnim();
-//                    mUDPListener = UDPMessageListener.getInstance(context);
-//                    mUDPListener.addMsgListener(this);
-//                    mUDPListener.connectUDPSocket();
+                    mUDPListener = UDPMessageListener.getInstance(getActivity());
+                    mUDPListener.addMsgListener(FragmentShareRecieve.this::processMessage);
+                    mUDPListener.connectUDPSocket();
                     break;
                 case PD_Constant.LOCATION_GRANTED:
                     createAP();
@@ -216,21 +284,40 @@ public class FragmentShareRecieve extends FragmentManagePermission {
                         }
                     }
                     break;
+                case IPMSGConst.AN_CONNECT_SUCCESS:
+                    Users user2 = new Users();
+                    user2.setDevice(getPhoneModel());
+                    user2.setIpaddress(serverIPaddres);
+                    break;
+                case PD_Constant.WiFiConnectSuccess:
+                    if (isValidated()) {
+                        status.setText("connection succeeded...");
+                        connectTimer.cancel();
+                        mUDPListener = UDPMessageListener.getInstance(getActivity());
+                        mUDPListener.addMsgListener(FragmentShareRecieve.this::processMessage);
+                        mUDPListener.connectUDPSocket();
+                        IPMSGProtocol command = new IPMSGProtocol();
+                        command.senderIP = localIPaddress;
+                        command.targetIP = serverIPaddres;
+                        command.commandNo = IPMSGConst.NO_CONNECT_SUCCESS;
+                        command.packetNo = new Date().getTime() + "";
+                        mUDPListener.sendUDPdata(command);
+                        hideViewsandShowFolders();
+                    }
+                    break;
             }
         }
     };
 
-    @OnClick(R.id.rl_recieve)
-    public void setRl_recieve() {
-        TransitionManager.beginDelayedTransition(root_share);
-        ViewGroup.LayoutParams params = rl_recieve.getLayoutParams();
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        rl_recieve.requestLayout();
-        connectHotspotAndRecieve();
+    private void hideViewsandShowFolders() {
+        shareCircle.setVisibility(View.GONE);
+        rl_recieve_block.setVisibility(View.GONE);
+        btn_send_files.setVisibility(View.VISIBLE);
+        sharePresenter.showFolders(PrathamApplication.pradigiPath);
     }
 
     private void connectHotspotAndRecieve() {
+        rl_recieve_block.setVisibility(View.GONE);
         startJoinAnim();
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
@@ -241,6 +328,59 @@ public class FragmentShareRecieve extends FragmentManagePermission {
                 mHandler.sendEmptyMessage(PD_Constant.ApScanResult);
             }
         }, new Date(System.currentTimeMillis() + 2000), 2000);
+        searchView.setOnAvatarClickListener(new SearchView.OnAvatarClickListener() {
+            @Override
+            public void onClick(View v) {
+                onAvatarClick(v);
+            }
+        });
+    }
+
+    private void onAvatarClick(final View v) {
+        startAvatarClickAnim(v);
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ScanResult wifi = (ScanResult) v.getTag();
+                connectAp(wifi.SSID);
+            }
+        }, 1500);
+    }
+
+    private void connectAp(final String hostName) {
+        if (hostName.startsWith(PD_Constant.WIFI_AP_HEADER)) {
+//            final boolean connFlag = WifiUtils.connectWifi(hostName, PD_Constant.WIFI_AP_PASSWORD,
+//                    WifiUtils.WifiCipherType.WIFICIPHER_WPA);
+            sharePresenter.connectToWify(hostName);
+//            if (connFlag) {
+//            }
+        }
+    }
+
+    private void startAvatarClickAnim(final View v) {
+        int[] mAvatarLocation = new int[2];
+        v.getLocationOnScreen(mAvatarLocation);
+
+        int mCenterSearchLocation[] = new int[2];
+        searchView.getLocationOnScreen(mCenterSearchLocation);
+
+        int mLeft = mCenterSearchLocation[0] + searchView.getWidth() / 2 - mAvatarLocation[0] - v.getWidth() / 2;
+        int mTop = mCenterSearchLocation[1] + searchView.getHeight() / 2 - mAvatarLocation[1] - v.getHeight() / 2 + PD_Utility.dp2px(getActivity(), 13);
+
+        searchView.clearApViewButOne(v);
+        searchView.hideBackground();
+        v.animate().translationX(mLeft).translationY(mTop).
+                setDuration(300).setInterpolator(new DecelerateInterpolator()).start();
+        v.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                shareCircle.setVisibility(View.VISIBLE);
+                status.setText("connecting...");
+                circleProgress.startScaleAnim(0);
+                circleProgress.startAnim(800);
+            }
+        }, 300);
+        searchView.setTextColor(v, Color.BLACK);
     }
 
     private void startJoinAnim() {
@@ -250,4 +390,78 @@ public class FragmentShareRecieve extends FragmentManagePermission {
         searchCircle.setVisibility(View.VISIBLE);
         searchView.startSearchAnim(1000);
     }
+
+    @Override
+    public void onWifiConnected(String ssid) {
+        circleProgress.finishAnim();
+        connectTimer = new Timer();
+        connectTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
+            }
+        }, new Date(), 1000);
+    }
+
+    @Override
+    public void fileItemClicked(File file, int position) {
+        sharePresenter.showFolders(file.getAbsolutePath());
+    }
+
+    @Override
+    public void showFilesList(List<File> files) {
+        if (rv_files.getVisibility() == View.GONE)
+            rv_files.setVisibility(View.VISIBLE);
+        if (fileListAdapter == null) {
+            //initialize adapter
+            fileListAdapter = new FileListAdapter(getActivity(), files, FragmentShareRecieve.this);
+            rv_files.setHasFixedSize(true);
+            rv_files.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            rv_files.setAdapter(fileListAdapter);
+        } else {
+            fileListAdapter.updateList(files);
+        }
+    }
+
+    @Override
+    public void hotspotStarted() {
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+//            createAP();
+        }
+    }
+
+    @Override
+    public void processMessage(IPMSGProtocol pMsg) {
+        Message msg = Message.obtain();
+        msg.what = pMsg.commandNo;
+        msg.obj = pMsg;
+        mHandler.sendMessage(msg);
+    }
+
+    public void setIPaddress() {
+        if (WifiUtils.isWifiApEnabled()) {
+            serverIPaddres = localIPaddress = "192.168.43.1";
+        } else {
+            localIPaddress = WifiUtils.getLocalIPAddress();
+            serverIPaddres = WifiUtils.getServerIPAddress();
+        }
+        Log.d("IPAddress:::", "localIPaddress:" + localIPaddress + " serverIPaddres:" + serverIPaddres);
+    }
+
+    private boolean isValidated() {
+        setIPaddress();
+        String nullIP = "0.0.0.0";
+        if (nullIP.equals(localIPaddress) || nullIP.equals(serverIPaddres)
+                || localIPaddress == null || serverIPaddres == null) {
+            return false;
+        }
+        return true;
+    }
+
 }

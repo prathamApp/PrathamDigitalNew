@@ -8,6 +8,8 @@
     <string name="pref_key_transition_time">pref_key_transition_time</string>
     <string name="download">Download</string>
     <string name="new_version_available">A new version of app is available over the playStore. Please update the app</string>
+    <string name="default_notification_channel_id">fcm_default_channel</string>
+    <string name="fcm_message">Pratham</string>
     <string-array name="search_tags">
         <item>English</item>
         <item>Maths</item>

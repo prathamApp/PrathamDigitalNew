@@ -16,7 +16,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
@@ -106,7 +105,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     public void validateSignIn(Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         if (result.isSuccess()) {
-            Log.d(TAG, "validateSignIn: "+result.toString());
+            Log.d(TAG, "validateSignIn: " + result.toString());
             // Google Sign In was successful, save Token and a state then authenticate with Firebase
             GoogleSignInAccount account = result.getSignInAccount();
             String token = account.getIdToken();

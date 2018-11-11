@@ -25,7 +25,7 @@ public class CatLoadingView extends DialogFragment {
     EyelidView eyelid_left, eyelid_right;
     GraduallyTextView mGraduallyTextView;
     String text;
-    private boolean isClickCancelAble = true;
+    private boolean isClickCancelAble = false;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -33,6 +33,7 @@ public class CatLoadingView extends DialogFragment {
             mDialog = new Dialog(getActivity(), R.style.cart_dialog);
             mDialog.setContentView(R.layout.cat_loading_dialog);
             mDialog.setCanceledOnTouchOutside(isClickCancelAble);
+            mDialog.setCancelable(false);
             mDialog.getWindow().setGravity(Gravity.CENTER);
 
             operatingAnim = new RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f,

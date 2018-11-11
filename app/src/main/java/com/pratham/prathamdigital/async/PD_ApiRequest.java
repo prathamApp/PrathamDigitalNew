@@ -12,14 +12,13 @@ import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
-import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.json.JSONObject;
 
 import java.io.File;
 
-import static com.pratham.prathamdigital.BaseActivity.pradigiPath;
+import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 /**
  * Created by HP on 30-12-2016.
@@ -76,7 +75,7 @@ public class PD_ApiRequest {
                         public void onError(ANError anError) {
                             if (contentPresenter != null)
                                 contentPresenter.recievedError(requestType);
-                            Log.d("Error::", anError.getErrorDetail());
+                            Log.d("Error:", anError.getErrorDetail());
                             Log.d("Error::", anError.getResponse().toString());
                         }
                     });

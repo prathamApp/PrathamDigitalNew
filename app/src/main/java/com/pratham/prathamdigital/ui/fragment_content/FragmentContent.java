@@ -18,8 +18,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -43,14 +43,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import static com.pratham.prathamdigital.BaseActivity.pradigiPath;
+import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView, ContentContract.contentClick {
 
     @BindView(R.id.content_header)
     RelativeLayout content_header;
-    @BindView(R.id.lottie_content_bkgd)
-    LottieAnimationView lottie_content_bkgd;
+    //    @BindView(R.id.lottie_content_bkgd)
+//    LottieAnimationView lottie_content_bkgd;
     @BindView(R.id.rv_content)
     RecyclerView rv_content;
     @BindView(R.id.content_back)
@@ -122,7 +122,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void onResume() {
         super.onResume();
         if (((ActivityMain) getActivity()).avatar_shape.getVisibility() == View.VISIBLE) {
-            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+            if (!BaseActivity.catLoadingView.isAdded())
+                BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
             contentPresenter.getContent(null);
         }
     }
@@ -174,7 +175,9 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
-        BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        PrathamApplication.bubble_mp.start();
+        if (!BaseActivity.catLoadingView.isAdded())
+            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
         contentPresenter.getContent(contentDetail);
     }
 
@@ -186,6 +189,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
 //        contentAdapter.updateList(getUpdatedList(contentDetail));
+        PrathamApplication.bubble_mp.start();
         contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
         contentPresenter.downloadContent(contentDetail);
     }
@@ -225,7 +229,9 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @OnClick(R.id.content_back)
     public void setContent_back() {
-        BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        PrathamApplication.bubble_mp.start();
+        if (!BaseActivity.catLoadingView.isAdded())
+            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
         contentPresenter.showPreviousContent();
     }
 
@@ -284,6 +290,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void openContent(int position, Modal_ContentDetail contentDetail) {
+        PrathamApplication.bubble_mp.start();
         if (isPermissionGranted(getActivity(), PermissionUtils.Manifest_RECORD_AUDIO)) {
             switch (contentDetail.getResourcetype()) {
                 case PD_Constant.GAME:

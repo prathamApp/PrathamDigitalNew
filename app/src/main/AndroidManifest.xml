@@ -13,7 +13,12 @@
     <uses-permission
         android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission
+        android:name="android.permission.UPDATE_DEVICE_STATS"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -106,8 +111,8 @@
         <activity
             android:name=".ui.settings_activity.SettingsActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.Transparent"
             android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
         <receiver android:name=".util.NetworkChangeReceiver">
@@ -125,48 +130,61 @@
             android:value="@integer/google_play_services_version" />
 
         <service
-            android:name=".services.LocationService"
-            android:process=":loc_service"
-            android:stopWithTask="false" />
+            android:name=".services.auto_sync.AutoSyncService"
+            android:exported="false" />
 
         <receiver
-            android:name=".ftpSettings.FsNotification"
+            android:name=".services.auto_sync.AutoSyncNetworkReceiver"
+            android:enabled="false"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.FTPSERVER_STARTED" />
-                <action android:name="com.pratham.FTPSERVER_STOPPED" />
+                <action
+                    android:name="android.net.conn.CONNECTIVITY_CHANGE"
+                    tools:ignore="BatteryLife" />
             </intent-filter>
         </receiver>
-
-        <service android:name=".ftpSettings.FsService" />
-        <service android:name=".ftpSettings.NsdService" />
-
         <receiver
-            android:name=".ftpSettings.NsdService$StartStopReceiver"
+            android:name=".services.auto_sync.AutoSyncPowerReceiver"
+            android:enabled="false"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.FTPSERVER_STARTED" />
-                <action android:name="com.pratham.FTPSERVER_STOPPED" />
+                <action android:name="android.intent.action.ACTION_POWER_CONNECTED" />
+                <action android:name="android.intent.action.ACTION_POWER_DISCONNECTED" />
             </intent-filter>
         </receiver>
-
-        <!-- Don't export this receiver in free, this clashes with paid -->
         <receiver
-            android:name=".ftpSettings.RequestStartStopReceiver"
-            android:exported="true">
+            android:name=".services.auto_sync.AutoSyncBootReceiver"
+            android:enabled="false"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.ACTION_START_FTPSERVER" />
-                <action android:name="com.pratham.ACTION_STOP_FTPSERVER" />
-            </intent-filter>
-        </receiver>
-        <receiver android:name=".ftpSettings.WifiStateChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.wifi.STATE_CHANGE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".ftpSettings.WifiStateChangeReceiver$StartServerService" />
-        <service android:name=".ftpSettings.WifiStateChangeReceiver$StopServerService" />
+        <meta-data
+            android:name="com.pratham.prathamdigital.services.auto_sync.AutoSync"
+            android:resource="@xml/autosync" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_app_logo_" />
+        <!-- Set color used with incoming notification messages. This is used when no color is set for the incoming
+             notification message. See README(https://goo.gl/6BKBk7) for more. -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/red" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="@string/default_notification_channel_id" />
 
+        <service android:name=".services.PrathamFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.PrathamFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
     </application>
 </manifest>

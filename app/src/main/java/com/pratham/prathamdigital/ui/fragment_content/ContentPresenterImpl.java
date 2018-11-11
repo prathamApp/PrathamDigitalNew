@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.pratham.prathamdigital.BaseActivity.pradigiPath;
+import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 public class ContentPresenterImpl implements ContentContract.contentPresenter {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();

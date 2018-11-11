@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.models;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
@@ -33,6 +32,7 @@ public class Modal_Score {
     private String EndDateTime;
     @SerializedName("Level")
     private int Level;
+    private int sentFlag;
 
     @Override
     public String toString() {
@@ -48,7 +48,16 @@ public class Modal_Score {
                 ", StartDateTime='" + StartDateTime + '\'' +
                 ", EndDateTime='" + EndDateTime + '\'' +
                 ", Level=" + Level +
+                ", sentFlag=" + sentFlag +
                 '}';
+    }
+
+    public int getSentFlag() {
+        return sentFlag;
+    }
+
+    public void setSentFlag(int sentFlag) {
+        this.sentFlag = sentFlag;
     }
 
     @NonNull

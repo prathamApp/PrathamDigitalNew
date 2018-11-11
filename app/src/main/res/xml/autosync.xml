@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<autosync>
+    <listener
+        name="com.pratham.prathamdigital.services.PrathamSmartSync"
+        every="3 minutes"
+        range="10 seconds" />
+</autosync>

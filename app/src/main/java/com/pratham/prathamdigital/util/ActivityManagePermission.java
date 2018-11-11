@@ -6,14 +6,11 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
-import com.pratham.prathamdigital.services.LocationService;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -160,31 +157,6 @@ public class ActivityManagePermission extends AppCompatActivity {
             Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
             intent.setData(Uri.parse("package:" + context.getPackageName()));
             startActivity(intent);
-        }
-    }
-
-    public void requestLocation(Context context, Handler mhandler) {
-        if (!isPermissionsGranted(context, new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                    , PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    mhandler.sendEmptyMessage(PD_Constant.LOCATION_GRANTED);
-                    startService(new Intent(context, LocationService.class));
-                }
-
-                @Override
-                public void permissionDenied() {
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                }
-            });
-        } else {
-            startService(new Intent(context, LocationService.class));
         }
     }
 }

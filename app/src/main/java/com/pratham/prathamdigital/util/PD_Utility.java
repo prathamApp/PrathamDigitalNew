@@ -50,6 +50,7 @@ import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
@@ -74,7 +75,9 @@ import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -1646,4 +1649,34 @@ public class PD_Utility {
             langcode = PD_Constant.ASSAMESE;
         return langcode;
     }
+
+    public static <T> T jsonToBean(String jsonResult, Class<T> clz) {
+        Gson gson = new Gson();
+        T t = gson.fromJson(jsonResult, clz);
+        return t;
+    }
+
+    public static <T> String beanToJson(T clz) {
+        Gson gson = new Gson();
+        return gson.toJson(clz);
+    }
+
+    public static List<File> getCurrentFileList(String path) {
+        if (path == null) {
+            return null;
+        }
+        List<File> list = new ArrayList<>();
+        File file = new File(path);
+        if (file.exists() && file.isDirectory()) {
+            for (File f : file.listFiles()) {
+                File wf = new File(f.getAbsolutePath());
+                list.add(wf);
+            }
+        } else {
+            return null;
+        }
+        Collections.sort(list);
+        return list;
+    }
+
 }

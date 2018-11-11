@@ -30,12 +30,6 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
 
-/**
- * Wifi 工具类
- * <p/>
- * 封装了Wifi的基础操作方法，方便获取Wifi连接信息以及操作Wifi
- */
-
 public class WifiUtils {
 
     private static final String TAG = "Pratham_WifiUtils";
@@ -46,9 +40,6 @@ public class WifiUtils {
         WIFICIPHER_WEP, WIFICIPHER_WPA, WIFICIPHER_NOPASS, WIFICIPHER_INVALID
     }
 
-    /**
-     * 开启热点
-     */
     public static void startWifiAp(String ssid, String passwd, final Handler handler) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mWifiManager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
@@ -91,12 +82,6 @@ public class WifiUtils {
         timerCheck.start(10, 1000);
     }
 
-    /**
-     * 开启热点
-     *
-     * @param ssid
-     * @param passwd
-     */
     private static void startAp(String ssid, String passwd) {
         Method method1 = null;
         try {
@@ -106,10 +91,11 @@ public class WifiUtils {
             netConfig.SSID = ssid;
             netConfig.preSharedKey = passwd;
 
+            netConfig.allowedKeyManagement.set(4);
             netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
             netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
             netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-            netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+//            netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
             netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
             netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
             netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
@@ -130,9 +116,6 @@ public class WifiUtils {
         }
     }
 
-    /**
-     * 关闭热点
-     */
     public static void closeWifiAp() {
         if (isWifiApEnabled()) {
             try {
@@ -160,11 +143,6 @@ public class WifiUtils {
         }
     }
 
-    /**
-     * 热点是否可用
-     *
-     * @return
-     */
     public static boolean isWifiApEnabled() {
         try {
             Method method = mWifiManager.getClass().getMethod("isWifiApEnabled");
@@ -190,11 +168,6 @@ public class WifiUtils {
         return 4;
     }
 
-    /**
-     * 判断是否连接上wifi
-     *
-     * @return boolean值(isConnect), 对应已连接(true)和未连接(false)
-     */
     public static boolean isWifiConnect() {
         NetworkInfo mNetworkInfo = ((ConnectivityManager) mContext
                 .getSystemService(Context.CONNECTIVITY_SERVICE))
@@ -202,26 +175,15 @@ public class WifiUtils {
         return mNetworkInfo.isConnected();
     }
 
-    /**
-     * wifi是否打开
-     *
-     * @return
-     */
     public static boolean isWifiEnabled() {
         return mWifiManager.isWifiEnabled();
     }
 
-    /**
-     * 打开wifi
-     */
     public static void OpenWifi() {
         if (!mWifiManager.isWifiEnabled())
             mWifiManager.setWifiEnabled(true);
     }
 
-    /**
-     * 关闭wifi
-     */
     public static void closeWifi() {
         mWifiManager.setWifiEnabled(false);
     }
@@ -238,36 +200,19 @@ public class WifiUtils {
         }
     }
 
-    /**
-     * Function: 连接Wifi热点 <br>
-     *
-     * @param SSID
-     * @param Password
-     * @param Type     <br>
-     *                 没密码： {@linkplain WifiCipherType#WIFICIPHER_NOPASS}<br>
-     *                 WEP加密: {@linkplain WifiCipherType#WIFICIPHER_WEP}<br>
-     *                 WPA加密： {@linkplain WifiCipherType#WIFICIPHER_WPA}<br>
-     * @return true:连接成功；false:连接失败
-     */
     public static boolean connectWifi(String SSID, String Password, WifiCipherType Type) {
-        if (!isWifiEnabled()) {
-            return false;
-        }
-        // 开启wifi需要一段时间,要等到wifi状态变成WIFI_STATE_ENABLED
         while (mWifiManager.getWifiState() == WifiManager.WIFI_STATE_ENABLING) {
             try {
-                // 避免程序不停循环
                 Thread.currentThread();
                 Thread.sleep(500);
             } catch (InterruptedException ie) {
+                ie.printStackTrace();
             }
         }
-
         WifiConfiguration wifiConfig = createWifiInfo(SSID, Password, Type);
         if (wifiConfig == null) {
             return false;
         }
-
         WifiConfiguration tempConfig = isExsits(SSID);
 
         if (tempConfig != null) {
@@ -276,10 +221,8 @@ public class WifiUtils {
 
         int netID = mWifiManager.addNetwork(wifiConfig);
 
-        // 断开连接
         mWifiManager.disconnect();
 
-        // 设置为true,使其他的连接断开
         boolean bRet = mWifiManager.enableNetwork(netID, true);
         mWifiManager.reconnect();
         return bRet;
@@ -376,11 +319,6 @@ public class WifiUtils {
         return mWifiInfo.getBSSID();
     }
 
-    /**
-     * 注意这里返回的字符串头和尾多了引号""
-     *
-     * @return
-     */
     public static String getSSID() {
         WifiInfo mWifiInfo = mWifiManager.getConnectionInfo();
         return mWifiInfo.getSSID();
@@ -456,16 +394,10 @@ public class WifiUtils {
         return mWifiManager.getConnectionInfo();
     }
 
-    /**
-     * 获取扫描的列表
-     *
-     * @return
-     */
     public static List<ScanResult> getScanResults() {
         return mWifiManager.getScanResults();
     }
 
-    // 查看以前是否也配置过这个网络
     private static WifiConfiguration isExsits(String SSID) {
         List<WifiConfiguration> existingConfigs = mWifiManager.getConfiguredNetworks();
         for (WifiConfiguration existingConfig : existingConfigs) {
@@ -480,11 +412,6 @@ public class WifiUtils {
         return (i & 0xFF) + "." + ((i >> 8) & 0xFF) + "." + ((i >> 16) & 0xFF) + "." + ((i >> 24) & 0xFF);
     }
 
-    /**
-     * 获取链接到当前热点的设备IP
-     *
-     * @return
-     */
     public static ArrayList<String> getConnectedHotIP() {
         ArrayList<String> connectedIP = new ArrayList<String>();
         try {

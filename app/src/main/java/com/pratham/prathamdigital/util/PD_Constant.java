@@ -30,7 +30,8 @@ public class PD_Constant {
     public static String RASPBERRY_HEADER = "RASPBERRY_HEADER";
     public static String BROWSE_RASPBERRY_URL = RASP_IP + "api/contentnode?parent=";
     public static String GET_RASPBERRY_HEADER = RASP_IP + "api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c";
-
+    public static final int TCP_SERVER_RECEIVE_PORT = 4447;
+    public static int READ_BUFFER_SIZE = 1024 * 4;
     int[] english_age_id = {1100, 1101, 1102, 1103};
     int[] hindi_age_id = {20, 21, 22, 23};
     int[] marathi_age_id = {25, 26, 27, 28};
@@ -61,7 +62,7 @@ public class PD_Constant {
     public static final int WiFiConnectSuccess = 202;
     public static final int ApCreateApSuccess = 203;
     public static final String WIFI_AP_HEADER = "Pratham_";
-    public static final String WIFI_AP_PASSWORD = "pratham";
+    public static final String WIFI_AP_PASSWORD = "pratham123";
     //Notification Keys
     // global topic to receive app wide push notifications
     public static final String TOPIC_GLOBAL = "global";
@@ -104,4 +105,27 @@ public class PD_Constant {
 
     }
 
+    public static final int REQUEST_SHOW_CREATE = 0x01;
+    public static final int REQUEST_SHOW_CREATING = 0x02;
+    public static final String EXTRA_BLUR_PATH = "blur_path";
+    public static final String EXTRA_SENDER_IP = "sender_ip";
+    public static final String EXTRA_CHAT_USER = "chat_user";
+    public static final String EXTRA_NEW_MSG_CONTENT = "new_msg_content";
+    public static final String EXTRA_NEW_MSG_TYPE = "new_msg_type";
+    public static final int NEW_MSG_TYPE_TXT = 0x401;
+    public static final int NEW_MSG_TYPE_IMAGE = 0x402;
+    public static final int NEW_MSG_TYPE_VOICE = 0x403;
+    public static final int NEW_MSG_TYPE_FILE = 0x404;
+    public static final int NEW_MSG_TYPE_VEDIO = 0x405;
+    public static final int NEW_MSG_TYPE_MUSIC = 0x406;
+    public static final int NEW_MSG_TYPE_APK = 0x407;
+
+    public static final int REQUEST_PICK_IMAGE = 0x000300;
+    public static final int REQUEST_PICK_FILE = 0x000301;
+    public static final int REQUEST_PICK_APK = 0x000302;
+    public static final int REQUEST_PICK_MUSIC = 0x000303;
+    public static final int REQUEST_PICK_VEDIO = 0x000304;
+    public static final String ACTION_CLEAR_SEND_FILES = "action.CLEAR_SEND_FILES";
+    public static final String ACTION_NEW_MSG = "action.NEW_MSG";
+    public static final String ACTION_UPDATE_BOTTOM = "action.UPDATE_BOTTOM";
 }

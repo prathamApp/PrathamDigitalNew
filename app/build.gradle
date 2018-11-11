@@ -65,10 +65,10 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.isupatches:wisefy:3.0.1'
-    compileOnly 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor 'org.projectlombok:lombok:1.16.18'
-    implementation project(':commons-net-3.6')
-    implementation project(':commons-net-3.6-sources')
+//    compileOnly 'org.projectlombok:lombok:1.16.18'
+//    annotationProcessor 'org.projectlombok:lombok:1.16.18'
+//    implementation project(':commons-net-3.6')
+//    implementation project(':commons-net-3.6-sources')
     implementation 'com.github.karacken:karackencurllib:0.0.1'
     implementation 'com.airbnb.android:lottie:2.7.0'
     implementation 'com.mindorks.android:prdownloader:0.4.0'
@@ -80,5 +80,8 @@ dependencies {
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'uk.co.jakelee:vidsta:1.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
+    implementation 'io.nlopez.smartlocation:library:3.3.3'
+    implementation 'com.google.firebase:firebase-messaging:17.3.3'
+//    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
 }
 apply plugin: 'com.google.gms.google-services'

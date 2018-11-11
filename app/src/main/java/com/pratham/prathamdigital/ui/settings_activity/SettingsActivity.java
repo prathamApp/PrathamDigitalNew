@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.tab_bar.NavigationTabBar;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -103,16 +104,19 @@ public class SettingsActivity extends BaseActivity {
 
     @OnClick(R.id.setting_download)
     public void setSetting_download() {
+        PrathamApplication.bubble_mp.start();
         settings_vp.setCurrentItem(0, true);
     }
 
     @OnClick(R.id.setting_language)
     public void setSetting_language() {
+        PrathamApplication.bubble_mp.start();
         settings_vp.setCurrentItem(1, true);
     }
 
     @OnClick(R.id.setting_share)
     public void setSetting_share() {
+        PrathamApplication.bubble_mp.start();
         settings_vp.setCurrentItem(2, true);
     }
 
@@ -129,6 +133,7 @@ public class SettingsActivity extends BaseActivity {
 
     @OnClick(R.id.settings_back)
     protected void unRevealActivity() {
+        PrathamApplication.bubble_mp.start();
         float finalRadius = (float) (Math.max(main_settings_root.getWidth(), main_settings_root.getHeight()) * 1.1);
         // create the animator for this view (the start radius is zero)
         Animator circularReveal = ViewAnimationUtils.createCircularReveal(main_settings_root, revealX, revealY, finalRadius, 0);

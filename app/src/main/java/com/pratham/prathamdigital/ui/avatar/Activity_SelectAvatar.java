@@ -8,16 +8,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -26,7 +24,6 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
-import com.yarolegovich.discretescrollview.InfiniteScrollAdapter;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
 import java.util.ArrayList;
@@ -105,6 +102,7 @@ public class Activity_SelectAvatar extends BaseActivity implements AvatarContrac
 
     @OnClick(R.id.btn_avatar_next)
     public void setNext() {
+        PrathamApplication.bubble_mp.start();
         FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
         Modal_Student modal_student = new Modal_Student();
         modal_student.setFullName(et_child_name.getText().toString());

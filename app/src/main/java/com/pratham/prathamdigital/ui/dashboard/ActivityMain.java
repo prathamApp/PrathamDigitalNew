@@ -17,16 +17,20 @@ import android.widget.RelativeLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
+import com.pratham.prathamdigital.util.PermissionUtils;
 
 import java.util.Map;
 
@@ -36,6 +40,7 @@ import butterknife.OnClick;
 
 public class ActivityMain extends BaseActivity implements ContentContract.mainView {
 
+    private static final String TAG = ActivityMain.class.getSimpleName();
     @BindView(R.id.main_root)
     RelativeLayout main_root;
     @BindView(R.id.avatar_view)
@@ -84,6 +89,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     protected void onResume() {
         super.onResume();
+        requestLocation();
         avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "rabbit.json"));
     }
 
@@ -100,6 +106,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.download_badge)
     public void showDownloadList() {
+        PrathamApplication.bubble_mp.start();
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, download_badge, "transition");
         Point points = PD_Utility.getCenterPointOfView(download_badge);
@@ -114,6 +121,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.avatar_shape)
     public void openSettingsActivity() {
+        PrathamApplication.bubble_mp.start();
         ActivityOptionsCompat options = ActivityOptionsCompat.
                 makeSceneTransitionAnimation(this, avatar_shape, "transition");
         Point points = PD_Utility.getCenterPointOfView(avatar_shape);
@@ -162,4 +170,29 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public void onBackPressed() {
 
     }
+
+    public void requestLocation() {
+        if (!isPermissionsGranted(ActivityMain.this, new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
+            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                    , PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, new PermissionResult() {
+                @Override
+                public void permissionGranted() {
+                    new LocationService(ActivityMain.this).checkLocation();
+                }
+
+                @Override
+                public void permissionDenied() {
+                }
+
+                @Override
+                public void permissionForeverDenied() {
+                }
+            });
+        } else {
+            new LocationService(ActivityMain.this).checkLocation();
+        }
+    }
+
 }
