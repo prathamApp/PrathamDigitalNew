@@ -141,10 +141,14 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     }
 
     public void checkStudentList() {
+        // todo redirect to age grp tablet
         if (!BaseActivity.studentDao.getAllStudents().isEmpty()) {
             splashview.redirectToDashboard();
         } else {
+            // todo redirect to age grp smartphone
             splashview.redirectToAvatar();
         }
+
+        // todo redirect to age grp tablet
     }
 }

@@ -130,6 +130,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         finishAfterTransition();
     }
 
+    // todo redirect to age grp ( called when tablet )  CALL AATENDANCE
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);

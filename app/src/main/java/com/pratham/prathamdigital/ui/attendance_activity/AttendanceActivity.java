@@ -47,6 +47,10 @@ public class AttendanceActivity extends BaseActivity {
         } else {
             main_attendance_root.setVisibility(View.VISIBLE);
         }
+
+        // todo Create fragment select age grp
+        // open QR Fragment if press on QRLogin
+        // open Admin Fragment if click on Admin
     }
 
 //    @OnClick(R.id.setting_download)

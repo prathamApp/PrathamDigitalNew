@@ -12,6 +12,7 @@ public class PrathamSmartSync extends AutoSync {
 
     @Override
     public void onSync(Context context) throws Exception {
+        // todo ask ganesh sir about sync process
         /*JSONArray scoreData = new JSONArray();
         List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
         if (scores != null && scores.size() > 0) {
