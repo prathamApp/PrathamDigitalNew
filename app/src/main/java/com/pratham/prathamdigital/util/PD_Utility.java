@@ -53,6 +53,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 
 import java.io.BufferedReader;
@@ -82,6 +83,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -183,13 +185,13 @@ public class PD_Utility {
                     .addToBackStack(TAG)
                     .commit();
         }
-//        else if (mActivity instanceof Activity_DietForm) {
-//            ((Activity_DietForm) mActivity).getSupportFragmentManager()
-//                    .beginTransaction()
-//                    .replace(frame, mFragment, TAG)
-//                    .addToBackStack(TAG)
-//                    .commit();
-//        }
+        else if (mActivity instanceof AttendanceActivity) {
+            ((AttendanceActivity) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
+        }
 
 
 //        if (mActivity instanceof CW_Tab_One) {
@@ -1679,4 +1681,7 @@ public class PD_Utility {
         return list;
     }
 
+    public static UUID getUUID(){
+        return UUID.randomUUID();
+    }
 }

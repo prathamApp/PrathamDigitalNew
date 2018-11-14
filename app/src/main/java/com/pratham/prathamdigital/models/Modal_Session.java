@@ -12,11 +12,11 @@ public class Modal_Session {
     @PrimaryKey
     @NonNull
     @SerializedName("SessionID")
-    private String SessionID;
+    public String SessionID;
     @SerializedName("fromDate")
-    private String fromDate;
+    public String fromDate;
     @SerializedName("toDate")
-    private String toDate;
+    public String toDate;
 
     @Override
     public String toString() {

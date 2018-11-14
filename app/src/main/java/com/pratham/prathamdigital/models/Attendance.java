@@ -1,25 +1,22 @@
 package com.pratham.prathamdigital.models;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class Attendance {
 
-    @NonNull
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @SerializedName("AttendanceID")
-    public String AttendanceID;
+    public int AttendanceID;
     @SerializedName("VillageID")
     public String VillageID;
     @SerializedName("GroupID")
     public String GroupID;
     @SerializedName("SessionID")
-    private String SessionID;
+    public String SessionID;
     @SerializedName("StudentID")
     public String StudentID;
     @SerializedName("Date")
@@ -29,12 +26,11 @@ public class Attendance {
     @SerializedName("sentFlag")
     public int sentFlag;
 
-    @NonNull
-    public String getAttendanceID() {
+    public int getAttendanceID() {
         return AttendanceID;
     }
 
-    public void setAttendanceID(@NonNull String attendanceID) {
+    public void setAttendanceID(int attendanceID) {
         AttendanceID = attendanceID;
     }
 

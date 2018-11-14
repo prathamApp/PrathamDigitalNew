@@ -6,6 +6,7 @@
     android:background="@drawable/age_group_bkgd">
 
     <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/scan_qr"
         android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_70sdp"
         android:layout_alignParentRight="true"

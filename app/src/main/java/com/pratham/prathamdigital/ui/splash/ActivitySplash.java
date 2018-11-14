@@ -15,15 +15,15 @@ import android.widget.ImageView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.animators.Animate;
 import com.pratham.prathamdigital.custom.animators.Techniques;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.avatar.Activity_SelectAvatar;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -59,11 +59,11 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     protected void onResume() {
         super.onResume();
-        boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
-        if (mGoogleApiClient == null && !signedIn) {
-            mGoogleApiClient = splashPresenter.configureSignIn();
-        } else {
-
+        if (!PrathamApplication.isTablet) {
+            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
+            if (mGoogleApiClient == null && !signedIn) {
+                mGoogleApiClient = splashPresenter.configureSignIn();
+            }
         }
     }
 
@@ -130,7 +130,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         finishAfterTransition();
     }
 
-    // todo redirect to age grp ( called when tablet )  CALL AATENDANCE
+    @Override
+    public void redirectToAttendance() {
+        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        finishAfterTransition();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

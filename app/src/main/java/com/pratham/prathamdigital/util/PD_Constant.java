@@ -18,6 +18,7 @@ public class PD_Constant {
     public static final String DOWNLOAD = "DOWNLOAD";
     public static final String SETTINGS = "SETTINGS";
     public static final String SHARE = "SHARE";
+    public static final String SESSIONID = "";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

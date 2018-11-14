@@ -84,13 +84,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
         PD_Utility.showFragment(this, new FragmentContent(), R.id.main_frame,
                 null, FragmentContent.class.getSimpleName());
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         requestLocation();
-        avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "rabbit.json"));
+        avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "avatars/rabbit.json"));
     }
 
     protected void revealActivity(int x, int y) {

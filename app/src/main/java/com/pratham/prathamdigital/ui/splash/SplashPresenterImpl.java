@@ -57,12 +57,16 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     }
 
     public void checkConnectivity() {
-        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-            getVersion();
-        } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            getVersion();
+        if (PrathamApplication.isTablet) {
+            splashview.redirectToAttendance();
         } else {
-            PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
+            if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+                getVersion();
+            } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                getVersion();
+            } else {
+                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
+            }
         }
     }
 

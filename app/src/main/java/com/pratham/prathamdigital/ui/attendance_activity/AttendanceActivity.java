@@ -11,6 +11,9 @@ import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
+import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,6 +54,9 @@ public class AttendanceActivity extends BaseActivity {
         // todo Create fragment select age grp
         // open QR Fragment if press on QRLogin
         // open Admin Fragment if click on Admin
+        PD_Utility.showFragment(this, new FragmentSelectAgeGroup(), R.id.frame_attendance,
+                null, FragmentSelectAgeGroup.class.getSimpleName());
+
     }
 
 //    @OnClick(R.id.setting_download)

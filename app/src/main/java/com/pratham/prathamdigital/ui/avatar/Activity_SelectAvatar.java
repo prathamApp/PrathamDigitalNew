@@ -105,6 +105,7 @@ public class Activity_SelectAvatar extends BaseActivity implements AvatarContrac
         PrathamApplication.bubble_mp.start();
         FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
         Modal_Student modal_student = new Modal_Student();
+        modal_student.setStudentId(PD_Utility.getUUID().toString());
         modal_student.setFullName(et_child_name.getText().toString());
         modal_student.setGroupId("SmartPhone");
         modal_student.setGroupName("SmartPhone");

@@ -8,6 +8,8 @@ public interface SplashContract {
 
         void redirectToAvatar();
 
+        void redirectToAttendance();
+
         void signInUsingGoogle();
     }
 
