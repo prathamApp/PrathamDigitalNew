@@ -31,11 +31,20 @@ public class Modal_Student {
     @SerializedName("sentFlag")
     public int sentFlag;
     @NonNull
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     @SerializedName("StudentId")
-    public int StudentId;
+    public String StudentId;
     @Ignore
     transient boolean isChecked = false;
+
+    public Modal_Student() {
+
+    }
+    public Modal_Student(String sid, String sname, String qrGroupID) {
+        this.StudentId = sid;
+        this.FirstName = sname;
+        this.GroupId = qrGroupID;
+    }
 
     @Override
     public String toString() {
@@ -117,11 +126,11 @@ public class Modal_Student {
     }
 
     @NonNull
-    public int getStudentId() {
+    public String getStudentId() {
         return StudentId;
     }
 
-    public void setStudentId(@NonNull int studentId) {
+    public void setStudentId(@NonNull String studentId) {
         StudentId = studentId;
     }
 

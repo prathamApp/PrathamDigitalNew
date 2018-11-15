@@ -1,18 +1,27 @@
 package com.pratham.prathamdigital.ui.fragment_age_group;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class FragmentSelectAgeGroup extends Fragment {
 
@@ -20,6 +29,8 @@ public class FragmentSelectAgeGroup extends Fragment {
     ImageView iv_age_3_to_6;
     @BindView(R.id.iv_age_8_to_14)
     ImageView iv_age_8_to_14;
+
+    private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,4 +49,86 @@ public class FragmentSelectAgeGroup extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
     }
+
+    @OnClick(R.id.scan_qr)
+    public void setScanQR() {
+        //todo check camera permission
+        checkPermission();
+    }
+
+
+    protected void checkPermission() {
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+
+            // Do something, when permissions not granted
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    getActivity(), Manifest.permission.CAMERA)) {
+                // If we should give explanation of requested permissions
+
+                // Show an alert dialog here with request explanation
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Permissions");
+//                builder.setIcon(R.drawable.ic_warning);
+                builder.setMessage("Please Grant All Permissions in order to Run the App.");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        ActivityCompat.requestPermissions(
+                                getActivity(),
+                                new String[]{
+                                        Manifest.permission.CAMERA
+                                },
+                                MY_PERMISSIONS_REQUEST_CODE
+                        );
+                    }
+                });
+                builder.setNeutralButton("Cancel", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            } else {
+                // Directly request for required permissions, without explanation
+                ActivityCompat.requestPermissions(
+                        getActivity(),
+                        new String[]{
+                                Manifest.permission.CAMERA
+                        },
+                        MY_PERMISSIONS_REQUEST_CODE
+                );
+            }
+        } else {
+            // Do something, when permissions are already granted
+            Intent intent = new Intent(getActivity(), QRLogin.class);
+            startActivity(intent);
+            getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CODE: {
+                // When request is cancelled, the results array are empty
+                if (
+                        (grantResults.length > 0) &&
+                                (grantResults[0]
+                                        + grantResults[1]
+                                        == PackageManager.PERMISSION_GRANTED
+                                )
+                        ) {
+
+                    // if granted
+                    Intent intent = new Intent(getActivity(), QRLogin.class);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+
+                } else {
+                    // Permissions are denied
+                    checkPermission();
+//                    Toast.makeText(mContext, "Permissions denied.", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
+    }
+
 }

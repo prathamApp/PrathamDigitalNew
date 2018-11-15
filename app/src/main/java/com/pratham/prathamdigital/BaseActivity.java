@@ -2,6 +2,7 @@ package com.pratham.prathamdigital;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -44,8 +45,8 @@ public class BaseActivity extends ActivityManagePermission {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+<<<<<<< HEAD
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -54,6 +55,10 @@ public class BaseActivity extends ActivityManagePermission {
         ttsService.setSpeechRate(0.7f);
         ttsService.setLanguage(new Locale("en", "IN"));
 
+=======
+        hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
+        super.onCreate(savedInstanceState);
+>>>>>>> 72a06a3762dcb1679ce884b6766cfafeb794e7dd
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
         crLdao = db.getCrLdao();
@@ -74,6 +79,27 @@ public class BaseActivity extends ActivityManagePermission {
     protected void onResume() {
         super.onResume();
         BackupDatabase.backup(this);
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        hideSystemUI(getWindow());
+    }
+
+    public static void hideSystemUI(Window window) {
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        window.getDecorView().setSystemUiVisibility(
+
+                View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LOW_PROFILE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                        | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        );
     }
 
     @Override
