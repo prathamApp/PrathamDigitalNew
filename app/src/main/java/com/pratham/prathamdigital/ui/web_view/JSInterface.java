@@ -369,7 +369,10 @@ public class JSInterface {
             Modal_Score modal_score = new Modal_Score();
             modal_score.setScoreId();
             modal_score.setSessionID();
-            modal_score.setStudentID();
+            if (PrathamApplication.isTablet)
+                modal_score.setStudentID();//groupId
+             else
+                modal_score.setStudentID();//studentId
             modal_score.setDeviceID();
             modal_score.setResourceID(tempResId);
             modal_score.setQuestionId(questionId);
@@ -378,7 +381,7 @@ public class JSInterface {
             modal_score.setStartDateTime(startTime);
             modal_score.setEndDateTime();
             modal_score.setLevel(level);
-            modal_score.setSentFlag();
+            modal_score.setSentFlag(0);
 
             BaseActivity.scoreDao.insert(modal_score);
             //interface_score.setScore(scorefromGame, totalMarks);
