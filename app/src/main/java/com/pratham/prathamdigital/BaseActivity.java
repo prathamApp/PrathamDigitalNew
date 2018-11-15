@@ -46,7 +46,6 @@ public class BaseActivity extends ActivityManagePermission {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-<<<<<<< HEAD
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -55,10 +54,8 @@ public class BaseActivity extends ActivityManagePermission {
         ttsService.setSpeechRate(0.7f);
         ttsService.setLanguage(new Locale("en", "IN"));
 
-=======
         hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
         super.onCreate(savedInstanceState);
->>>>>>> 72a06a3762dcb1679ce884b6766cfafeb794e7dd
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
         crLdao = db.getCrLdao();
