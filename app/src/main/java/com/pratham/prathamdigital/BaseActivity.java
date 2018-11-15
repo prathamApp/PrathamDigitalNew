@@ -42,11 +42,9 @@ public class BaseActivity extends ActivityManagePermission {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
         crLdao = db.getCrLdao();
@@ -68,6 +66,7 @@ public class BaseActivity extends ActivityManagePermission {
         super.onResume();
         BackupDatabase.backup(this);
     }
+
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
@@ -75,7 +74,11 @@ public class BaseActivity extends ActivityManagePermission {
     }
 
     public static void hideSystemUI(Window window) {
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
         window.getDecorView().setSystemUiVisibility(
+
                 View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LOW_PROFILE
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
