@@ -18,9 +18,11 @@ import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
+import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import java.util.Locale;
 import java.util.UUID;
 
 public class BaseActivity extends ActivityManagePermission {
@@ -38,6 +40,7 @@ public class BaseActivity extends ActivityManagePermission {
     public static String RASP_FACILITY = "";
     public static String language = "";
     public static CatLoadingView catLoadingView = new CatLoadingView();
+    public static TTSService ttsService;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,6 +48,12 @@ public class BaseActivity extends ActivityManagePermission {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        ttsService = new TTSService(getApplication());
+        ttsService.setActivity(this);
+        ttsService.setSpeechRate(0.7f);
+        ttsService.setLanguage(new Locale("en", "IN"));
+
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
         crLdao = db.getCrLdao();

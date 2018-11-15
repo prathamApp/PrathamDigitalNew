@@ -148,4 +148,5 @@ public class Modal_Score {
     public void setLevel(int level) {
         Level = level;
     }
+
 }
