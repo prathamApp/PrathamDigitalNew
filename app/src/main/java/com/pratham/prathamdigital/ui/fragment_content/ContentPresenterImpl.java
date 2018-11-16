@@ -54,7 +54,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             contentView.displayHeader(contentDetail);
             new GetDownloadedContent(contentDetail.getNodeid()).execute();
         }
-
     }
 
     private void checkConnectivity(String parentId) {
@@ -197,9 +196,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
                 Modal_DownloadContent download_content = gson.fromJson(jsonObject.toString(), Modal_DownloadContent.class);
-                String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
                 download_content.getNodelist().get(download_content.getNodelist().size() - 1).
-                        setResourcepath(pradigiPath + "/" + lang + "/Pratham" + download_content.getFoldername()
+                        setResourcepath(pradigiPath + "/Pratham" + download_content.getFoldername()
                                 + "/" + download_content.getNodelist().get(download_content.getNodelist().size() - 1)
                                 .getResourcepath());
                 Modal_ContentDetail contentDetail = download_content.getNodelist().get(download_content.getNodelist().size() - 1);
@@ -360,7 +358,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            totalContents = (ArrayList<Modal_ContentDetail>) BaseActivity.modalContentDao.getChild(parentId);
+            if (parentId != null)
+                totalContents = (ArrayList<Modal_ContentDetail>) BaseActivity.modalContentDao.getChild(parentId);
+            else
+                totalContents = (ArrayList<Modal_ContentDetail>) BaseActivity.modalContentDao.getParents();
             return null;
         }
 

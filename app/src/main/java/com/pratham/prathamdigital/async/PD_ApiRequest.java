@@ -10,15 +10,12 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
-import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.json.JSONObject;
 
 import java.io.File;
-
-import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 /**
  * Created by HP on 30-12-2016.
@@ -27,10 +24,16 @@ import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 public class PD_ApiRequest {
     Context mContext;
     ContentContract.contentPresenter contentPresenter;
+//    OkHttpClient okHttpClient;
 
     public PD_ApiRequest(Context context, ContentContract.contentPresenter contentPresenter) {
         this.mContext = context;
         this.contentPresenter = contentPresenter;
+//        okHttpClient = new OkHttpClient().newBuilder()
+//                .connectTimeout(30, TimeUnit.SECONDS)
+//                .readTimeout(60, TimeUnit.SECONDS)
+//                .writeTimeout(60, TimeUnit.SECONDS)
+//                .build();
     }
 
     public void getContentFromRaspberry(final String requestType, String url) {
@@ -143,11 +146,9 @@ public class PD_ApiRequest {
 
 
     public static void downloadImage(String url, String filename) {
-        File mydir = new File(pradigiPath + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-        if (!mydir.exists()) mydir.mkdirs();
-        mydir = new File(mydir.getAbsolutePath() + "/PrathamImages"); //Creating an internal dir;
-        if (!mydir.exists()) mydir.mkdirs();
-        AndroidNetworking.download(url, mydir.getAbsolutePath(), filename)
+        File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
+        if (!dir.exists()) dir.mkdirs();
+        AndroidNetworking.download(url, dir.getAbsolutePath(), filename)
                 .setPriority(Priority.HIGH)
                 .build()
                 .startDownload(new DownloadListener() {

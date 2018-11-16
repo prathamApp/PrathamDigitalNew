@@ -128,6 +128,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage {
         PrathamApplication.bubble_mp.start();
         Modal_Language language = adapter.getitem(position);
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
+        PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
     }
 }

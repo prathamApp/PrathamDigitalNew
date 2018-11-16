@@ -58,7 +58,7 @@ dependencies {
     implementation 'com.android.support:support-vector-drawable:28.0.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     testImplementation 'junit:junit:4.12'
-    implementation 'com.github.barteksc:android-pdf-viewer:2.6.1'
+//    implementation 'com.github.barteksc:android-pdf-viewer:2.6.1'
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'com.google.android.gms:play-services-location:15.0.1'
     implementation 'com.google.firebase:firebase-auth:16.0.5'
@@ -69,7 +69,8 @@ dependencies {
 //    annotationProcessor 'org.projectlombok:lombok:1.16.18'
 //    implementation project(':commons-net-3.6')
 //    implementation project(':commons-net-3.6-sources')
-    implementation 'com.github.karacken:karackencurllib:0.0.1'
+//    implementation 'com.github.aerdy:Android-Viger_View_Pager_PDF_OpenSource:1.2'
+//    implementation 'com.github.karacken:karackencurllib:0.0.1'
     implementation 'com.airbnb.android:lottie:2.7.0'
     implementation 'com.mindorks.android:prdownloader:0.4.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
@@ -78,7 +79,7 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.github.joielechong:zip4jandroid:1.0.1'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    implementation 'uk.co.jakelee:vidsta:1.0.0'
+//    implementation 'uk.co.jakelee:vidsta:1.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'io.nlopez.smartlocation:library:3.3.3'
     implementation 'com.google.firebase:firebase-messaging:17.3.3'

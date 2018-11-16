@@ -1,15 +1,8 @@
 package com.pratham.prathamdigital.async;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.os.PowerManager;
 import android.util.Log;
 
-import com.androidnetworking.AndroidNetworking;
-import com.androidnetworking.common.Priority;
-import com.androidnetworking.error.ANError;
-import com.androidnetworking.interfaces.DownloadListener;
-import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.downloader.Error;
 import com.downloader.OnCancelListener;
 import com.downloader.OnDownloadListener;
@@ -18,29 +11,14 @@ import com.downloader.OnProgressListener;
 import com.downloader.OnStartOrResumeListener;
 import com.downloader.PRDownloader;
 import com.downloader.Progress;
-import com.downloader.request.DownloadRequest;
 import com.pratham.prathamdigital.PrathamApplication;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.ProgressUpdate;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
-import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.UnzipUtil;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Enumeration;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 /**
  * Created by User on 16/11/15.
@@ -69,9 +47,7 @@ public class ZipDownloader {
         this.contentPresenter = contentPresenter;
         this.contentDetail = contentDetail;
 //        this.wakeLock = wl;
-        mydir = new File(pradigiPath + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)); //Creating an internal dir;
-        if (!mydir.exists()) mydir.mkdirs();
-        mydir = new File(mydir.getAbsolutePath() + "/Pratham" + foldername); //Creating an internal dir;
+        mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername); //Creating an internal dir;
         if (!mydir.exists()) mydir.mkdirs();
         if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             if (foldername.equalsIgnoreCase("Game")) {
@@ -118,7 +94,11 @@ public class ZipDownloader {
                 .start(new OnDownloadListener() {
                     @Override
                     public void onDownloadComplete() {
-                        new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
+                        if (foldername.equalsIgnoreCase("Game")) {
+                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
+                        } else {
+                            contentPresenter.onDownloadCompleted(downloadId);
+                        }
                     }
 
                     @Override

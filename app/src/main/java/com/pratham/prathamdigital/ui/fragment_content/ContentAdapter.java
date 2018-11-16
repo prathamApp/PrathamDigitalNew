@@ -96,7 +96,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     else if (contentDetail.getResourcetype().equalsIgnoreCase("Video"))
                         fileViewHolder.file_item_lottieview.setAnimation("play_button.json");
                     else if (contentDetail.getResourcetype().equalsIgnoreCase("Pdf"))
-                        fileViewHolder.file_item_lottieview.setAnimation("preview_icon_hover.json");
+                        fileViewHolder.file_item_lottieview.setAnimation("book.json");
                     if (contentDetail.isDownloaded()) {
                         fileViewHolder.txt_download.setVisibility(View.GONE);
                         fileViewHolder.txt_download.setOnClickListener(null);
@@ -150,7 +150,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     else if (content.getResourcetype().equalsIgnoreCase("Video"))
                         fileViewHolder.file_item_lottieview.setAnimation("play_button.json");
                     else if (content.getResourcetype().equalsIgnoreCase("Pdf"))
-                        fileViewHolder.file_item_lottieview.setAnimation("preview_icon_hover.json");
+                        fileViewHolder.file_item_lottieview.setAnimation("book.json");
                     if (content.isDownloaded()) {
                         fileViewHolder.txt_download.setVisibility(View.GONE);
                         fileViewHolder.txt_download.setOnClickListener(null);

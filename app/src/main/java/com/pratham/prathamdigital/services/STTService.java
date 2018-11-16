@@ -48,7 +48,7 @@ public class STTService {
             instance = new STTService(context);
         }
 
-         intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+        intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
                 .putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
 //                .putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
                 .putExtra(RecognizerIntent.EXTRA_LANGUAGE, /*mLocale.getLanguage()*/"en-IN")

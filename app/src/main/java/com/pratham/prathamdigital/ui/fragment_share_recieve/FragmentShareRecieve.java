@@ -25,10 +25,10 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -46,6 +46,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 import com.pratham.prathamdigital.util.WifiUtils;
 
+import org.greenrobot.eventbus.Subscribe;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -61,6 +63,7 @@ import static com.pratham.prathamdigital.util.PD_Utility.getPhoneModel;
 
 public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView, UDPMessageListener.OnNewMsgListener {
 
+    private static final String TAG = FragmentShareRecieve.class.getSimpleName();
     @BindView(R.id.root_share)
     LinearLayout root_share;
     @BindView(R.id.rl_share)
@@ -83,8 +86,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     RelativeLayout rl_recieve_block;
     @BindView(R.id.rv_files)
     RecyclerView rv_files;
-    @BindView(R.id.btn_send_files)
-    Button btn_send_files;
 
     private List<String> mList = new ArrayList<>();
     private UDPMessageListener mUDPListener;
@@ -94,6 +95,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private String serverIPaddres;
     SharePresenter sharePresenter;
     FileListAdapter fileListAdapter;
+    private File selectedFile = null;
+    private String currentFilePath = "";
 
     public static FragmentShareRecieve newInstance(int centerX, int centerY, int color) {
         Bundle args = new Bundle();
@@ -138,6 +141,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         sharePresenter = new SharePresenter(getActivity(), this);
+        currentFilePath = PrathamApplication.pradigiPath;
     }
 
     @Override
@@ -266,6 +270,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                     ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
                     status.setText(ss);
                     circleProgress.finishAnim();
+//                    hideViewsandShowFolders();
                     mUDPListener = UDPMessageListener.getInstance(getActivity());
                     mUDPListener.addMsgListener(FragmentShareRecieve.this::processMessage);
                     mUDPListener.connectUDPSocket();
@@ -285,9 +290,15 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                     }
                     break;
                 case IPMSGConst.AN_CONNECT_SUCCESS:
+                    Users user = new Users();
+                    user.setDevice(getPhoneModel());
+                    user.setIpaddress(serverIPaddres);
+                    break;
+                case IPMSGConst.NO_CONNECT_SUCCESS:
+                    IPMSGProtocol command = (IPMSGProtocol) msg.obj;
                     Users user2 = new Users();
                     user2.setDevice(getPhoneModel());
-                    user2.setIpaddress(serverIPaddres);
+                    user2.setIpaddress(command.senderIP);
                     break;
                 case PD_Constant.WiFiConnectSuccess:
                     if (isValidated()) {
@@ -296,13 +307,13 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                         mUDPListener = UDPMessageListener.getInstance(getActivity());
                         mUDPListener.addMsgListener(FragmentShareRecieve.this::processMessage);
                         mUDPListener.connectUDPSocket();
-                        IPMSGProtocol command = new IPMSGProtocol();
-                        command.senderIP = localIPaddress;
-                        command.targetIP = serverIPaddres;
-                        command.commandNo = IPMSGConst.NO_CONNECT_SUCCESS;
-                        command.packetNo = new Date().getTime() + "";
-                        mUDPListener.sendUDPdata(command);
-                        hideViewsandShowFolders();
+                        IPMSGProtocol cmd = new IPMSGProtocol();
+                        cmd.senderIP = localIPaddress;
+                        cmd.targetIP = serverIPaddres;
+                        cmd.commandNo = IPMSGConst.NO_CONNECT_SUCCESS;
+                        cmd.packetNo = new Date().getTime() + "";
+                        mUDPListener.sendUDPdata(cmd);
+//                        sharePresenter.registerListener(FragmentShareRecieve.this);
                     }
                     break;
             }
@@ -311,9 +322,9 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     private void hideViewsandShowFolders() {
         shareCircle.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
         rl_recieve_block.setVisibility(View.GONE);
-        btn_send_files.setVisibility(View.VISIBLE);
-        sharePresenter.showFolders(PrathamApplication.pradigiPath);
+        sharePresenter.showFolders(currentFilePath);
     }
 
     private void connectHotspotAndRecieve() {
@@ -395,17 +406,28 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     public void onWifiConnected(String ssid) {
         circleProgress.finishAnim();
         connectTimer = new Timer();
-        connectTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
-            }
-        }, new Date(), 1000);
+//        connectTimer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+        Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
+//            }
+//        }, new Date(), 1000);
     }
 
     @Override
     public void fileItemClicked(File file, int position) {
+        selectedFile = file;
         sharePresenter.showFolders(file.getAbsolutePath());
+    }
+
+    @Override
+    public void sendItemClicked(File file, int position) {
+//        ChatEntity chatMsg = new ChatEntity();
+//        chatMsg.setContent(file.getAbsolutePath());
+//        chatMsg.setIsSend(true);
+//        chatMsg.setType(com.pratham.prathamdigital.socket.entity.Message.CONTENT_TYPE.TEXT);
+//        chatMsg.setTime(System.currentTimeMillis());
+        sharePresenter.sendMessage(file.getAbsolutePath(), com.pratham.prathamdigital.socket.entity.Message.CONTENT_TYPE.TEXT, localIPaddress, serverIPaddres);
     }
 
     @Override
@@ -436,14 +458,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     }
 
-    @Override
-    public void processMessage(IPMSGProtocol pMsg) {
-        Message msg = Message.obtain();
-        msg.what = pMsg.commandNo;
-        msg.obj = pMsg;
-        mHandler.sendMessage(msg);
-    }
-
     public void setIPaddress() {
         if (WifiUtils.isWifiApEnabled()) {
             serverIPaddres = localIPaddress = "192.168.43.1";
@@ -464,4 +478,25 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         return true;
     }
 
+    @Subscribe
+    public void onSettingsBackPressed(final String pressed) {
+        Log.d(TAG, "onSettingsBackPressed:");
+        if (selectedFile != null) {
+            if (selectedFile.getAbsolutePath().equalsIgnoreCase(currentFilePath)) {
+                selectedFile = null;
+                sharePresenter.showFolders(currentFilePath);
+            } else {
+                selectedFile = selectedFile.getParentFile();
+                sharePresenter.showFolders(selectedFile.getAbsolutePath());
+            }
+        }
+    }
+
+    @Override
+    public void processMessage(IPMSGProtocol pMsg) {
+        Message msg = Message.obtain();
+        msg.what = pMsg.commandNo;
+        msg.obj = pMsg;
+        Toast.makeText(getActivity(), "message" + pMsg.commandNo + ":::" + pMsg, Toast.LENGTH_SHORT).show();
+    }
 }

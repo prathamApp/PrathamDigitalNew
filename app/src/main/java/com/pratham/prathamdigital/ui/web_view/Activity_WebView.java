@@ -28,7 +28,7 @@ public class Activity_WebView extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
         ButterKnife.bind(this);
-        startTime = PD_Utility.GetCurrentDateTime();
+        startTime = PD_Utility.getCurrentDateTime();
 
         String index_path = getIntent().getStringExtra("index_path");
         String path = getIntent().getStringExtra("path");
@@ -42,9 +42,8 @@ public class Activity_WebView extends BaseActivity {
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-//            webView.addJavascriptInterface(new JSInterface(Activity_WebView.this, webView,
-//                    "file://" + parse, resId, Activity_WebView.this), "Android");
-
+            webView.addJavascriptInterface(new JSInterface(Activity_WebView.this, webView,
+                    "file://" + parse, resId), "Android");
             webView.setWebContentsDebuggingEnabled(true);
             webView.setWebViewClient(new WebViewClient());
             webView.setWebChromeClient(new WebChromeClient());

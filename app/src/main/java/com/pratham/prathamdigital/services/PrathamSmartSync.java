@@ -1,10 +1,13 @@
 package com.pratham.prathamdigital.services;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 
 public class PrathamSmartSync extends AutoSync {
+    private static final String TAG = PrathamSmartSync.class.getSimpleName();
+
     @Override
     protected void onCreate(Context context) {
         super.onCreate(context);
@@ -12,7 +15,7 @@ public class PrathamSmartSync extends AutoSync {
 
     @Override
     public void onSync(Context context) throws Exception {
-        // todo ask ganesh sir about sync process
+        Log.d(TAG, "onSync: ");
         /*JSONArray scoreData = new JSONArray();
         List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
         if (scores != null && scores.size() > 0) {

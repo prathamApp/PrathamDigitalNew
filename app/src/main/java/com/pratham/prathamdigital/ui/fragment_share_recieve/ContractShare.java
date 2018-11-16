@@ -11,6 +11,8 @@ public interface ContractShare {
 
         void fileItemClicked(File file, int position);
 
+        void sendItemClicked(File file, int position);
+
         void showFilesList(List<File> files);
     }
 }

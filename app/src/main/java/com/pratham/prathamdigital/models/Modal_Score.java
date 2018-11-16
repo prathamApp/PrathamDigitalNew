@@ -16,6 +16,8 @@ public class Modal_Score {
     private String SessionID;
     @SerializedName("StudentID")
     private String StudentID;
+    @SerializedName("GroupID")
+    private String GroupID;
     @SerializedName("DeviceID")
     private String DeviceID;
     @SerializedName("ResourceID")
@@ -32,25 +34,9 @@ public class Modal_Score {
     private String EndDateTime;
     @SerializedName("Level")
     private int Level;
+    @SerializedName("Label")
+    private String Label;
     private int sentFlag;
-
-    @Override
-    public String toString() {
-        return "Modal_Score{" +
-                "ScoreId='" + ScoreId + '\'' +
-                ", SessionID='" + SessionID + '\'' +
-                ", StudentID='" + StudentID + '\'' +
-                ", DeviceID='" + DeviceID + '\'' +
-                ", ResourceID='" + ResourceID + '\'' +
-                ", QuestionId=" + QuestionId +
-                ", ScoredMarks=" + ScoredMarks +
-                ", TotalMarks=" + TotalMarks +
-                ", StartDateTime='" + StartDateTime + '\'' +
-                ", EndDateTime='" + EndDateTime + '\'' +
-                ", Level=" + Level +
-                ", sentFlag=" + sentFlag +
-                '}';
-    }
 
     public int getSentFlag() {
         return sentFlag;
@@ -83,6 +69,14 @@ public class Modal_Score {
 
     public void setStudentID(String studentID) {
         StudentID = studentID;
+    }
+
+    public String getGroupID() {
+        return GroupID;
+    }
+
+    public void setGroupID(String groupID) {
+        GroupID = groupID;
     }
 
     public String getDeviceID() {
@@ -149,4 +143,11 @@ public class Modal_Score {
         Level = level;
     }
 
+    public String getLabel() {
+        return Label;
+    }
+
+    public void setLabel(String label) {
+        Label = label;
+    }
 }

@@ -5,13 +5,23 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_bkgd_two"
+    android:background="@color/white"
     tools:context=".ui.dashboard.ActivityMain">
+
+    <!--<com.airbnb.lottie.LottieAnimationView-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:scaleType="centerCrop"-->
+    <!--app:lottie_autoPlay="true"-->
+    <!--android:background="@color/white"-->
+    <!--app:lottie_fileName="main_bkgd/ufo_first.json"-->
+    <!--app:lottie_loop="true" />-->
 
     <FrameLayout
         android:id="@+id/main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
 
     <com.pratham.prathamdigital.custom.shapes.ShapeOfView
         android:id="@+id/avatar_shape"

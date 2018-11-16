@@ -18,6 +18,8 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.tab_bar.NavigationTabBar;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
@@ -132,8 +134,21 @@ public class SettingsActivity extends BaseActivity {
     }
 
     @OnClick(R.id.settings_back)
-    protected void unRevealActivity() {
+    protected void setSettings_back() {
         PrathamApplication.bubble_mp.start();
+        int currentposition = settings_vp.getCurrentItem();
+        switch (currentposition) {
+            case 0:
+            case 1:
+                unRevealAndCloseActivity();
+                break;
+            case 2:
+                EventBus.getDefault().post(PD_Constant.SETTINGS_BACK);
+                break;
+        }
+    }
+
+    private void unRevealAndCloseActivity() {
         float finalRadius = (float) (Math.max(main_settings_root.getWidth(), main_settings_root.getHeight()) * 1.1);
         // create the animator for this view (the start radius is zero)
         Animator circularReveal = ViewAnimationUtils.createCircularReveal(main_settings_root, revealX, revealY, finalRadius, 0);

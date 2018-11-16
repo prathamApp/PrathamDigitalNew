@@ -1,20 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/transparent">
 
-    <!--<com.airbnb.lottie.LottieAnimationView-->
-    <!--android:id="@+id/lottie_content_bkgd"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/yellow_sand"-->
-    <!--android:duplicateParentState="true"-->
-    <!--android:scaleType="centerCrop"-->
-    <!--app:lottie_autoPlay="true"-->
-    <!--app:lottie_loop="true" />-->
-    <!--app:lottie_fileName="main_bkgd/plane.json"-->
+    <RelativeLayout
+        android:id="@+id/rl_network_error"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_retry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/retry"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_30sdp" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_content_bkgd"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/txt_retry"
+            android:scaleType="fitCenter"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="network_error.json"
+            app:lottie_loop="true" />
+
+    </RelativeLayout>
     <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
     <com.pratham.prathamdigital.custom.GridRecyclerView
         android:id="@+id/rv_content"
@@ -32,13 +49,6 @@
         android:background="@color/green"
         android:visibility="gone">
 
-        <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-        <!--android:id="@+id/content_back"-->
-        <!--android:layout_width="@dimen/_80sdp"-->
-        <!--android:layout_height="@dimen/_80sdp"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--app:shape_clip_drawable="@drawable/dashboard_half_circle">-->
-
         <ImageView
             android:id="@+id/content_back"
             android:layout_width="@dimen/_80sdp"
@@ -48,7 +58,6 @@
             android:padding="@dimen/_20sdp"
             android:scaleType="centerCrop"
             android:src="@drawable/back_arrow" />
-        <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
 
         <!--<RelativeLayout-->
         <!--android:id="@+id/rl_level"-->

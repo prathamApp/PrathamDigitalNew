@@ -83,7 +83,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.QRLogin.QRLogin"
             android:configChanges="orientation|screenSize"

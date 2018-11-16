@@ -7,7 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CheckBox;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -50,6 +50,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
             });
         else
             holder.itemView.setOnClickListener(null);
+        holder.btn_send_files.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                shareView.sendItemClicked(f, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -68,6 +74,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                 });
             else
                 holder.itemView.setOnClickListener(null);
+            holder.btn_send_files.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    shareView.sendItemClicked(f, holder.getAdapterPosition());
+                }
+            });
         }
     }
 
@@ -88,8 +100,8 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         LottieAnimationView file_icon;
         @BindView(R.id.file_title)
         TextView file_title;
-        @BindView(R.id.check_file)
-        CheckBox check_file;
+        @BindView(R.id.btn_send_files)
+        Button btn_send_files;
 
         public FileViewHolder(View itemView) {
             super(itemView);

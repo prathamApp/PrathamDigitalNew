@@ -4,9 +4,8 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_80sdp"
-    android:padding="@dimen/_6sdp"
     card_view:cardBackgroundColor="#FFFFFF"
-    card_view:cardCornerRadius="@dimen/_8sdp"
+    card_view:cardCornerRadius="@dimen/_5sdp"
     card_view:cardElevation="@dimen/_5sdp"
     card_view:cardUseCompatPadding="true">
 
@@ -24,21 +23,28 @@
 
         <TextView
             android:id="@+id/file_title"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/_6sdp"
+            android:layout_toLeftOf="@+id/btn_send_files"
             android:layout_toEndOf="@+id/file_icon"
             android:gravity="center_vertical"
             android:textColor="@color/colorPrimary"
             android:textSize="@dimen/_16sdp"
             android:textStyle="bold" />
 
-        <CheckBox
-            android:id="@+id/check_file"
-            android:layout_width="@dimen/_30sdp"
+        <Button
+            android:id="@+id/btn_send_files"
+            android:layout_width="@dimen/_60sdp"
             android:layout_height="@dimen/_30sdp"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true" />
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/_3sdp"
+            android:background="@drawable/avatar_next_button_round_bg"
+            android:scaleType="centerCrop"
+            android:text="Send"
+            android:textColor="@android:color/white" />
+
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

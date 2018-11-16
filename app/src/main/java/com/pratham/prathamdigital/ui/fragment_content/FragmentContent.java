@@ -9,11 +9,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,7 +21,6 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
@@ -47,6 +45,7 @@ import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView, ContentContract.contentClick {
 
+    private static final String TAG = FragmentContent.class.getSimpleName();
     @BindView(R.id.content_header)
     RelativeLayout content_header;
     //    @BindView(R.id.lottie_content_bkgd)
@@ -57,6 +56,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
     ImageView content_back;
     @BindView(R.id.content_title)
     TextView content_title;
+    @BindView(R.id.rl_network_error)
+    RelativeLayout rl_network_error;
 
     ContentPresenterImpl contentPresenter;
     ArrayList<Modal_ContentDetail> modal_contents = new ArrayList<>();
@@ -82,22 +83,22 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_content, container, false);
-        if (getArguments() != null) {
-            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
-                                           int oldRight, int oldBottom) {
-                    v.removeOnLayoutChangeListener(this);
-                    int cx = getArguments().getInt("cx");
-                    int cy = getArguments().getInt("cy");
-                    int radius = (int) Math.hypot(right, bottom);
-                    Animator reveal = ViewAnimationUtils.createCircularReveal(v, cx, cy, 0, radius);
-                    reveal.setInterpolator(new DecelerateInterpolator(2f));
-                    reveal.setDuration(1000);
-                    reveal.start();
-                }
-            });
-        }
+//        if (getArguments() != null) {
+//            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//                @Override
+//                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
+//                                           int oldRight, int oldBottom) {
+//                    v.removeOnLayoutChangeListener(this);
+//                    int cx = getArguments().getInt("cx");
+//                    int cy = getArguments().getInt("cy");
+//                    int radius = (int) Math.hypot(right, bottom);
+//                    Animator reveal = ViewAnimationUtils.createCircularReveal(v, cx, cy, 0, radius);
+//                    reveal.setInterpolator(new DecelerateInterpolator(2f));
+//                    reveal.setDuration(1000);
+//                    reveal.start();
+//                }
+//            });
+//        }
         return rootView;
     }
 
@@ -130,12 +131,23 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void showNoConnectivity() {
+        BaseActivity.catLoadingView.dismiss();
+        rv_content.setVisibility(View.GONE);
+        rl_network_error.setVisibility(View.VISIBLE);
+    }
 
+    @OnClick(R.id.txt_retry)
+    public void setRetry() {
+        PrathamApplication.bubble_mp.start();
+        onResume();
     }
 
     @Override
     public void displayContents(final ArrayList<Modal_ContentDetail> content) {
+        rl_network_error.setVisibility(View.GONE);
         BaseActivity.catLoadingView.dismiss();
+        if (rv_content.getVisibility() == View.GONE)
+            rv_content.setVisibility(View.VISIBLE);
         if (!content.isEmpty()) {
             modal_contents.clear();
             modal_contents.addAll(content);
@@ -292,7 +304,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void openContent(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
         if (isPermissionGranted(getActivity(), PermissionUtils.Manifest_RECORD_AUDIO)) {
-            switch (contentDetail.getResourcetype()) {
+            switch (contentDetail.getResourcetype().toLowerCase()) {
                 case PD_Constant.GAME:
                     openGame(contentDetail);
                     break;
@@ -307,7 +319,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
             askCompactPermission(PermissionUtils.Manifest_RECORD_AUDIO, new PermissionResult() {
                 @Override
                 public void permissionGranted() {
-                    switch (contentDetail.getResourcetype()) {
+                    switch (contentDetail.getResourcetype().toLowerCase()) {
                         case PD_Constant.GAME:
                             openGame(contentDetail);
                             break;
@@ -322,12 +334,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
                 @Override
                 public void permissionDenied() {
-
+                    Log.d(TAG, "permissionDenied:");
                 }
 
                 @Override
                 public void permissionForeverDenied() {
-
+                    Log.d(TAG, "permissionForeverDenied:");
                 }
             });
         }
@@ -335,8 +347,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openPdf(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_PdfViewer.class);
-        File directory = new File(pradigiPath + "/" +
-                FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + "/PrathamPdf");
+        File directory = new File(pradigiPath + "/PrathamPdf");
         String f_path;
         if (!contentDetail.getResourcepath().contains("http://")) {
             f_path = contentDetail.getResourcepath();
@@ -351,8 +362,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openVideo(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_VPlayer.class);
-        File directory = new File(pradigiPath + "/" +
-                FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + "/PrathamVideo");
+        File directory = new File(pradigiPath + "/PrathamVideo");
         String f_path;
         if (!contentDetail.getResourcepath().contains("http://")) {
             f_path = contentDetail.getResourcepath();
@@ -367,8 +377,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openGame(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_WebView.class);
-        File directory = new File(pradigiPath + "/" +
-                FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + "/PrathamGame");
+        File directory = new File(pradigiPath + "/PrathamGame");
         String f_path;
         String folder_path;
         if (!contentDetail.getResourcepath().contains("http://")) {

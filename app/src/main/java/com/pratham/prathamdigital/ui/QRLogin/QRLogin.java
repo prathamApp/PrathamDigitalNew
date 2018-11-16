@@ -29,7 +29,6 @@ import com.google.zxing.Result;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -47,7 +46,6 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,7 +67,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     int totalStudents = 0;
     Boolean setStud = false;
     Modal_Student std;
-//    static String programID = "";
+    //    static String programID = "";
 //    StatusDBHelper statusDBHelper;
     boolean permission = false;
     List<Attendance> attendances;
@@ -79,8 +77,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrlogin);
-
-
         // Memory Allocation
         content_frame = findViewById(R.id.content_frame);
         tv_stud_one = findViewById(R.id.tv_stud_one);
@@ -95,13 +91,9 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         tv_stud_three.setVisibility(View.GONE);
         tv_stud_four.setVisibility(View.GONE);
         tv_stud_five.setVisibility(View.GONE);
-
 //        statusDBHelper = new StatusDBHelper(this);
 //        programID = statusDBHelper.getValue("programId");
-
-
         initCamera();
-
 
         btn_Reset.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -141,7 +133,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
 
 
         if (ContextCompat.checkSelfPermission(QRLogin.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setMessage("App requires camera permission to scan QR code");
@@ -220,36 +211,33 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             if (stdList != null && stdList.size() > 0) {
 
                 if (PD_Constant.SESSIONID == null || PD_Constant.SESSIONID.trim().equalsIgnoreCase("")) {
-                    UUID RandomSessionID = UUID.randomUUID();
-                    FastSave.getInstance().saveString(PD_Constant.SESSIONID, RandomSessionID.toString());
+                    FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
                 }
                 for (int i = 0; i < stdList.size(); i++) {
                     Attendance attendance = new Attendance();
-                    attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID,"");
+                    attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
                     attendance.StudentID = stdList.get(i).getStudentId();
-                    attendance.Date = PD_Utility.GetCurrentDateTime();
+                    attendance.Date = PD_Utility.getCurrentDateTime();
 //                    MultiPhotoSelectActivity.presentStudents[i] = stdList.get(i).getStudentID();
                     attendance.GroupID = "QR";
+                    FastSave.getInstance().saveString(PD_Constant.GROUPID, attendance.GroupID);
 /*
                     if (!MultiPhotoSelectActivity.selectedGroupsScore.contains(attendance.GroupID)) {
                         MultiPhotoSelectActivity.selectedGroupsScore += attendance.GroupID + ",";
                     }
-
 */
                     attendances.add(attendance);
                 }
                 BaseActivity.attendanceDao.insertAttendance(attendances);
 
                 Modal_Session s = new Modal_Session();
-                s.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID,"");
-                s.fromDate = PD_Utility.GetCurrentDateTime();
+                s.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+                s.fromDate = PD_Utility.getCurrentDateTime();
                 s.toDate = "NA";
 
                 BaseActivity.sessionDao.insert(s);
 //                sessionDBHelper.Add(s);
-
 //                BackupDatabase.backup(this, PD_Constant.pradigiObbPath);
-
             }
         } catch (Exception e) {
             e.printStackTrace();

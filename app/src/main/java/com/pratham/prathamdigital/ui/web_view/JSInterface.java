@@ -1,15 +1,11 @@
 package com.pratham.prathamdigital.ui.web_view;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.MediaRecorder;
-import android.net.Uri;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
-import android.widget.RadioGroup;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -19,29 +15,28 @@ import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.util.Audio;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
 import java.util.Locale;
 
 public class JSInterface {
-    static Context mContext;
+    Context mContext;
     String path;
     Audio recordAudio;
-    public static int groupId = 0;
-    public int UserId = 1;
-    MediaRecorder myAudioRecorder;
+    //    MediaRecorder myAudioRecorder;
     public static MediaPlayer mp;
     WebView w;
-    RadioGroup radioGroup;
+    //    RadioGroup radioGroup;
     public static int flag = 0;
     public static Boolean MediaFlag = false;
-    static Boolean pdfFlag = false;
-//    static Boolean audioFlag = false;
-    static Boolean trailerFlag = false;
-    static Boolean completeFlag = false;
+    //    static Boolean pdfFlag = false;
+    //    static Boolean audioFlag = false;
+//    static Boolean trailerFlag = false;
+//    static Boolean completeFlag = false;
     public String gamePath;
     TTSService ttspeech;
-//    static TextToSp textToSp;
+    //    static TextToSp textToSp;
     //    private TextToSpeech textToSp;
     private String resId;
     private String audio_directory_path = "";
@@ -59,8 +54,7 @@ public class JSInterface {
     }
 
     private void createRecordingFolder() {
-//        File file = mContext.getDir("PrathamRecordings", Context.MODE_PRIVATE);
-        File file = new File(PrathamApplication.pradigiPath+ FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        File file = new File(PrathamApplication.pradigiPath + "/PrathamRecordings");
         if (!file.exists()) {
             file.mkdirs();
         }
@@ -81,16 +75,11 @@ public class JSInterface {
         return "";
     }
 
-
-    //Ketan
     @JavascriptInterface
     public String getMediaPath(String gameFolder) {
-        /*String path = "";
-        path = ContentScreen.fpath+"Media/"+gameFolder+"/";*/
         return gamePath;
     }
 
-    // Ketan
     @JavascriptInterface
     public void startRecording(String recName) {
         try {
@@ -103,9 +92,10 @@ public class JSInterface {
 
     @JavascriptInterface
     public void stopRecording() {
-//        audioFlag = false;
         try {
-            recordAudio.close();
+            if (recordAudio != null) {
+                recordAudio.close();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -123,7 +113,6 @@ public class JSInterface {
         });
     }
 
-
     /*@JavascriptInterface
     public void sendBackTojavascript() {
         w.post(new Runnable() {
@@ -134,54 +123,28 @@ public class JSInterface {
             }
         });
     }*/
-
-
     @JavascriptInterface
     public void showPdf(String filename, String resId) {
-        try {
-            File file = new File(ContentScreen.fpath + filename);
-
-            if (file.exists()) {
-                Uri path = Uri.fromFile(file);
-                Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(path, "application/pdf");
-                try {
-                    ((Activity) mContext).startActivityForResult(intent, 1);
-                } catch (ActivityNotFoundException e) {
-                   }
-            } else {
-            }
-        } catch (Exception e) {
-        }
     }
 
-
-    // Ketan's Code
     @JavascriptInterface
     public void audioPlayerForStory(String filename, String storyName) {
         try {
             mp = new MediaPlayer();
-
             if (mp.isPlaying())
                 mp.stop();
             mp.reset();
-
             if (ttspeech.isSpeaking()) {
                 ttspeech.stop();
             }
-
             String path = "";
-//            audioFlag = true;
             flag = 0;
             String mp3File;
-
             try {
                 if (storyName != null) {
-                    File file = mContext.getDir(audio_directory_path + "/" + storyName, Context.MODE_PRIVATE);
-                    if (!file.exists()) {
-                        file.mkdirs();
-                    }
-                    mp3File = audio_directory_path + "/" + storyName + "/" + filename;
+                    File file = new File(audio_directory_path + "/" + storyName);
+                    if (!file.exists()) file.mkdirs();
+                    mp3File = file.getAbsolutePath() + "/" + filename;
                 } else
                     mp3File = audio_directory_path + "/" + filename;
 
@@ -254,7 +217,6 @@ public class JSInterface {
         }
     }
 
-
     @JavascriptInterface
     public void audioPause() {
         if (MediaFlag == true) {
@@ -282,7 +244,6 @@ public class JSInterface {
         }
     }
 
-
     @JavascriptInterface
     public void stopAudioPlayer() {
         try {
@@ -292,6 +253,7 @@ public class JSInterface {
                 //mp = null;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -308,17 +270,6 @@ public class JSInterface {
             e.printStackTrace();
         }
     }
-
-
-    /*public static void returnFunction() {
-        try {
-            pdfFlag = false;
-            MediaFlag = false;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
 
     @JavascriptInterface
     public void playTts(String theWordWasAndYouSaid, String ttsLanguage) {
@@ -347,11 +298,11 @@ public class JSInterface {
     public void playTts(final String toSpeak) {
         ttspeech.setLanguage(new Locale("en", "IN"));
         ttspeech.play(toSpeak);
-        }
+    }
 
     @JavascriptInterface
     public static boolean informCompletion() {
-        return completeFlag;
+        return true;
     }
 
    /* public String formatCustomDate(String[] splitedDate, String delimiter){
@@ -363,27 +314,63 @@ public class JSInterface {
         return TextUtils.join(delimiter,splitedDate);
     }*/
 
+    //this addScore method is called from the Games Made By Pratham
     @JavascriptInterface
     public void addScore(String tempResId, int questionId, int scorefromGame, int totalMarks, int level, String startTime) {
         try {
-            Modal_Score modal_score = new Modal_Score();
-            modal_score.setScoreId();
-            modal_score.setSessionID();
-            modal_score.setStudentID();
-            modal_score.setDeviceID();
-            modal_score.setResourceID(tempResId);
-            modal_score.setQuestionId(questionId);
-            modal_score.setScoredMarks(scorefromGame);
-            modal_score.setTotalMarks(totalMarks);
-            modal_score.setStartDateTime(startTime);
-            modal_score.setEndDateTime();
-            modal_score.setLevel(level);
-            modal_score.setSentFlag();
-
-            BaseActivity.scoreDao.insert(modal_score);
-            //interface_score.setScore(scorefromGame, totalMarks);
+            if (PrathamApplication.isTablet)
+                addScoreForTablet(resId, "_", questionId, scorefromGame, totalMarks, level, startTime, "_");
+            else
+                addScoreForSmartPhone(resId, "_", questionId, scorefromGame, totalMarks, level, startTime, "_");
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //this addScore method is called from the Games Made By UBS
+    @JavascriptInterface
+    public void addScore(String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
+        try {
+            if (PrathamApplication.isTablet)
+                addScoreForTablet(resId, piStudId, questionId, scorefromGame, totalMarks, level, startTime, label);
+            else
+                addScoreForSmartPhone(resId, piStudId, questionId, scorefromGame, totalMarks, level, startTime, label);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addScoreForSmartPhone(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
+        Modal_Score modal_score = new Modal_Score();
+        modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+        modal_score.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+        modal_score.setDeviceID(PD_Utility.getDeviceID());
+        modal_score.setResourceID(tempResId);
+        modal_score.setQuestionId(questionId);
+        modal_score.setScoredMarks(scorefromGame);
+        modal_score.setTotalMarks(totalMarks);
+        modal_score.setStartDateTime(startTime);
+        modal_score.setEndDateTime(PD_Utility.getCurrentDateTime());
+        modal_score.setLevel(level);
+        modal_score.setLabel(piStudId + "," + label);
+        modal_score.setSentFlag(0);
+        BaseActivity.scoreDao.insert(modal_score);
+    }
+
+    private void addScoreForTablet(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
+        Modal_Score modal_score = new Modal_Score();
+        modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+        modal_score.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        modal_score.setDeviceID(PD_Utility.getDeviceID());
+        modal_score.setResourceID(tempResId);
+        modal_score.setQuestionId(questionId);
+        modal_score.setScoredMarks(scorefromGame);
+        modal_score.setTotalMarks(totalMarks);
+        modal_score.setStartDateTime(startTime);
+        modal_score.setEndDateTime(PD_Utility.getCurrentDateTime());
+        modal_score.setLevel(level);
+        modal_score.setLabel(piStudId + "," + label);
+        modal_score.setSentFlag(0);
+        BaseActivity.scoreDao.insert(modal_score);
     }
 }
