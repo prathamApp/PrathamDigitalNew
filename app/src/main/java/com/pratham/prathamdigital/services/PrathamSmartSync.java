@@ -3,7 +3,18 @@ package com.pratham.prathamdigital.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
+import com.pratham.prathamdigital.util.PD_Utility;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.List;
 
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
@@ -16,7 +27,17 @@ public class PrathamSmartSync extends AutoSync {
     @Override
     public void onSync(Context context) throws Exception {
         Log.d(TAG, "onSync: ");
-        /*JSONArray scoreData = new JSONArray();
+        if (PrathamApplication.isTablet) {
+            // Push Tab related Jsons
+            pushTabletJsons();
+        } else {
+            // Push Smartphone related Jsons
+            pushSmartphoneJsons();
+        }
+    }
+
+    private void pushTabletJsons() {
+        JSONArray scoreData = new JSONArray();
         List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
         if (scores != null && scores.size() > 0) {
             try {
@@ -31,38 +52,48 @@ public class PrathamSmartSync extends AutoSync {
                     _obj.put("startDateTime", scoreObj.getStartDateTime());
                     _obj.put("endDateTime", scoreObj.getEndDateTime());
                     _obj.put("level", scoreObj.getLevel());
+                    _obj.put("label", scoreObj.getLabel());
                     scoreData.put(_obj);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-        List<Attendance> attendanceData = BaseActivity.attendanceDao.getNewAttendances(0);
-        if (attendanceData != null && !attendanceData.isEmpty()) {
-            // get list of distinct session id
+
+        // get list of distinct session id
+        List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
+        JSONObject attendanceObject;
+        List<String> presentStudents;
+        JSONArray presentStudentsJsonArray;
+        JSONArray attendanceData = null;
+        try {
             // get present grpid & present student ids
             for (int x = 0; x < distinctSessions.size(); x++) {
-                String presentStd = "", grpID = "";
+                String grpID = "";
                 attendanceObject = new JSONObject();
-                presentStudents = new JSONArray();
+                presentStudentsJsonArray = new JSONArray();
 
-                presentStd = attendanceDBHelper1.GetAllPresentStudentBySessionId(distinctSessions.get(x));
-                grpID = attendanceDBHelper1.GetGrpIDBySessionID(distinctSessions.get(x));
-                presentStudents = attendanceDBHelper1.GetAllPresentStdBySessionId(distinctSessions.get(x));
-                try {
-                    attendanceObject.put("SessionID", distinctSessions.get(x));
+                grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
+                presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
 
-                    attendanceObject.put("GroupID", grpID);
-
-                    attendanceObject.put("PresentStudentIds", presentStudents);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                presentStudentsJsonArray = null;
+                for (int i = 0; i < presentStudents.size(); i++) {
+                    JSONObject obj = new JSONObject();
+                    obj.put("id", presentStudents.get(i));
+                    presentStudentsJsonArray.put(obj);
                 }
+
+                attendanceObject.put("SessionID", distinctSessions.get(x));
+                attendanceObject.put("GroupID", grpID);
+                attendanceObject.put("PresentStudentIds", presentStudentsJsonArray);
+
                 Log.d("attendance obj :::", attendanceObject.toString());
                 attendanceData.put(attendanceObject);
             }
-
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
+
         //For New Students data
         List<Modal_Student> studentsList = BaseActivity.studentDao.getAllNewStudents();
         JSONArray studentData = new JSONArray();
@@ -76,58 +107,47 @@ public class PrathamSmartSync extends AutoSync {
                     studentObj.put("LastName", student.getLastName());
                     studentObj.put("Age", student.getAge());
                     studentObj.put("Class", student.getStud_Class());
-//                    studentObj.put("UpdatedDate", student.UpdatedDate);
                     studentObj.put("Gender", student.getGender());
                     studentObj.put("GroupID", student.getGroupId());
-//                    studentObj.put("CreatedBy", student.get);
-//                    studentObj.put("newStudent", student.newStudent); // DO THE CHANGES for HANDLING NULLS
-//                    studentObj.put("StudentUID", student.StudentUID == null ? "" : student.StudentUID);
-//                    studentObj.put("IsSelected", student.IsSelected == null ? false : !student.IsSelected);
-                    // new entries
-//                    studentObj.put("sharedBy", student.sharedBy == null ? "" : student.sharedBy);
-//                    studentObj.put("SharedAtDateTime", student.SharedAtDateTime == null ? "" : student.SharedAtDateTime);
-//                    studentObj.put("appName", student.appName == null ? "" : student.appName);
-//                    studentObj.put("appVersion", student.appVersion == null ? "" : student.appVersion);
-//                    studentObj.put("CreatedOn", student.CreatedOn == null ? "" : student.CreatedOn);
                     studentData.put(studentObj);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        // Status Table
         JSONObject statusObj = new JSONObject();
         try {
             statusObj.put("ScoreCount", scores.size());
             statusObj.put("AttendanceCount", attendanceData.length());
-            statusObj.put("CRLID", statusDBHelper.getValue("crlId").equals(null) ? "admin" : statusDBHelper.getValue("crlId"));
-            //obj.put("LogsCount", logs.size());
+            statusObj.put("CRLID", BaseActivity.statusDao.getValue("crlId"));
             statusObj.put("NewStudentsCount", studentData.length());
-            statusObj.put("TransId", new Utility().GetUniqueID());
-            String deviceId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-            statusObj.put("DeviceId", deviceId.equals(null) ? "0000" : deviceId);
-            statusObj.put("MobileNumber", "0");
-            statusObj.put("ActivatedDate", statusDBHelper.getValue("ActivatedDate"));
-            statusObj.put("ActivatedForGroups", statusDBHelper.getValue("ActivatedForGroups"));
-
-            // new status table fields
-            statusObj.put("Latitude", statusDBHelper.getValue("Latitude"));
-            statusObj.put("Longitude", statusDBHelper.getValue("Longitude"));
-            statusObj.put("GPSDateTime", statusDBHelper.getValue("GPSDateTime"));
-            statusObj.put("AndroidID", statusDBHelper.getValue("AndroidID"));
-            statusObj.put("SerialID", statusDBHelper.getValue("SerialID"));
-            statusObj.put("apkVersion", statusDBHelper.getValue("apkVersion"));
-            statusObj.put("appName", statusDBHelper.getValue("appName"));
-            statusObj.put("gpsFixDuration", statusDBHelper.getValue("gpsFixDuration"));
-            statusObj.put("wifiMAC", statusDBHelper.getValue("wifiMAC"));
-            statusObj.put("apkType", statusDBHelper.getValue("apkType"));
-            statusObj.put("prathamCode", statusDBHelper.getValue("prathamCode"));
+            statusObj.put("TransId", PD_Utility.getUUID().toString());
+            statusObj.put("DeviceId", BaseActivity.statusDao.getValue("deviceId"));
+            statusObj.put("ActivatedDate", BaseActivity.statusDao.getValue("ActivatedDate"));
+            statusObj.put("ActivatedForGroups", BaseActivity.statusDao.getValue("ActivatedForGroups"));
+            statusObj.put("Latitude", BaseActivity.statusDao.getValue("Latitude"));
+            statusObj.put("Longitude", BaseActivity.statusDao.getValue("Longitude"));
+            statusObj.put("GPSDateTime", BaseActivity.statusDao.getValue("GPSDateTime"));
+            statusObj.put("AndroidID", BaseActivity.statusDao.getValue("AndroidID"));
+            statusObj.put("SerialID", BaseActivity.statusDao.getValue("SerialID"));
+            statusObj.put("apkVersion", BaseActivity.statusDao.getValue("apkVersion"));
+            statusObj.put("appName", BaseActivity.statusDao.getValue("appName"));
+            statusObj.put("gpsFixDuration", BaseActivity.statusDao.getValue("gpsFixDuration"));
+            statusObj.put("wifiMAC", BaseActivity.statusDao.getValue("wifiMAC"));
+            statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
+            statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         // Pushing File to Server
-        String programId = statusDBHelper.getValue("programId");
-        String requestString = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
-        Log.d("array:::", scoreData.toString());
-*/
+        String programId = BaseActivity.statusDao.getValue("programId");
+        String collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
+    }
+
+    private void pushSmartphoneJsons() {
+
     }
 }

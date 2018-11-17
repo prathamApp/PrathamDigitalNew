@@ -2,12 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-<<<<<<< HEAD
-      <module fileurl="file://$PROJECT_DIR$/PrathamDigital.iml" filepath="$PROJECT_DIR$/PrathamDigital.iml" />
-      <module fileurl="file://$PROJECT_DIR$/PrathamDigitalNew.iml" filepath="$PROJECT_DIR$/PrathamDigitalNew.iml" />
-=======
-      <module fileurl="file://$PROJECT_DIR$/Pratham Digital Kolibri with New UI.iml" filepath="$PROJECT_DIR$/Pratham Digital Kolibri with New UI.iml" />
->>>>>>> 72a06a3762dcb1679ce884b6766cfafeb794e7dd
+      <module fileurl="file://$PROJECT_DIR$/PrathamDigitalNewUI.iml" filepath="$PROJECT_DIR$/PrathamDigitalNewUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons-net-3.6/commons-net-3.6.iml" filepath="$PROJECT_DIR$/commons-net-3.6/commons-net-3.6.iml" />
       <module fileurl="file://$PROJECT_DIR$/commons-net-3.6-sources/commons-net-3.6-sources.iml" filepath="$PROJECT_DIR$/commons-net-3.6-sources/commons-net-3.6-sources.iml" />
