@@ -1775,4 +1775,12 @@ public class PD_Utility {
         String macAddress = wInfo.getMacAddress();
         return macAddress;
     }
+
+    public static int getRandomColorGradient() {
+        Random r = new Random();
+        int red = r.nextInt(255 - 0 + 1) + 0;
+        int green = r.nextInt(255 - 0 + 1) + 0;
+        int blue = r.nextInt(255 - 0 + 1) + 0;
+        return Color.rgb(red, green, blue);
+    }
 }
