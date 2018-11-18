@@ -2,15 +2,11 @@ package com.pratham.prathamdigital.custom.loading_view;
 
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
-import android.view.animation.LinearInterpolator;
-import android.view.animation.RotateAnimation;
 
 import com.pratham.prathamdigital.R;
 
@@ -36,7 +32,7 @@ public class CatLoadingView extends DialogFragment {
             mDialog.setCancelable(false);
             mDialog.getWindow().setGravity(Gravity.CENTER);
 
-            operatingAnim = new RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f,
+           /* operatingAnim = new RotateAnimation(360f, 0f, Animation.RELATIVE_TO_SELF, 0.5f,
                     Animation.RELATIVE_TO_SELF, 0.5f);
             operatingAnim.setRepeatCount(Animation.INFINITE);
             operatingAnim.setDuration(2000);
@@ -96,7 +92,7 @@ public class CatLoadingView extends DialogFragment {
                     eyelid_left.resetAnimator();
                     eyelid_right.resetAnimator();
                 }
-            });
+            });*/
         }
         return mDialog;
     }
@@ -104,38 +100,38 @@ public class CatLoadingView extends DialogFragment {
     @Override
     public void onResume() {
         super.onResume();
-        mouse.setAnimation(operatingAnim);
-        eye_left.setAnimation(eye_left_Anim);
-        eye_right.setAnimation(eye_right_Anim);
-        eyelid_left.startLoading();
-        eyelid_right.startLoading();
-        mGraduallyTextView.startLoading();
+//        mouse.setAnimation(operatingAnim);
+//        eye_left.setAnimation(eye_left_Anim);
+//        eye_right.setAnimation(eye_right_Anim);
+//        eyelid_left.startLoading();
+//        eyelid_right.startLoading();
+//        mGraduallyTextView.startLoading();
     }
 
     @Override
     public void onPause() {
         super.onPause();
 
-        operatingAnim.reset();
-        eye_left_Anim.reset();
-        eye_right_Anim.reset();
-
-        mouse.clearAnimation();
-        eye_left.clearAnimation();
-        eye_right.clearAnimation();
-
-        eyelid_left.stopLoading();
-        eyelid_right.stopLoading();
-        mGraduallyTextView.stopLoading();
+//        operatingAnim.reset();
+//        eye_left_Anim.reset();
+//        eye_right_Anim.reset();
+//
+//        mouse.clearAnimation();
+//        eye_left.clearAnimation();
+//        eye_right.clearAnimation();
+//
+//        eyelid_left.stopLoading();
+//        eyelid_right.stopLoading();
+//        mGraduallyTextView.stopLoading();
     }
 
-    public void setText(String str) {
-        text = str;
-    }
-
-    public void setClickCancelAble(boolean bo) {
-        isClickCancelAble = bo;
-    }
+//    public void setText(String str) {
+//        text = str;
+//    }
+//
+//    public void setClickCancelAble(boolean bo) {
+//        isClickCancelAble = bo;
+//    }
 
     @Override
     public void onDismiss(DialogInterface dialog) {

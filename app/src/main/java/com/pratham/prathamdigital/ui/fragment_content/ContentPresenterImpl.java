@@ -298,7 +298,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     @Override
-    public void onDownloadCompleted(int downloadId) {
+    public void onDownloadCompleted(final int downloadId) {
         Log.d(TAG, "updateFileProgress: " + downloadId);
         ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
         temp.addAll(levelContents);
@@ -307,14 +307,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
         content.setDownloaded(true);
         temp.add(content);
-        for (Modal_ContentDetail temp_content : temp) {
-            BaseActivity.modalContentDao.addContent(temp_content);
-        }
+        BaseActivity.modalContentDao.addContentList(temp);
         filesDownloading.remove(downloadId);
+        contentView.decreaseNotification(filesDownloading.size(), content);
         if (filesDownloading.size() == 0) {
             EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
         }
-        contentView.decreaseNotification(filesDownloading.size());
     }
 
     @Override

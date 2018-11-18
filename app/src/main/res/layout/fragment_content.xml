@@ -38,7 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:columnWidth="@dimen/_160sdp"
+        android:columnWidth="@dimen/_130sdp"
         android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
         android:scrollbars="vertical" />
 

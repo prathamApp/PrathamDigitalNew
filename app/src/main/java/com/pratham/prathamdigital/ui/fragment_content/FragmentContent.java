@@ -60,7 +60,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     RelativeLayout rl_network_error;
 
     ContentPresenterImpl contentPresenter;
-    ArrayList<Modal_ContentDetail> modal_contents = new ArrayList<>();
+    ArrayList<Modal_ContentDetail> modal_contents;
     ContentAdapter contentAdapter;
     ContentContract.mainView mainView;
 
@@ -149,13 +149,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
         if (rv_content.getVisibility() == View.GONE)
             rv_content.setVisibility(View.VISIBLE);
         if (!content.isEmpty()) {
-            modal_contents.clear();
+            modal_contents = new ArrayList<>();
             modal_contents.addAll(content);
             if (contentAdapter == null) {
                 contentAdapter = new ContentAdapter(getActivity(), content, FragmentContent.this);
                 rv_content.setHasFixedSize(true);
                 rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-//                int mNoOfColumns = PD_Utility.calculateNoOfColumns(getActivity());
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
                 gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                     @Override
@@ -180,8 +179,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 contentAdapter.updateList(content);
                 rv_content.scheduleLayoutAnimation();
             }
-        } else {
-            //todo if no contents are recieved
         }
     }
 
@@ -200,9 +197,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
-//        contentAdapter.updateList(getUpdatedList(contentDetail));
         PrathamApplication.bubble_mp.start();
-        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
+//        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
         contentPresenter.downloadContent(contentDetail);
     }
 
@@ -229,8 +225,16 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Override
-    public void decreaseNotification(int number) {
+    public void decreaseNotification(int number, Modal_ContentDetail contentDetail) {
 //        ((ActivityMain) getActivity()).hideNotificationBadge(number);
+        for (int i = 0; i < modal_contents.size(); i++) {
+            if (modal_contents.get(i).getNodeid() != null)
+                if (modal_contents.get(i).getNodeid().equalsIgnoreCase(contentDetail.getNodeid())) {
+                    modal_contents.set(i, contentDetail);
+                    break;
+                }
+        }
+        contentAdapter.updateList(modal_contents);
         mainView.hideNotificationBadge(number);
     }
 

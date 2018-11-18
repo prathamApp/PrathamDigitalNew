@@ -5,7 +5,6 @@ import com.pratham.prathamdigital.models.Modal_FileDownloading;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.logging.Handler;
 
 public interface ContentContract {
     interface contentView {
@@ -21,7 +20,7 @@ public interface ContentContract {
 
         void increaseNotification(int number);
 
-        void decreaseNotification(int number);
+        void decreaseNotification(int number, Modal_ContentDetail detail);
 
         void updateDownloadList(Map<Integer, Modal_FileDownloading> downloadings);
 

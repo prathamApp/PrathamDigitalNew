@@ -32,19 +32,19 @@ public class IndieEditText extends EditText {
     }
 
     private void init() {
-        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/indie_flower.ttf");
+        Typeface font = Typeface.createFromAsset(getContext().getAssets(), "fonts/FredokaOne.ttf");
         this.setTypeface(font);
     }
 
     @Override
     public void setTypeface(Typeface tf, int style) {
-        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/indie_flower.ttf");
+        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/FredokaOne.ttf");
         super.setTypeface(tf, style);
     }
 
     @Override
     public void setTypeface(Typeface tf) {
-        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/indie_flower.ttf");
+        tf = Typeface.createFromAsset(getContext().getAssets(), "fonts/FredokaOne.ttf");
         super.setTypeface(tf);
     }
 }

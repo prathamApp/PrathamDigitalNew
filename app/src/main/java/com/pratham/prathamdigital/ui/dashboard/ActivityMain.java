@@ -25,6 +25,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.services.LocationService;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
@@ -108,16 +109,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @OnClick(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, download_badge, "transition");
-        Point points = PD_Utility.getCenterPointOfView(download_badge);
-        int revealX = (int) points.x;
-        int revealY = (int) points.y;
-        Intent intent = new Intent(this, SettingsActivity.class);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        intent.putExtra(PD_Constant.VIEW_TYPE, PD_Constant.DOWNLOAD);
-        ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
+        DownloadListFragment fragment = new DownloadListFragment();
+        fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
     @OnClick(R.id.avatar_shape)

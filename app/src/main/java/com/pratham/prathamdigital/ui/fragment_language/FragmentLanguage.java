@@ -98,7 +98,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage {
             adapter = new LanguageAdapter(getActivity(), getLanguageList(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)), FragmentLanguage.this);
             rv_language.setLayoutManager(new GridLayoutManager(getActivity(), 5));
             rv_language.setHasFixedSize(true);
-            rv_language.addItemDecoration(new ContentItemDecoration(PD_Constant.LANGUAGE, 30));
+            rv_language.addItemDecoration(new ContentItemDecoration(PD_Constant.LANGUAGE, 10));
             rv_language.setAdapter(adapter);
 //            rv_language.invalidate();
         } else {
