@@ -28,4 +28,14 @@ public interface AttendanceDao {
 
     @Query("UPDATE Attendance SET sentFlag=:pushStatus")
     void updateAllSentFlag(int pushStatus);
+
+    @Query("SELECT DISTINCT SessionID FROM Attendance")
+    public List<String> getAllDistinctSessions();
+
+    @Query("select GroupID from Attendance where SessionID=:SessID")
+    public String GetGrpIDBySessionID(String SessID);
+
+    @Query("select Present from Attendance where SessionID=:SessID")
+    public List<String> GetAllPresentStdBySessionId(String SessID);
+
 }
