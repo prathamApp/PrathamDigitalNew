@@ -36,6 +36,6 @@ public interface AttendanceDao {
     public String GetGrpIDBySessionID(String SessID);
 
     @Query("select Present from Attendance where SessionID=:SessID")
-    public List<String> GetAllPresentStdBySessionId(String SessID);
+    public List<Integer> GetAllPresentStdBySessionId(String SessID);
 
 }

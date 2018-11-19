@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
@@ -23,7 +24,6 @@ import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
-import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -32,8 +32,6 @@ import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
-
-import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -54,6 +52,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public ShapeOfView avatar_shape;
     @BindView(R.id.search_shape)
     public ShapeOfView search_shape;
+    @BindView(R.id.rv_level)
+    public RecyclerView rv_level;
 
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
@@ -154,10 +154,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             download_badge.setVisibility(View.GONE);
         }
         download_notification.setNumber(number);
-    }
-
-    @Override
-    public void updateDownloadList(final Map<Integer, Modal_FileDownloading> downloadings) {
     }
 
     @Override

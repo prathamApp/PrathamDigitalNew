@@ -63,7 +63,7 @@ public class PrathamSmartSync extends AutoSync {
         // get list of distinct session id
         List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
         JSONObject attendanceObject;
-        List<String> presentStudents;
+        List<Integer> presentStudents;
         JSONArray presentStudentsJsonArray;
         JSONArray attendanceData = null;
         try {

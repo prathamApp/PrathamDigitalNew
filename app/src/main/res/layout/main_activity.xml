@@ -5,13 +5,14 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="@drawable/village_one"
     tools:context=".ui.dashboard.ActivityMain">
 
     <FrameLayout
         android:id="@+id/main_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:background="#49000000" />
 
     <com.pratham.prathamdigital.custom.shapes.ShapeOfView
         android:id="@+id/avatar_shape"
@@ -29,6 +30,13 @@
             app:lottie_autoPlay="true"
             app:lottie_loop="true" />
     </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_level"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_marginLeft="@dimen/_50sdp"
+        android:layout_marginTop="@dimen/_8sdp" />
 
     <com.pratham.prathamdigital.custom.shapes.ShapeOfView
         android:id="@+id/search_shape"

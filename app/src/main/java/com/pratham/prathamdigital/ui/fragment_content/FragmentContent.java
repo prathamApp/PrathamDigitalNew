@@ -23,7 +23,6 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
@@ -34,7 +33,6 @@ import com.pratham.prathamdigital.util.PermissionUtils;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
@@ -236,11 +234,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
         contentAdapter.updateList(modal_contents);
         mainView.hideNotificationBadge(number);
-    }
-
-    @Override
-    public void updateDownloadList(Map<Integer, Modal_FileDownloading> downloadings) {
-        mainView.updateDownloadList(downloadings);
     }
 
     @OnClick(R.id.content_back)

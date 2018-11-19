@@ -292,7 +292,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             modal_fileDownloading.setProgress(progress);
             modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
             filesDownloading.put(downloadId, modal_fileDownloading);
-//        contentView.updateDownloadList(filesDownloading)
             EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
         }
     }

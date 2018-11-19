@@ -59,14 +59,6 @@
             android:scaleType="centerCrop"
             android:src="@drawable/back_arrow" />
 
-        <!--<RelativeLayout-->
-        <!--android:id="@+id/rl_level"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/_80sdp"-->
-        <!--android:layout_toRightOf="@+id/content_back"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:paddingLeft="@dimen/_10sdp">-->
-
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/content_title"
             android:layout_width="match_parent"
