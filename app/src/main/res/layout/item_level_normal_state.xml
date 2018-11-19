@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/_30sdp"
+    app:cardElevation="@dimen/_8sdp">
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/level_name"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:maxLines="1"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:textColor="@color/charcoal" />
+
+    <View
+        android:layout_width="@dimen/_2sdp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="@color/charcoal" />
+</android.support.design.card.MaterialCardView>
