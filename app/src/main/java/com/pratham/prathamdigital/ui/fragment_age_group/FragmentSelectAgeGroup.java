@@ -18,6 +18,8 @@ import android.widget.ImageView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
+import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,6 +31,9 @@ public class FragmentSelectAgeGroup extends Fragment {
     ImageView iv_age_3_to_6;
     @BindView(R.id.iv_age_8_to_14)
     ImageView iv_age_8_to_14;
+
+  /*  @BindView(R.id.admin_panel)
+    com.airbnb.lottie.LottieAnimationView admin_panel;*/
 
     private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
 
@@ -131,4 +136,12 @@ public class FragmentSelectAgeGroup extends Fragment {
         }
     }
 
+
+    @OnClick(R.id.admin_panel)
+    public void openAdminPanel(){
+
+        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
+                null, AdminPanelFragment.class.getSimpleName());
+
+    }
 }
