@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.pm.Signature;
 import android.content.res.Configuration;
+import android.content.res.XmlResourceParser;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -61,6 +62,8 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+
+import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
@@ -1770,17 +1773,42 @@ public class PD_Utility {
     public static String getDeviceWifiMACID() {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
-        WifiManager wifiManager = (WifiManager) PrathamApplication.getInstance().getSystemService(Context.WIFI_SERVICE);
+        WifiManager wifiManager = (WifiManager) PrathamApplication.getInstance().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo wInfo = wifiManager.getConnectionInfo();
         String macAddress = wInfo.getMacAddress();
         return macAddress;
     }
 
     public static int getRandomColorGradient() {
-        Random r = new Random();
-        int red = r.nextInt(255 - 0 + 1) + 0;
-        int green = r.nextInt(255 - 0 + 1) + 0;
-        int blue = r.nextInt(255 - 0 + 1) + 0;
-        return Color.rgb(red, green, blue);
+        List<Integer> allColors = getAllMaterialColors();
+        if (allColors != null) {
+            int randomIndex = new Random().nextInt(allColors.size());
+            int randomColor = allColors.get(randomIndex);
+            return randomColor;
+        } else {
+            return 0;
+        }
+    }
+
+    private static List<Integer> getAllMaterialColors() {
+        try {
+            XmlResourceParser xrp = PrathamApplication.getInstance().getResources().getXml(R.xml.android_material_design_colours);
+            List<Integer> allColors = new ArrayList<>();
+            int nextEvent;
+            while ((nextEvent = xrp.next()) != XmlResourceParser.END_DOCUMENT) {
+                String s = xrp.getName();
+                if ("color".equals(s)) {
+                    String color = xrp.nextText();
+                    allColors.add(Color.parseColor(color));
+                }
+            }
+            return allColors;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        } catch (XmlPullParserException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

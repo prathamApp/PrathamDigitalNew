@@ -1,4 +1,4 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
 
     <!-- Base application theme. -->
     <!--<style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">-->
@@ -13,7 +13,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/charcoal</item>
         <item name="colorPrimaryDark">@color/charcoal</item>
-        <item name="colorAccent">@color/purple</item>
+        <item name="colorAccent">@color/white</item>
         <!--<item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>
@@ -81,6 +81,10 @@
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:backgroundDimEnabled">true</item>
         <item name="android:backgroundDimAmount">0.6</item>
+    </style>
+
+    <style name="superBottomSheetDialog" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="android:windowIsFloating">false</item>
     </style>
     <!--<style name="button" parent="@android:style/Widget.Button">-->
     <!--<item name="com.firsteat.firsteat:font">fonts/Lato_Regular.ttf</item>-->

@@ -90,7 +90,7 @@ public class PrathamApplication extends Application {
     }
 
     public void setPradigiPath() {
-        pradigiPath = PD_Utility.getInternalPath(this) + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
+        pradigiPath = PD_Utility.getInternalPath(this) + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         File f = new File(pradigiPath);
         if (!f.exists()) f.mkdirs();
     }

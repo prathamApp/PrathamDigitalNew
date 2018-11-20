@@ -22,14 +22,16 @@ public class ContentItemDecoration extends RecyclerView.ItemDecoration {
         GridLayoutManager.LayoutParams layoutParams = (GridLayoutManager.LayoutParams) view.getLayoutParams();
         if (item.equalsIgnoreCase(PD_Constant.CONTENT)) {
             if (layoutParams.getSpanIndex() % 2 == 0) {
-                outRect.top = offset * 2;
-                outRect.left = offset * 0;
-                outRect.right = offset * 0/*/ 2*/;
+                //even position
+                outRect.top = offset;
+                outRect.left = offset * 1;
+                outRect.right = offset * 1;
                 outRect.bottom = offset;
             } else {
-                outRect.top = offset * 2;
-                outRect.right = offset * 0;
-                outRect.left = offset * 0/*/ 2*/;
+                //odd position
+                outRect.top = offset;
+                outRect.right = offset * 1;
+                outRect.left = offset * 1;
                 outRect.bottom = offset;
             }
         } else {

@@ -8,19 +8,19 @@ import android.util.AttributeSet;
 public class PacificoTextView extends android.support.v7.widget.AppCompatTextView {
     public PacificoTextView(Context context) {
         super(context);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/pacifico_regular.ttf");
+        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
         this.setTypeface(face);
     }
 
     public PacificoTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/pacifico_regular.ttf");
+        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
         this.setTypeface(face);
     }
 
     public PacificoTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/pacifico_regular.ttf");
+        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
         this.setTypeface(face);
     }
 

@@ -11,6 +11,8 @@
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="fcm_message">Pratham</string>
     <string name="retry">Retry</string>
+    <string name="Open">Open</string>
+    <string name="downloading">Downloading...</string>
     <string-array name="search_tags">
         <item>English</item>
         <item>Maths</item>

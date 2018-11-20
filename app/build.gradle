@@ -87,6 +87,5 @@ dependencies {
 
     //QR scan
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
-
 }
 apply plugin: 'com.google.gms.google-services'

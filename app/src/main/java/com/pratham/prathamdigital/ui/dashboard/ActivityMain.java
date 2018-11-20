@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
@@ -23,8 +25,9 @@ import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
-import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.services.LocationService;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
@@ -32,7 +35,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
-import java.util.Map;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -53,11 +56,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public ShapeOfView avatar_shape;
     @BindView(R.id.search_shape)
     public ShapeOfView search_shape;
+    @BindView(R.id.rv_level)
+    public RecyclerView rv_level;
 
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
     private int revealX;
     private int revealY;
+    private RV_LevelAdapter levelAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -108,16 +114,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @OnClick(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, download_badge, "transition");
-        Point points = PD_Utility.getCenterPointOfView(download_badge);
-        int revealX = (int) points.x;
-        int revealY = (int) points.y;
-        Intent intent = new Intent(this, SettingsActivity.class);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        intent.putExtra(PD_Constant.VIEW_TYPE, PD_Constant.DOWNLOAD);
-        ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
+        DownloadListFragment fragment = new DownloadListFragment();
+        fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
     @OnClick(R.id.avatar_shape)
@@ -133,6 +131,25 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
         intent.putExtra(PD_Constant.VIEW_TYPE, PD_Constant.SETTINGS);
         ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
+    }
+
+    ArrayList<Modal_ContentDetail> level = new ArrayList<>();
+    int count = 0;
+
+    @OnClick(R.id.search_shape)
+    public void setSearch_shape() {
+        count += 1;
+        Modal_ContentDetail modal_contentDetail = new Modal_ContentDetail();
+        modal_contentDetail.setNodetitle("count::" + count);
+        level.add(modal_contentDetail);
+        if (levelAdapter == null) {
+            levelAdapter = new RV_LevelAdapter(ActivityMain.this, level);
+            rv_level.setHasFixedSize(true);
+            rv_level.setLayoutManager(new LinearLayoutManager(ActivityMain.this, LinearLayoutManager.HORIZONTAL, false));
+            rv_level.setAdapter(levelAdapter);
+        } else {
+            levelAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override
@@ -161,10 +178,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             download_badge.setVisibility(View.GONE);
         }
         download_notification.setNumber(number);
-    }
-
-    @Override
-    public void updateDownloadList(final Map<Integer, Modal_FileDownloading> downloadings) {
     }
 
     @Override

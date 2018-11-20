@@ -3,15 +3,14 @@ package com.pratham.prathamdigital.ui.download_list;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 
 import org.greenrobot.eventbus.EventBus;
@@ -22,16 +21,16 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadListFragment extends Fragment {
+public class DownloadListFragment extends SuperBottomSheetFragment {
     private static final String TAG = DownloadListFragment.class.getSimpleName();
     @BindView(R.id.rv_download)
     RecyclerView rv_download;
 
     DownloadListAdapter adapter;
 
-    @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View rootView = inflater.inflate(R.layout.download_list_fragment, container, false);
         return rootView;
     }
@@ -68,7 +67,6 @@ public class DownloadListFragment extends Fragment {
 
     @Subscribe
     public void onEvent(final List<Modal_FileDownloading> downloadings) {
-        Log.d(TAG, "onEvent: ");
         if (downloadings != null && downloadings.size() > 0) {
             if (adapter != null) {
                 adapter.updateList(downloadings);
