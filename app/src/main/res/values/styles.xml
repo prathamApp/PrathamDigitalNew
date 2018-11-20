@@ -93,6 +93,13 @@
         <item name="android:textSize">25sp</item>
         <item name="android:padding">15dp</item>
     </style>
+
+    <style name="CustomRadioButton">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:layout_margin">8dp</item>
+    </style>
     <!--<style name="button" parent="@android:style/Widget.Button">-->
     <!--<item name="com.firsteat.firsteat:font">fonts/Lato_Regular.ttf</item>-->
     <!--</style>-->

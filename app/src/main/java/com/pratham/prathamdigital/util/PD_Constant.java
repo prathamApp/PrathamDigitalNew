@@ -132,4 +132,10 @@ public class PD_Constant {
     public static final String ACTION_CLEAR_SEND_FILES = "action.CLEAR_SEND_FILES";
     public static final String ACTION_NEW_MSG = "action.NEW_MSG";
     public static final String ACTION_UPDATE_BOTTOM = "action.UPDATE_BOTTOM";
+
+
+    //API's
+    public static final String HLpullStudentURL="http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
+    public static final String HLpullVillagesURL="http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
+    public static final String HLpullGroupsURL="http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
 }
