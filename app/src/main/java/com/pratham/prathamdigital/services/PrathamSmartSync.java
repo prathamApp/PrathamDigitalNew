@@ -138,6 +138,7 @@ public class PrathamSmartSync extends AutoSync {
             statusObj.put("wifiMAC", BaseActivity.statusDao.getValue("wifiMAC"));
             statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
             statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
+            statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
         } catch (Exception e) {
             e.printStackTrace();
         }

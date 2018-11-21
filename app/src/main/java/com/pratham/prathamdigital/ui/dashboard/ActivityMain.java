@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
@@ -24,6 +25,7 @@ import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -32,6 +34,8 @@ import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -59,6 +63,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
     private int revealX;
     private int revealY;
+    private RV_LevelAdapter levelAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -126,6 +131,25 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
         intent.putExtra(PD_Constant.VIEW_TYPE, PD_Constant.SETTINGS);
         ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
+    }
+
+    ArrayList<Modal_ContentDetail> level = new ArrayList<>();
+    int count = 0;
+
+    @OnClick(R.id.search_shape)
+    public void setSearch_shape() {
+        count += 1;
+        Modal_ContentDetail modal_contentDetail = new Modal_ContentDetail();
+        modal_contentDetail.setNodetitle("count::" + count);
+        level.add(modal_contentDetail);
+        if (levelAdapter == null) {
+            levelAdapter = new RV_LevelAdapter(ActivityMain.this, level);
+            rv_level.setHasFixedSize(true);
+            rv_level.setLayoutManager(new LinearLayoutManager(ActivityMain.this, LinearLayoutManager.HORIZONTAL, false));
+            rv_level.setAdapter(levelAdapter);
+        } else {
+            levelAdapter.notifyDataSetChanged();
+        }
     }
 
     @Override

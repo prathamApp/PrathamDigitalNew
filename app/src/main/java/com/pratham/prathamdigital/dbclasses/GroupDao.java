@@ -20,4 +20,13 @@ public interface GroupDao {
     @Query("SELECT * FROM Groups ")
     public List<Modal_Groups> getAllGroups();
 
+    @Query("SELECT GroupID,GroupName FROM Groups WHERE VillageID=:vID ORDER BY GroupName ASC")
+    public List<Modal_Groups> GetGroups(int vID);
+
+    @Query("DELETE FROM Groups WHERE GroupID=:grpID")
+    public void deleteGroupByGrpID(String grpID);
+
+    @Query("select * from Groups WHERE DeviceID = 'deleted'")
+    public List<Modal_Groups> GetAllDeletedGroups();
+
 }

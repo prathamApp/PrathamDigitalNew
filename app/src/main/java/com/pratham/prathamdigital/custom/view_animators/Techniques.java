@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.custom.animators;
+package com.pratham.prathamdigital.custom.view_animators;
 
 public enum Techniques {
     Flash(FlashAnimator.class),

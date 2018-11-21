@@ -21,8 +21,11 @@ public interface StudentDao {
     @Update
     public int updateAllStudent(List<Modal_Student> studList);
 
-    @Query("DELETE FROM Students")
-    public void deleteAllStudents();
+    @Query("DELETE FROM Students WHERE Gender='Deleted'")
+    public void deleteDeletedStdRecords();
+
+    @Query("DELETE FROM Students WHERE GroupID=:grpID")
+    public void deleteDeletedGrpsStdRecords(String grpID);
 
     @Query("SELECT * FROM Students")
     public List<Modal_Student> getAllStudents();

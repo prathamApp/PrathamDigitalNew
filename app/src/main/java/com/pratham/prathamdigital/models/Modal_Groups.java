@@ -11,21 +11,26 @@ public class Modal_Groups {
     @NonNull
     @PrimaryKey
     @SerializedName("GroupId")
-    String GroupId;
+    public String GroupId;
     @SerializedName("GroupName")
-    String GroupName;
+    public String GroupName;
     @SerializedName("VillageId")
-    String VillageId;
+    public String VillageId;
     @SerializedName("ProgramId")
-    int ProgramId;
+    public int ProgramId;
     @SerializedName("GroupCode")
-    String GroupCode;
+    public String GroupCode;
     @SerializedName("SchoolName")
-    String SchoolName;
+    public String SchoolName;
     @SerializedName("VIllageName")
-    String VIllageName;
+    public String VIllageName;
     @SerializedName("DeviceId")
-    String DeviceId;
+    public String DeviceId;
+
+    Modal_Groups(String id, String name) {
+        GroupId = id;
+        GroupName = name;
+    }
 
     @NonNull
     public String getGroupId() {

@@ -11,7 +11,7 @@ public class Modal_Village {
     @NonNull
     @PrimaryKey
     @SerializedName("VillageId")
-    private String VillageId;
+    private int VillageId;
     @SerializedName("VillageCode")
     private String VillageCode;
     @SerializedName("VillageName")
@@ -25,11 +25,16 @@ public class Modal_Village {
     @SerializedName("CRLId")
     private String CRLId;
 
-    public String getVillageId() {
+    Modal_Village(int id, String name) {
+        VillageId = id;
+        VillageName = name;
+    }
+
+    public int getVillageId() {
         return VillageId;
     }
 
-    public void setVillageId(String villageId) {
+    public void setVillageId(int villageId) {
         VillageId = villageId;
     }
 
