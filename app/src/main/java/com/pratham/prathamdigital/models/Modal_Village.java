@@ -25,6 +25,10 @@ public class Modal_Village {
     @SerializedName("CRLId")
     private String CRLId;
 
+    Modal_Village() {
+
+    }
+
     Modal_Village(int id, String name) {
         VillageId = id;
         VillageName = name;

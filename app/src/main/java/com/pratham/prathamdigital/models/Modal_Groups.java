@@ -27,6 +27,10 @@ public class Modal_Groups {
     @SerializedName("DeviceId")
     public String DeviceId;
 
+    Modal_Groups() {
+
+    }
+
     Modal_Groups(String id, String name) {
         GroupId = id;
         GroupName = name;

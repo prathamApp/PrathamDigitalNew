@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.PullData;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;

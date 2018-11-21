@@ -4,13 +4,13 @@ public class VillageNameID {
     String villageName;
     String villageId;
 
-    public VillageNameID( String villageName) {
+    public VillageNameID(String villageName) {
         this.villageName = villageName;
     }
 
-    public VillageNameID(String villaId, String villageName) {
+    public VillageNameID(int villaId, String villageName) {
         this.villageName = villageName;
-        this.villageId = villaId;
+        this.villageId = String.valueOf(villaId);
     }
 
     @Override

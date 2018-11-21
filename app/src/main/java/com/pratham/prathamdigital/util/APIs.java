@@ -9,7 +9,7 @@ public class APIs {
     public static final String Group = "Groups";
     public static final String Student = "Student";
 
-    public static final String HL = "Hybrid Learning";
+  /*  public static final String HL = "Hybrid Learning";
     public static final String HLpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
     public static final String HLpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
     public static final String HLpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
@@ -28,14 +28,14 @@ public class APIs {
     public static final String UPpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=6&villageId=";
     public static final String UPpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=6&statecode=";
 
+*/
 
-
-    /*public static final String HL = "Hybrid Learning";
+    public static final String HL = "Hybrid Learning";
     public static final String HLpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:1,state:";
     public static final String HLpullGroupsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:1,villageid:";
     public static final String HLpullStudentsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:1,villageid:";
     public static final String HLpullCrlsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:1,state:";
-*/
+
 
     public static final String RI = "Read India";
     public static final String RIpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:2,state:";
