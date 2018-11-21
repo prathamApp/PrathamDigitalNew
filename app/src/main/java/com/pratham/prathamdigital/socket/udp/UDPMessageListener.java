@@ -92,7 +92,6 @@ public class UDPMessageListener implements Runnable {
     @Override
     public void run() {
         while (isThreadRunning) {
-
             try {
                 UDPSocket.receive(receiveDatagramPacket);
             } catch (IOException e) {

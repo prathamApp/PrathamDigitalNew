@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.ui.dashboard;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.ui.fragment_content.ContentDiffUtilCallback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +29,12 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
     public static final int NORMAL_ITEM = 2;
     private Context context;
     private ArrayList<Modal_ContentDetail> levels;
+    private LevelContract levelContract;
 
-    public RV_LevelAdapter(Context context, ArrayList<Modal_ContentDetail> levels) {
+    public RV_LevelAdapter(Context context, ArrayList<Modal_ContentDetail> levels, LevelContract levelContract) {
         this.context = context;
         this.levels = levels;
+        this.levelContract = levelContract;
     }
 
     @Override
@@ -70,7 +74,12 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
                 last.last_level_name.setText(levels.get(viewHolder.getAdapterPosition()).getNodetitle());
                 break;
         }
-
+        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                levelContract.levelClicked(levels.get(viewHolder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
@@ -81,14 +90,27 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
             switch (holder.getItemViewType()) {
                 case NORMAL_ITEM:
                     NormalItemViewHolder normalItemViewHolder = (NormalItemViewHolder) holder;
-                    ((NormalItemViewHolder) holder).l_name.setText(levels.get(holder.getAdapterPosition()).getNodetitle());
+                    normalItemViewHolder.l_name.setText(levels.get(holder.getAdapterPosition()).getNodetitle());
                     break;
                 case LAST_ITEM:
                     LastItemViewHolder last = (LastItemViewHolder) holder;
                     last.last_level_name.setText(levels.get(holder.getAdapterPosition()).getNodetitle());
                     break;
             }
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    levelContract.levelClicked(levels.get(holder.getAdapterPosition()));
+                }
+            });
         }
+    }
+
+    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
+        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, levels));
+        levels.clear();
+        this.levels.addAll(newList);
+        diffResult.dispatchUpdatesTo(this);
     }
 
     @Override

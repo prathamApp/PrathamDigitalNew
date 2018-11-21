@@ -22,8 +22,8 @@
             android:id="@+id/last_level_name"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/_17sdp"
-            android:layout_marginRight="@dimen/_5sdp"
+            android:layout_marginLeft="@dimen/_25sdp"
+            android:layout_marginRight="@dimen/_15sdp"
             android:gravity="center"
             android:maxLines="1"
             android:textColor="@color/charcoal" />

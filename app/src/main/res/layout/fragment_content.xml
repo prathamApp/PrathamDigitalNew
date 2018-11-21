@@ -11,21 +11,20 @@
         android:layout_height="match_parent"
         android:visibility="gone">
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/txt_retry"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/retry"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_30sdp" />
+        <!--<com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView-->
+        <!--android:id="@+id/txt_retry"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:text="@string/retry"-->
+        <!--android:textColor="@android:color/black"-->
+        <!--android:textSize="@dimen/_30sdp" />-->
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/lottie_content_bkgd"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_above="@+id/txt_retry"
             android:scaleType="fitCenter"
             app:lottie_autoPlay="true"
             app:lottie_fileName="network_error.json"

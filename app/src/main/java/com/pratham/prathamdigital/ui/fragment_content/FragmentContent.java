@@ -1,7 +1,5 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,6 +19,8 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
+import com.pratham.prathamdigital.custom.view_animator.AnimationListener;
+import com.pratham.prathamdigital.custom.view_animator.ViewAnimator;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
@@ -30,6 +30,9 @@ import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PermissionUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -118,9 +121,52 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe
+    public void onMainBackPressed(final String pressed) {
+        Log.d(TAG, "onMainBackPressed:");
+        if (pressed.equalsIgnoreCase(PD_Constant.MAIN_BACK)) {
+            setContent_back();
+        }
+    }
+
+    @Subscribe
+    public void onLevelClicked(final Modal_ContentDetail detail) {
+        Log.d(TAG, "onLevelClicked:");
+        PrathamApplication.bubble_mp.start();
+        if (!BaseActivity.catLoadingView.isAdded())
+            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        contentPresenter.getContent(detail);
+    }
+
+    //    @OnClick(R.id.content_back)
+    public void setContent_back() {
+        PrathamApplication.bubble_mp.start();
+        if (!BaseActivity.catLoadingView.isAdded())
+            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        contentPresenter.showPreviousContent();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        if (((ActivityMain) getActivity()).avatar_shape.getVisibility() == View.VISIBLE) {
+        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
             if (!BaseActivity.catLoadingView.isAdded())
                 BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
             contentPresenter.getContent(null);
@@ -134,7 +180,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         rl_network_error.setVisibility(View.VISIBLE);
     }
 
-    @OnClick(R.id.txt_retry)
+    @OnClick(R.id.lottie_content_bkgd)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
         onResume();
@@ -169,15 +215,19 @@ public class FragmentContent extends FragmentManagePermission implements Content
                         }
                     }
                 });
-//                rv_content.setLayoutManager(gridLayoutManager);
                 rv_content.setAdapter(contentAdapter);
                 rv_content.scheduleLayoutAnimation();
-//                new LinearSnapHelper().attachToRecyclerView(rv_content);
             } else {
                 contentAdapter.updateList(content);
                 rv_content.scheduleLayoutAnimation();
             }
         }
+        contentPresenter.getLevels();
+    }
+
+    @Override
+    public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
+        ((ActivityMain) getActivity()).showLevels(levelContents);
     }
 
     @Override
@@ -190,7 +240,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void displayHeader(Modal_ContentDetail contentDetail) {
-        content_title.setText(contentDetail.getNodetitle());
+//        content_title.setText(contentDetail.getNodetitle());
     }
 
     @Override
@@ -202,18 +252,78 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void hideViews() {
-//        hideViewUp(((ActivityMain) getActivity()).main_tab);
-        hideViewSide(((ActivityMain) getActivity()).avatar_shape);
-        hideViewSide(((ActivityMain) getActivity()).search_shape);
-        content_header.setVisibility(View.VISIBLE);
+        //hide search
+        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
+                .dp().translationX(0, 100)
+                .duration(900)
+                .onStop(new AnimationListener.Stop() {
+                    @Override
+                    public void onStop() {
+                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.GONE);
+                    }
+                })
+                .start();
+        //hide avatar
+        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
+                .dp().translationX(0, 100)
+                .duration(900)
+                .onStart(new AnimationListener.Start() {
+                    @Override
+                    public void onStart() {
+                        //show back
+                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
+                                .dp().translationX(100, 0)
+                                .duration(900)
+                                .onStart(new AnimationListener.Start() {
+                                    @Override
+                                    public void onStart() {
+                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.VISIBLE);
+                                    }
+                                })
+                                .start();
+                    }
+                })
+                .onStop(new AnimationListener.Stop() {
+                    @Override
+                    public void onStop() {
+                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.GONE);
+                    }
+                })
+                .start();
     }
 
     @Override
     public void showViews() {
-//        showViewDown(((ActivityMain) getActivity()).main_tab);
-        showViewSide(((ActivityMain) getActivity()).avatar_shape);
-        showViewSide(((ActivityMain) getActivity()).search_shape);
-        content_header.setVisibility(View.GONE);
+        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
+                .dp().translationX(100, 0)
+                .duration(900)
+                .onStart(new AnimationListener.Start() {
+                    @Override
+                    public void onStart() {
+                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.VISIBLE);
+                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
+                                .dp().translationX(0, 100)
+                                .duration(900)
+                                .onStop(new AnimationListener.Stop() {
+                                    @Override
+                                    public void onStop() {
+                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.GONE);
+                                    }
+                                })
+                                .start();
+                    }
+                })
+                .start();
+        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
+                .dp().translationX(100, 0)
+                .duration(900)
+                .onStart(new AnimationListener.Start() {
+                    @Override
+                    public void onStart() {
+                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.VISIBLE);
+                    }
+                })
+                .start();
     }
 
     @Override
@@ -234,67 +344,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
         contentAdapter.updateList(modal_contents);
         mainView.hideNotificationBadge(number);
-    }
-
-    @OnClick(R.id.content_back)
-    public void setContent_back() {
-        PrathamApplication.bubble_mp.start();
-        if (!BaseActivity.catLoadingView.isAdded())
-            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
-        contentPresenter.showPreviousContent();
-    }
-
-    public void hideViewUp(View view) {
-        view.animate()
-//                .translationY(0)
-                .alpha(0.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.GONE);
-                        content_header.setVisibility(View.VISIBLE);
-                    }
-                });
-    }
-
-    public void hideViewSide(View view) {
-        view.animate()
-//                .translationX(0)
-                .alpha(0.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.GONE);
-                    }
-                });
-    }
-
-    public void showViewDown(View view) {
-        view.animate()
-//                .translationY(view.getHeight())
-                .alpha(1.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.VISIBLE);
-                    }
-                });
-    }
-
-    public void showViewSide(View view) {
-        view.animate()
-//                .translationX(view.getWidth())
-                .alpha(1.0f)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        view.setVisibility(View.VISIBLE);
-                    }
-                });
     }
 
     @Override

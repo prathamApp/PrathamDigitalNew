@@ -5,14 +5,14 @@
     android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/village_one"
+    android:background="@drawable/village_two"
     tools:context=".ui.dashboard.ActivityMain">
 
     <FrameLayout
         android:id="@+id/main_frame"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#49000000" />
+        android:background="#0d000000" />
 
     <com.pratham.prathamdigital.custom.shapes.ShapeOfView
         android:id="@+id/avatar_shape"
@@ -21,13 +21,27 @@
         android:elevation="@dimen/_10sdp"
         app:shape_clip_drawable="@drawable/dashboard_half_circle">
 
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/red" />
+
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/avatar_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/red"
             android:scaleType="centerInside"
             app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/back_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerInside"
+            android:visibility="gone"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="walking_arrow.json"
             app:lottie_loop="true" />
     </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
 
@@ -35,7 +49,7 @@
         android:id="@+id/rv_level"
         android:layout_width="match_parent"
         android:layout_height="@dimen/_30sdp"
-        android:layout_marginLeft="@dimen/_50sdp"
+        android:layout_marginLeft="@dimen/_55sdp"
         android:layout_marginTop="@dimen/_8sdp" />
 
     <com.pratham.prathamdigital.custom.shapes.ShapeOfView

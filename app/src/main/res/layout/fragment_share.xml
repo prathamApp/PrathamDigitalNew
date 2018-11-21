@@ -1,124 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    android:gravity="center"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_10sdp"
+    app:cardElevation="@dimen/_7sdp"
+    app:cardUseCompatPadding="true">
 
-    <LinearLayout
-        android:id="@+id/root_share"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="1">
+        android:layout_height="match_parent">
 
-        <RelativeLayout
-            android:id="@+id/rl_share"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:id="@+id/root_share"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight=".5"
-            android:background="@color/dark_blue">
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <RelativeLayout
-                android:id="@+id/rl_share_block"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
+                android:id="@+id/rl_share"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:background="@color/dark_blue">
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_share"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_100sdp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="share.json"
-                    app:lottie_loop="true" />
-
-                <com.pratham.prathamdigital.custom.textviews.PacificoTextView
+                <RelativeLayout
+                    android:id="@+id/rl_share_block"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/lottie_share"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/share"
-                    android:textColor="#FDBE44"
-                    android:textSize="@dimen/_30sdp" />
+                    android:layout_centerInParent="true">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie_share"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="share.json"
+                        app:lottie_loop="true" />
+
+                    <com.pratham.prathamdigital.custom.textviews.PacificoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/lottie_share"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/share"
+                        android:textColor="#FDBE44"
+                        android:textSize="@dimen/_30sdp" />
+                </RelativeLayout>
             </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_recieve"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:background="@color/dark_yellow">
+
+                <RelativeLayout
+                    android:id="@+id/rl_recieve_block"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true">
+
+                    <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottie_recieve"
+                        android:layout_width="@dimen/_100sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        app:lottie_autoPlay="true"
+                        app:lottie_fileName="recieve.json"
+                        app:lottie_loop="true" />
+
+                    <com.pratham.prathamdigital.custom.textviews.PacificoTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/lottie_recieve"
+                        android:layout_centerHorizontal="true"
+                        android:text="@string/recieve"
+                        android:textColor="#262B4B"
+                        android:textSize="@dimen/_30sdp" />
+                </RelativeLayout>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/shareCircle"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
+
+            <com.pratham.prathamdigital.custom.CircularProgress
+                android:id="@+id/circleProgress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <com.pratham.prathamdigital.custom.edittexts.PacificoEditText
+                android:id="@+id/status"
+                android:layout_width="@dimen/_160sdp"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_50sdp"
+                android:gravity="center"
+                android:lineSpacingMultiplier="1.5"
+                android:textColor="@color/black_20"
+                android:textSize="@dimen/_16sdp" />
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/rl_recieve"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight=".5"
-            android:background="@color/dark_yellow">
+            android:id="@+id/searchCircle"
+            android:layout_width="@dimen/_250sdp"
+            android:layout_height="@dimen/_250sdp"
+            android:layout_centerInParent="true"
+            android:visibility="gone">
 
-            <RelativeLayout
-                android:id="@+id/rl_recieve_block"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_recieve"
-                    android:layout_width="@dimen/_100sdp"
-                    android:layout_height="@dimen/_100sdp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="recieve.json"
-                    app:lottie_loop="true" />
-
-                <com.pratham.prathamdigital.custom.textviews.PacificoTextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/lottie_recieve"
-                    android:layout_centerHorizontal="true"
-                    android:text="@string/recieve"
-                    android:textColor="#262B4B"
-                    android:textSize="@dimen/_30sdp" />
-            </RelativeLayout>
+            <com.pratham.prathamdigital.custom.SearchView
+                android:id="@+id/searchView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </RelativeLayout>
-    </LinearLayout>
 
-    <RelativeLayout
-        android:id="@+id/shareCircle"
-        android:layout_width="@dimen/_250sdp"
-        android:layout_height="@dimen/_250sdp"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
-
-        <com.pratham.prathamdigital.custom.CircularProgress
-            android:id="@+id/circleProgress"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_files"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.pratham.prathamdigital.custom.edittexts.PacificoEditText
-            android:id="@+id/status"
-            android:layout_width="@dimen/_160sdp"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_50sdp"
-            android:gravity="center"
-            android:lineSpacingMultiplier="1.5"
-            android:textColor="@color/black_20"
-            android:textSize="@dimen/_16sdp" />
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_10sdp"
+            android:visibility="gone" />
     </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/searchCircle"
-        android:layout_width="@dimen/_250sdp"
-        android:layout_height="@dimen/_250sdp"
-        android:layout_centerInParent="true"
-        android:visibility="gone">
-
-        <com.pratham.prathamdigital.custom.SearchView
-            android:id="@+id/searchView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </RelativeLayout>
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_files"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_margin="@dimen/_10sdp"
-        android:visibility="gone" />
-
-</RelativeLayout>
+</android.support.design.card.MaterialCardView>

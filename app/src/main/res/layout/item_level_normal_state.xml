@@ -14,10 +14,4 @@
         android:paddingLeft="@dimen/_5sdp"
         android:paddingRight="@dimen/_5sdp"
         android:textColor="@color/charcoal" />
-
-    <View
-        android:layout_width="@dimen/_2sdp"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:background="@color/charcoal" />
 </android.support.design.card.MaterialCardView>

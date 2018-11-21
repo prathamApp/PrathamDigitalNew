@@ -34,7 +34,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     Context context;
     ContentContract.contentView contentView;
     ArrayList<Modal_ContentDetail> totalContents;
-    ArrayList<Modal_ContentDetail> levelContents = new ArrayList<>();
+    ArrayList<Modal_ContentDetail> levelContents;
     Map<Integer, Modal_FileDownloading> filesDownloading = new HashMap<>();
 
     public ContentPresenterImpl(Context context, ContentContract.contentView contentView) {
@@ -47,10 +47,20 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         if (contentDetail == null) {
             new GetDownloadedContent(null).execute();
         } else {
-            if (levelContents.isEmpty()) {
-                contentView.hideViews();
+            if (levelContents == null) levelContents = new ArrayList<>();
+            if (levelContents.isEmpty()) contentView.hideViews();
+            boolean found = false;
+            for (int i = 0; i < levelContents.size(); i++) {
+                if (levelContents.get(i).getNodeid().equalsIgnoreCase(contentDetail.getNodeid())) {
+                    if ((i + 1) == levelContents.size()) found = true;
+                    else {
+                        levelContents.subList(i + 1, levelContents.size()).clear();
+                        found = true;
+                    }
+                    break;
+                }
             }
-            levelContents.add(contentDetail);
+            if (!found) levelContents.add(contentDetail);
             contentView.displayHeader(contentDetail);
             new GetDownloadedContent(contentDetail.getNodeid()).execute();
         }
@@ -343,6 +353,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 //        temp.addAll(totalContents);
         totalContents.remove(contentDetail);
         return totalContents;
+    }
+
+    public void getLevels() {
+        if (levelContents != null) {
+            ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+            temp.addAll(levelContents);
+            levelContents = new ArrayList<>();
+            levelContents.addAll(temp);
+            contentView.displayLevel(levelContents);
+        }
     }
 
     private class GetDownloadedContent extends AsyncTask {

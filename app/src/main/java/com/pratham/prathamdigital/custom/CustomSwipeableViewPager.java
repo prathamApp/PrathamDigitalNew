@@ -5,6 +5,10 @@ import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.Scroller;
+
+import java.lang.reflect.Field;
 
 public class CustomSwipeableViewPager extends ViewPager {
     public CustomSwipeableViewPager(Context context) {
@@ -30,17 +34,16 @@ public class CustomSwipeableViewPager extends ViewPager {
     }
 
     //down one is added for smooth scrolling
-
     private void setMyScroller() {
-//        try {
-//            Class<?> viewpager = ViewPager.class;
-//            Field scroller = viewpager.getDeclaredField("mScroller");
-//            scroller.setAccessible(true);
-//            scroller.set(this, new MyScroller(getContext()));
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        setPageTransformer(true, new VerticalPageTransformer());
+        try {
+            Class<?> viewpager = ViewPager.class;
+            Field scroller = viewpager.getDeclaredField("mScroller");
+            scroller.setAccessible(true);
+            scroller.set(this, new MyScroller(getContext()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+//        setPageTransformer(true, new VerticalPageTransformer());
         // The easiest way to get rid of the overscroll drawing that happens on the left and right
         setOverScrollMode(OVER_SCROLL_NEVER);
     }
@@ -84,15 +87,15 @@ public class CustomSwipeableViewPager extends ViewPager {
 
         return ev;
     }
-//
-//    public class MyScroller extends Scroller {
-//        public MyScroller(Context context) {
-//            super(context, new DecelerateInterpolator());
-//        }
-//
-//        @Override
-//        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
-//            super.startScroll(startX, startY, dx, dy, 350 /*1 secs*/);
-//        }
-//    }
+
+    public class MyScroller extends Scroller {
+        public MyScroller(Context context) {
+            super(context, new DecelerateInterpolator());
+        }
+
+        @Override
+        public void startScroll(int startX, int startY, int dx, int dy, int duration) {
+            super.startScroll(startX, startY, dx, dy, 350 /*1 secs*/);
+        }
+    }
 }

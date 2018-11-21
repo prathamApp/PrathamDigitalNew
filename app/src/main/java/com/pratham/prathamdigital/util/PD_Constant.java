@@ -22,6 +22,11 @@ public class PD_Constant {
     public static final String GROUPID = "groupid";
     public static final String SETTINGS_BACK = "settings_back";
     public static final String STUDENTID = "studentid";
+    public static final String MAIN_BACK = "main_back";
+    public static final String LEVEL_CLICKED = "level_clicked";
+    public static final String PDF_DURATION = "pdf_duration";
+    public static final String PDF_MESH_PIXELS = "pdf_mesh_pixels";
+    public static final String PDF_PAGE_MODE = "pdf_page_mode";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

@@ -1,7 +1,5 @@
 package com.pratham.prathamdigital.ui.fragment_language;
 
-import android.animation.Animator;
-import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,10 +8,7 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
-import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -29,11 +24,10 @@ import butterknife.ButterKnife;
 
 public class FragmentLanguage extends Fragment implements ContractLanguage {
 
-    @BindView(R.id.root_language)
-    RelativeLayout root_language;
+    //    @BindView(R.id.root_language)
+//    RelativeLayout root_language;
     @BindView(R.id.rv_language)
     RecyclerView rv_language;
-    AnimationDrawable animationDrawable;
 
     LanguageAdapter adapter;
 
@@ -57,22 +51,22 @@ public class FragmentLanguage extends Fragment implements ContractLanguage {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_language, container, false);
-        if (getArguments() != null) {
-            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-                @Override
-                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
-                                           int oldRight, int oldBottom) {
-                    v.removeOnLayoutChangeListener(this);
-                    int cx = getArguments().getInt("cx");
-                    int cy = getArguments().getInt("cy");
-                    int radius = (int) Math.hypot(right, bottom);
-                    Animator reveal = ViewAnimationUtils.createCircularReveal(v, cx, cy, 0, radius);
-                    reveal.setInterpolator(new DecelerateInterpolator(2f));
-                    reveal.setDuration(1000);
-                    reveal.start();
-                }
-            });
-        }
+//        if (getArguments() != null) {
+//            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+//                @Override
+//                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
+//                                           int oldRight, int oldBottom) {
+//                    v.removeOnLayoutChangeListener(this);
+//                    int cx = getArguments().getInt("cx");
+//                    int cy = getArguments().getInt("cy");
+//                    int radius = (int) Math.hypot(right, bottom);
+//                    Animator reveal = ViewAnimationUtils.createCircularReveal(v, cx, cy, 0, radius);
+//                    reveal.setInterpolator(new DecelerateInterpolator(2f));
+//                    reveal.setDuration(1000);
+//                    reveal.start();
+//                }
+//            });
+//        }
         return rootView;
     }
 
@@ -81,16 +75,15 @@ public class FragmentLanguage extends Fragment implements ContractLanguage {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         //start gradient animation
-        animationDrawable = (AnimationDrawable) root_language.getBackground();
-        animationDrawable.setEnterFadeDuration(5000);
-        animationDrawable.setExitFadeDuration(2000);
+//        animationDrawable = (AnimationDrawable) root_language.getBackground();
+//        animationDrawable.setEnterFadeDuration(5000);
+//        animationDrawable.setExitFadeDuration(2000);
         initializeAdapter();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        animationDrawable.start();
     }
 
     private void initializeAdapter() {

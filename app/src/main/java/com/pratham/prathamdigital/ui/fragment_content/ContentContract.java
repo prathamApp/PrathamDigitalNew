@@ -19,6 +19,8 @@ public interface ContentContract {
         void increaseNotification(int number);
 
         void decreaseNotification(int number, Modal_ContentDetail detail);
+
+        void displayLevel(ArrayList<Modal_ContentDetail> levelContents);
     }
 
     interface contentPresenter {

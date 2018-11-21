@@ -2,9 +2,13 @@ package com.pratham.prathamdigital.ui.settings_activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.card.MaterialCardView;
 import android.support.v4.view.ViewPager;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewTreeObserver;
@@ -15,16 +19,14 @@ import android.widget.RelativeLayout;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.tab_bar.NavigationTabBar;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnTouch;
 
 public class SettingsActivity extends BaseActivity {
     @BindView(R.id.main_settings_root)
@@ -33,12 +35,10 @@ public class SettingsActivity extends BaseActivity {
     ImageView settings_back;
     @BindView(R.id.settings_vp)
     ViewPager settings_vp;
-    @BindView(R.id.setting_download)
-    ImageView setting_download;
-    @BindView(R.id.setting_language)
-    ImageView setting_language;
-    @BindView(R.id.setting_share)
-    ImageView setting_share;
+    @BindView(R.id.settings_tab_holder)
+    RelativeLayout settings_tab_holder;
+    @BindView(R.id.tab_card)
+    MaterialCardView tab_card;
 
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
@@ -46,7 +46,6 @@ public class SettingsActivity extends BaseActivity {
     private int revealY;
 
     SettingsPagerAdapter pagerAdapter;
-    final ArrayList<NavigationTabBar.Model> models = new ArrayList<>();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,55 +70,12 @@ public class SettingsActivity extends BaseActivity {
         } else {
             main_settings_root.setVisibility(View.VISIBLE);
         }
-        switch (getIntent().getStringExtra(PD_Constant.VIEW_TYPE)) {
-            case PD_Constant.DOWNLOAD:
-                initializeVP(true);
-                initializeTab(true);
-                break;
-            case PD_Constant.SETTINGS:
-                initializeVP(false);
-                initializeTab(false);
-                break;
-        }
+        initializeTab();
     }
 
-    private void initializeTab(boolean onlyDownload) {
-        if (onlyDownload) {
-            setting_download.setVisibility(View.VISIBLE);
-            setting_language.setVisibility(View.GONE);
-            setting_share.setVisibility(View.GONE);
-        } else {
-            setting_download.setVisibility(View.VISIBLE);
-            setting_language.setVisibility(View.VISIBLE);
-            setting_share.setVisibility(View.VISIBLE);
-        }
-    }
-
-    private void initializeVP(boolean onlyDownload) {
-        if (onlyDownload) {
-            pagerAdapter = new SettingsPagerAdapter(1, getSupportFragmentManager());
-        } else {
-            pagerAdapter = new SettingsPagerAdapter(3, getSupportFragmentManager());
-        }
+    private void initializeTab() {
+        pagerAdapter = new SettingsPagerAdapter(getSupportFragmentManager());
         settings_vp.setAdapter(pagerAdapter);
-    }
-
-    @OnClick(R.id.setting_download)
-    public void setSetting_download() {
-        PrathamApplication.bubble_mp.start();
-        settings_vp.setCurrentItem(0, true);
-    }
-
-    @OnClick(R.id.setting_language)
-    public void setSetting_language() {
-        PrathamApplication.bubble_mp.start();
-        settings_vp.setCurrentItem(1, true);
-    }
-
-    @OnClick(R.id.setting_share)
-    public void setSetting_share() {
-        PrathamApplication.bubble_mp.start();
-        settings_vp.setCurrentItem(2, true);
     }
 
     protected void revealActivity(int x, int y) {
@@ -163,5 +119,53 @@ public class SettingsActivity extends BaseActivity {
         });
         // make the view visible and start the animation
         circularReveal.start();
+    }
+
+    @OnTouch(R.id.settings_language)
+    public boolean setSettingLanguage(View view, MotionEvent event) {
+        animate(1, event, view, getResources().getColor(R.color.red));
+        return onTouchEvent(event);
+    }
+
+    @OnTouch(R.id.settings_share)
+    public boolean setSettingShare(View view, MotionEvent event) {
+        animate(2, event, view, getResources().getColor(R.color.green));
+        return onTouchEvent(event);
+    }
+
+    @OnTouch(R.id.settings)
+    public boolean setSetting(View view, MotionEvent event) {
+        animate(3, event, view, getResources().getColor(R.color.blue));
+        return onTouchEvent(event);
+    }
+
+    @BindView(R.id.sliding_strip)
+    View sliding_strip;
+
+    private void animate(int position, MotionEvent event, View v, int backgroundColor) {
+        float start = 0F;
+        float end = (float) Math.hypot(settings_tab_holder.getWidth(), settings_tab_holder.getHeight());
+        Animator animator = ViewAnimationUtils.createCircularReveal(settings_tab_holder, (int) event.getRawX(), (int) event.getY(), start, end);
+        animator.setDuration(1150L);
+        animator.setInterpolator(new FastOutSlowInInterpolator());
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                tab_card.setCardBackgroundColor(((ColorDrawable) settings_tab_holder.getBackground()).getColor());
+                settings_tab_holder.setBackgroundColor(backgroundColor);
+                sliding_strip.animate()
+                        .x(v.getX())
+                        .y(v.getY())
+                        .setDuration(500)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                sliding_strip.setX(v.getX());
+                                sliding_strip.setY(v.getY());
+                            }
+                        }).start();
+            }
+        });
+        animator.start();
     }
 }

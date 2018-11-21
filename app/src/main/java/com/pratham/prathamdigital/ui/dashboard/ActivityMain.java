@@ -35,19 +35,23 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ActivityMain extends BaseActivity implements ContentContract.mainView {
+public class ActivityMain extends BaseActivity implements ContentContract.mainView, LevelContract {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     @BindView(R.id.main_root)
     RelativeLayout main_root;
     @BindView(R.id.avatar_view)
-    LottieAnimationView avatar_view;
+    public LottieAnimationView avatar_view;
+    @BindView(R.id.back_view)
+    public LottieAnimationView back_view;
     @BindView(R.id.download_notification)
     NotificationBadge download_notification;
     @BindView(R.id.download_badge)
@@ -118,37 +122,30 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
-    @OnClick(R.id.avatar_shape)
+    @OnClick(R.id.avatar_view)
     public void openSettingsActivity() {
         PrathamApplication.bubble_mp.start();
         ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, avatar_shape, "transition");
-        Point points = PD_Utility.getCenterPointOfView(avatar_shape);
+                makeSceneTransitionAnimation(this, avatar_view, "transition");
+        Point points = PD_Utility.getCenterPointOfView(avatar_view);
         int revealX = (int) points.x;
         int revealY = (int) points.y;
         Intent intent = new Intent(this, SettingsActivity.class);
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        intent.putExtra(PD_Constant.VIEW_TYPE, PD_Constant.SETTINGS);
         ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
     }
 
-    ArrayList<Modal_ContentDetail> level = new ArrayList<>();
-    int count = 0;
-
-    @OnClick(R.id.search_shape)
-    public void setSearch_shape() {
-        count += 1;
-        Modal_ContentDetail modal_contentDetail = new Modal_ContentDetail();
-        modal_contentDetail.setNodetitle("count::" + count);
-        level.add(modal_contentDetail);
-        if (levelAdapter == null) {
-            levelAdapter = new RV_LevelAdapter(ActivityMain.this, level);
-            rv_level.setHasFixedSize(true);
-            rv_level.setLayoutManager(new LinearLayoutManager(ActivityMain.this, LinearLayoutManager.HORIZONTAL, false));
-            rv_level.setAdapter(levelAdapter);
-        } else {
-            levelAdapter.notifyDataSetChanged();
+    public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
+        if (levelContents != null) {
+            if (levelAdapter == null) {
+                levelAdapter = new RV_LevelAdapter(ActivityMain.this, levelContents, ActivityMain.this);
+                rv_level.setHasFixedSize(true);
+                rv_level.setLayoutManager(new LinearLayoutManager(ActivityMain.this, LinearLayoutManager.HORIZONTAL, false));
+                rv_level.setAdapter(levelAdapter);
+            } else {
+                levelAdapter.updateList(levelContents);
+            }
         }
     }
 
@@ -180,9 +177,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         download_notification.setNumber(number);
     }
 
+    @OnClick(R.id.back_view)
+    public void setMainBack() {
+        onBackPressed();
+    }
+
     @Override
     public void onBackPressed() {
-
+        EventBus.getDefault().post(PD_Constant.MAIN_BACK);
     }
 
     public void requestLocation() {
@@ -209,4 +211,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
+    @Override
+    public void levelClicked(Modal_ContentDetail detail) {
+        EventBus.getDefault().post(detail);
+    }
 }
