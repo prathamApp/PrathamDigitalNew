@@ -37,21 +37,15 @@ public class Modal_Student {
     @Ignore
     transient boolean isChecked = false;
 
-    public Modal_Student() {
-
-    }
-    public Modal_Student(String sid, String sname, String qrGroupID) {
-        this.StudentId = sid;
-        this.FirstName = sname;
-        this.GroupId = qrGroupID;
-    }
-
     @Override
     public String toString() {
         return "Modal_Student{" +
                 "GroupId='" + GroupId + '\'' +
                 ", GroupName='" + GroupName + '\'' +
                 ", FullName='" + FullName + '\'' +
+                ", FirstName='" + FirstName + '\'' +
+                ", MiddleName='" + MiddleName + '\'' +
+                ", LastName='" + LastName + '\'' +
                 ", Stud_Class='" + Stud_Class + '\'' +
                 ", Age='" + Age + '\'' +
                 ", Gender='" + Gender + '\'' +
@@ -59,6 +53,15 @@ public class Modal_Student {
                 ", StudentId='" + StudentId + '\'' +
                 ", isChecked=" + isChecked +
                 '}';
+    }
+
+    public Modal_Student() {
+
+    }
+    public Modal_Student(String sid, String sname, String qrGroupID) {
+        this.StudentId = sid;
+        this.FirstName = sname;
+        this.GroupId = qrGroupID;
     }
 
     public String getGroupId() {

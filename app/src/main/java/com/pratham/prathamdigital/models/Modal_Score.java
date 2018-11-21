@@ -38,6 +38,26 @@ public class Modal_Score {
     private String Label;
     private int sentFlag;
 
+    @Override
+    public String toString() {
+        return "Modal_Score{" +
+                "ScoreId=" + ScoreId +
+                ", SessionID='" + SessionID + '\'' +
+                ", StudentID='" + StudentID + '\'' +
+                ", GroupID='" + GroupID + '\'' +
+                ", DeviceID='" + DeviceID + '\'' +
+                ", ResourceID='" + ResourceID + '\'' +
+                ", QuestionId=" + QuestionId +
+                ", ScoredMarks=" + ScoredMarks +
+                ", TotalMarks=" + TotalMarks +
+                ", StartDateTime='" + StartDateTime + '\'' +
+                ", EndDateTime='" + EndDateTime + '\'' +
+                ", Level=" + Level +
+                ", Label='" + Label + '\'' +
+                ", sentFlag=" + sentFlag +
+                '}';
+    }
+
     public int getSentFlag() {
         return sentFlag;
     }

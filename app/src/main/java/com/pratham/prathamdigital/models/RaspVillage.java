@@ -19,6 +19,17 @@ public class RaspVillage {
     @SerializedName("facility")
     public String facility;
 
+    @Override
+    public String toString() {
+        return "RaspVillage{" +
+                "id='" + id + '\'' +
+                ", data=" + data +
+                ", filter_name='" + filter_name + '\'' +
+                ", table_name='" + table_name + '\'' +
+                ", facility='" + facility + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }

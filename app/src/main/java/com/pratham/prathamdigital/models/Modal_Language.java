@@ -7,6 +7,15 @@ public class Modal_Language implements Comparable {
     String main_language;
     boolean isselected;
 
+    @Override
+    public String toString() {
+        return "Modal_Language{" +
+                "language='" + language + '\'' +
+                ", main_language='" + main_language + '\'' +
+                ", isselected=" + isselected +
+                '}';
+    }
+
     public String getMain_language() {
         return main_language;
     }

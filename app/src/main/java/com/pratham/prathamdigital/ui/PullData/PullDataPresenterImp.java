@@ -8,6 +8,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Modal_Crl;
@@ -197,7 +198,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void loadStudent(String url) {
-        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+        AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
             @Override
             public void onResponse(JSONArray response) {
@@ -263,7 +264,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     private void downloadGroups(String url) {
 
-        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+        AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
             @Override
             public void onResponse(JSONArray response) {
@@ -326,7 +327,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void downloadCRL(String url) {
-        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+        AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
@@ -357,6 +358,24 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         PrathamDatabase.getDatabaseInstance(context).getStudentDao().insertAllStudents(studentList);
         PrathamDatabase.getDatabaseInstance(context).getGroupDao().insertAllGroups(groupList);
         PrathamDatabase.getDatabaseInstance(context).getVillageDao().insertAllVillages(vilageList.get(0).getData());
+
+        switch (selectedProgram) {
+            case APIs.HL:
+                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "1");
+                break;
+            case RI:
+                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "2");
+                break;
+            case SC:
+                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "3");
+                break;
+            case PI:
+                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "4");
+                break;
+            default:
+                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "1");
+                break;
+        }
         pullDataView.openLoginActivity();
     }
 

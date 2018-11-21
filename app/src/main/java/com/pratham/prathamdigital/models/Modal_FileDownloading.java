@@ -8,6 +8,16 @@ public class Modal_FileDownloading implements Comparable {
     int progress;
     Modal_ContentDetail contentDetail;
 
+    @Override
+    public String toString() {
+        return "Modal_FileDownloading{" +
+                "downloadId=" + downloadId +
+                ", filename='" + filename + '\'' +
+                ", progress=" + progress +
+                ", contentDetail=" + contentDetail +
+                '}';
+    }
+
     public Modal_ContentDetail getContentDetail() {
         return contentDetail;
     }

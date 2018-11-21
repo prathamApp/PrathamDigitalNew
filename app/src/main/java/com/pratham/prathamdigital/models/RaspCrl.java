@@ -19,6 +19,17 @@ public class RaspCrl {
     @SerializedName("facility")
     public String facility;
 
+    @Override
+    public String toString() {
+        return "RaspCrl{" +
+                "id='" + id + '\'' +
+                ", data=" + data +
+                ", filter_name='" + filter_name + '\'' +
+                ", table_name='" + table_name + '\'' +
+                ", facility='" + facility + '\'' +
+                '}';
+    }
+
     public String getId() {
         return id;
     }

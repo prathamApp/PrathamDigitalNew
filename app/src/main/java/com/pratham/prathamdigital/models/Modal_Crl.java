@@ -40,6 +40,26 @@ public class Modal_Crl {
     @SerializedName("Password")
     String Password;
 
+    @Override
+    public String toString() {
+        return "Modal_Crl{" +
+                "CRLId='" + CRLId + '\'' +
+                ", RoleId='" + RoleId + '\'' +
+                ", RoleName='" + RoleName + '\'' +
+                ", ProgramId='" + ProgramId + '\'' +
+                ", ProgramName='" + ProgramName + '\'' +
+                ", State='" + State + '\'' +
+                ", FirstName='" + FirstName + '\'' +
+                ", LastName='" + LastName + '\'' +
+                ", Mobile='" + Mobile + '\'' +
+                ", Email='" + Email + '\'' +
+                ", Block='" + Block + '\'' +
+                ", District='" + District + '\'' +
+                ", UserName='" + UserName + '\'' +
+                ", Password='" + Password + '\'' +
+                '}';
+    }
+
     @NonNull
     public String getCRLId() {
         return CRLId;

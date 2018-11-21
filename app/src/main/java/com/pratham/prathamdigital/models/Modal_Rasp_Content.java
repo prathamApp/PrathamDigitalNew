@@ -67,6 +67,32 @@ public class Modal_Rasp_Content {
     @SerializedName("sort_order")
     private int sortOrder;
 
+    @Override
+    public String toString() {
+        return "Modal_Rasp_Content{" +
+                "coachContent=" + coachContent +
+                ", numCoachContents=" + numCoachContents +
+                ", parent='" + parent + '\'' +
+                ", contentId='" + contentId + '\'' +
+                ", author='" + author + '\'' +
+                ", kind='" + kind + '\'' +
+                ", available=" + available +
+                ", description='" + description + '\'' +
+                ", title='" + title + '\'' +
+                ", licenseDescription=" + licenseDescription +
+                ", licenseName=" + licenseName +
+                ", progressFraction=" + progressFraction +
+                ", assessmentmetadata=" + assessmentmetadata +
+                ", licenseOwner='" + licenseOwner + '\'' +
+                ", files=" + files +
+                ", id='" + id + '\'' +
+                ", pk='" + pk + '\'' +
+                ", lang=" + lang +
+                ", channelId='" + channelId + '\'' +
+                ", sortOrder=" + sortOrder +
+                '}';
+    }
+
     public void setCoachContent(boolean coachContent) {
         this.coachContent = coachContent;
     }

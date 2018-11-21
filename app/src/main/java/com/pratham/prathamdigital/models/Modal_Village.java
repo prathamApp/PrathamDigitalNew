@@ -25,6 +25,19 @@ public class Modal_Village {
     @SerializedName("CRLId")
     private String CRLId;
 
+    @Override
+    public String toString() {
+        return "Modal_Village{" +
+                "VillageId=" + VillageId +
+                ", VillageCode='" + VillageCode + '\'' +
+                ", VillageName='" + VillageName + '\'' +
+                ", Block='" + Block + '\'' +
+                ", District='" + District + '\'' +
+                ", State='" + State + '\'' +
+                ", CRLId='" + CRLId + '\'' +
+                '}';
+    }
+
     public int getVillageId() {
         return VillageId;
     }

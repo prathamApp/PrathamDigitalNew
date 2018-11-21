@@ -30,6 +30,20 @@ public class Modal_RaspFacility {
     @SerializedName("username")
     private String username;
 
+    @Override
+    public String toString() {
+        return "Modal_RaspFacility{" +
+                "fullName='" + fullName + '\'' +
+                ", userId='" + userId + '\'' +
+                ", kind=" + kind +
+                ", facilityId='" + facilityId + '\'' +
+                ", id='" + id + '\'' +
+                ", canManageContent=" + canManageContent +
+                ", error='" + error + '\'' +
+                ", username='" + username + '\'' +
+                '}';
+    }
+
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }

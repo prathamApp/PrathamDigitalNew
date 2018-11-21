@@ -25,16 +25,24 @@ public class Village {
     @SerializedName("CRLId")
     private String CRLId;
 
+    @Override
+    public String toString() {
+        return "Village{" +
+                "VillageId=" + VillageId +
+                ", VillageCode='" + VillageCode + '\'' +
+                ", VillageName='" + VillageName + '\'' +
+                ", Block='" + Block + '\'' +
+                ", District='" + District + '\'' +
+                ", State='" + State + '\'' +
+                ", CRLId='" + CRLId + '\'' +
+                '}';
+    }
+
     public Village(int villageId, String villageName) {
         this.VillageId = villageId;
         this.VillageName = villageName;
     }
 
-
-    @Override
-    public String toString() {
-        return Block;
-    }
 
     public int getVillageId() {
         return VillageId;
