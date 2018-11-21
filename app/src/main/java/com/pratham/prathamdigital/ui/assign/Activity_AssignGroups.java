@@ -198,9 +198,8 @@ public class Activity_AssignGroups extends BaseActivity {
             checkBoxIds = null;
 
             dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
-            List<Modal_Groups> groupList = new ArrayList<Modal_Groups>(dbgroupList);
 
-            groupList.remove(0);
+            dbgroupList.remove(0);
 
             LinearLayout my_layout = (LinearLayout) findViewById(R.id.assignGroup1);
             LinearLayout my_layout1 = (LinearLayout) findViewById(R.id.assignGroup2);
@@ -208,12 +207,12 @@ public class Activity_AssignGroups extends BaseActivity {
             my_layout.removeAllViews();
             my_layout1.removeAllViews();
 
-            checkBoxIds = new String[groupList.size()];
-            int half = Math.round(groupList.size() / 2);
+            checkBoxIds = new String[dbgroupList.size()];
+            int half = Math.round(dbgroupList.size() / 2);
 
-            for (int i = 0; i < groupList.size(); i++) {
+            for (int i = 0; i < dbgroupList.size(); i++) {
 
-                Modal_Groups grp = groupList.get(i);
+                Modal_Groups grp = dbgroupList.get(i);
                 String groupName = grp.getGroupName();
                 String groupId = grp.getGroupId();
 

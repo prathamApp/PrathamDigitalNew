@@ -21,6 +21,13 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.models.Modal_Status;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
@@ -51,6 +58,23 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                 .start(new OnLocationUpdatedListener() {
                     @Override
                     public void onLocationUpdated(Location location) {
+                        Modal_Status statusObj = new Modal_Status();
+
+                        statusObj.statusKey = "Latitude";
+                        statusObj.value = String.valueOf(location.getLatitude());
+                        BaseActivity.statusDao.insert(statusObj);
+
+                        statusObj.statusKey = "Longitude";
+                        statusObj.value = String.valueOf(location.getLongitude());
+                        BaseActivity.statusDao.insert(statusObj);
+
+                        statusObj.statusKey = "GPSDateTime";
+                        DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+                        Date gdate = new Date(location.getTime());
+                        String gpsDateTime = format.format(gdate);
+                        statusObj.value = gpsDateTime;
+                        BaseActivity.statusDao.insert(statusObj);
+
                         Log.d(TAG, "onLocationUpdated:" + location.getLatitude() + ":::" + location.getLongitude());
                     }
                 });

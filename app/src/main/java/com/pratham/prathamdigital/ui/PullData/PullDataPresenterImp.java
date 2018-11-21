@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.PullData;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -14,7 +13,7 @@ import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
-import com.pratham.prathamdigital.models.VillageNameID;
+import com.pratham.prathamdigital.models.Village;
 import com.pratham.prathamdigital.util.APIs;
 
 import org.json.JSONArray;
@@ -58,10 +57,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void proccessVillageData(String block) {
-        ArrayList<VillageNameID> villageName = new ArrayList();
+        ArrayList<Village> villageName = new ArrayList();
         for (Modal_Village village : vilageList) {
             if (block.equalsIgnoreCase(village.getBlock().trim()))
-                villageName.add(new VillageNameID(village.getVillageId(), village.getVillageName()));
+                villageName.add(new Village(village.getVillageId(), village.getVillageName()));
         }
         if (!villageName.isEmpty()) {
             pullDataView.showVillageDialog(villageName);

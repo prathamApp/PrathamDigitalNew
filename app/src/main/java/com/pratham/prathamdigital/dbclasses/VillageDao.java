@@ -26,7 +26,7 @@ public interface VillageDao {
     @Query("SELECT DISTINCT Block FROM Village WHERE State=:st ORDER BY Block ASC")
     public List<String> GetStatewiseBlock(String st);
 
-    @Query("SELECT VillageID,VillageName FROM Village WHERE Block=:block  ORDER BY VillageName ASC")
+    @Query("SELECT * FROM Village WHERE Block=:block  ORDER BY VillageName ASC")
     public List<Modal_Village> GetVillages(String block);
 
     @Query("select VillageID from Village where Block=:block")

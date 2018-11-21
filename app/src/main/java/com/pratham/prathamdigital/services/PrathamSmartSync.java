@@ -5,9 +5,11 @@ import android.util.Log;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
+import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.json.JSONArray;
@@ -130,7 +132,6 @@ public class PrathamSmartSync extends AutoSync {
             statusObj.put("Latitude", BaseActivity.statusDao.getValue("Latitude"));
             statusObj.put("Longitude", BaseActivity.statusDao.getValue("Longitude"));
             statusObj.put("GPSDateTime", BaseActivity.statusDao.getValue("GPSDateTime"));
-            statusObj.put("AndroidID", BaseActivity.statusDao.getValue("AndroidID"));
             statusObj.put("SerialID", BaseActivity.statusDao.getValue("SerialID"));
             statusObj.put("apkVersion", BaseActivity.statusDao.getValue("apkVersion"));
             statusObj.put("appName", BaseActivity.statusDao.getValue("appName"));
@@ -143,9 +144,19 @@ public class PrathamSmartSync extends AutoSync {
             e.printStackTrace();
         }
 
-        // Pushing File to Server
-        String programId = BaseActivity.statusDao.getValue("programId");
-        String collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
+        String programId = "";
+        String collectedData = "";
+
+        try {
+            // Pushing File to Server
+            programId = BaseActivity.statusDao.getValue("programId");
+            collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
+        } finally {
+            new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                    .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
+                            collectedData, programId, "USAGEDATA");
+        }
+
     }
 
     private void pushSmartphoneJsons() {

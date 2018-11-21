@@ -15,6 +15,9 @@ public interface StudentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertAllStudents(List<Modal_Student> studentsList);
 
+    @Query("DELETE FROM Students")
+    public void deleteAllStudents();
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertStudent(Modal_Student studentsList);
 

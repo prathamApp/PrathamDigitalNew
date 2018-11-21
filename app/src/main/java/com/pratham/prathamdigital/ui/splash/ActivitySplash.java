@@ -65,6 +65,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                 mGoogleApiClient = splashPresenter.configureSignIn();
             }
         }
+        // Populate initial values
+        splashPresenter.populateDefaultDB();
     }
 
     private void startLightsAnimation() {
@@ -86,6 +88,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             }
         }, 2000);
     }
+
 
     @Override
     public void showAppUpdateDialog() {

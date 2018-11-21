@@ -1,7 +1,12 @@
 package com.pratham.prathamdigital.ui.splash;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -27,6 +32,11 @@ import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import java.util.Iterator;
+import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
+
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
         GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
@@ -34,6 +44,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     SplashContract.splashview splashview;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private String appname;
 
     public SplashPresenterImpl(Context context, SplashContract.splashview splashview) {
         this.context = context;
@@ -155,4 +166,143 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
         // todo redirect to age grp tablet
     }
+
+    // TODO populateDefaultDB();
+    public void populateDefaultDB() {
+        Modal_Status statusObj = new Modal_Status();
+
+        if (BaseActivity.statusDao.getKey("CRLID") == null) {
+            statusObj.statusKey = "CRLID";
+            statusObj.value = "default";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("DeviceId") == null) {
+            statusObj.statusKey = "DeviceId";
+            statusObj.value = PD_Utility.getDeviceID();
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("ActivatedDate") == null) {
+            statusObj.statusKey = "ActivatedDate";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("ActivatedForGroups") == null) {
+            statusObj.statusKey = "ActivatedForGroups";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("Latitude") == null) {
+            statusObj.statusKey = "Latitude";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("Longitude") == null) {
+            statusObj.statusKey = "Longitude";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("GPSDateTime") == null) {
+            statusObj.statusKey = "GPSDateTime";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("SerialID") == null) {
+            statusObj.statusKey = "SerialID";
+            statusObj.value = PD_Utility.getDeviceSerialID();
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("gpsFixDuration") == null) {
+            statusObj.statusKey = "gpsFixDuration";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("prathamCode") == null) {
+            statusObj.statusKey = "prathamCode";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("programId") == null) {
+            statusObj.statusKey = "programId";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("wifiMAC") == null) {
+            statusObj.statusKey = "wifiMAC";
+            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiInfo wInfo = wifiManager.getConnectionInfo();
+            String macAddress = wInfo.getMacAddress();
+            statusObj.value = macAddress;
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("apkType") == null) {
+            statusObj.statusKey = "apkType";
+            statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie";
+            BaseActivity.statusDao.insert(statusObj);
+        } else {
+            statusObj.statusKey = "apkType";
+            statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("appName") == null) {
+            CharSequence c = "";
+            ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+            List l = am.getRunningAppProcesses();
+            Iterator i = l.iterator();
+            PackageManager pm = context.getPackageManager();
+            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+            try {
+                c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
+                appname = c.toString();
+                Log.w("LABEL", c.toString());
+            } catch (Exception e) {
+            }
+            statusObj.statusKey = "appName";
+            statusObj.value = appname;
+            BaseActivity.statusDao.insert(statusObj);
+        } else {
+            CharSequence c = "";
+            ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+            List l = am.getRunningAppProcesses();
+            Iterator i = l.iterator();
+            PackageManager pm = context.getPackageManager();
+            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+            try {
+                c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
+                appname = c.toString();
+                Log.w("LABEL", c.toString());
+            } catch (Exception e) {
+            }
+            statusObj.statusKey = "appName";
+            statusObj.value = appname;
+            BaseActivity.statusDao.insert(statusObj);
+        }
+
+        if (BaseActivity.statusDao.getKey("apkVersion") == null) {
+            statusObj.statusKey = "apkVersion";
+            PackageInfo pInfo = null;
+            String verCode = "";
+            try {
+                pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                verCode = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            statusObj.value = verCode;
+            BaseActivity.statusDao.insert(statusObj);
+        } else {
+            statusObj.statusKey = "apkVersion";
+            PackageInfo pInfo = null;
+            String verCode = "";
+            try {
+                pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+                verCode = pInfo.versionName;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+            statusObj.value = verCode;
+            BaseActivity.statusDao.insert(statusObj);
+        }
+
+    }
+
 }

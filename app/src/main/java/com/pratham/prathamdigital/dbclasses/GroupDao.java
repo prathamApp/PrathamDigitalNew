@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.RoomWarnings;
 
 import com.pratham.prathamdigital.models.Modal_Groups;
 
@@ -20,7 +21,7 @@ public interface GroupDao {
     @Query("SELECT * FROM Groups ")
     public List<Modal_Groups> getAllGroups();
 
-    @Query("SELECT GroupID,GroupName FROM Groups WHERE VillageID=:vID ORDER BY GroupName ASC")
+    @Query("SELECT * FROM Groups WHERE VillageID=:vID ORDER BY GroupName ASC")
     public List<Modal_Groups> GetGroups(int vID);
 
     @Query("DELETE FROM Groups WHERE GroupID=:grpID")

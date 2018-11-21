@@ -49,17 +49,29 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHandler {
 
+    @BindView(R.id.content_frame)
     ViewGroup content_frame;
+    @BindView(R.id.tv_stud_one)
     TextView tv_stud_one;
+    @BindView(R.id.tv_stud_two)
     TextView tv_stud_two;
+    @BindView(R.id.tv_stud_three)
     TextView tv_stud_three;
+    @BindView(R.id.tv_stud_four)
     TextView tv_stud_four;
+    @BindView(R.id.tv_stud_five)
     TextView tv_stud_five;
-    Button btn_Start, btn_Reset;
+    @BindView(R.id.btn_Start)
+    Button btn_Start;
+    @BindView(R.id.btn_Reset)
+    Button btn_Reset;
 
     public ZXingScannerView startCameraScan;
     ArrayList<Modal_Student> stdList = new ArrayList<Modal_Student>();
@@ -67,8 +79,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     int totalStudents = 0;
     Boolean setStud = false;
     Modal_Student std;
-    //    static String programID = "";
-//    StatusDBHelper statusDBHelper;
     boolean permission = false;
     List<Attendance> attendances;
 
@@ -77,60 +87,9 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrlogin);
-        // Memory Allocation
-        content_frame = findViewById(R.id.content_frame);
-        tv_stud_one = findViewById(R.id.tv_stud_one);
-        tv_stud_two = findViewById(R.id.tv_stud_two);
-        tv_stud_three = findViewById(R.id.tv_stud_three);
-        tv_stud_four = findViewById(R.id.tv_stud_four);
-        tv_stud_five = findViewById(R.id.tv_stud_five);
-        btn_Reset = findViewById(R.id.btn_Reset);
-        btn_Start = findViewById(R.id.btn_Start);
-        tv_stud_one.setVisibility(View.GONE);
-        tv_stud_two.setVisibility(View.GONE);
-        tv_stud_three.setVisibility(View.GONE);
-        tv_stud_four.setVisibility(View.GONE);
-        tv_stud_five.setVisibility(View.GONE);
-//        statusDBHelper = new StatusDBHelper(this);
-//        programID = statusDBHelper.getValue("programId");
+        ButterKnife.bind(this);
+
         initCamera();
-
-        btn_Reset.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                content_frame.setVisibility(View.VISIBLE);
-
-                stdList.clear();
-                totalStudents = 0;
-
-                tv_stud_one.setText("");
-                tv_stud_two.setText("");
-                tv_stud_three.setText("");
-                tv_stud_four.setText("");
-                tv_stud_five.setText("");
-
-                tv_stud_one.setVisibility(View.GONE);
-                tv_stud_two.setVisibility(View.GONE);
-                tv_stud_three.setVisibility(View.GONE);
-                tv_stud_four.setVisibility(View.GONE);
-                tv_stud_five.setVisibility(View.GONE);
-
-                scanNextQRCode();
-
-            }
-        });
-
-
-        btn_Start.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (stdList.size() > 0)
-                    setValues();
-                else
-                    Toast.makeText(QRLogin.this, "Please Add Student !!!", Toast.LENGTH_SHORT).show();
-            }
-        });
-
 
         if (ContextCompat.checkSelfPermission(QRLogin.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
@@ -154,6 +113,36 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         }
 
     }// onCreate
+
+    @OnClick(R.id.btn_Reset)
+    public void resetButton() {
+        content_frame.setVisibility(View.VISIBLE);
+
+        stdList.clear();
+        totalStudents = 0;
+
+        tv_stud_one.setText("");
+        tv_stud_two.setText("");
+        tv_stud_three.setText("");
+        tv_stud_four.setText("");
+        tv_stud_five.setText("");
+
+        tv_stud_one.setVisibility(View.GONE);
+        tv_stud_two.setVisibility(View.GONE);
+        tv_stud_three.setVisibility(View.GONE);
+        tv_stud_four.setVisibility(View.GONE);
+        tv_stud_five.setVisibility(View.GONE);
+
+        scanNextQRCode();
+    }
+
+    @OnClick(R.id.btn_Start)
+    public void startButton() {
+        if (stdList.size() > 0)
+            setValues();
+        else
+            Toast.makeText(QRLogin.this, "Please Add Student !!!", Toast.LENGTH_SHORT).show();
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
@@ -195,6 +184,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         startCameraScan.stopCamera();
     }
 
+    // Start QRScan
     private void setValues() {
         attendances = new ArrayList<>();
 
@@ -203,8 +193,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
 
 //        MultiPhotoSelectActivity.selectedGroupsScore = "";
 
-
-        //todo check logic
 //        MultiPhotoSelectActivity.presentStudents = new String[stdList.size()];
         try {
 
@@ -280,7 +268,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         return progIDString;
     }
 
-
     public void scanNextQRCode() {
         if (startCameraScan != null) {
             startCameraScan.stopCamera();
@@ -288,7 +275,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         startCameraScan.startCamera();
         startCameraScan.resumeCameraPreview(this);
     }
-
 
     @Override
     public void handleResult(Result result) {
@@ -379,7 +365,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         }
     }
 
-
     public void showQrDialog(String studentName) {
 
         dialog = new Dialog(QRLogin.this);
@@ -430,7 +415,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         });
 
     }
-
 
     public void qrEntryProcess(Result result) {
         if (result.getText().contains("{")) {

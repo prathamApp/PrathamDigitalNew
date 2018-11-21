@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.RoomWarnings;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
@@ -26,11 +27,6 @@ public class Modal_Groups {
     public String VIllageName;
     @SerializedName("DeviceId")
     public String DeviceId;
-
-    Modal_Groups(String id, String name) {
-        GroupId = id;
-        GroupName = name;
-    }
 
     @NonNull
     public String getGroupId() {
@@ -97,3 +93,4 @@ public class Modal_Groups {
         DeviceId = deviceId;
     }
 }
+

@@ -11,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.models.VillageNameID;
+import com.pratham.prathamdigital.models.Village;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +33,7 @@ public class SelectVillageDialog extends Dialog {
     GridLayout flowLayout;
 
     Context context;
-    List<VillageNameID> villageList;
+    List<Village> villageList;
     List<CheckBox> checkBoxes = new ArrayList<>();
     VillageSelectListener villageSelectListener;
 

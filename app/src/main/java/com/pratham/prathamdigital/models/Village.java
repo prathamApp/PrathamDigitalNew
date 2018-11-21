@@ -11,7 +11,7 @@ public class Village {
     @NonNull
     @PrimaryKey
     @SerializedName("VillageId")
-    private String VillageId;
+    private int VillageId;
     @SerializedName("VillageCode")
     private String VillageCode;
     @SerializedName("VillageName")
@@ -25,17 +25,22 @@ public class Village {
     @SerializedName("CRLId")
     private String CRLId;
 
+    public Village(int villageId, String villageName) {
+        this.VillageId = villageId;
+        this.VillageName = villageName;
+    }
+
 
     @Override
     public String toString() {
         return Block;
     }
 
-    public String getVillageId() {
+    public int getVillageId() {
         return VillageId;
     }
 
-    public void setVillageId(String villageId) {
+    public void setVillageId(int villageId) {
         VillageId = villageId;
     }
 
