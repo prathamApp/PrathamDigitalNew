@@ -28,6 +28,10 @@ public class Modal_Groups {
     @SerializedName("DeviceId")
     public String DeviceId;
 
+
+
+
+
     @NonNull
     public String getGroupId() {
         return GroupId;

@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
+import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups;
 import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -99,7 +101,8 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
 
     @Override
     public void onLoginSuccess() {
-
+        Intent intent=new Intent(getActivity(),Activity_AssignGroups.class);
+        getActivity().startActivity(intent);
     }
 
     @Override

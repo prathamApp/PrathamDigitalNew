@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.PullData;
 
 import android.content.Context;
+import android.util.Base64;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
@@ -13,6 +14,10 @@ import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
+import com.pratham.prathamdigital.models.RaspCrl;
+import com.pratham.prathamdigital.models.RaspGroup;
+import com.pratham.prathamdigital.models.RaspStudent;
+import com.pratham.prathamdigital.models.RaspVillage;
 import com.pratham.prathamdigital.models.Village;
 import com.pratham.prathamdigital.util.APIs;
 
@@ -38,7 +43,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     String selectedProgram;
     int count = 0;
     int groupCount = 0;
-    ArrayList<Modal_Village> vilageList;
+    ArrayList<RaspVillage> vilageList;
     List<Modal_Crl> crlList = new ArrayList<>();
     List<Modal_Student> studentList = new ArrayList();
     List<Modal_Groups> groupList = new ArrayList();
@@ -58,7 +63,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     @Override
     public void proccessVillageData(String block) {
         ArrayList<Village> villageName = new ArrayList();
-        for (Modal_Village village : vilageList) {
+        for (Modal_Village village : vilageList.get(0).getData()) {
             if (block.equalsIgnoreCase(village.getBlock().trim()))
                 villageName.add(new Village(village.getVillageId(), village.getVillageName()));
         }
@@ -104,14 +109,16 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void downloadblock(String url) {
-        AndroidNetworking.get(url).build()
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
                     public void onResponse(JSONArray response) {
                         // do anything with response
                         List<String> blockList = new ArrayList<>();
                         Gson gson = new Gson();
-                        Type listType = new TypeToken<List<Modal_Village>>() {
+                        Type listType = new TypeToken<List<RaspVillage>>() {
                         }.getType();
                         vilageList = gson.fromJson(response.toString(), listType);
                         if (vilageList != null) {
@@ -119,7 +126,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                                 blockList.add("NO BLOCKS");
                             } else {
                                 blockList.add("Select block");
-                                for (Modal_Village village : vilageList) {
+                                for (Modal_Village village : vilageList.get(0).getData()) {
                                     blockList.add(village.getBlock());
                                 }
                             }
@@ -139,6 +146,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         pullDataView.showErrorToast();
                     }
                 });
+    }
+
+    private String getAuthHeader(String ID, String pass) {
+        String encoded = Base64.encodeToString((ID + ":" + pass).getBytes(), Base64.NO_WRAP);
+        String returnThis = "Basic " + encoded;
+        return returnThis;
     }
 
     @Override
@@ -184,19 +197,19 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void loadStudent(String url) {
-        AndroidNetworking.get(url).build().getAsJSONArray(new JSONArrayRequestListener() {
+        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
             @Override
             public void onResponse(JSONArray response) {
                 count++;
                 String json = response.toString();
                 Gson gson = new Gson();
-                Type listType = new TypeToken<List<Modal_Student>>() {
+                Type listType = new TypeToken<List<RaspStudent>>() {
                 }.getType();
-                List<Modal_Student> studentListTemp = gson.fromJson(json, listType);
+                List<RaspStudent> studentListTemp = gson.fromJson(json, listType);
                 if (studentListTemp != null) {
-                    studentList.addAll(studentListTemp);
+                    studentList.addAll(studentListTemp.get(0).getData());
                 }
-
                 loadGroups();
                 //dismissDialog();
             }
@@ -250,17 +263,18 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     private void downloadGroups(String url) {
 
-        AndroidNetworking.get(url).build().getAsJSONArray(new JSONArrayRequestListener() {
+        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
             @Override
             public void onResponse(JSONArray response) {
                 groupCount++;
                 String json = response.toString();
                 Gson gson = new Gson();
-                Type listType = new TypeToken<List<Modal_Groups>>() {
+                Type listType = new TypeToken<List<RaspGroup>>() {
                 }.getType();
-                List<Modal_Groups> groupListTemp = gson.fromJson(json, listType);
+                List<RaspGroup> groupListTemp = gson.fromJson(json, listType);
                 if (groupListTemp != null) {
-                    groupList.addAll(groupListTemp);
+                    groupList.addAll(groupListTemp.get(0).getData());
                 }
                 loadCRL();
             }
@@ -312,17 +326,18 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void downloadCRL(String url) {
-        AndroidNetworking.get(url).build()
+        AndroidNetworking.get(url) .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
                     public void onResponse(JSONArray response) {
                         // do anything with response
                         Gson gson = new Gson();
-                        Type listType = new TypeToken<List<Modal_Crl>>() {
+                        Type listType = new TypeToken<List<RaspCrl>>() {
                         }.getType();
-                        ArrayList<Modal_Crl> crlListTemp = gson.fromJson(response.toString(), listType);
+                        ArrayList<RaspCrl> crlListTemp = gson.fromJson(response.toString(), listType);
                         crlList.clear();
-                        crlList.addAll(crlListTemp);
+                        crlList.addAll(crlListTemp.get(0).getData());
                         pullDataView.closeProgressDialog();
                         pullDataView.enableSaveButton();
                     }
@@ -341,7 +356,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         PrathamDatabase.getDatabaseInstance(context).getCrLdao().insertAllCRL(crlList);
         PrathamDatabase.getDatabaseInstance(context).getStudentDao().insertAllStudents(studentList);
         PrathamDatabase.getDatabaseInstance(context).getGroupDao().insertAllGroups(groupList);
-        PrathamDatabase.getDatabaseInstance(context).getVillageDao().insertAllVillages(vilageList);
+        PrathamDatabase.getDatabaseInstance(context).getVillageDao().insertAllVillages(vilageList.get(0).getData());
         pullDataView.openLoginActivity();
     }
 

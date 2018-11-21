@@ -60,8 +60,6 @@ public class Activity_AssignGroups extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_assign_groups);
         ButterKnife.bind(this);
-        // Hide Actionbar
-        getSupportActionBar().hide();
 
         initializeStatesSpinner();
     }
@@ -199,7 +197,7 @@ public class Activity_AssignGroups extends BaseActivity {
 
             dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
 
-            dbgroupList.remove(0);
+//            dbgroupList.remove(0);
 
             LinearLayout my_layout = (LinearLayout) findViewById(R.id.assignGroup1);
             LinearLayout my_layout1 = (LinearLayout) findViewById(R.id.assignGroup2);
