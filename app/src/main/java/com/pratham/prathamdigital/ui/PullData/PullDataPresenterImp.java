@@ -40,7 +40,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     int count = 0;
     int groupCount = 0;
     ArrayList<Modal_Village> vilageList;
-    List<Modal_Crl> crlList;
+    List<Modal_Crl> crlList = new ArrayList<>();
     List<Modal_Student> studentList = new ArrayList();
     List<Modal_Groups> groupList = new ArrayList();
     List<String> villageIDList = new ArrayList();
@@ -80,7 +80,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 url = APIs.HLpullVillagesURL + selectedBlock;
                 downloadblock(url);
                 break;
-            case APIs.UP:
+           /* case APIs.UP:
                 //todo urban
                 url = APIs.UPpullVillagesURL + selectedBlock;
                 downloadblock(url);
@@ -88,7 +88,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
             case APIs.ECE:
                 url = APIs.ECEpullVillagesURL + selectedBlock;
                 downloadblock(url);
-                break;
+                break;*/
             case RI:
                 url = APIs.RIpullVillagesURL + selectedBlock;
                 downloadblock(url);
@@ -137,6 +137,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         // handle error
                         pullDataView.closeProgressDialog();
                         pullDataView.clearBlockSpinner();
+                        pullDataView.showErrorToast();
                     }
                 });
     }
@@ -157,7 +158,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                     url = APIs.HLpullStudentsURL + id;
                     loadStudent(url);
                     break;
-                case APIs.UP:
+              /*  case APIs.UP:
                     //todo urban
                     url = APIs.UPpullStudentsURL + id;
                     loadStudent(url);
@@ -165,7 +166,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 case APIs.ECE:
                     url = APIs.ECEpullStudentsURL + id;
                     loadStudent(url);
-                    break;
+                    break;*/
                 case RI:
                     url = APIs.RIpullStudentsURL + id;
                     loadStudent(url);
@@ -205,7 +206,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
             public void onError(ANError error) {
                 studentList.clear();
                 pullDataView.closeProgressDialog();
-                Toast.makeText(context, "no Internet available", Toast.LENGTH_SHORT).show();
+                pullDataView.showErrorToast();
                 // dismissDialog();
             }
         });
@@ -222,7 +223,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         urlgroup = APIs.HLpullGroupsURL + id;
                         downloadGroups(urlgroup);
                         break;
-                    case APIs.UP:
+                   /* case APIs.UP:
                         //todo urban
                         urlgroup = APIs.UPpullGroupsURL + id;
                         downloadGroups(urlgroup);
@@ -230,7 +231,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                     case APIs.ECE:
                         urlgroup = APIs.ECEpullGroupsURL + id;
                         downloadGroups(urlgroup);
-                        break;
+                        break;*/
                     case RI:
                         urlgroup = APIs.RIpullGroupsURL + id;
                         downloadGroups(urlgroup);
@@ -269,7 +270,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
             public void onError(ANError error) {
                 studentList.clear();
                 pullDataView.closeProgressDialog();
-                Toast.makeText(context, "no Internet available", Toast.LENGTH_SHORT).show();
+                pullDataView.showErrorToast();
                 // dismissDialog();
             }
         });
@@ -278,12 +279,15 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     private void loadCRL() {
         if (groupCount >= villageIDList.size()) {
             String crlURL;
+            if (crlList != null) {
+                crlList.clear();
+            }
             switch (selectedProgram) {
                 case APIs.HL:
                     crlURL = APIs.HLpullCrlsURL + selectedBlock;
                     downloadCRL(crlURL);
                     break;
-                case APIs.UP:
+               /* case APIs.UP:
                     //todo urban
                     crlURL = APIs.UPpullCrlsURL + selectedBlock;
                     downloadCRL(crlURL);
@@ -291,7 +295,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 case APIs.ECE:
                     crlURL = APIs.ECEpullCrlsURL + selectedBlock;
                     downloadCRL(crlURL);
-                    break;
+                    break;*/
                 case RI:
                     crlURL = APIs.RIpullCrlsURL + selectedBlock;
                     downloadCRL(crlURL);
@@ -317,15 +321,18 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         Gson gson = new Gson();
                         Type listType = new TypeToken<List<Modal_Crl>>() {
                         }.getType();
-                        crlList = gson.fromJson(response.toString(), listType);
+                        ArrayList<Modal_Crl> crlListTemp = gson.fromJson(response.toString(), listType);
+                        crlList.clear();
+                        crlList.addAll(crlListTemp);
                         pullDataView.closeProgressDialog();
-                        pullDataView.shoConfermationDialog(crlList.size(), studentList.size(), groupList.size(), vilageList.size());
+                        pullDataView.enableSaveButton();
                     }
 
                     @Override
                     public void onError(ANError error) {
                         // handle error
                         pullDataView.closeProgressDialog();
+                        pullDataView.showErrorToast();
                     }
                 });
     }
@@ -336,6 +343,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         PrathamDatabase.getDatabaseInstance(context).getStudentDao().insertAllStudents(studentList);
         PrathamDatabase.getDatabaseInstance(context).getGroupDao().insertAllGroups(groupList);
         PrathamDatabase.getDatabaseInstance(context).getVillageDao().insertAllVillages(vilageList);
+        pullDataView.openLoginActivity();
     }
 
     @Override
@@ -357,6 +365,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         }
         pullDataView.clearStateSpinner();
         pullDataView.clearBlockSpinner();
+        pullDataView.disableSaveButton();
+    }
+
+    @Override
+    public void onSaveClick() {
+        pullDataView.shoConfermationDialog(crlList.size(), studentList.size(), groupList.size(), vilageList.size());
     }
 
 

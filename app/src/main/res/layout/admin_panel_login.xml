@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/gray_btn_bg_pressed_color"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -31,8 +32,7 @@
                 android:layout_weight="1"
                 android:hint="User name"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:text="admin" />
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout
@@ -54,8 +54,7 @@
                 android:hint="Password"
                 android:inputType="textWebPassword"
                 android:maxLines="1"
-                android:singleLine="true"
-                android:text="admin" />
+                android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
     </LinearLayout>
 

@@ -15,39 +15,47 @@ public class APIs {
     public static final String HLpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
     public static final String HLpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=1&statecode=";
 
+
     public static final String ECE = "ECE";
     public static final String ECEpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=8&state=";
     public static final String ECEpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=8&villageId=";
     public static final String ECEpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=8&villageId=";
     public static final String ECEpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=8&statecode=";
 
-
-    /* http://www.swap.prathamcms.org/api/UserList?statecode=MH&programid=1*/
-    public static final String RI = "Read India";
-    public static final String RIpullVillagesURL = "http://www.readindia.openiscool.org/api/village/get?programId=2&state=";
-    public static final String RIpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=2&villageId=";
-    public static final String RIpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=2&villageId=";
-    public static final String RIpullCrlsURL = "http://www.readindia.openiscool.org/api/crl/get?programId=2";
-
-    public static final String SC = "Second Chance";
-    public static final String SCpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=3&state=";
-    public static final String SCpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=3&villageId=";
-    public static final String SCpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=3&villageId=";
-   // public static final String SCpullCrlsURL = "http://www.hlearning.openiscool.org/api/crl/get?programId=3";
-    public static final String SCpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=3&statecode=";
-
-    public static final String PI = "Pratham Institute";
-    public static final String PIpullVillagesURL = "http://www.tabdata.prathaminstitute.org/api/village/get?programId=4&state=";
-    public static final String PIpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=4&villageId=";
-    public static final String PIpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=4&villageId=";
-    public static final String PIpullCrlsURL = "http://www.tabdata.prathaminstitute.org/api/crl/get?programId=4";
-
-
     public static final String UP = "Urban programme";
     public static final String UPpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=6&state=";
     public static final String UPpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=6&villageId=";
     public static final String UPpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=6&villageId=";
     public static final String UPpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=6&statecode=";
+
+
+
+    /*public static final String HL = "Hybrid Learning";
+    public static final String HLpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:1,state:";
+    public static final String HLpullGroupsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:1,villageid:";
+    public static final String HLpullStudentsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:1,villageid:";
+    public static final String HLpullCrlsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:1,state:";
+*/
+
+    public static final String RI = "Read India";
+    public static final String RIpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:2,state:";
+    public static final String RIpullGroupsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:2,villageid:";
+    public static final String RIpullStudentsURL = "hhttp://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:2,villageid:";
+    public static final String RIpullCrlsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:2,state:";
+
+    public static final String SC = "Second Chance";
+    public static final String SCpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:3,state:";
+    public static final String SCpullGroupsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:3,villageid:";
+    public static final String SCpullStudentsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:3,villageid:";
+    public static final String SCpullCrlsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:3,state:";
+
+    public static final String PI = "Pratham Institute";
+    public static final String PIpullVillagesURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:4,state:";
+    public static final String PIpullGroupsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:4,villageid:";
+    public static final String PIpullStudentsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:4,villageid:";
+    public static final String PIpullCrlsURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:4,state:";
+
+
 
     //NewPushURL
     /*  public static final String HLpushToServerURL = "http://www.hlearning.openiscool.org/api/datapush/pushusage";*/

@@ -7,6 +7,7 @@ import android.arch.persistence.room.Query;
 
 import com.pratham.prathamdigital.models.Modal_Crl;
 
+import java.security.cert.CRL;
 import java.util.List;
 
 @Dao
@@ -17,7 +18,10 @@ public interface CRLdao {
     @Query("DELETE FROM CRL")
     public void deleteAllCRLs();
 
-    @Query("SELECT * FROM CRL")
+    @Query("SELECT * FROM CRL WHERE UserName=:user AND Password=:pass")
+    public Modal_Crl checkUserValidation(String user, String pass);
+
+/*    @Query("SELECT * FROM CRL")
     public List<Modal_Crl> getAllCRLs();
 
     @Query("SELECT count(*) FROM CRL")
@@ -33,5 +37,5 @@ public interface CRLdao {
     public List<String> getDistinctCRLsRoleId();
 
     @Query("SELECT DISTINCT UserName,CRLId,FirstName FROM CRL WHERE RoleName=:roleName and ProgramName=:programName")
-    public List<Modal_Crl> getDistinctCRLsUserName(String roleName, String programName);
+    public List<Modal_Crl> getDistinctCRLsUserName(String roleName, String programName);*/
 }

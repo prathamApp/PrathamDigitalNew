@@ -18,11 +18,21 @@ public interface PullDataContract {
         public void closeProgressDialog();
 
         public void clearBlockSpinner();
+
         public void clearStateSpinner();
 
         public void showBlocksSpinner(List blocks);
 
         public void showVillageDialog(List villageList);
+
+        public void disableSaveButton();
+
+        public void enableSaveButton();
+
+        public void showErrorToast();
+
+        public void openLoginActivity();
+
 
     }
 
@@ -36,6 +46,10 @@ public interface PullDataContract {
         public void downloadStudentAndGroup(ArrayList<String> villageIDList);
 
         public void saveData();
+
         public void clearLists();
+
+        public void onSaveClick();
+
     }
 }

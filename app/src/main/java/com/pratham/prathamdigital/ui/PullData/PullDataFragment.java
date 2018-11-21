@@ -13,18 +13,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -40,6 +44,9 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
 
     @BindView(R.id.blockSpinner)
     Spinner blockSpinner;
+
+    @BindView(R.id.save_button)
+    Button save_button;
 
     PullDataContract.PullDataPresenter pullDataPresenter;
     ProgressDialog progressDialog;
@@ -59,7 +66,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         radioGroupPrograms.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-               pullDataPresenter.clearLists();
+                pullDataPresenter.clearLists();
             }
         });
     }
@@ -72,8 +79,10 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                disableSaveButton();
                 if (pos <= 0) {
                     clearBlockSpinner();
+
                 } else {
                     int selectedRadioButtonId = radioGroupPrograms.getCheckedRadioButtonId();
                     if (selectedRadioButtonId == -1) {
@@ -112,6 +121,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 pullDataPresenter.saveData();
+
             }
         });
         dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -149,11 +159,11 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         blockSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long l) {
+                disableSaveButton();
                 if (pos > 0) {
                     //open Village Dialog
                     String block = adapterView.getSelectedItem().toString();
                     pullDataPresenter.proccessVillageData(block);
-
                 }
             }
 
@@ -171,7 +181,33 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     }
 
     @Override
+    public void disableSaveButton() {
+        save_button.setEnabled(false);
+    }
+
+    @Override
+    public void enableSaveButton() {
+        save_button.setEnabled(true);
+    }
+
+    @Override
+    public void showErrorToast() {
+        Toast.makeText(getActivity(), "Connect to raspberry ", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void openLoginActivity() {
+        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
+                null, AdminPanelFragment.class.getSimpleName());
+    }
+
+    @Override
     public void getSelectedItems(ArrayList<String> villageIDList) {
         pullDataPresenter.downloadStudentAndGroup(villageIDList);
+    }
+
+    @OnClick(R.id.save_button)
+    public void saveData() {
+        pullDataPresenter.onSaveClick();
     }
 }
