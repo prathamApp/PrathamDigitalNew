@@ -44,6 +44,8 @@ public class Activity_AssignGroups extends BaseActivity {
     LinearLayout assignGroup1;
     @BindView(R.id.assignGroup2)
     LinearLayout assignGroup2;
+    @BindView(R.id.LinearLayoutGroups)
+    LinearLayout LinearLayoutGroups;
 
     @BindView(R.id.allocateGroups)
     Button allocateGroups;
@@ -90,7 +92,7 @@ public class Activity_AssignGroups extends BaseActivity {
     private void initializeStatesSpinner() {
         //Get Villages Data for States AllSpinners
         List<String> States = new ArrayList<>();
-        States.add("Select State");
+//        States.add("Select State");
         States = BaseActivity.villageDao.getAllStates();
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<String> StateAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, States);
@@ -117,7 +119,7 @@ public class Activity_AssignGroups extends BaseActivity {
         spinner_SelectBlock = (Spinner) findViewById(R.id.spinner_SelectBlock);
         //Get Villages Data for Blocks AllSpinners
         Blocks = new ArrayList<>();
-        Blocks.add("Select Block");
+//        Blocks.add("Select Block");
         Blocks = BaseActivity.villageDao.GetStatewiseBlock(selectedState);
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<String> BlockAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, Blocks);
@@ -153,7 +155,7 @@ public class Activity_AssignGroups extends BaseActivity {
 
         //Get Villages Data for Villages filtered by block for Spinners
         List<Modal_Village> BlocksVillages = new ArrayList<Modal_Village>();
-        BlocksVillages.add(new Modal_Village(0, "--Select Village--"));
+//        BlocksVillages.add(new Modal_Village(0, "--Select Village--"));
         BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<Modal_Village> VillagesAdapter = new ArrayAdapter<Modal_Village>(this, R.layout.custom_spinner, BlocksVillages);
@@ -196,29 +198,25 @@ public class Activity_AssignGroups extends BaseActivity {
         // Check Spinner Emptyness
         int VillagesSpinnerValue = spinner_selectVillage.getSelectedItemPosition();
 
+//        Toast.makeText(this, ""+vilID, Toast.LENGTH_SHORT).show();
+
         if (VillagesSpinnerValue > 0 || programID.equals("2")) {
 
             // Showing Groups from Database
             checkBoxIds = null;
 
             dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
-            List<Modal_Groups> groupList = new ArrayList<Modal_Groups>(dbgroupList);
 
-            groupList.add(new Modal_Groups("0", "--Select Groups--"));
-
-            for (int i = 0; i < dbgroupList.size(); i++)
-                groupList.add(new Modal_Groups(dbgroupList.get(i).GroupId, dbgroupList.get(i).GroupName));
-
-            groupList.remove(0);
+//            groupList.remove(0);
             assignGroup1.removeAllViews();
             assignGroup2.removeAllViews();
 
-            checkBoxIds = new String[groupList.size()];
-            int half = Math.round(groupList.size() / 2);
+            checkBoxIds = new String[dbgroupList.size()];
+            int half = Math.round(dbgroupList.size() / 2);
 
-            for (int i = 0; i < groupList.size(); i++) {
+            for (int i = 0; i < dbgroupList.size(); i++) {
 
-                Modal_Groups grp = groupList.get(i);
+                Modal_Groups grp = dbgroupList.get(i);
                 String groupName = grp.getGroupName();
                 String groupId = grp.getGroupId();
 
@@ -247,11 +245,9 @@ public class Activity_AssignGroups extends BaseActivity {
                 else
                     assignGroup1.addView(row);
             }
-
             // Animation Effect on Groups populate
-            LinearLayout image = (LinearLayout) findViewById(R.id.LinearLayoutGroups);
             Animation animation1 = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.slide);
-            image.startAnimation(animation1);
+            LinearLayoutGroups.startAnimation(animation1);
 
             allocateGroups.setVisibility(View.VISIBLE);
         } else {
@@ -316,7 +312,7 @@ public class Activity_AssignGroups extends BaseActivity {
                     progress.setCanceledOnTouchOutside(false);
                     progress.show();
 
-                    Toast.makeText(Activity_AssignGroups.this, "grp1 : " + group1 + "\ngrp2 : " + group2 + "\ngrp3 : " + group3 + "\ngrp4 : " + group4 + "\ngrp5 : " + group5, Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(Activity_AssignGroups.this, "grp1 : " + group1 + "\ngrp2 : " + group2 + "\ngrp3 : " + group3 + "\ngrp4 : " + group4 + "\ngrp5 : " + group5, Toast.LENGTH_SHORT).show();
 
                     Thread mThread = new Thread() {
                         @Override
