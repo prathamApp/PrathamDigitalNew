@@ -27,11 +27,6 @@ import butterknife.OnClick;
 
 public class FragmentSelectAgeGroup extends Fragment {
 
-    @BindView(R.id.iv_age_3_to_6)
-    ImageView iv_age_3_to_6;
-    @BindView(R.id.iv_age_8_to_14)
-    ImageView iv_age_8_to_14;
-
   /*  @BindView(R.id.admin_panel)
     com.airbnb.lottie.LottieAnimationView admin_panel;*/
 
@@ -61,10 +56,8 @@ public class FragmentSelectAgeGroup extends Fragment {
         checkPermission();
     }
 
-
     protected void checkPermission() {
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-
             // Do something, when permissions not granted
             if (ActivityCompat.shouldShowRequestPermissionRationale(
                     getActivity(), Manifest.permission.CAMERA)) {
@@ -78,13 +71,8 @@ public class FragmentSelectAgeGroup extends Fragment {
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(
-                                getActivity(),
-                                new String[]{
-                                        Manifest.permission.CAMERA
-                                },
-                                MY_PERMISSIONS_REQUEST_CODE
-                        );
+                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                                MY_PERMISSIONS_REQUEST_CODE);
                     }
                 });
                 builder.setNeutralButton("Cancel", null);
@@ -92,13 +80,8 @@ public class FragmentSelectAgeGroup extends Fragment {
                 dialog.show();
             } else {
                 // Directly request for required permissions, without explanation
-                ActivityCompat.requestPermissions(
-                        getActivity(),
-                        new String[]{
-                                Manifest.permission.CAMERA
-                        },
-                        MY_PERMISSIONS_REQUEST_CODE
-                );
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+                        MY_PERMISSIONS_REQUEST_CODE);
             }
         } else {
             // Do something, when permissions are already granted
@@ -113,19 +96,11 @@ public class FragmentSelectAgeGroup extends Fragment {
         switch (requestCode) {
             case MY_PERMISSIONS_REQUEST_CODE: {
                 // When request is cancelled, the results array are empty
-                if (
-                        (grantResults.length > 0) &&
-                                (grantResults[0]
-                                        + grantResults[1]
-                                        == PackageManager.PERMISSION_GRANTED
-                                )
-                        ) {
-
+                if ((grantResults.length > 0) && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
                     // if granted
                     Intent intent = new Intent(getActivity(), QRLogin.class);
                     startActivity(intent);
                     getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-
                 } else {
                     // Permissions are denied
                     checkPermission();
@@ -136,12 +111,17 @@ public class FragmentSelectAgeGroup extends Fragment {
         }
     }
 
+    @OnClick(R.id.iv_age_3_to_6)
+    public void open3to6Groups() {
+    }
+
+    @OnClick(R.id.iv_age_8_to_14)
+    public void open8to14Groups() {
+    }
 
     @OnClick(R.id.admin_panel)
-    public void openAdminPanel(){
-
+    public void openAdminPanel() {
         PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
                 null, AdminPanelFragment.class.getSimpleName());
-
     }
 }

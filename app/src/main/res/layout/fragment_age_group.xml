@@ -7,24 +7,22 @@
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/scan_qr"
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_70sdp"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
         android:layout_alignParentRight="true"
-        android:background="@color/white"
         app:lottie_autoPlay="true"
         app:lottie_fileName="scan.json"
         app:lottie_loop="true" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/admin_panel"
-        android:layout_width="@dimen/_70sdp"
-        android:layout_height="@dimen/_70sdp"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_60sdp"
         android:layout_alignParentTop="true"
-        android:layout_toLeftOf="@id/scan_qr"
         android:layout_marginRight="10dp"
-        android:background="@color/white"
+        android:layout_toLeftOf="@id/scan_qr"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="scan.json"
+        app:lottie_fileName="avatars/profile.json"
         app:lottie_loop="true" />
 
     <LinearLayout
