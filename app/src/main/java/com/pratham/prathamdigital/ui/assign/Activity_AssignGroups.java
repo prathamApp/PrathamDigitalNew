@@ -89,7 +89,9 @@ public class Activity_AssignGroups extends BaseActivity {
     // Populate States Spinner
     private void initializeStatesSpinner() {
         //Get Villages Data for States AllSpinners
-        List<String> States = BaseActivity.villageDao.getAllStates();
+        List<String> States = new ArrayList<>();
+        States.add("Select State");
+        States = BaseActivity.villageDao.getAllStates();
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<String> StateAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, States);
         // Hint for AllSpinners
@@ -114,6 +116,8 @@ public class Activity_AssignGroups extends BaseActivity {
     public void populateBlock(String selectedState) {
         spinner_SelectBlock = (Spinner) findViewById(R.id.spinner_SelectBlock);
         //Get Villages Data for Blocks AllSpinners
+        Blocks = new ArrayList<>();
+        Blocks.add("Select Block");
         Blocks = BaseActivity.villageDao.GetStatewiseBlock(selectedState);
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<String> BlockAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, Blocks);
@@ -148,7 +152,9 @@ public class Activity_AssignGroups extends BaseActivity {
     public void populateVillage(String selectedBlock) {
 
         //Get Villages Data for Villages filtered by block for Spinners
-        List<Modal_Village> BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
+        List<Modal_Village> BlocksVillages = new ArrayList<Modal_Village>();
+        BlocksVillages.add(new Modal_Village(0, "--Select Village--"));
+        BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
         //Creating the ArrayAdapter instance having the Villages list
         ArrayAdapter<Modal_Village> VillagesAdapter = new ArrayAdapter<Modal_Village>(this, R.layout.custom_spinner, BlocksVillages);
         // Hint for AllSpinners
@@ -196,21 +202,23 @@ public class Activity_AssignGroups extends BaseActivity {
             checkBoxIds = null;
 
             dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
+            List<Modal_Groups> groupList = new ArrayList<Modal_Groups>(dbgroupList);
 
-//            dbgroupList.remove(0);
+            groupList.add(new Modal_Groups("0", "--Select Groups--"));
 
-            LinearLayout my_layout = (LinearLayout) findViewById(R.id.assignGroup1);
-            LinearLayout my_layout1 = (LinearLayout) findViewById(R.id.assignGroup2);
+            for (int i = 0; i < dbgroupList.size(); i++)
+                groupList.add(new Modal_Groups(dbgroupList.get(i).GroupId, dbgroupList.get(i).GroupName));
 
-            my_layout.removeAllViews();
-            my_layout1.removeAllViews();
+            groupList.remove(0);
+            assignGroup1.removeAllViews();
+            assignGroup2.removeAllViews();
 
-            checkBoxIds = new String[dbgroupList.size()];
-            int half = Math.round(dbgroupList.size() / 2);
+            checkBoxIds = new String[groupList.size()];
+            int half = Math.round(groupList.size() / 2);
 
-            for (int i = 0; i < dbgroupList.size(); i++) {
+            for (int i = 0; i < groupList.size(); i++) {
 
-                Modal_Groups grp = dbgroupList.get(i);
+                Modal_Groups grp = groupList.get(i);
                 String groupName = grp.getGroupName();
                 String groupId = grp.getGroupId();
 
@@ -235,9 +243,9 @@ public class Activity_AssignGroups extends BaseActivity {
 
                 row.addView(checkBox);
                 if (i >= half)
-                    my_layout1.addView(row);
+                    assignGroup2.addView(row);
                 else
-                    my_layout.addView(row);
+                    assignGroup1.addView(row);
             }
 
             // Animation Effect on Groups populate
@@ -308,6 +316,8 @@ public class Activity_AssignGroups extends BaseActivity {
                     progress.setCanceledOnTouchOutside(false);
                     progress.show();
 
+                    Toast.makeText(Activity_AssignGroups.this, "grp1 : " + group1 + "\ngrp2 : " + group2 + "\ngrp3 : " + group3 + "\ngrp4 : " + group4 + "\ngrp5 : " + group5, Toast.LENGTH_SHORT).show();
+
                     Thread mThread = new Thread() {
                         @Override
                         public void run() {
@@ -325,7 +335,7 @@ public class Activity_AssignGroups extends BaseActivity {
                             BaseActivity.statusDao.updateValue("group4", group4);
                             BaseActivity.statusDao.updateValue("group5", group5);
                             BaseActivity.statusDao.updateValue("village", Integer.toString(vilID));
-                            BaseActivity.statusDao.updateValue("deviceId", PD_Utility.getDeviceID());
+                            BaseActivity.statusDao.updateValue("DeviceId", PD_Utility.getDeviceID());
                             BaseActivity.statusDao.updateValue("ActivatedDate", PD_Utility.getCurrentDateTime());
                             BaseActivity.statusDao.updateValue("ActivatedForGroups", group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5);
 

@@ -39,7 +39,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/_32sdp"
+                android:layout_margin="16dp"
                 android:textAlignment="center" />
 
             <!--Select Block Drop Down List-->
@@ -49,7 +49,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/spinner_SelectState"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/_32sdp"
+                android:layout_margin="16dp"
                 android:textAlignment="center" />
 
             <!--Village Drop Down List-->
@@ -59,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/spinner_SelectBlock"
                 android:layout_centerHorizontal="true"
-                android:layout_margin="@dimen/_32sdp"
+                android:layout_margin="16dp"
                 android:textAlignment="center" />
 
 
@@ -68,7 +68,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/spinner_selectVillage"
-                android:layout_margin="@dimen/_32sdp"
+                android:layout_margin="16dp"
                 android:gravity="center_horizontal"
                 android:orientation="horizontal">
 
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/LinearLayoutGroups"
                 android:layout_gravity="center"
-                android:layout_margin="@dimen/_32sdp"
+                android:layout_margin="16dp"
                 android:background="@color/button"
                 android:text="  Assign  "
                 android:textColor="#FFFFFF"

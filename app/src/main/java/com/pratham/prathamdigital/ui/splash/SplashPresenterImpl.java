@@ -176,6 +176,31 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = "default";
             BaseActivity.statusDao.insert(statusObj);
         }
+        if (BaseActivity.statusDao.getKey("group1") == null) {
+            statusObj.statusKey = "group1";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("group2") == null) {
+            statusObj.statusKey = "group2";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("group3") == null) {
+            statusObj.statusKey = "group3";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("group4") == null) {
+            statusObj.statusKey = "group4";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("group5") == null) {
+            statusObj.statusKey = "group5";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
         if (BaseActivity.statusDao.getKey("DeviceId") == null) {
             statusObj.statusKey = "DeviceId";
             statusObj.value = PD_Utility.getDeviceID();
@@ -183,6 +208,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
         if (BaseActivity.statusDao.getKey("ActivatedDate") == null) {
             statusObj.statusKey = "ActivatedDate";
+            statusObj.value = "";
+            BaseActivity.statusDao.insert(statusObj);
+        }
+        if (BaseActivity.statusDao.getKey("village") == null) {
+            statusObj.statusKey = "village";
             statusObj.value = "";
             BaseActivity.statusDao.insert(statusObj);
         }

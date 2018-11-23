@@ -11,31 +11,36 @@ public class Modal_Village {
     @NonNull
     @PrimaryKey
     @SerializedName("VillageId")
-    private int VillageId;
+    public int VillageId;
     @SerializedName("VillageCode")
-    private String VillageCode;
+    public String VillageCode;
     @SerializedName("VillageName")
-    private String VillageName;
+    public String VillageName;
     @SerializedName("Block")
-    private String Block;
+    public String Block;
     @SerializedName("District")
-    private String District;
+    public String District;
     @SerializedName("State")
-    private String State;
+    public String State;
     @SerializedName("CRLId")
-    private String CRLId;
+    public String CRLId;
 
     @Override
-    public String toString() {
-        return "Modal_Village{" +
-                "VillageId=" + VillageId +
-                ", VillageCode='" + VillageCode + '\'' +
-                ", VillageName='" + VillageName + '\'' +
-                ", Block='" + Block + '\'' +
-                ", District='" + District + '\'' +
-                ", State='" + State + '\'' +
-                ", CRLId='" + CRLId + '\'' +
-                '}';
+    public String toString(){
+        return this.VillageName;
+    }
+
+    public Modal_Village() {
+    }
+
+    Modal_Village(int id) {
+        VillageId = id;
+    }
+
+
+    public Modal_Village(int vid, String vname) {
+        this.VillageId = vid;
+        this.VillageName = vname;
     }
 
     public int getVillageId() {

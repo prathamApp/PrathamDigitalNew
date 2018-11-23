@@ -38,7 +38,7 @@ public interface StatusDao {
     @Query("Select value from Status where statusKey = :key")
     String getValue(String key);
 
-    @Query("update Status set value =:value where statusKey = :key")
+    @Query("UPDATE Status set value =:value where statusKey =:key")
     void updateValue(String key, String value);
 
 }

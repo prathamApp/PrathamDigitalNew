@@ -28,17 +28,16 @@ public class Modal_Groups {
     public String DeviceId;
 
     @Override
-    public String toString() {
-        return "Modal_Groups{" +
-                "GroupId='" + GroupId + '\'' +
-                ", GroupName='" + GroupName + '\'' +
-                ", VillageId='" + VillageId + '\'' +
-                ", ProgramId=" + ProgramId +
-                ", GroupCode='" + GroupCode + '\'' +
-                ", SchoolName='" + SchoolName + '\'' +
-                ", VIllageName='" + VIllageName + '\'' +
-                ", DeviceId='" + DeviceId + '\'' +
-                '}';
+    public String toString(){
+        return this.GroupName;
+    }
+
+    public Modal_Groups() {
+    }
+
+    public Modal_Groups(String gid, String gname) {
+        this.GroupId = gid;
+        this.GroupName = gname;
     }
 
     @NonNull
