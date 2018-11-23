@@ -27,6 +27,8 @@ public class PD_Constant {
     public static final String PDF_DURATION = "pdf_duration";
     public static final String PDF_MESH_PIXELS = "pdf_mesh_pixels";
     public static final String PDF_PAGE_MODE = "pdf_page_mode";
+    public static final String STUDENT_ADDED = "STUDENT_ADDED";
+    public static final String STUDENT_LIST = "STUDENT_LIST";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";
@@ -140,7 +142,7 @@ public class PD_Constant {
 
 
     //API's
-    public static final String HLpullStudentURL="http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
-    public static final String HLpullVillagesURL="http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
-    public static final String HLpullGroupsURL="http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
+    public static final String HLpullStudentURL = "http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
+    public static final String HLpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
+    public static final String HLpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
 }

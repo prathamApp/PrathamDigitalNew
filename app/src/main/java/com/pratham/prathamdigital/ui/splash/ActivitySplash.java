@@ -24,7 +24,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.view_animators.Animate;
 import com.pratham.prathamdigital.custom.view_animators.Techniques;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
-import com.pratham.prathamdigital.ui.avatar.Activity_SelectAvatar;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
 
@@ -127,7 +127,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
     @Override
     public void redirectToAvatar() {
-        Intent intent = new Intent(ActivitySplash.this, Activity_SelectAvatar.class);
+        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity.class);
+        intent.putExtra(PD_Constant.STUDENT_ADDED, true);
         startActivity(intent);
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         finishAfterTransition();
