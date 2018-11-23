@@ -124,18 +124,21 @@ public class SettingsActivity extends BaseActivity {
     @OnTouch(R.id.settings_language)
     public boolean setSettingLanguage(View view, MotionEvent event) {
         animate(1, event, view, getResources().getColor(R.color.red));
+        settings_vp.setCurrentItem(0);
         return onTouchEvent(event);
     }
 
     @OnTouch(R.id.settings_share)
     public boolean setSettingShare(View view, MotionEvent event) {
         animate(2, event, view, getResources().getColor(R.color.green));
+        settings_vp.setCurrentItem(1);
         return onTouchEvent(event);
     }
 
     @OnTouch(R.id.settings)
     public boolean setSetting(View view, MotionEvent event) {
         animate(3, event, view, getResources().getColor(R.color.blue));
+        settings_vp.setCurrentItem(2);
         return onTouchEvent(event);
     }
 

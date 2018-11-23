@@ -22,7 +22,7 @@ public class FragmentSettings extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_language, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_general_settings, container, false);
         return rootView;
     }
 

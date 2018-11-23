@@ -1,15 +1,16 @@
 package com.pratham.prathamdigital.models;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "Students")
-public class Modal_Student {
+public class Modal_Student implements Comparable, Parcelable {
     @SerializedName("GroupId")
     public String GroupId;
     @SerializedName("GroupName")
@@ -37,6 +38,33 @@ public class Modal_Student {
     @Ignore
     transient boolean isChecked = false;
 
+    protected Modal_Student(Parcel in) {
+        GroupId = in.readString();
+        GroupName = in.readString();
+        FullName = in.readString();
+        FirstName = in.readString();
+        MiddleName = in.readString();
+        LastName = in.readString();
+        Stud_Class = in.readString();
+        Age = in.readString();
+        Gender = in.readString();
+        sentFlag = in.readInt();
+        StudentId = in.readString();
+        isChecked = in.readByte() != 0;
+    }
+
+    public static final Creator<Modal_Student> CREATOR = new Creator<Modal_Student>() {
+        @Override
+        public Modal_Student createFromParcel(Parcel in) {
+            return new Modal_Student(in);
+        }
+
+        @Override
+        public Modal_Student[] newArray(int size) {
+            return new Modal_Student[size];
+        }
+    };
+
     @Override
     public String toString() {
         return "Modal_Student{" +
@@ -58,6 +86,7 @@ public class Modal_Student {
     public Modal_Student() {
 
     }
+
     public Modal_Student(String sid, String sname, String qrGroupID) {
         this.StudentId = sid;
         this.FirstName = sname;
@@ -159,5 +188,38 @@ public class Modal_Student {
 
     public void setLastName(String lastName) {
         LastName = lastName;
+    }
+
+    @Override
+    public int compareTo(@NonNull Object o) {
+        Modal_Student compare = (Modal_Student) o;
+        if (compare.getStudentId() != null) {
+            if (compare.isChecked() == this.isChecked())
+                return 0;
+            else return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(GroupId);
+        dest.writeString(GroupName);
+        dest.writeString(FullName);
+        dest.writeString(FirstName);
+        dest.writeString(MiddleName);
+        dest.writeString(LastName);
+        dest.writeString(Stud_Class);
+        dest.writeString(Age);
+        dest.writeString(Gender);
+        dest.writeInt(sentFlag);
+        dest.writeString(StudentId);
+        dest.writeByte((byte) (isChecked ? 1 : 0));
     }
 }
