@@ -20,6 +20,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -50,6 +51,36 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
+            get3to6Groups(BaseActivity.groupDao.getAllGroups(), BaseActivity.studentDao.getAllStudents());
+        } else {
+            get8to14Groups(BaseActivity.groupDao.getAllGroups(), BaseActivity.studentDao.getAllStudents());
+        }
+        setGroups(groups);
+    }
+
+    private void get3to6Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+        for (Modal_Groups gr : allGroups) {
+            for (Modal_Student stu : allStudents) {
+                if (Integer.parseInt(stu.getAge()) < 7) {
+                    if (!groups.contains(gr))
+                        groups.add(gr);
+                    break;
+                }
+            }
+        }
+    }
+
+    private void get8to14Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+        for (Modal_Groups gr : allGroups) {
+            for (Modal_Student stu : allStudents) {
+                if (Integer.parseInt(stu.getAge()) >= 7) {
+                    if (!groups.contains(gr))
+                        groups.add(gr);
+                    break;
+                }
+            }
+        }
     }
 
     @Override

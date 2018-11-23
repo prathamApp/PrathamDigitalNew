@@ -29,6 +29,7 @@ public class PD_Constant {
     public static final String PDF_PAGE_MODE = "pdf_page_mode";
     public static final String STUDENT_ADDED = "STUDENT_ADDED";
     public static final String STUDENT_LIST = "STUDENT_LIST";
+    public static final String GROUP_AGE_BELOW_7 = "GROUP_AGE_BELOW_7";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";
