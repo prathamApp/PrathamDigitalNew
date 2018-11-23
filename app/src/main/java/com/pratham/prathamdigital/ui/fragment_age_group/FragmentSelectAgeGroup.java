@@ -14,14 +14,13 @@ import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
+import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
@@ -113,10 +112,14 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.iv_age_3_to_6)
     public void open3to6Groups() {
+        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
+                null, FragmentSelectGroup.class.getSimpleName());
     }
 
     @OnClick(R.id.iv_age_8_to_14)
     public void open8to14Groups() {
+        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
+                null, FragmentSelectGroup.class.getSimpleName());
     }
 
     @OnClick(R.id.admin_panel)

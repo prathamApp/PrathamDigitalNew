@@ -4,17 +4,20 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Groups;
-import com.pratham.prathamdigital.ui.fragment_child_attendance.ChildAdapter;
+import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
 
@@ -22,15 +25,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FragmentSelectGroup extends Fragment {
+public class FragmentSelectGroup extends Fragment implements ContractGroup {
 
     @BindView(R.id.rv_group)
     RecyclerView rv_group;
 
-    ChildAdapter childAdapter;
-    ArrayList<Modal_Groups> students;
-    private int revealX;
-    private int revealY;
+    GroupAdapter groupAdapter;
+    ArrayList<Modal_Groups> groups;
+    Modal_Groups groupSelected;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -55,17 +57,16 @@ public class FragmentSelectGroup extends Fragment {
         super.onResume();
     }
 
-    public void setChilds(ArrayList<Modal_Groups> groups) {
-//        if (childAdapter == null) {
-//            childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentSelectGroup.this);
-//            rv_child.setHasFixedSize(true);
-//            rv_child.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-//            rv_child.setAdapter(childAdapter);
-//        } else {
-//            childAdapter.updateChildItems(childs);
-//        }
+    public void setGroups(ArrayList<Modal_Groups> groups) {
+        if (groupAdapter == null) {
+            groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
+            rv_group.setHasFixedSize(true);
+            rv_group.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+            rv_group.setAdapter(groupAdapter);
+        } else {
+            groupAdapter.updateGroupItems(groups);
+        }
     }
-
 
 //    @OnTouch(R.id.btn_attendance_next)
 //    public boolean setNextAvatar(View view, MotionEvent event) {
@@ -77,7 +78,24 @@ public class FragmentSelectGroup extends Fragment {
     @OnClick(R.id.btn_group_next)
     public void setNext(View v) {
         PrathamApplication.bubble_mp.start();
-        FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
+        ArrayList<Modal_Student> students = new ArrayList<>();
+        students.addAll(BaseActivity.studentDao.getGroupwiseStudents(groupSelected.getGroupId()));
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
+                bundle, FragmentChildAttendance.class.getSimpleName());
+    }
+
+    @Override
+    public void groupItemClicked(Modal_Groups modalGroup, int position) {
+        groupSelected = modalGroup;
+        for (Modal_Groups gr : groups) {
+            if (gr.getGroupId().equalsIgnoreCase(modalGroup.getGroupId())) {
+                gr.setSelected(true);
+                break;
+            }
+        }
+        setGroups(groups);
     }
 
 //    public void presentActivity(View view) {

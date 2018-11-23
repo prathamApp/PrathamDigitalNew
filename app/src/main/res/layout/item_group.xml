@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="@dimen/_100sdp"
-    android:layout_height="@dimen/_100sdp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/group_card"
+    android:layout_width="@dimen/_130sdp"
+    android:layout_height="@dimen/_80sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardElevation="@dimen/_10sdp">
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-        android:id="@+id/child_name"
+        android:id="@+id/group_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -13,7 +18,7 @@
         android:gravity="center"
         android:paddingLeft="@dimen/_5sdp"
         android:paddingRight="@dimen/_5sdp"
-        android:text="asanksjdnakssdasdaskj"
+        android:text="asanksjdnaks"
         android:textColor="@android:color/black"
         android:textSize="@dimen/_18sdp" />
 

@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -26,9 +27,11 @@ public class Modal_Groups {
     public String VIllageName;
     @SerializedName("DeviceId")
     public String DeviceId;
+    @Ignore
+    boolean isSelected = false;
 
     @Override
-    public String toString(){
+    public String toString() {
         return this.GroupName;
     }
 
@@ -103,6 +106,14 @@ public class Modal_Groups {
 
     public void setDeviceId(String deviceId) {
         DeviceId = deviceId;
+    }
+
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
     }
 }
 
