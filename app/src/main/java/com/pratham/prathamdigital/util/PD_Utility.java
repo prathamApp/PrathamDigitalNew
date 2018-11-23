@@ -1779,6 +1779,12 @@ public class PD_Utility {
         return macAddress;
     }
 
+    public static String getRandomAvatar(Context context) {
+        String[] avatars = context.getResources().getStringArray(R.array.avatars);
+        String word = avatars[new Random().nextInt(avatars.length)];
+        return word;
+    }
+
     public static int getRandomColorGradient() {
         List<Integer> allColors = getAllMaterialColors();
         if (allColors != null) {

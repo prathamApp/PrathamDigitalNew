@@ -135,6 +135,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setAge(spinner_age.getSelectedItem().toString());
         modal_student.setGender("M");
         modal_student.setSentFlag(1);
+        modal_student.setAvatarName(avatar_selected);
         avatarPresenter.addStudent(modal_student, studentDao);
     }
 

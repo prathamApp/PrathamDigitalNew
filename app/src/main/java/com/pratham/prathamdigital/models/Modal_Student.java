@@ -35,6 +35,7 @@ public class Modal_Student implements Comparable, Parcelable {
     @PrimaryKey
     @SerializedName("StudentId")
     public String StudentId;
+    public String avatarName;
     @Ignore
     transient boolean isChecked = false;
 
@@ -50,6 +51,7 @@ public class Modal_Student implements Comparable, Parcelable {
         Gender = in.readString();
         sentFlag = in.readInt();
         StudentId = in.readString();
+        avatarName = in.readString();
         isChecked = in.readByte() != 0;
     }
 
@@ -190,6 +192,14 @@ public class Modal_Student implements Comparable, Parcelable {
         LastName = lastName;
     }
 
+    public String getAvatarName() {
+        return avatarName;
+    }
+
+    public void setAvatarName(String avatarName) {
+        this.avatarName = avatarName;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_Student compare = (Modal_Student) o;
@@ -220,6 +230,7 @@ public class Modal_Student implements Comparable, Parcelable {
         dest.writeString(Gender);
         dest.writeInt(sentFlag);
         dest.writeString(StudentId);
+        dest.writeString(avatarName);
         dest.writeByte((byte) (isChecked ? 1 : 0));
     }
 }

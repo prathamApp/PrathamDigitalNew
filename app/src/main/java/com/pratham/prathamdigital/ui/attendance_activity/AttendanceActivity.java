@@ -33,11 +33,11 @@ public class AttendanceActivity extends BaseActivity {
                     null, FragmentSelectAgeGroup.class.getSimpleName());
         } else {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
-                List<Modal_Student> students = BaseActivity.studentDao.getAllStudents();
+                ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getAllStudents();
                 Bundle bundle = new Bundle();
-                bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, (ArrayList<? extends Parcelable>) students);
+                bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
                 PD_Utility.showFragment(this, new FragmentChildAttendance(), R.id.frame_attendance,
-                        null, FragmentChildAttendance.class.getSimpleName());
+                        bundle, FragmentChildAttendance.class.getSimpleName());
             } else {
                 PD_Utility.showFragment(this, new Fragment_SelectAvatar(), R.id.frame_attendance,
                         null, Fragment_SelectAvatar.class.getSimpleName());
