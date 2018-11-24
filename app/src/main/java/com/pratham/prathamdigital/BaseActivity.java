@@ -26,6 +26,8 @@ import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
+import net.alhazmy13.catcho.library.Catcho;
+
 import java.util.Locale;
 import java.util.UUID;
 
@@ -41,7 +43,6 @@ public class BaseActivity extends ActivityManagePermission {
     public static StatusDao statusDao;
     public static StudentDao studentDao;
     public static VillageDao villageDao;
-    public static String RASP_FACILITY = "";
     public static String language = "";
     public static CatLoadingView catLoadingView = new CatLoadingView();
     public static TTSService ttsService;
@@ -51,7 +52,9 @@ public class BaseActivity extends ActivityManagePermission {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
+        Catcho.Builder(this)
+                .recipients("abhishek.mittal@pratham.org")
+                .build();
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
         ttsService.setSpeechRate(0.7f);

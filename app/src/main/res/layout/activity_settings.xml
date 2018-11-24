@@ -53,7 +53,7 @@
                 android:layout_toRightOf="@+id/settings_language"
                 android:padding="@dimen/_8sdp"
                 android:src="@drawable/settings_share"
-                android:visibility="visible" />
+                android:visibility="gone" />
 
             <ImageView
                 android:id="@+id/settings"
@@ -62,7 +62,7 @@
                 android:layout_toRightOf="@+id/settings_share"
                 android:padding="@dimen/_8sdp"
                 android:src="@drawable/settings_tools"
-                android:visibility="visible" />
+                android:visibility="gone" />
         </RelativeLayout>
     </android.support.design.card.MaterialCardView>
 
