@@ -85,9 +85,17 @@ public class ZipDownloader {
                     }
                 })
                 .setOnProgressListener(new OnProgressListener() {
+                    long progg = 0;
+
                     @Override
                     public void onProgress(Progress progress) {
-                        long progressPercent = progress.currentBytes * 100 / progress.totalBytes;
+                        long progressPercent = 0;
+//                        if (progress.totalBytes == -1) {
+//                            if (progg == 0) progg = progress.currentBytes;
+//                            progressPercent = progress.currentBytes / progg;
+//                        } else
+                        progressPercent = progress.currentBytes * 100 / progress.totalBytes;
+                        Log.d("onProgress::", "" + progressPercent);
                         contentPresenter.updateFileProgress(downloadId, f_name, (int) progressPercent);
                     }
                 })

@@ -36,7 +36,8 @@ public class PD_Constant {
     public static final String GROUPID4 = "group4";
     public static final String GROUPID5 = "group5";
     public static final String CONNECT_WIFI = "connect_wifi";
-    public static String RASP_IP = "http://192.168.4.1:8080/";
+    public static final String FACILITY_ID = "facility_id";
+    public static String RASP_IP = "http://192.168.4.1:8080";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";
     public static String pradigiObbPath = "";
@@ -46,8 +47,6 @@ public class PD_Constant {
     public static String FTP_PORT = "";
     public static String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
     public static String RASPBERRY_HEADER = "RASPBERRY_HEADER";
-    public static String BROWSE_RASPBERRY_URL = RASP_IP + "api/contentnode?parent=";
-    public static String GET_RASPBERRY_HEADER = RASP_IP + "api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c";
     public static final int TCP_SERVER_RECEIVE_PORT = 4447;
     public static int READ_BUFFER_SIZE = 1024 * 4;
     int[] english_age_id = {1100, 1101, 1102, 1103};
@@ -105,6 +104,8 @@ public class PD_Constant {
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
+        BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
+        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;

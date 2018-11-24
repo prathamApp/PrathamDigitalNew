@@ -124,7 +124,7 @@ public class PD_ApiRequest {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-//                        contentPresenter.notifySuccess(requestType, response);
+                        contentPresenter.recievedContent(requestType, response);
                     }
 
                     @Override

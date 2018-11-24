@@ -37,7 +37,11 @@ public interface ContentContract {
         void onDownloadPaused(int downloadId);
 
         void ondownloadCancelled(int downloadId);
+
+        void checkConnectionForRaspberry();
     }
+
+    ;
 
     interface contentClick {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
