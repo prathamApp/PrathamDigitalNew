@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -8,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +17,6 @@ import android.widget.Toast;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
 import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups;
-import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
@@ -50,13 +49,15 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this,view);
-        adminPanelPresenter=new AdminPanelPresenter(getActivity(),this);
+        ButterKnife.bind(this, view);
+        adminPanelPresenter = new AdminPanelPresenter(getActivity(), this);
     }
 
     @OnClick(R.id.btn_login)
     public void loginCheck() {
-        adminPanelPresenter.checkLogin(getUserName(),getPassword());
+        adminPanelPresenter.checkLogin(getUserName(), getPassword());
+        userNameET.getText().clear();
+        passwordET.getText().clear();
     }
 
 
@@ -67,13 +68,13 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
 
     @Override
     public String getUserName() {
-        String userName=userNameET.getText().toString();
+        String userName = userNameET.getText().toString();
         return userName.trim();
     }
 
     @Override
     public String getPassword() {
-        String password=passwordET.getText().toString();
+        String password = passwordET.getText().toString();
         return password.trim();
     }
 
@@ -101,8 +102,19 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
 
     @Override
     public void onLoginSuccess() {
-        Intent intent=new Intent(getActivity(),Activity_AssignGroups.class);
-        getActivity().startActivity(intent);
+        Intent intent = new Intent(getActivity(), Activity_AssignGroups.class);
+        startActivityForResult(intent, 1);
+//        getActivity().startActivity(intent);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == Activity.RESULT_OK) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        }
     }
 
     @Override

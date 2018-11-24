@@ -2,13 +2,13 @@ package com.pratham.prathamdigital.ui.PullData;
 
 import android.content.Context;
 import android.util.Base64;
+import android.widget.Toast;
 
 import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Modal_Crl;
@@ -376,6 +376,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "1");
                 break;
         }
+        Toast.makeText(context, "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
         pullDataView.openLoginActivity();
     }
 

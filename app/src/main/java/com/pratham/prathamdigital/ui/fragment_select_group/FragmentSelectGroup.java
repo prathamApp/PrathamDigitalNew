@@ -60,6 +60,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
     }
 
     private void get3to6Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+        groups = new ArrayList<>();
         for (Modal_Groups gr : allGroups) {
             for (Modal_Student stu : allStudents) {
                 if (Integer.parseInt(stu.getAge()) < 7) {
@@ -72,6 +73,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
     }
 
     private void get8to14Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+        groups = new ArrayList<>();
         for (Modal_Groups gr : allGroups) {
             for (Modal_Student stu : allStudents) {
                 if (Integer.parseInt(stu.getAge()) >= 7) {

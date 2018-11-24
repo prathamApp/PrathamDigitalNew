@@ -1,6 +1,8 @@
 package com.pratham.prathamdigital.ui.assign;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -49,6 +51,8 @@ public class Activity_AssignGroups extends BaseActivity {
 
     @BindView(R.id.allocateGroups)
     Button allocateGroups;
+
+    Boolean isAssigned = false;
 
     List<String> Blocks;
     private List<Modal_Groups> dbgroupList;
@@ -338,8 +342,10 @@ public class Activity_AssignGroups extends BaseActivity {
                             //  MultiPhotoSelectActivity.dilog.dismissDilog();
                             Activity_AssignGroups.this.runOnUiThread(new Runnable() {
                                 public void run() {
+                                    isAssigned = true;
                                     Toast.makeText(Activity_AssignGroups.this, " Groups Assigned Successfully !!!", Toast.LENGTH_SHORT).show();
                                     progress.dismiss();
+                                    onBackPressed();
                                 }
                             });
                         }
@@ -358,4 +364,14 @@ public class Activity_AssignGroups extends BaseActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isAssigned) {
+            Intent i = new Intent();
+            setResult(Activity.RESULT_OK, i);
+            finish();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

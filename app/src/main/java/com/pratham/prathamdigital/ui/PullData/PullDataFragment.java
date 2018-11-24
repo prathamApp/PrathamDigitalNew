@@ -20,8 +20,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
-import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -197,8 +195,11 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
 
     @Override
     public void openLoginActivity() {
+/*
         PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
                 null, AdminPanelFragment.class.getSimpleName());
+*/
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override
