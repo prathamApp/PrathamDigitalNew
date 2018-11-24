@@ -16,9 +16,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -31,18 +34,19 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
-import static com.pratham.prathamdigital.BaseActivity.studentDao;
-
 public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView {
 
     @BindView(R.id.rv_child)
     RecyclerView rv_child;
+    @BindView(R.id.btn_attendance_next)
+    Button btn_attendance_next;
 
     ChildAdapter childAdapter;
     ArrayList<Modal_Student> students;
     ArrayList<String> avatars;
     private int revealX;
     private int revealY;
+    private String groupID = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,13 +67,15 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
         avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
-            for (Modal_Student stu : students) {
+            btn_attendance_next.setVisibility(View.VISIBLE);
+            groupID = getArguments().getString(PD_Constant.GROUPID);
+            for (Modal_Student stu : students)
                 avatars.add(PD_Utility.getRandomAvatar(getActivity()));
-            }
         } else {
-            for (Modal_Student stu : students) {
+            btn_attendance_next.setVisibility(View.GONE);
+            groupID = "SmartPhone";
+            for (Modal_Student stu : students)
                 avatars.add(stu.getAvatarName());
-            }
         }
         setChilds(students);
     }
@@ -86,12 +92,13 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             rv_child.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
             rv_child.setAdapter(childAdapter);
         } else {
-            childAdapter.updateChildItems(childs);
+            childAdapter.notifyDataSetChanged();
         }
     }
 
     @Override
     public void childItemClicked(Modal_Student student, int position) {
+        PrathamApplication.bubble_mp.start();
         for (Modal_Student stu : students) {
             if (stu.getStudentId().equalsIgnoreCase(student.getStudentId())) {
                 if (stu.isChecked()) stu.setChecked(false);
@@ -102,8 +109,25 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         setChilds(students);
     }
 
+    @Override
+    public void moveToDashboardOnChildClick(Modal_Student student, int position, View v) {
+        PrathamApplication.bubble_mp.start();
+        FastSave.getInstance().saveString(PD_Constant.AVATAR, student.getAvatarName());
+        ArrayList<Modal_Student> s = new ArrayList<>();
+        s.add(student);
+        markAttendance(s);
+        presentActivity(v);
+    }
+
     @OnTouch(R.id.btn_attendance_next)
     public boolean setNextAvatar(View view, MotionEvent event) {
+        revealX = (int) event.getRawX();
+        revealY = (int) event.getY();
+        return getActivity().onTouchEvent(event);
+    }
+
+    @OnTouch(R.id.rv_child)
+    public boolean getRecyclerTouch(View view, MotionEvent event) {
         revealX = (int) event.getRawX();
         revealY = (int) event.getY();
         return getActivity().onTouchEvent(event);
@@ -113,7 +137,28 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public void setNext(View v) {
         PrathamApplication.bubble_mp.start();
         FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
+        markAttendance(students);
         presentActivity(v);
+    }
+
+    public void markAttendance(ArrayList<Modal_Student> stud) {
+        FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
+        ArrayList<Attendance> attendances = new ArrayList<>();
+        for (Modal_Student stu : stud) {
+            Attendance attendance = new Attendance();
+            attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+            attendance.StudentID = stu.getStudentId();
+            attendance.Date = PD_Utility.getCurrentDateTime();
+            attendance.GroupID = groupID;
+            FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
+            attendances.add(attendance);
+        }
+        BaseActivity.attendanceDao.insertAttendance(attendances);
+        Modal_Session s = new Modal_Session();
+        s.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        s.setFromDate(PD_Utility.getCurrentDateTime());
+        s.setToDate("NA");
+        BaseActivity.sessionDao.insert(s);
     }
 
     public void presentActivity(View view) {
@@ -123,5 +168,4 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
     }
-
 }

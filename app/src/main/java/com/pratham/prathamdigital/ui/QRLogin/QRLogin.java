@@ -197,10 +197,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         try {
 
             if (stdList != null && stdList.size() > 0) {
-
-                if (PD_Constant.SESSIONID == null || PD_Constant.SESSIONID.trim().equalsIgnoreCase("")) {
-                    FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
-                }
+                FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
                 for (int i = 0; i < stdList.size(); i++) {
                     Attendance attendance = new Attendance();
                     attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
