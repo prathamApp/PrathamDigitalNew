@@ -73,5 +73,6 @@
     <color name="dark_yellow">#FDBE44</color>
 
     <color name="button">#2E96BB</color>
+    <color name="simple_white">#FFFFFF</color>
 
 </resources>
