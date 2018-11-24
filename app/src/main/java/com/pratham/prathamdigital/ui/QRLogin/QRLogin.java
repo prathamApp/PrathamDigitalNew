@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
@@ -39,11 +38,6 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.nio.MappedByteBuffer;
-import java.nio.channels.FileChannel;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -74,7 +68,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     Button btn_Reset;
 
     public ZXingScannerView startCameraScan;
-    ArrayList<Modal_Student> stdList = new ArrayList<Modal_Student>();
+    ArrayList<Modal_Student> stdList;
     Dialog dialog;
     int totalStudents = 0;
     Boolean setStud = false;
@@ -82,18 +76,18 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     boolean permission = false;
     List<Attendance> attendances;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qrlogin);
-        ButterKnife.bind(this);
+        ButterKnife.bind(QRLogin.this);
 
-        initCamera();
+        hideAllStudents();
+        stdList = new ArrayList<Modal_Student>();
 
         if (ContextCompat.checkSelfPermission(QRLogin.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            if (ActivityCompat.shouldShowRequestPermissionRationale(QRLogin.this, Manifest.permission.CAMERA)) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(QRLogin.this);
                 builder.setMessage("App requires camera permission to scan QR code");
                 builder.setCancelable(false);
                 builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
@@ -108,8 +102,8 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 ActivityCompat.requestPermissions(QRLogin.this, new String[]{Manifest.permission.CAMERA}, 1);
             }
         } else {
-            initCamera();
             permission = true;
+            initCamera();
         }
 
     }// onCreate
@@ -117,23 +111,27 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     @OnClick(R.id.btn_Reset)
     public void resetButton() {
         content_frame.setVisibility(View.VISIBLE);
-
         stdList.clear();
         totalStudents = 0;
+        clearStudents();
+        hideAllStudents();
+        scanNextQRCode();
+    }
 
+    private void clearStudents() {
         tv_stud_one.setText("");
         tv_stud_two.setText("");
         tv_stud_three.setText("");
         tv_stud_four.setText("");
         tv_stud_five.setText("");
+    }
 
+    private void hideAllStudents() {
         tv_stud_one.setVisibility(View.GONE);
         tv_stud_two.setVisibility(View.GONE);
         tv_stud_three.setVisibility(View.GONE);
         tv_stud_four.setVisibility(View.GONE);
         tv_stud_five.setVisibility(View.GONE);
-
-        scanNextQRCode();
     }
 
     @OnClick(R.id.btn_Start)
@@ -150,7 +148,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == 1) {
             if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(this, "You Need Camera permission", Toast.LENGTH_SHORT).show();
+                Toast.makeText(QRLogin.this, "You Need Camera permission", Toast.LENGTH_SHORT).show();
                 finish();
             } else {
                 initCamera();
@@ -163,13 +161,13 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        startCameraScan.resumeCameraPreview(this);
+        startCameraScan.resumeCameraPreview(QRLogin.this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        startCameraScan.resumeCameraPreview(this);
+        startCameraScan.resumeCameraPreview(QRLogin.this);
     }
 
     @Override
@@ -190,39 +188,28 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
 
         // todo Handle Session Start Webview service to handle session tracking
 //        startService(new Intent(this, WebViewService.class));
-
-//        MultiPhotoSelectActivity.selectedGroupsScore = "";
-
-//        MultiPhotoSelectActivity.presentStudents = new String[stdList.size()];
         try {
 
             if (stdList != null && stdList.size() > 0) {
+
                 FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
                 for (int i = 0; i < stdList.size(); i++) {
                     Attendance attendance = new Attendance();
-                    attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+                    attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "defaultSession");
                     attendance.StudentID = stdList.get(i).getStudentId();
                     attendance.Date = PD_Utility.getCurrentDateTime();
-//                    MultiPhotoSelectActivity.presentStudents[i] = stdList.get(i).getStudentID();
                     attendance.GroupID = "QR";
                     FastSave.getInstance().saveString(PD_Constant.GROUPID, attendance.GroupID);
-/*
-                    if (!MultiPhotoSelectActivity.selectedGroupsScore.contains(attendance.GroupID)) {
-                        MultiPhotoSelectActivity.selectedGroupsScore += attendance.GroupID + ",";
-                    }
-*/
                     attendances.add(attendance);
                 }
                 BaseActivity.attendanceDao.insertAttendance(attendances);
 
                 Modal_Session s = new Modal_Session();
-                s.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+                s.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "defaultSession");
                 s.fromDate = PD_Utility.getCurrentDateTime();
                 s.toDate = "NA";
 
                 BaseActivity.sessionDao.insert(s);
-//                sessionDBHelper.Add(s);
-//                BackupDatabase.backup(this, PD_Constant.pradigiObbPath);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -233,36 +220,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
 
         Intent main = new Intent(QRLogin.this, ActivityMain.class);
         startActivity(main);
-//        finish();
-
-    }
-
-    // Reading configuration Json From SDCard
-    public String getProgramId() {
-
-        String progIDString = null;
-        try {
-            File myJsonFile = new File(Environment.getExternalStorageDirectory() + "/.POSinternal/Json/Config.json");
-            FileInputStream stream = new FileInputStream(myJsonFile);
-            String jsonStr = null;
-            try {
-                FileChannel fc = stream.getChannel();
-                MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-
-                jsonStr = Charset.defaultCharset().decode(bb).toString();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                stream.close();
-            }
-
-            JSONObject jsonObj = new JSONObject(jsonStr);
-            progIDString = jsonObj.getString("programId");
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return progIDString;
     }
 
     public void scanNextQRCode() {
@@ -270,7 +227,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             startCameraScan.stopCamera();
         }
         startCameraScan.startCamera();
-        startCameraScan.resumeCameraPreview(this);
+        startCameraScan.resumeCameraPreview(QRLogin.this);
     }
 
     @Override
@@ -281,18 +238,11 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             Log.d("RawResult:::", "****" + result.getText());
             if (result.getText().contains("{")) {
                 // New QRCode Jsons
-
                 // Json Parsing
                 JSONObject jsonobject = new JSONObject(result.getText());
                 String id = jsonobject.getString("stuId");
                 String name = jsonobject.getString("name");
 
-            /*// got result in json format
-            Pattern pattern = Pattern.compile("[A-Za-z0-9]+-[A-Za-z._]{2,50}");
-            Matcher mat = pattern.matcher(result.getText());
-
-            if (mat.matches()) {
-*/
                 if (stdList.size() <= 0)
                     qrEntryProcess(result);
                 else {
@@ -301,7 +251,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                         String[] currentIdArr = {id};
                         String currId = currentIdArr[0];
                         if (stdList.get(i).getStudentId().equalsIgnoreCase("" + currId)) {
-//                            Toast.makeText(this, "Already Scaned", Toast.LENGTH_SHORT).show();
                             showQrDialog(", This QR Was Already Scaned");
                             setStud = false;
                             dulicateQR = true;
@@ -312,11 +261,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                         qrEntryProcess(result);
                     }
                 }
-            /*} else {
-                startCameraScan.startCamera();
-                startCameraScan.resumeCameraPreview(this);
-                BackupDatabase.backup(this);
-            }*/
             } else {
                 // Old Jsons
                 try {
@@ -334,7 +278,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                                 String[] currentIdArr = decodeStudentId(result.getText(), "-");
                                 String currId = currentIdArr[0];
                                 if (stdList.get(i).getStudentId().equalsIgnoreCase("" + currId)) {
-//                            Toast.makeText(this, "Already Scaned", Toast.LENGTH_SHORT).show();
                                     showQrDialog(", This QR Was Already Scaned");
                                     setStud = false;
                                     dulicateQR = true;
@@ -347,8 +290,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                         }
                     } else {
                         startCameraScan.startCamera();
-                        startCameraScan.resumeCameraPreview(this);
-//                        BackupDatabase.backup(this, PD_Constant.pradigiObbPath);
+                        startCameraScan.resumeCameraPreview(QRLogin.this);
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -356,7 +298,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             }
 
         } catch (Exception e) {
-            Toast.makeText(this, "Invalid QR Code !!!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(QRLogin.this, "Invalid QR Code !!!", Toast.LENGTH_SHORT).show();
             btn_Reset.performClick();
             e.printStackTrace();
         }
@@ -418,7 +360,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             totalStudents++;
             String sid = "", sname = "", sscore = "", salias = "";
             std = new Modal_Student(sid, sname, "QRGroupID");
-//        Toast.makeText(this, "" + totalStudents, Toast.LENGTH_SHORT).show();
             if (totalStudents < 6) {
 
                 // todo Parse json & separate id & name
@@ -445,11 +386,8 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 std.setStudentId(stdId);
                 std.setFirstName(stdFirstName);
 
-//            Toast.makeText(QRLogin.this, "ID" + stdId, Toast.LENGTH_LONG).show();
-//            Toast.makeText(QRLogin.this, "First" + stdFirstName, Toast.LENGTH_LONG).show();
                 stdList.add(std);
 
-                //scanNextQRCode();
                 setStud = true;
                 showQrDialog(stdFirstName);
             }
@@ -457,14 +395,12 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             totalStudents++;
             String sid = "", sname = "", sscore = "", salias = "";
             std = new Modal_Student(sid, sname, "QRGroupID");
-//        Toast.makeText(this, "" + totalStudents, Toast.LENGTH_SHORT).show();
             if (totalStudents < 6) {
 
                 //Valid pattern
                 String[] id = decodeStudentId(result.getText(), "-");
 
                 String stdId = id[0];
-                //String stdFirstName = id[1];
                 String[] name = decodeStudentId(id[1], "_");
                 String stdFirstName = name[0];
                 String stdLastName = "";
@@ -474,11 +410,8 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 std.setStudentId(stdId);
                 std.setFirstName(stdFirstName);
 
-//            Toast.makeText(QRLogin.this, "ID" + stdId, Toast.LENGTH_LONG).show();
-//            Toast.makeText(QRLogin.this, "First" + stdFirstName, Toast.LENGTH_LONG).show();
                 stdList.add(std);
 
-                //scanNextQRCode();
                 setStud = true;
                 showQrDialog(stdFirstName);
             }
@@ -498,31 +431,35 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             case 1:
                 tv_stud_one.setVisibility(View.VISIBLE);
                 tv_stud_one.setText("" + stdList.get(0).getFirstName());
-                break; // break is optional
+                break;
             case 2:
                 tv_stud_two.setVisibility(View.VISIBLE);
                 tv_stud_two.setText("" + stdList.get(1).getFirstName());
-                break; // break is optional
+                break;
             case 3:
                 tv_stud_three.setVisibility(View.VISIBLE);
                 tv_stud_three.setText("" + stdList.get(2).getFirstName());
-                break; // break is optional
+                break;
             case 4:
                 tv_stud_four.setVisibility(View.VISIBLE);
                 tv_stud_four.setText("" + stdList.get(3).getFirstName());
-                break; // break is optional
+                break;
             case 5:
                 tv_stud_five.setVisibility(View.VISIBLE);
                 tv_stud_five.setText("" + stdList.get(4).getFirstName());
-                break; // break is optional
+                break;
         }
     }
 
     public void initCamera() {
-        startCameraScan = new ZXingScannerView(this);
-        startCameraScan.setResultHandler(this);
-        content_frame.addView((startCameraScan));
-        startCameraScan.startCamera();
-        //startCameraScan.resumeCameraPreview(this);
+        try {
+            startCameraScan = new ZXingScannerView(QRLogin.this);
+            startCameraScan.setResultHandler(QRLogin.this);
+            content_frame.addView((startCameraScan));
+            startCameraScan.startCamera();
+            startCameraScan.resumeCameraPreview(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
