@@ -23,6 +23,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -162,6 +163,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     }
 
     public void presentActivity(View view) {
+        getActivity().startService(new Intent(getActivity(), AppKillService.class));
         ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getActivity(), view, "transition");
         Intent intent = new Intent(getActivity(), ActivityMain.class);
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);

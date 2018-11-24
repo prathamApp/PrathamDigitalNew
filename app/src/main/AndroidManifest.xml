@@ -212,6 +212,11 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+        <service
+            android:name=".services.AppKillService"
+            android:enabled="true"
+            android:stopWithTask="false" />
+
 
     </application>
 

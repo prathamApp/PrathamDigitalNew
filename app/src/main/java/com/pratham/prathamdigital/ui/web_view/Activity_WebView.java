@@ -89,7 +89,7 @@ public class Activity_WebView extends BaseActivity {
         finish();
     }
 
-    /*public static class WebViewService extends Service {
+    /*public static class AppKillService extends Service {
         Activity_WebView activity_webView;
 
         @Override

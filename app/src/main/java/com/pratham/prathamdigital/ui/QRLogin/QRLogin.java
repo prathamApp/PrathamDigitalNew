@@ -31,6 +31,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -187,7 +188,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         attendances = new ArrayList<>();
 
         // todo Handle Session Start Webview service to handle session tracking
-//        startService(new Intent(this, WebViewService.class));
         try {
 
             if (stdList != null && stdList.size() > 0) {
@@ -210,16 +210,19 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 s.toDate = "NA";
 
                 BaseActivity.sessionDao.insert(s);
+
+                if (startCameraScan != null) {
+                    startCameraScan.stopCamera();
+                }
+
+                startService(new Intent(this, AppKillService.class));
+                Intent main = new Intent(QRLogin.this, ActivityMain.class);
+                startActivity(main);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if (startCameraScan != null) {
-            startCameraScan.stopCamera();
-        }
-
-        Intent main = new Intent(QRLogin.this, ActivityMain.class);
-        startActivity(main);
     }
 
     public void scanNextQRCode() {
