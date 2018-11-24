@@ -24,16 +24,13 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.PermissionUtils;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -100,7 +97,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     protected void onResume() {
         super.onResume();
-        requestLocation();
         avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "avatars/rabbit.json"));
     }
 
@@ -185,30 +181,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     public void onBackPressed() {
         EventBus.getDefault().post(PD_Constant.MAIN_BACK);
-    }
-
-    public void requestLocation() {
-        if (!isPermissionsGranted(ActivityMain.this, new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                    , PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    new LocationService(ActivityMain.this).checkLocation();
-                }
-
-                @Override
-                public void permissionDenied() {
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                }
-            });
-        } else {
-            new LocationService(ActivityMain.this).checkLocation();
-        }
     }
 
     @Override

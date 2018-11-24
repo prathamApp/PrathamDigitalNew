@@ -26,6 +26,9 @@ public interface GroupDao {
     @Query("DELETE FROM Groups WHERE GroupID=:grpID")
     public void deleteGroupByGrpID(String grpID);
 
+    @Query("SELECT * FROM Groups WHERE GroupID=:grpID")
+    public Modal_Groups getGroupByGrpID(String grpID);
+
     @Query("select * from Groups WHERE DeviceID = 'deleted'")
     public List<Modal_Groups> GetAllDeletedGroups();
 

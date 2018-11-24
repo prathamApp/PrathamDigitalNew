@@ -100,12 +100,17 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--<activity-->
-            <!--android:name=".ui.avatar.Fragment_SelectAvatar"-->
-            <!--android:configChanges="orientation|screenSize"-->
-            <!--android:screenOrientation="sensorLandscape"-->
-            <!--android:theme="@style/AppTheme"-->
-            <!--android:windowSoftInputMode="adjustPan" />-->
+        <activity
+            android:name=".ui.connect_dialog.ConnectDialog"
+            android:excludeFromRecents="true"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Dialog"
+            android:windowSoftInputMode="stateHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".ui.pdf_viewer.Activity_PdfViewer"
             android:configChanges="orientation|screenSize"

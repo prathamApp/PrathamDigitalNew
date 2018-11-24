@@ -19,9 +19,12 @@ import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
+import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PermissionUtils;
 
 import java.util.Locale;
 import java.util.UUID;
@@ -75,6 +78,7 @@ public class BaseActivity extends ActivityManagePermission {
     @Override
     protected void onResume() {
         super.onResume();
+        requestLocation();
         BackupDatabase.backup(this);
     }
 
@@ -104,4 +108,29 @@ public class BaseActivity extends ActivityManagePermission {
         super.onPause();
         BackupDatabase.backup(this);
     }
+
+    public void requestLocation() {
+        if (!isPermissionsGranted(this, new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
+            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
+                    , PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, new PermissionResult() {
+                @Override
+                public void permissionGranted() {
+                    new LocationService(BaseActivity.this).checkLocation();
+                }
+
+                @Override
+                public void permissionDenied() {
+                }
+
+                @Override
+                public void permissionForeverDenied() {
+                }
+            });
+        } else {
+            new LocationService(this).checkLocation();
+        }
+    }
+
 }

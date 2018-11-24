@@ -30,6 +30,12 @@ public class PD_Constant {
     public static final String STUDENT_ADDED = "STUDENT_ADDED";
     public static final String STUDENT_LIST = "STUDENT_LIST";
     public static final String GROUP_AGE_BELOW_7 = "GROUP_AGE_BELOW_7";
+    public static final String GROUPID1 = "group1";
+    public static final String GROUPID2 = "group2";
+    public static final String GROUPID3 = "group3";
+    public static final String GROUPID4 = "group4";
+    public static final String GROUPID5 = "group5";
+    public static final String CONNECT_WIFI = "connect_wifi";
     public static String RASP_IP = "http://192.168.4.1:8080/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

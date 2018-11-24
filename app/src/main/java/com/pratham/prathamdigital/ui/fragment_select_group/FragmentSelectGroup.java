@@ -20,7 +20,6 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -51,35 +50,48 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
+        ArrayList<String> present_groups = new ArrayList<>();
+        String groupId1 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID1);
+        if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
+        String groupId2 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID2);
+        if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
+        String groupId3 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID3);
+        if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
+        String groupId4 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID4);
+        if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
+        String groupId5 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID5);
+        if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
         if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
-            get3to6Groups(BaseActivity.groupDao.getAllGroups(), BaseActivity.studentDao.getAllStudents());
+            get3to6Groups(present_groups);
         } else {
-            get8to14Groups(BaseActivity.groupDao.getAllGroups(), BaseActivity.studentDao.getAllStudents());
+            get8to14Groups(present_groups);
         }
         setGroups(groups);
     }
 
-    private void get3to6Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+    private void get3to6Groups(ArrayList<String> allGroups) {
         groups = new ArrayList<>();
-        for (Modal_Groups gr : allGroups) {
-            for (Modal_Student stu : allStudents) {
+        for (String grID : allGroups) {
+            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
+            for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) < 7) {
-                    if (!groups.contains(gr))
-                        groups.add(gr);
-                    break;
+                    Modal_Groups group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                    if (!groups.contains(grID))
+                        groups.add(group);
                 }
             }
         }
     }
 
-    private void get8to14Groups(List<Modal_Groups> allGroups, List<Modal_Student> allStudents) {
+    private void get8to14Groups(ArrayList<String> allGroups) {
         groups = new ArrayList<>();
-        for (Modal_Groups gr : allGroups) {
-            for (Modal_Student stu : allStudents) {
+        for (String grID : allGroups) {
+            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
+            for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) >= 7) {
-                    if (!groups.contains(gr))
-                        groups.add(gr);
-                    break;
+                    Modal_Groups group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                    if (!groups.contains(grID))
+                        groups.add(group);
                 }
             }
         }

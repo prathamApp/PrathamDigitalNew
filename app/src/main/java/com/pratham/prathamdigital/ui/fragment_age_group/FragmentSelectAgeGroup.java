@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_age_group;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -129,7 +130,22 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.admin_panel)
     public void openAdminPanel() {
+//        if (!PrathamApplication.wiseF.isWifiEnabled())
+//            PrathamApplication.wiseF.enableWifi();
+//        Intent intent = new Intent(getActivity(), ConnectDialog.class);
+//        startActivityForResult(intent, 3);
         PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
                 null, AdminPanelFragment.class.getSimpleName());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 3) {
+            if (resultCode == Activity.RESULT_OK) {
+                PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
+                        null, AdminPanelFragment.class.getSimpleName());
+            }
+        }
     }
 }

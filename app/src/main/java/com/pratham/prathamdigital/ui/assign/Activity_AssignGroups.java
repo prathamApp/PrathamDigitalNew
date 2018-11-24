@@ -22,6 +22,7 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Village;
+import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.json.JSONException;
@@ -321,24 +322,20 @@ public class Activity_AssignGroups extends BaseActivity {
                     Thread mThread = new Thread() {
                         @Override
                         public void run() {
-
                             // Delete Groups where Device ID is deleted & also delete associated students & update status table
                             deleteGroupsWithStudents();
-
                             // delete deleted Students
                             BaseActivity.studentDao.deleteDeletedStdRecords();
-
                             // Update Groups in Status
-                            BaseActivity.statusDao.updateValue("group1", group1);
-                            BaseActivity.statusDao.updateValue("group2", group2);
-                            BaseActivity.statusDao.updateValue("group3", group3);
-                            BaseActivity.statusDao.updateValue("group4", group4);
-                            BaseActivity.statusDao.updateValue("group5", group5);
+                            BaseActivity.statusDao.updateValue(PD_Constant.GROUPID1, group1);
+                            BaseActivity.statusDao.updateValue(PD_Constant.GROUPID2, group2);
+                            BaseActivity.statusDao.updateValue(PD_Constant.GROUPID3, group3);
+                            BaseActivity.statusDao.updateValue(PD_Constant.GROUPID4, group4);
+                            BaseActivity.statusDao.updateValue(PD_Constant.GROUPID5, group5);
                             BaseActivity.statusDao.updateValue("village", Integer.toString(vilID));
                             BaseActivity.statusDao.updateValue("DeviceId", PD_Utility.getDeviceID());
                             BaseActivity.statusDao.updateValue("ActivatedDate", PD_Utility.getCurrentDateTime());
                             BaseActivity.statusDao.updateValue("ActivatedForGroups", group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5);
-
                             //  MultiPhotoSelectActivity.dilog.dismissDilog();
                             Activity_AssignGroups.this.runOnUiThread(new Runnable() {
                                 public void run() {
