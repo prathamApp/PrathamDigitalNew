@@ -14,11 +14,13 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.reflect.Type;
@@ -66,11 +68,30 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         }
     }
 
+    @Override
+    public void checkConnectionForRaspberry() {
+        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+                try {
+                    JSONObject object = new JSONObject();
+                    object.put("username", "pratham");
+                    object.put("password", "pratham");
+                    new PD_ApiRequest(context, ContentPresenterImpl.this)
+                            .getacilityIdfromRaspberry(PD_Constant.FACILITY_ID, PD_Constant.RASP_IP + "/api/session/", object);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
     private void checkConnectivity(String parentId) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             callOnlineContentAPI(parentId);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+                if (FastSave.getInstance().getString(PD_Constant.FACILITY_ID, "").isEmpty())
+                    checkConnectionForRaspberry();
                 callKolibriAPI(parentId);
             } else {
                 callOnlineContentAPI(parentId);
@@ -89,10 +110,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     private void callKolibriAPI(String parentId) {
         if (parentId == null) {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.GET_RASPBERRY_HEADER);
+                    .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString());
         } else {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.BROWSE_RASPBERRY_URL + parentId);
+                    .getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString() + parentId);
         }
     }
 
@@ -137,7 +158,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             Log.d("response:::", response);
             Log.d("response:::", "requestType:: " + header);
             Gson gson = new Gson();
-            if (header.equalsIgnoreCase(PD_Constant.RASPBERRY_HEADER)) {
+            if (header.equalsIgnoreCase(PD_Constant.FACILITY_ID)) {
+                Modal_RaspFacility facility = gson.fromJson(response, Modal_RaspFacility.class);
+                FastSave.getInstance().saveString(PD_Constant.FACILITY_ID, facility.getFacilityId());
+            } else if (header.equalsIgnoreCase(PD_Constant.RASPBERRY_HEADER)) {
                 displayedContents.clear();
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
@@ -286,9 +310,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         filesDownloading.put(downloadId, modal_fileDownloading);
         contentView.increaseNotification(filesDownloading.size());
         for (Modal_ContentDetail detail : levelContents) {
-            String f_name = detail.getNodeserverimage()
-                    .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
-            PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
+            if (detail.getNodeserverimage() != null) {
+                String f_name = detail.getNodeserverimage()
+                        .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
+                PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
+            }
         }
     }
 

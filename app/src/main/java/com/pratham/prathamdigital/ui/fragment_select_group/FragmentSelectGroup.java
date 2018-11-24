@@ -128,6 +128,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
         students.addAll(BaseActivity.studentDao.getGroupwiseStudents(groupSelected.getGroupId()));
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+        bundle.putString(PD_Constant.GROUPID, groupSelected.getGroupId());
         PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
                 bundle, FragmentChildAttendance.class.getSimpleName());
     }

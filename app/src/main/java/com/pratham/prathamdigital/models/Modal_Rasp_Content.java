@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.models;
 import com.google.gson.annotations.SerializedName;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import java.net.URLDecoder;
 import java.util.List;
 
 public class Modal_Rasp_Content {
@@ -254,55 +255,60 @@ public class Modal_Rasp_Content {
     }
 
     public Modal_ContentDetail setContentToConfigNodeStructure(Modal_Rasp_Content modal_rasp_content) {
-        Modal_ContentDetail modal_contentDetail = new Modal_ContentDetail();
-        modal_contentDetail.setNodeid(modal_rasp_content.getId());
-        switch (modal_rasp_content.getKind()) {
-            case "html5":
-                modal_contentDetail.setNodetype("Resource");
-                modal_contentDetail.setResourcetype("Game");
-                modal_contentDetail.setContentType("file");
-                break;
-            case "video":
-                modal_contentDetail.setNodetype("Resource");
-                modal_contentDetail.setResourcetype("Video");
-                modal_contentDetail.setContentType("file");
-                break;
-            case "document":
-                modal_contentDetail.setNodetype("Resource");
-                modal_contentDetail.setResourcetype("Pdf");
-                modal_contentDetail.setContentType("file");
-                break;
-            default:
-                modal_contentDetail.setNodetype(modal_rasp_content.getKind());
-                modal_contentDetail.setResourcetype(modal_rasp_content.getKind());
-                modal_contentDetail.setContentType("folder");
-        }
-        modal_contentDetail.setNodetitle(modal_rasp_content.getTitle());
-        modal_contentDetail.setNodeeage("");
-        modal_contentDetail.setNodedesc(modal_rasp_content.getDescription());
-        for (Modal_Rasp_ContentFilesItem filesItem : modal_rasp_content.getFiles()) {
-            if (filesItem.isThumbnail()) {
-                modal_contentDetail.setNodeimage(PD_Constant.RASP_IP + filesItem.getDownloadUrl());
-                modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + filesItem.getDownloadUrl());
-            } else {
-                if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
-                    modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + filesItem.getDownloadUrl());
-                    String filename = filesItem.getDownloadUrl()
-                            .substring(filesItem.getDownloadUrl().lastIndexOf('/') + 1);
-                    filename = filename.substring(0, filename.lastIndexOf("."));
-                    modal_contentDetail.setNodekeywords(filename);
+        Modal_ContentDetail modal_contentDetail = null;
+        try {
+            modal_contentDetail = new Modal_ContentDetail();
+            modal_contentDetail.setNodeid(modal_rasp_content.getId());
+            switch (modal_rasp_content.getKind()) {
+                case "html5":
+                    modal_contentDetail.setNodetype("Resource");
+                    modal_contentDetail.setResourcetype("Game");
+                    modal_contentDetail.setContentType("file");
+                    break;
+                case "video":
+                    modal_contentDetail.setNodetype("Resource");
+                    modal_contentDetail.setResourcetype("Video");
+                    modal_contentDetail.setContentType("file");
+                    break;
+                case "document":
+                    modal_contentDetail.setNodetype("Resource");
+                    modal_contentDetail.setResourcetype("Pdf");
+                    modal_contentDetail.setContentType("file");
+                    break;
+                default:
+                    modal_contentDetail.setNodetype(modal_rasp_content.getKind());
+                    modal_contentDetail.setResourcetype(modal_rasp_content.getKind());
+                    modal_contentDetail.setContentType("folder");
+            }
+            modal_contentDetail.setNodetitle(modal_rasp_content.getTitle());
+            modal_contentDetail.setNodeeage("");
+            modal_contentDetail.setNodedesc(modal_rasp_content.getDescription());
+            for (Modal_Rasp_ContentFilesItem filesItem : modal_rasp_content.getFiles()) {
+                if (filesItem.isThumbnail()) {
+                    modal_contentDetail.setNodeimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
+                    modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
                 } else {
-                    modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
-                    String filename = filesItem.getStorageUrl().toString()
-                            .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
-                    filename = filename.substring(0, filename.lastIndexOf("."));
-                    modal_contentDetail.setNodekeywords(filename);
+                    if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
+                        modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
+                        String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
+                                .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
+                        filename = filename.substring(0, filename.lastIndexOf("."));
+                        modal_contentDetail.setNodekeywords(filename);
+                    } else {
+                        modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
+                        String filename = filesItem.getStorageUrl().toString()
+                                .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
+                        filename = filename.substring(0, filename.lastIndexOf("."));
+                        modal_contentDetail.setNodekeywords(filename);
+                    }
                 }
             }
+            modal_contentDetail.setResourceid(modal_rasp_content.getContentId());
+            modal_contentDetail.setLevel(modal_rasp_content.getNumCoachContents());
+            modal_contentDetail.setParentid(modal_rasp_content.getParent());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        modal_contentDetail.setResourceid(modal_rasp_content.getContentId());
-        modal_contentDetail.setLevel(modal_rasp_content.getNumCoachContents());
-        modal_contentDetail.setParentid(modal_rasp_content.getParent());
         return modal_contentDetail;
     }
 }

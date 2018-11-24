@@ -2,7 +2,7 @@ package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
+import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +10,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Student;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -46,15 +46,23 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
         pos = viewHolder.getAdapterPosition();
         viewHolder.child_name.setText(datalist.get(pos).getFullName());
         viewHolder.child_avatar.setAnimation(child_avatar.get(pos));
+        if (datalist.get(pos).isChecked()) {
+            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.green));
+        } else {
+            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.white));
+        }
         int finalPos = pos;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                attendanceView.childItemClicked(datalist.get(finalPos), finalPos);
+                if (PrathamApplication.isTablet)
+                    attendanceView.childItemClicked(datalist.get(finalPos), finalPos);
+                else
+                    attendanceView.moveToDashboardOnChildClick(datalist.get(finalPos), finalPos, viewHolder.itemView);
             }
         });
     }
-
+/*
     @Override
     public void onBindViewHolder(@NonNull ChildHolder holder, int position, @NonNull List<Object> payloads) {
         if (payloads.isEmpty()) {
@@ -63,11 +71,9 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
             Modal_Student student = (Modal_Student) payloads.get(0);
             holder.child_name.setText(student.getFullName());
             if (student.isChecked()) {
-                holder.child_name.setBackgroundColor(context.getResources().getColor(R.color.green));
-                holder.child_name.setTextColor(context.getResources().getColor(R.color.white));
+                holder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.green));
             } else {
-                holder.child_name.setBackgroundColor(context.getResources().getColor(R.color.white));
-                holder.child_name.setTextColor(context.getResources().getColor(R.color.black_20));
+                holder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.white));
             }
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -85,7 +91,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
 //        this.datalist.addAll(newStudents);
         this.datalist = newStudents;
         diffResult.dispatchUpdatesTo(this);
-    }
+    }*/
 
     @Override
     public int getItemCount() {
@@ -97,6 +103,10 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
         TextView child_name;
         @BindView(R.id.child_avatar)
         LottieAnimationView child_avatar;
+        @BindView(R.id.card_avatar)
+        MaterialCardView card_avatar;
+        @BindView(R.id.card_child_name)
+        MaterialCardView card_child_name;
 
         public ChildHolder(@NonNull View itemView) {
             super(itemView);

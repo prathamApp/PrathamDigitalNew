@@ -23,6 +23,7 @@
         android:elevation="@dimen/_10sdp"
         android:scaleType="centerCrop"
         android:text="Next"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:visibility="gone" />
 
 </RelativeLayout>
