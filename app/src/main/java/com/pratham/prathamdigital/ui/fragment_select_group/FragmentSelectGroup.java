@@ -51,15 +51,15 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         ArrayList<String> present_groups = new ArrayList<>();
-        String groupId1 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID1);
+        String groupId1 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID1);
         if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
-        String groupId2 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID2);
+        String groupId2 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID2);
         if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
-        String groupId3 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID3);
+        String groupId3 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID3);
         if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
-        String groupId4 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID4);
+        String groupId4 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID4);
         if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
-        String groupId5 = BaseActivity.statusDao.getKey(PD_Constant.GROUPID5);
+        String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
         if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
         if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
             get3to6Groups(present_groups);
@@ -76,8 +76,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) < 7) {
                     Modal_Groups group = BaseActivity.groupDao.getGroupByGrpID(grID);
-                    if (!groups.contains(grID))
-                        groups.add(group);
+                    groups.add(group);
+                    break;
                 }
             }
         }
@@ -85,13 +85,14 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
 
     private void get8to14Groups(ArrayList<String> allGroups) {
         groups = new ArrayList<>();
+        Modal_Groups group;
         for (String grID : allGroups) {
             ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) >= 7) {
-                    Modal_Groups group = BaseActivity.groupDao.getGroupByGrpID(grID);
-                    if (!groups.contains(grID))
-                        groups.add(group);
+                    group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                    groups.add(group);
+                    break;
                 }
             }
         }
@@ -137,8 +138,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
         for (Modal_Groups gr : groups) {
             if (gr.getGroupId().equalsIgnoreCase(modalGroup.getGroupId())) {
                 gr.setSelected(true);
-                break;
-            }
+            } else
+                gr.setSelected(false);
         }
         setGroups(groups);
     }

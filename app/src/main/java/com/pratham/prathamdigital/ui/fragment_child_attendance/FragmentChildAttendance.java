@@ -61,13 +61,14 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
+        avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
             for (Modal_Student stu : students) {
-                avatars.add(stu.getAvatarName());
+                avatars.add(PD_Utility.getRandomAvatar(getActivity()));
             }
         } else {
             for (Modal_Student stu : students) {
-                avatars.add(PD_Utility.getRandomAvatar(getActivity()));
+                avatars.add(stu.getAvatarName());
             }
         }
         setChilds(students);
@@ -93,7 +94,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public void childItemClicked(Modal_Student student, int position) {
         for (Modal_Student stu : students) {
             if (stu.getStudentId().equalsIgnoreCase(student.getStudentId())) {
-                stu.setChecked(true);
+                if (stu.isChecked()) stu.setChecked(false);
+                else stu.setChecked(true);
                 break;
             }
         }
