@@ -9,8 +9,8 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -354,26 +354,26 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void saveData() {
-        PrathamDatabase.getDatabaseInstance(context).getCrLdao().insertAllCRL(crlList);
-        PrathamDatabase.getDatabaseInstance(context).getStudentDao().insertAllStudents(studentList);
-        PrathamDatabase.getDatabaseInstance(context).getGroupDao().insertAllGroups(groupList);
-        PrathamDatabase.getDatabaseInstance(context).getVillageDao().insertAllVillages(vilageList.get(0).getData());
+        BaseActivity.crLdao.insertAllCRL(crlList);
+        BaseActivity.studentDao.insertAllStudents(studentList);
+        BaseActivity.groupDao.insertAllGroups(groupList);
+        BaseActivity.villageDao.insertAllVillages(vilageList.get(0).getData());
 
         switch (selectedProgram) {
             case APIs.HL:
-                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "1");
+                BaseActivity.statusDao.updateValue("programId", "1");
                 break;
             case RI:
-                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "2");
+                BaseActivity.statusDao.updateValue("programId", "2");
                 break;
             case SC:
-                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "3");
+                BaseActivity.statusDao.updateValue("programId", "3");
                 break;
             case PI:
-                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "4");
+                BaseActivity.statusDao.updateValue("programId", "4");
                 break;
             default:
-                PrathamDatabase.getDatabaseInstance(context).getStatusDao().updateValue("programId", "1");
+                BaseActivity.statusDao.updateValue("programId", "1");
                 break;
         }
         Toast.makeText(context, "Data Pulled Successful !", Toast.LENGTH_SHORT).show();

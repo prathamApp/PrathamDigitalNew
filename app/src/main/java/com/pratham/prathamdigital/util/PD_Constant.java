@@ -37,6 +37,7 @@ public class PD_Constant {
     public static final String GROUPID5 = "group5";
     public static final String CONNECT_WIFI = "connect_wifi";
     public static final String FACILITY_ID = "facility_id";
+    public static final String WRITE_PERMISSION = "write_permission";
     public static String RASP_IP = "http://192.168.4.1:8080";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

@@ -13,13 +13,14 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
 
-@Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class, Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class}, version = 1, exportSchema = false)
+@Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class, Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class, Modal_Log.class}, version = 1, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi";
@@ -41,6 +42,8 @@ public abstract class PrathamDatabase extends RoomDatabase {
     public abstract StudentDao getStudentDao();
 
     public abstract VillageDao getVillageDao();
+
+    public abstract LogDao getLogDao();
 
     public static PrathamDatabase getDatabaseInstance(final Context context) {
         if (INSTANCE == null) {

@@ -2,10 +2,8 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 import android.content.Context;
 
-import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.models.Modal_Crl;
-
-import java.security.cert.CRL;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -14,9 +12,10 @@ import java.security.cert.CRL;
 public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresenter {
     AdminPanelContract.AdminPanelView adminPanelView;
     Context context;
-    public AdminPanelPresenter(Context context,AdminPanelContract.AdminPanelView adminPanelView) {
+
+    public AdminPanelPresenter(Context context, AdminPanelContract.AdminPanelView adminPanelView) {
         this.adminPanelView = adminPanelView;
-        this.context=context;
+        this.context = context;
     }
 
     @Override
@@ -27,10 +26,10 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
             adminPanelView.openPullDataFragment();
         } else {
             // assign push logic
-            Modal_Crl loggedCrl= PrathamDatabase.getDatabaseInstance(context).getCrLdao().checkUserValidation(userName,password);
-            if(loggedCrl!=null){
+            Modal_Crl loggedCrl = BaseActivity.crLdao.checkUserValidation(userName, password);
+            if (loggedCrl != null) {
                 adminPanelView.onLoginSuccess();
-            }else {
+            } else {
                 //userNAme and password may be wrong
                 adminPanelView.onLoginFail();
             }
@@ -39,10 +38,10 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
 
     @Override
     public void clearData() {
-        PrathamDatabase.getDatabaseInstance(context).getVillageDao().deleteAllVillages();
-        PrathamDatabase.getDatabaseInstance(context).getGroupDao().deleteAllGroups();
-        PrathamDatabase.getDatabaseInstance(context).getStudentDao().deleteAllStudents();
-        PrathamDatabase.getDatabaseInstance(context).getCrLdao().deleteAllCRLs();
+        BaseActivity.villageDao.deleteAllVillages();
+        BaseActivity.groupDao.deleteAllGroups();
+        BaseActivity.studentDao.deleteAllStudents();
+        BaseActivity.crLdao.deleteAllCRLs();
         adminPanelView.onDataClearToast();
     }
 }
