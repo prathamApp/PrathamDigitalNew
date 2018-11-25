@@ -1,11 +1,13 @@
 package com.pratham.prathamdigital.ui.connect_dialog;
 
 import android.annotation.SuppressLint;
-import android.app.Dialog;
+import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -13,10 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.isupatches.wisefy.callbacks.AddNetworkCallbacks;
@@ -51,6 +55,7 @@ public class ConnectDialog extends DialogFragment {
     TextView dialog_txt;
 
     String ssid;
+    String[] wifi_result;
 
     @SuppressLint("MissingPermission")
     @Nullable
@@ -58,28 +63,40 @@ public class ConnectDialog extends DialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_connecction, container);
         ButterKnife.bind(this, view);
+        PrathamApplication.wiseF.getNearbyAccessPoints(true, nearbyAccessPointsCallbacks);
+        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         return view;
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-//        AlertDialog alertDialog = new AlertDialog(getActivity())
-//                .setView(R.);
-        return null;
-    }
+//    @SuppressLint("MissingPermission")
+//    @NonNull
+//    @Override
+//    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//        return null;
+//    }
 
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case 0:
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(PrathamApplication.getInstance(),
+                            android.R.layout.simple_list_item_1, android.R.id.text1, wifi_result);
+                    wifi_list.setAdapter(adapter);
+                    wifi_list.setOnItemClickListener(onItemClickListener);
+            }
+        }
+    };
     GetNearbyAccessPointsCallbacks nearbyAccessPointsCallbacks = new GetNearbyAccessPointsCallbacks() {
         @Override
         public void retrievedNearbyAccessPoints(@NotNull List<ScanResult> scanResults) {
-            String[] wifi_result = new String[scanResults.size()];
+            wifi_result = new String[scanResults.size()];
             for (int i = 0; i < scanResults.size(); i++) {
                 wifi_result[i] = scanResults.get(i).SSID;
             }
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(PrathamApplication.getInstance(),
-                    android.R.layout.simple_list_item_1, android.R.id.text1, wifi_result);
-            wifi_list.setAdapter(adapter);
-            wifi_list.setOnItemClickListener(onItemClickListener);
+            mHandler.sendEmptyMessage(0);
         }
 
         @Override
@@ -97,12 +114,16 @@ public class ConnectDialog extends DialogFragment {
     ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            dialog_txt.setText("Connecting...");
             ssid = (String) wifi_list.getItemAtPosition(position);
-            if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
-                wiseF.disconnectFromCurrentNetwork();
+            if (ssid.equalsIgnoreCase(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+                dialog_txt.setText("Connecting...");
+                if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
+                    wiseF.disconnectFromCurrentNetwork();
+                }
+                wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
+            } else {
+                Toast.makeText(getActivity(), "Please select " + PD_Constant.PRATHAM_KOLIBRI_HOTSPOT, Toast.LENGTH_SHORT).show();
             }
-            wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
         }
     };
 
@@ -152,6 +173,8 @@ public class ConnectDialog extends DialogFragment {
 //                Intent intent = new Intent();
 //                setResult(Activity.RESULT_OK, intent);
 //                finish();
+                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
+                dismiss();
             }
 
             @Override

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/_300sdp"
+    android:layout_width="match_parent"
     android:layout_height="@dimen/_300sdp"
     android:layout_gravity="center"
+    android:background="@android:color/transparent"
     app:cardCornerRadius="@dimen/_5sdp"
-    app:cardUseCompatPadding="true">
+    app:cardUseCompatPadding="false">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -19,7 +20,7 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:text="Connect"
             android:textColor="@android:color/black"
-            android:textSize="@dimen/_30sdp" />
+            android:textSize="@dimen/_22sdp" />
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/refresh"
@@ -28,8 +29,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginRight="@dimen/_10sdp"
+            android:scaleType="centerInside"
             app:lottie_autoPlay="true"
-            android:scaleType="centerCrop"
             app:lottie_fileName="update.json"
             app:lottie_loop="true" />
 

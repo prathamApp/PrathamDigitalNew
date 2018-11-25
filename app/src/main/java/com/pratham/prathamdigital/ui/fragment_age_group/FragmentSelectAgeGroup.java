@@ -16,8 +16,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
+import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
 import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -130,12 +132,15 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.admin_panel)
     public void openAdminPanel() {
-//        if (!PrathamApplication.wiseF.isWifiEnabled())
-//            PrathamApplication.wiseF.enableWifi();
+        if (!PrathamApplication.wiseF.isWifiEnabled())
+            PrathamApplication.wiseF.enableWifi();
 //        Intent intent = new Intent(getActivity(), ConnectDialog.class);
 //        startActivityForResult(intent, 3);
-        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
-                null, AdminPanelFragment.class.getSimpleName());
+        ConnectDialog connectDialog = new ConnectDialog();
+        connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
+        connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
+//        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
+//                null, AdminPanelFragment.class.getSimpleName());
     }
 
     @Override
