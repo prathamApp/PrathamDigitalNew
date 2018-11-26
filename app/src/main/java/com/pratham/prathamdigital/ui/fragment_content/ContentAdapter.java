@@ -37,7 +37,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     public static final int FILE_TYPE = 2;
     public static final int HEADER_TYPE = 3;
 
-    ArrayList<Modal_ContentDetail> datalist = new ArrayList<>();
+    ArrayList<Modal_ContentDetail> datalist;
     Context context;
     ContentContract.contentClick contentClick;
 
@@ -104,9 +104,10 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     //file type
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
                     Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                    if (fileViewHolder.rl_reveal.getVisibility() == View.VISIBLE)
+                        unreveal(fileViewHolder.rl_reveal);
                     if (contentDetail.isDownloaded()) {
                         fileViewHolder.rl_download.setVisibility(View.GONE);
-                        fileViewHolder.rl_reveal.setVisibility(View.GONE);
                         fileViewHolder.rl_download.setOnClickListener(null);
                         fileViewHolder.rl_play_content.setVisibility(View.VISIBLE);
                         if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
@@ -220,32 +221,37 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
     public void unreveal(View view) {
         // previously visible view
-        int centerX = view.getWidth();
-        int centerY = view.getHeight();
-        int startRadius = 0;
-        int endRadius = (int) Math.max(view.getWidth(), view.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, endRadius, startRadius);
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-        anim.setDuration(300);
-        anim.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
+        try {
+            int centerX = view.getWidth();
+            int centerY = view.getHeight();
+            int startRadius = 0;
+            int endRadius = (int) Math.max(view.getWidth(), view.getHeight());
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, endRadius, startRadius);
+            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+            anim.setDuration(300);
+            anim.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
 
-            @Override
-            public void onAnimationEnd(Animator animation) {
-                view.setVisibility(View.GONE);
-            }
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    view.setVisibility(View.GONE);
+                }
 
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
 
-            @Override
-            public void onAnimationRepeat(Animator animation) {
-            }
-        });
-        anim.start();
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+            anim.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            view.setVisibility(View.GONE);
+        }
     }
 
     class EmptyHolder extends RecyclerView.ViewHolder {

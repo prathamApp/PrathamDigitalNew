@@ -11,11 +11,13 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * Created by HP on 30-12-2016.
@@ -36,7 +38,7 @@ public class PD_ApiRequest {
 //                .build();
     }
 
-    public void getContentFromRaspberry(final String requestType, String url) {
+    public void getContentFromRaspberry(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
         try {
             AndroidNetworking.get(url)
                     .addHeaders("Content-Type", "application/json")
@@ -46,13 +48,13 @@ public class PD_ApiRequest {
                         @Override
                         public void onResponse(String response) {
                             if (contentPresenter != null)
-                                contentPresenter.recievedContent(requestType, response);
+                                contentPresenter.recievedContent(requestType, response, contentList);
                         }
 
                         @Override
                         public void onError(ANError anError) {
                             if (contentPresenter != null)
-                                contentPresenter.recievedError(requestType);
+                                contentPresenter.recievedError(requestType, contentList);
                             Log.d("Error::", anError.getErrorDetail());
                             Log.d("Error::", anError.getResponse().toString());
                         }
@@ -62,7 +64,7 @@ public class PD_ApiRequest {
         }
     }
 
-    public void getContentFromInternet(final String requestType, String url) {
+    public void getContentFromInternet(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
         try {
             AndroidNetworking.get(url)
                     .addHeaders("Content-Type", "application/json")
@@ -71,13 +73,13 @@ public class PD_ApiRequest {
                         @Override
                         public void onResponse(String response) {
                             if (contentPresenter != null)
-                                contentPresenter.recievedContent(requestType, response);
+                                contentPresenter.recievedContent(requestType, response, contentList);
                         }
 
                         @Override
                         public void onError(ANError anError) {
                             if (contentPresenter != null)
-                                contentPresenter.recievedError(requestType);
+                                contentPresenter.recievedError(requestType, contentList);
                             Log.d("Error:", anError.getErrorDetail());
                             Log.d("Error::", anError.getResponse().toString());
                         }
@@ -124,7 +126,7 @@ public class PD_ApiRequest {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        contentPresenter.recievedContent(requestType, response);
+                        contentPresenter.recievedContent(requestType, response, null);
                     }
 
                     @Override

@@ -86,6 +86,10 @@ public class ConnectDialog extends DialogFragment {
                             R.layout.connect_dialog_item, android.R.id.text1, wifi_result);
                     wifi_list.setAdapter(adapter);
                     wifi_list.setOnItemClickListener(onItemClickListener);
+                    break;
+                case 1:
+                    dialog_txt.setText("Failed");
+                    break;
             }
         }
     };
@@ -141,7 +145,7 @@ public class ConnectDialog extends DialogFragment {
         @Override
         public void wisefyFailure(int i) {
             Log.d(TAG, "wisefyFailure:");
-            dialog_txt.setText("Failed");
+            mHandler.sendEmptyMessage(1);
         }
     };
 
@@ -150,7 +154,7 @@ public class ConnectDialog extends DialogFragment {
             @Override
             public void failureAddingNetwork(int i) {
                 Log.d(TAG, "failureAddingNetwork: ");
-                dialog_txt.setText("Failed");
+                mHandler.sendEmptyMessage(1);
             }
 
             @Override
@@ -161,7 +165,7 @@ public class ConnectDialog extends DialogFragment {
             @Override
             public void wisefyFailure(int i) {
                 Log.d(TAG, "wisefyFailure: ");
-                dialog_txt.setText("Failed");
+                mHandler.sendEmptyMessage(1);
             }
         });
     }
@@ -179,19 +183,19 @@ public class ConnectDialog extends DialogFragment {
 
             @Override
             public void failureConnectingToNetwork() {
-                dialog_txt.setText("Failed");
+                mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "failureConnectingToNetwork: ");
             }
 
             @Override
             public void networkNotFoundToConnectTo() {
-                dialog_txt.setText("Failed");
+                mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "networkNotFoundToConnectTo: ");
             }
 
             @Override
             public void wisefyFailure(int i) {
-                dialog_txt.setText("Failed");
+                mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "wisefyFailure: ");
             }
         });

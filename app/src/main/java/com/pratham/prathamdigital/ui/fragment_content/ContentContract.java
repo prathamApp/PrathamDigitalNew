@@ -18,15 +18,19 @@ public interface ContentContract {
 
         void increaseNotification(int number);
 
-        void decreaseNotification(int number, Modal_ContentDetail detail);
+        void decreaseNotification(int number, Modal_ContentDetail detail, ArrayList<String> selectedNodeIds);
 
         void displayLevel(ArrayList<Modal_ContentDetail> levelContents);
+
+        void onDownloadError(String file_name, ArrayList<String> selectedNodeIds);
     }
 
     interface contentPresenter {
-        void recievedContent(String header, String response);
+        void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList);
 
-        void recievedError(String header);
+        void recievedError(String header, ArrayList<Modal_ContentDetail> contentList);
+
+        void downloadContent(Modal_ContentDetail contentDetail);
 
         void fileDownloadStarted(int downloadId, String filename, Modal_ContentDetail contentDetail);
 
@@ -37,6 +41,8 @@ public interface ContentContract {
         void onDownloadPaused(int downloadId);
 
         void ondownloadCancelled(int downloadId);
+
+        void ondownloadError(String f_name);
 
         void checkConnectionForRaspberry();
     }

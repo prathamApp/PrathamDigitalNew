@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.pratham.prathamdigital.custom.loading_view.CatLoadingView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -25,6 +24,7 @@ import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
 import net.alhazmy13.catcho.library.Catcho;
@@ -49,7 +49,6 @@ public class BaseActivity extends ActivityManagePermission {
     public static VillageDao villageDao;
     public static LogDao logDao;
     public static String language = "";
-    public static CatLoadingView catLoadingView = new CatLoadingView();
     public static TTSService ttsService;
 
     @Override
@@ -57,6 +56,7 @@ public class BaseActivity extends ActivityManagePermission {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
                 .activity(CatchoTransparentActivity.class)
                 .build();

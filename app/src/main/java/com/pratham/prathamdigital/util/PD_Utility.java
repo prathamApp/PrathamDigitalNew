@@ -19,6 +19,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.location.Address;
@@ -44,6 +45,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.Window;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -58,6 +60,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
@@ -106,8 +109,14 @@ public class PD_Utility {
     static int Dont_Disclose = 0;
     private static String TAG = "Utility";
     static Dialog mDateTimeDialog = null;
+    private static Dialog dialog;
 
     public static final Pattern otp_pattern = Pattern.compile("(|^)\\d{4}");
+    private static List<Integer> colors;
+
+    public PD_Utility(BaseActivity baseActivity) {
+        colors = getAllMaterialColors();
+    }
 
     public static int dp2px(Context context, float value) {
         final float scale = context.getResources().getDisplayMetrics().densityDpi;
@@ -1786,10 +1795,9 @@ public class PD_Utility {
     }
 
     public static int getRandomColorGradient() {
-        List<Integer> allColors = getAllMaterialColors();
-        if (allColors != null) {
-            int randomIndex = new Random().nextInt(allColors.size());
-            int randomColor = allColors.get(randomIndex);
+        if (colors != null) {
+            int randomIndex = new Random().nextInt(colors.size());
+            int randomColor = colors.get(randomIndex);
             return randomColor;
         } else {
             return 0;
@@ -1816,5 +1824,21 @@ public class PD_Utility {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static void showDialog(Activity activity) {
+        dialog = new Dialog(activity);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(R.layout.cat_loading_dialog);
+        dialog.show();
+    }
+
+    public static void dismissDialog() {
+        if (dialog != null)
+            dialog.dismiss();
+        dialog = null;
     }
 }

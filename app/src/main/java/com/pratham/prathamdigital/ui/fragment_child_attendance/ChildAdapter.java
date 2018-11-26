@@ -37,7 +37,11 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
     @Override
     public ChildHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
-        View v = inflater.inflate(R.layout.item_child_attendance, parent, false);
+        View v = null;
+        if (PrathamApplication.isTablet)
+            v = inflater.inflate(R.layout.item_child_attendance_two, parent, false);
+        else
+            v = inflater.inflate(R.layout.item_child_attendance, parent, false);
         return new ChildHolder(v);
     }
 
@@ -105,8 +109,6 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
         LottieAnimationView child_avatar;
         @BindView(R.id.card_avatar)
         MaterialCardView card_avatar;
-        @BindView(R.id.card_child_name)
-        MaterialCardView card_child_name;
 
         public ChildHolder(@NonNull View itemView) {
             super(itemView);

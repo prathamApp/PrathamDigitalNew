@@ -11,6 +11,7 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
@@ -35,7 +36,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
     Context context;
     ContentContract.contentView contentView;
-    ArrayList<Modal_ContentDetail> totalContents;
+    //    ArrayList<Modal_ContentDetail> totalContents;
     ArrayList<Modal_ContentDetail> levelContents;
     Map<Integer, Modal_FileDownloading> filesDownloading = new HashMap<>();
 
@@ -85,55 +86,57 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         }
     }
 
-    private void checkConnectivity(String parentId) {
+    private void checkConnectivity(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            callOnlineContentAPI(parentId);
+            callOnlineContentAPI(contentList, parentId);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 if (FastSave.getInstance().getString(PD_Constant.FACILITY_ID, "").isEmpty())
                     checkConnectionForRaspberry();
-                callKolibriAPI(parentId);
+                callKolibriAPI(contentList, parentId);
             } else {
-                callOnlineContentAPI(parentId);
+                callOnlineContentAPI(contentList, parentId);
             }
         } else {
-            if (totalContents.isEmpty()) {
+            if (contentList.isEmpty()) {
                 contentView.showNoConnectivity();
             } else {
 //                Collections.shuffle(totalContents);
-                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
+                contentView.displayContents(contentList);
             }
         }
     }
 
-    private void callKolibriAPI(String parentId) {
+    private void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null) {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString());
+                    .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
         } else {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString() + parentId);
+                    .getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
+                            + parentId, contentList);
         }
     }
 
-    private void callOnlineContentAPI(String parentId) {
+    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null) {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
                     .getContentFromInternet(PD_Constant.INTERNET_HEADER,
                             PD_Constant.URL.GET_TOP_LEVEL_NODE
-                                    + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"));
+                                    + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"), contentList);
         } else {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
                     .getContentFromInternet(PD_Constant.BROWSE_INTERNET,
-                            PD_Constant.URL.BROWSE_BY_ID + parentId);
+                            PD_Constant.URL.BROWSE_BY_ID + parentId, contentList);
         }
     }
 
+    @Override
     public void downloadContent(Modal_ContentDetail contentDetail) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
-                    PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid());
+                    PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 String url = contentDetail.getResourcepath();
@@ -144,16 +147,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                         , url, foldername, fileName, pradigiPath, contentDetail);
             } else {
                 new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
-                        PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid());
+                        PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
             }
-        } else {
-            //todo no internet connecctivity dialog
         }
     }
 
+
     @Override
-    public void recievedContent(String header, String response) {
+    public void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList) {
         ArrayList<Modal_ContentDetail> displayedContents = new ArrayList<>();
+        ArrayList<Modal_ContentDetail> totalContents = new ArrayList<>();
         try {
             Log.d("response:::", response);
             Log.d("response:::", "requestType:: " + header);
@@ -163,6 +166,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 FastSave.getInstance().saveString(PD_Constant.FACILITY_ID, facility.getFacilityId());
             } else if (header.equalsIgnoreCase(PD_Constant.RASPBERRY_HEADER)) {
                 displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
@@ -172,9 +177,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.DISPLAY_CONTENT);
+                message.setContentList(totalContents);
+                EventBus.getDefault().post(message);
+//                contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
                 displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
@@ -188,9 +199,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.DISPLAY_CONTENT);
+                message.setContentList(totalContents);
+                EventBus.getDefault().post(message);
+//                contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
                 displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
                 Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
@@ -210,6 +227,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
                 displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
                 Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
@@ -290,13 +309,13 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     @Override
-    public void recievedError(String header) {
-        if (totalContents.isEmpty()) {
+    public void recievedError(String header, ArrayList<Modal_ContentDetail> contentList) {
+        if (contentList != null && contentList.isEmpty()) {
             contentView.showNoConnectivity();
         } else {
 //            Collections.shuffle(totalContents);
-            totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-            contentView.displayContents(totalContents);
+            contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
+            contentView.displayContents(contentList);
         }
     }
 
@@ -344,7 +363,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         temp.add(content);
         BaseActivity.modalContentDao.addContentList(temp);
         filesDownloading.remove(downloadId);
-        contentView.decreaseNotification(filesDownloading.size(), content);
+//        contentView.decreaseNotification(filesDownloading.size(), content, selectedNodeIds);
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
+        message.setDownlaodContentSize(filesDownloading.size());
+        message.setContentDetail(content);
+        EventBus.getDefault().post(message);
         if (filesDownloading.size() == 0) {
             EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
         }
@@ -358,6 +382,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     @Override
     public void ondownloadCancelled(int downloadId) {
 
+    }
+
+    @Override
+    public void ondownloadError(String f_name) {
+        contentView.onDownloadError(f_name, null);
     }
 
     public void showPreviousContent() {
@@ -374,12 +403,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         }
     }
 
-    public ArrayList<Modal_ContentDetail> getUpdatedList(Modal_ContentDetail contentDetail) {
-//        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-//        temp.addAll(totalContents);
-        totalContents.remove(contentDetail);
-        return totalContents;
-    }
+//    public ArrayList<Modal_ContentDetail> getUpdatedList(Modal_ContentDetail contentDetail) {
+//////        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+//////        temp.addAll(totalContents);
+////        totalContents.remove(contentDetail);
+////        return totalContents;
+////    }
 
     public void getLevels() {
         if (levelContents != null) {
@@ -396,22 +425,22 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 
         public GetDownloadedContent(String parentId) {
             this.parentId = parentId;
-            totalContents = new ArrayList<>();
+//            totalContents = new ArrayList<>();
         }
 
         @Override
         protected Object doInBackground(Object[] objects) {
             if (parentId != null)
-                totalContents = (ArrayList<Modal_ContentDetail>) BaseActivity.modalContentDao.getChild(parentId);
+                return BaseActivity.modalContentDao.getChild(parentId);
             else
-                totalContents = (ArrayList<Modal_ContentDetail>) BaseActivity.modalContentDao.getParents();
-            return null;
+                return BaseActivity.modalContentDao.getParents();
+//            return null;
         }
 
         @Override
         protected void onPostExecute(Object o) {
             super.onPostExecute(o);
-            checkConnectivity(parentId);
+            checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
         }
     }
 }

@@ -134,13 +134,13 @@ public class FragmentSelectAgeGroup extends Fragment {
     public void openAdminPanel() {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
-//        Intent intent = new Intent(getActivity(), ConnectDialog.class);
-//        startActivityForResult(intent, 3);
-        ConnectDialog connectDialog = new ConnectDialog();
-        connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
-        connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
-//        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
-//                null, AdminPanelFragment.class.getSimpleName());
+        if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            ConnectDialog connectDialog = new ConnectDialog();
+            connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
+            connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
+        } else {
+            onActivityResult(3, Activity.RESULT_OK, null);
+        }
     }
 
     @Override

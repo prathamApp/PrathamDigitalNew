@@ -14,14 +14,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.view_animator.AnimationListener;
 import com.pratham.prathamdigital.custom.view_animator.ViewAnimator;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer;
@@ -29,6 +30,7 @@ import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -36,6 +38,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 import butterknife.BindView;
@@ -61,9 +65,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
     RelativeLayout rl_network_error;
 
     ContentPresenterImpl contentPresenter;
-    ArrayList<Modal_ContentDetail> modal_contents;
+    //    ArrayList<Modal_ContentDetail> modal_contents;
     ContentAdapter contentAdapter;
     ContentContract.mainView mainView;
+    Map<String, Integer> filesDownloading = new HashMap<>();
 
     public static FragmentContent newInstance(int centerX, int centerY, int color) {
         Bundle args = new Bundle();
@@ -150,16 +155,26 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void onLevelClicked(final Modal_ContentDetail detail) {
         Log.d(TAG, "onLevelClicked:");
         PrathamApplication.bubble_mp.start();
-        if (!BaseActivity.catLoadingView.isAdded())
-            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        PD_Utility.showDialog(getActivity());
         contentPresenter.getContent(detail);
+    }
+
+    @Subscribe
+    public void decrease(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
+                if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
+                    contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()));
+                mainView.hideNotificationBadge(message.getDownlaodContentSize());
+            }
+        }
     }
 
     //    @OnClick(R.id.content_back)
     public void setContent_back() {
+        filesDownloading.clear();
         PrathamApplication.bubble_mp.start();
-        if (!BaseActivity.catLoadingView.isAdded())
-            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        PD_Utility.showDialog(getActivity());
         contentPresenter.showPreviousContent();
     }
 
@@ -167,15 +182,14 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void onResume() {
         super.onResume();
         if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
-            if (!BaseActivity.catLoadingView.isAdded())
-                BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+            PD_Utility.showDialog(getActivity());
             contentPresenter.getContent(null);
         }
     }
 
     @Override
     public void showNoConnectivity() {
-        BaseActivity.catLoadingView.dismiss();
+        PD_Utility.dismissDialog();
         rv_content.setVisibility(View.GONE);
         rl_network_error.setVisibility(View.VISIBLE);
     }
@@ -187,42 +201,52 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Override
-    public void displayContents(final ArrayList<Modal_ContentDetail> content) {
-        rl_network_error.setVisibility(View.GONE);
-        BaseActivity.catLoadingView.dismiss();
-        if (rv_content.getVisibility() == View.GONE)
-            rv_content.setVisibility(View.VISIBLE);
-        if (!content.isEmpty()) {
-            modal_contents = new ArrayList<>();
-            modal_contents.addAll(content);
-            if (contentAdapter == null) {
-                contentAdapter = new ContentAdapter(getActivity(), content, FragmentContent.this);
-                rv_content.setHasFixedSize(true);
-                rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-                GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
-                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int pos) {
-                        switch (contentAdapter.getItemViewType(pos)) {
-                            case ContentAdapter.HEADER_TYPE:
-                                return gridLayoutManager.getSpanCount();
-                            case ContentAdapter.FOLDER_TYPE:
-                                return 1;
-                            case ContentAdapter.FILE_TYPE:
-                                return 1;
-                            default:
-                                return 1;
-                        }
+    public void displayContents(ArrayList<Modal_ContentDetail> content) {
+
+    }
+
+    @Subscribe
+    public void displayContent(final EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DISPLAY_CONTENT)) {
+                filesDownloading.clear();
+                rl_network_error.setVisibility(View.GONE);
+                PD_Utility.dismissDialog();
+                if (rv_content.getVisibility() == View.GONE)
+                    rv_content.setVisibility(View.VISIBLE);
+                if (!message.getContentList().isEmpty()) {
+                    //            modal_contents = new ArrayList<>();
+                    //            modal_contents.addAll(content);
+                    if (contentAdapter == null) {
+                        contentAdapter = new ContentAdapter(getActivity(), message.getContentList(), FragmentContent.this);
+                        rv_content.setHasFixedSize(true);
+                        rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
+                        GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
+                        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                            @Override
+                            public int getSpanSize(int pos) {
+                                switch (contentAdapter.getItemViewType(pos)) {
+                                    case ContentAdapter.HEADER_TYPE:
+                                        return gridLayoutManager.getSpanCount();
+                                    case ContentAdapter.FOLDER_TYPE:
+                                        return 1;
+                                    case ContentAdapter.FILE_TYPE:
+                                        return 1;
+                                    default:
+                                        return 1;
+                                }
+                            }
+                        });
+                        rv_content.setAdapter(contentAdapter);
+                        rv_content.scheduleLayoutAnimation();
+                    } else {
+                        contentAdapter.updateList(message.getContentList());
+                        rv_content.scheduleLayoutAnimation();
                     }
-                });
-                rv_content.setAdapter(contentAdapter);
-                rv_content.scheduleLayoutAnimation();
-            } else {
-                contentAdapter.updateList(content);
-                rv_content.scheduleLayoutAnimation();
+                }
+                contentPresenter.getLevels();
             }
         }
-        contentPresenter.getLevels();
     }
 
     @Override
@@ -233,8 +257,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
-        if (!BaseActivity.catLoadingView.isAdded())
-            BaseActivity.catLoadingView.show(getActivity().getSupportFragmentManager(), "");
+        PD_Utility.showDialog(getActivity());
         contentPresenter.getContent(contentDetail);
     }
 
@@ -246,6 +269,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
+        filesDownloading.put(contentDetail.getNodeid(), position);
 //        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
         contentPresenter.downloadContent(contentDetail);
     }
@@ -333,17 +357,15 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Override
-    public void decreaseNotification(int number, Modal_ContentDetail contentDetail) {
+    public void decreaseNotification(int number, Modal_ContentDetail contentDetail, ArrayList<String> selectedNodeIds) {
 //        ((ActivityMain) getActivity()).hideNotificationBadge(number);
-        for (int i = 0; i < modal_contents.size(); i++) {
-            if (modal_contents.get(i).getNodeid() != null)
-                if (modal_contents.get(i).getNodeid().equalsIgnoreCase(contentDetail.getNodeid())) {
-                    modal_contents.set(i, contentDetail);
-                    break;
-                }
-        }
-        contentAdapter.updateList(modal_contents);
-        mainView.hideNotificationBadge(number);
+//        if (selectedNodeIds.contains(contentDetail.getNodeid())) {
+    }
+
+    @Override
+    public void onDownloadError(String file_name, ArrayList<String> selectedNodeIds) {
+        Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
+//        contentAdapter.updateList(modal_contents);
     }
 
     @Override

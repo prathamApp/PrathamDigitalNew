@@ -112,6 +112,7 @@ public class ZipDownloader {
                     @Override
                     public void onError(Error error) {
                         Log.d(TAG, "onError: content download error");
+                        contentPresenter.ondownloadError(f_name);
                     }
                 });
     }
