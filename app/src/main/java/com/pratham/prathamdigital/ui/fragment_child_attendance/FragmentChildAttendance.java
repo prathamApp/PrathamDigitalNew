@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -136,10 +137,19 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     @OnClick(R.id.btn_attendance_next)
     public void setNext(View v) {
-        PrathamApplication.bubble_mp.start();
-        FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
-        markAttendance(students);
-        presentActivity(v);
+        ArrayList<Modal_Student> checkedStds = new ArrayList<>();
+        for (int i = 0; i < students.size(); i++) {
+            if (students.get(i).isChecked())
+                checkedStds.add(students.get(i));
+        }
+        if (checkedStds.size() > 0) {
+            PrathamApplication.bubble_mp.start();
+            FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
+            markAttendance(students);
+            presentActivity(v);
+        } else {
+            Toast.makeText(getContext(), "Please Select Students !", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void markAttendance(ArrayList<Modal_Student> stud) {
@@ -169,5 +179,6 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        getActivity().finish();
     }
 }

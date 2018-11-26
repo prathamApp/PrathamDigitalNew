@@ -65,7 +65,7 @@ public class BaseActivity extends ActivityManagePermission {
         ttsService.setSpeechRate(0.7f);
         ttsService.setLanguage(new Locale("en", "IN"));
 
-//        hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
+        hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
         super.onCreate(savedInstanceState);
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
@@ -106,7 +106,7 @@ public class BaseActivity extends ActivityManagePermission {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-//        hideSystemUI(getWindow());
+        hideSystemUI(getWindow());
     }
 
     public static void hideSystemUI(Window window) {

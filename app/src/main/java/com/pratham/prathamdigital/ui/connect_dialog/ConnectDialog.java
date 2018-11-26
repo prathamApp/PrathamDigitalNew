@@ -83,7 +83,7 @@ public class ConnectDialog extends DialogFragment {
             switch (msg.what) {
                 case 0:
                     ArrayAdapter<String> adapter = new ArrayAdapter<String>(PrathamApplication.getInstance(),
-                            android.R.layout.simple_list_item_1, android.R.id.text1, wifi_result);
+                            R.layout.connect_dialog_item, android.R.id.text1, wifi_result);
                     wifi_list.setAdapter(adapter);
                     wifi_list.setOnItemClickListener(onItemClickListener);
             }

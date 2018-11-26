@@ -218,6 +218,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 startService(new Intent(this, AppKillService.class));
                 Intent main = new Intent(QRLogin.this, ActivityMain.class);
                 startActivity(main);
+                finishAffinity();
 
             }
         } catch (Exception e) {

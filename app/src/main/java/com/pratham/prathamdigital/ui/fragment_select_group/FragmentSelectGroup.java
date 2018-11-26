@@ -9,6 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -123,14 +124,19 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
 
     @OnClick(R.id.btn_group_next)
     public void setNext(View v) {
-        PrathamApplication.bubble_mp.start();
-        ArrayList<Modal_Student> students = new ArrayList<>();
-        students.addAll(BaseActivity.studentDao.getGroupwiseStudents(groupSelected.getGroupId()));
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
-        bundle.putString(PD_Constant.GROUPID, groupSelected.getGroupId());
-        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
-                bundle, FragmentChildAttendance.class.getSimpleName());
+        if (groupSelected != null) {
+            PrathamApplication.bubble_mp.start();
+            ArrayList<Modal_Student> students = new ArrayList<>();
+            students.addAll(BaseActivity.studentDao.getGroupwiseStudents(groupSelected.getGroupId()));
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+            bundle.putString(PD_Constant.GROUPID, groupSelected.getGroupId());
+            PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
+                    bundle, FragmentChildAttendance.class.getSimpleName());
+        }else {
+            Toast.makeText(getContext(), "Please select Group !", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override

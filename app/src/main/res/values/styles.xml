@@ -13,7 +13,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/charcoal</item>
         <item name="colorPrimaryDark">@color/charcoal</item>
-        <item name="colorAccent">@color/white</item>
+        <item name="colorAccent">@color/button</item>
         <!--<item name="android:windowContentTransitions" tools:targetApi="lollipop">true</item>-->
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowTranslucentStatus">true</item>

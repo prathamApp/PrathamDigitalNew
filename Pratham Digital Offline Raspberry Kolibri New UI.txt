@@ -33,3 +33,15 @@ appkillservice --- done
 initial entries update -- done
 db backups -- done
 db name changed --- done
+exit confirmation on backpressed --- done
+change text color of connect screen --- done	
+change text color of Alert dialog screen --- done	
+finish qr login -- done
+backpress on age select grp fragment ---- done
+backpress popbackstack on FragmentSelectGroup,FragmentChildAttendance,AdminPanelFragment fragment ---- done
+change images of login --- done
+handle next nutton attendance childattendance, selectgroup --- done
+
+
+
+

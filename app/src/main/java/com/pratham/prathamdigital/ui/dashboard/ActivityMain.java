@@ -1,12 +1,14 @@
 package com.pratham.prathamdigital.ui.dashboard;
 
 import android.animation.Animator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
@@ -180,7 +182,24 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @Override
     public void onBackPressed() {
-        EventBus.getDefault().post(PD_Constant.MAIN_BACK);
+        if (avatar_view.getVisibility() == View.GONE)
+            EventBus.getDefault().post(PD_Constant.MAIN_BACK);
+        else {
+            new AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("PraDigi")
+                    .setMessage("Do you want to exit?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                        }
+
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+
+        }
     }
 
     @Override
