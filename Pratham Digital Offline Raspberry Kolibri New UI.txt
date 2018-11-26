@@ -27,3 +27,9 @@ update pojo to string --- done
 Give proper toast -- done
 erase txview after login ---- done
 pull data ui --- done
+appkillservice --- done
+
+26 Nov
+initial entries update -- done
+db backups -- done
+db name changed --- done

@@ -265,13 +265,25 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("apkType") == null) {
-            statusObj.statusKey = "apkType";
-            statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie";
-            BaseActivity.statusDao.insert(statusObj);
+            if (PrathamApplication.isTablet) {
+                statusObj.statusKey = "apkType";
+                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Tablet Apk";
+                BaseActivity.statusDao.insert(statusObj);
+            } else {
+                statusObj.statusKey = "apkType";
+                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Smartphone Apk";
+                BaseActivity.statusDao.insert(statusObj);
+            }
         } else {
-            statusObj.statusKey = "apkType";
-            statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie";
-            BaseActivity.statusDao.insert(statusObj);
+            if (PrathamApplication.isTablet) {
+                statusObj.statusKey = "apkType";
+                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Tablet Apk";
+                BaseActivity.statusDao.insert(statusObj);
+            } else {
+                statusObj.statusKey = "apkType";
+                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Smartphone Apk";
+                BaseActivity.statusDao.insert(statusObj);
+            }
         }
         if (BaseActivity.statusDao.getKey("appName") == null) {
             CharSequence c = "";

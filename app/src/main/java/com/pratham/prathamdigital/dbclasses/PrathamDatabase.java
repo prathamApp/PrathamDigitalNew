@@ -23,7 +23,7 @@ import com.pratham.prathamdigital.models.Modal_Village;
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class, Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class, Modal_Log.class}, version = 1, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
-    public static final String DB_NAME = "pradigi";
+    public static final String DB_NAME = "pradigi_db";
 
     public abstract AttendanceDao getAttendanceDao();
 
