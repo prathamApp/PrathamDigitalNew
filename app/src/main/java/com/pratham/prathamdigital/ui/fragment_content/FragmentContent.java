@@ -202,7 +202,42 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void displayContents(ArrayList<Modal_ContentDetail> content) {
-
+        filesDownloading.clear();
+        rl_network_error.setVisibility(View.GONE);
+        PD_Utility.dismissDialog();
+        if (rv_content.getVisibility() == View.GONE)
+            rv_content.setVisibility(View.VISIBLE);
+        if (!content.isEmpty()) {
+            //            modal_contents = new ArrayList<>();
+            //            modal_contents.addAll(content);
+            if (contentAdapter == null) {
+                contentAdapter = new ContentAdapter(getActivity(), content, FragmentContent.this);
+                rv_content.setHasFixedSize(true);
+                rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
+                GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
+                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                    @Override
+                    public int getSpanSize(int pos) {
+                        switch (contentAdapter.getItemViewType(pos)) {
+                            case ContentAdapter.HEADER_TYPE:
+                                return gridLayoutManager.getSpanCount();
+                            case ContentAdapter.FOLDER_TYPE:
+                                return 1;
+                            case ContentAdapter.FILE_TYPE:
+                                return 1;
+                            default:
+                                return 1;
+                        }
+                    }
+                });
+                rv_content.setAdapter(contentAdapter);
+                rv_content.scheduleLayoutAnimation();
+            } else {
+                contentAdapter.updateList(content);
+                rv_content.scheduleLayoutAnimation();
+            }
+        }
+        contentPresenter.getLevels();
     }
 
     @Subscribe
