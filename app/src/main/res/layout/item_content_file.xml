@@ -5,103 +5,101 @@
     android:layout_width="@dimen/_130sdp"
     android:layout_height="@dimen/_130sdp"
     android:clickable="true"
-    android:foreground="?attr/selectableItemBackground"
+    android:focusable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     android:stateListAnimator="@animator/lift_on_touch"
-    app:cardBackgroundColor="@color/black_20"
-    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_10sdp"
     app:cardElevation="@dimen/_5sdp">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_3sdp"
+        android:stateListAnimator="@animator/lift_on_touch"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardElevation="0dp">
 
-        <ImageView
-            android:id="@+id/file_content_image"
+        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            android:src="@drawable/ic_app_logo_" />
+            android:background="@drawable/content_item_bkgd">
 
-        <RelativeLayout
-            android:id="@+id/rl_play_content"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/_10sdp"
-            android:background="@drawable/rounded_corners"
-            android:visibility="visible">
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:id="@+id/file_content_desc"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center"
-                android:text="@string/Open"
-                android:textColor="@color/ghost_white" />
-
-            <com.airbnb.lottie.LottieAnimationView
-                android:id="@+id/file_item_lottieview"
-                android:layout_width="@dimen/_30sdp"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_toLeftOf="@+id/file_content_desc"
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                app:lottie_scale=".7" />
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_download"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_margin="@dimen/_10sdp"
-            android:background="@drawable/rounded_corners"
-            android:visibility="gone">
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            <ImageView
+                android:id="@+id/file_content_image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="@string/download"
-                android:textColor="@color/white" />
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_app_logo_" />
+
+            <RelativeLayout
+                android:id="@+id/rl_play_content"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/rounded_corners"
+                android:visibility="visible">
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/file_content_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:text="@string/Open"
+                    android:textColor="@color/ghost_white" />
+
+                <com.airbnb.lottie.LottieAnimationView
+                    android:id="@+id/file_item_lottieview"
+                    android:layout_width="@dimen/_30sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_toLeftOf="@+id/file_content_desc"
+                    app:lottie_autoPlay="true"
+                    app:lottie_loop="true"
+                    app:lottie_scale=".7" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_download"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/rounded_corners"
+                android:visibility="gone">
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/download"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_reveal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/red"
+                android:visibility="invisible">
+
+                <ProgressBar
+                    android:id="@+id/item_progress"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/item_progress"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginTop="@dimen/size_5"
+                    android:text="@string/downloading"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
         </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/rl_reveal"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/red"
-            android:visibility="invisible">
-
-            <ProgressBar
-                android:id="@+id/item_progress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true" />
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_progress"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/size_5"
-                android:text="@string/downloading"
-                android:textColor="@color/white" />
-        </RelativeLayout>
-        <!--<ImageView-->
-        <!--android:id="@+id/iv_delete"-->
-        <!--android:layout_width="@dimen/_40sdp"-->
-        <!--android:layout_height="@dimen/_40sdp"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="@drawable/quarter_circle"-->
-        <!--android:paddingLeft="@dimen/_18sdp"-->
-        <!--android:paddingTop="@dimen/_5sdp"-->
-        <!--android:scaleType="centerInside"-->
-        <!--android:src="@drawable/delete_button"-->
-        <!--android:visibility="gone" />-->
-
-    </RelativeLayout>
+    </android.support.design.card.MaterialCardView>
 </android.support.design.card.MaterialCardView>

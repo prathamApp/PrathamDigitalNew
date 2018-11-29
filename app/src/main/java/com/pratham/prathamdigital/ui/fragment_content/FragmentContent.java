@@ -19,8 +19,6 @@ import android.widget.Toast;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
-import com.pratham.prathamdigital.custom.view_animator.AnimationListener;
-import com.pratham.prathamdigital.custom.view_animator.ViewAnimator;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -164,7 +162,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
                 if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
-                    contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()));
+                    contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
                 mainView.hideNotificationBadge(message.getDownlaodContentSize());
             }
         }
@@ -181,10 +179,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onResume() {
         super.onResume();
-        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
-            PD_Utility.showDialog(getActivity());
-            contentPresenter.getContent(null);
-        }
+//        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
+        PD_Utility.showDialog(getActivity());
+        contentPresenter.getContent(null);
+//        }
     }
 
     @Override
@@ -240,50 +238,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         contentPresenter.getLevels();
     }
 
-    @Subscribe
-    public void displayContent(final EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.DISPLAY_CONTENT)) {
-                filesDownloading.clear();
-                rl_network_error.setVisibility(View.GONE);
-                PD_Utility.dismissDialog();
-                if (rv_content.getVisibility() == View.GONE)
-                    rv_content.setVisibility(View.VISIBLE);
-                if (!message.getContentList().isEmpty()) {
-                    //            modal_contents = new ArrayList<>();
-                    //            modal_contents.addAll(content);
-                    if (contentAdapter == null) {
-                        contentAdapter = new ContentAdapter(getActivity(), message.getContentList(), FragmentContent.this);
-                        rv_content.setHasFixedSize(true);
-                        rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-                        GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
-                        gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                            @Override
-                            public int getSpanSize(int pos) {
-                                switch (contentAdapter.getItemViewType(pos)) {
-                                    case ContentAdapter.HEADER_TYPE:
-                                        return gridLayoutManager.getSpanCount();
-                                    case ContentAdapter.FOLDER_TYPE:
-                                        return 1;
-                                    case ContentAdapter.FILE_TYPE:
-                                        return 1;
-                                    default:
-                                        return 1;
-                                }
-                            }
-                        });
-                        rv_content.setAdapter(contentAdapter);
-                        rv_content.scheduleLayoutAnimation();
-                    } else {
-                        contentAdapter.updateList(message.getContentList());
-                        rv_content.scheduleLayoutAnimation();
-                    }
-                }
-                contentPresenter.getLevels();
-            }
-        }
-    }
-
     @Override
     public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
         ((ActivityMain) getActivity()).showLevels(levelContents);
@@ -312,77 +266,77 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void hideViews() {
         //hide search
-        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
-                .dp().translationX(0, 100)
-                .duration(900)
-                .onStop(new AnimationListener.Stop() {
-                    @Override
-                    public void onStop() {
-                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.GONE);
-                    }
-                })
-                .start();
+//        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
+//                .dp().translationX(0, 100)
+//                .duration(900)
+//                .onStop(new AnimationListener.Stop() {
+//                    @Override
+//                    public void onStop() {
+//                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.GONE);
+//                    }
+//                })
+//                .start();
         //hide avatar
-        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
-                .dp().translationX(0, 100)
-                .duration(900)
-                .onStart(new AnimationListener.Start() {
-                    @Override
-                    public void onStart() {
-                        //show back
-                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
-                                .dp().translationX(100, 0)
-                                .duration(900)
-                                .onStart(new AnimationListener.Start() {
-                                    @Override
-                                    public void onStart() {
-                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.VISIBLE);
-                                    }
-                                })
-                                .start();
-                    }
-                })
-                .onStop(new AnimationListener.Stop() {
-                    @Override
-                    public void onStop() {
-                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.GONE);
-                    }
-                })
-                .start();
+//        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
+//                .dp().translationX(0, 100)
+//                .duration(900)
+//                .onStart(new AnimationListener.Start() {
+//                    @Override
+//                    public void onStart() {
+//                        //show back
+//                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
+//                                .dp().translationX(100, 0)
+//                                .duration(900)
+//                                .onStart(new AnimationListener.Start() {
+//                                    @Override
+//                                    public void onStart() {
+//                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.VISIBLE);
+//                                    }
+//                                })
+//                                .start();
+//                    }
+//                })
+//                .onStop(new AnimationListener.Stop() {
+//                    @Override
+//                    public void onStop() {
+//                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.GONE);
+//                    }
+//                })
+//                .start();
     }
 
     @Override
     public void showViews() {
-        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
-                .dp().translationX(100, 0)
-                .duration(900)
-                .onStart(new AnimationListener.Start() {
-                    @Override
-                    public void onStart() {
-                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.VISIBLE);
-                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
-                                .dp().translationX(0, 100)
-                                .duration(900)
-                                .onStop(new AnimationListener.Stop() {
-                                    @Override
-                                    public void onStop() {
-                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.GONE);
-                                    }
-                                })
-                                .start();
-                    }
-                })
-                .start();
-        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
-                .dp().translationX(100, 0)
-                .duration(900)
-                .onStart(new AnimationListener.Start() {
-                    @Override
-                    public void onStart() {
-                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.VISIBLE);
-                    }
-                })
-                .start();
+//        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
+//                .dp().translationX(100, 0)
+//                .duration(900)
+//                .onStart(new AnimationListener.Start() {
+//                    @Override
+//                    public void onStart() {
+//                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.VISIBLE);
+//                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
+//                                .dp().translationX(0, 100)
+//                                .duration(900)
+//                                .onStop(new AnimationListener.Stop() {
+//                                    @Override
+//                                    public void onStop() {
+//                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.GONE);
+//                                    }
+//                                })
+//                                .start();
+//                    }
+//                })
+//                .start();
+//        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
+//                .dp().translationX(100, 0)
+//                .duration(900)
+//                .onStart(new AnimationListener.Start() {
+//                    @Override
+//                    public void onStart() {
+//                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.VISIBLE);
+//                    }
+//                })
+//                .start();
     }
 
     @Override
@@ -460,7 +414,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         intent.putExtra("pdfPath", f_path);
         intent.putExtra("pdfTitle", contentDetail.getNodetitle());
         intent.putExtra("resId", contentDetail.getResourceid());
-        startActivity(intent);
+        getActivity().startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
     }
 
     private void openVideo(Modal_ContentDetail contentDetail) {
@@ -475,7 +430,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         intent.putExtra("videoPath", f_path);
         intent.putExtra("videoTitle", contentDetail.getNodetitle());
         intent.putExtra("resId", contentDetail.getResourceid());
-        startActivity(intent);
+        getActivity().startActivity(intent);
+        getActivity().overridePendingTransition(R.anim.pop_in, R.anim.nothing);
     }
 
     private void openGame(Modal_ContentDetail contentDetail) {
@@ -494,6 +450,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         intent.putExtra("index_path", f_path);
         intent.putExtra("path", folder_path);
         intent.putExtra("resId", contentDetail.getResourceid());
+        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.nothing);
         startActivity(intent);
     }
 }

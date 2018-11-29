@@ -15,6 +15,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
@@ -25,6 +26,7 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -42,6 +44,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     RecyclerView rv_child;
     @BindView(R.id.btn_attendance_next)
     Button btn_attendance_next;
+    @BindView(R.id.add_child)
+    RelativeLayout add_child;
 
     ChildAdapter childAdapter;
     ArrayList<Modal_Student> students;
@@ -70,11 +74,13 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
             btn_attendance_next.setVisibility(View.VISIBLE);
+            add_child.setVisibility(View.GONE);
             groupID = getArguments().getString(PD_Constant.GROUPID);
             for (Modal_Student stu : students)
                 avatars.add(PD_Utility.getRandomAvatar(getActivity()));
         } else {
             btn_attendance_next.setVisibility(View.GONE);
+            add_child.setVisibility(View.VISIBLE);
             groupID = "SmartPhone";
             for (Modal_Student stu : students)
                 avatars.add(stu.getAvatarName());
@@ -180,5 +186,11 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
         ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
         getActivity().finish();
+    }
+
+    @OnClick(R.id.add_child)
+    public void setAdd_child() {
+        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar(), R.id.frame_attendance,
+                null, Fragment_SelectAvatar.class.getSimpleName());
     }
 }

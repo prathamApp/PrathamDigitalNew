@@ -2,12 +2,9 @@ package com.pratham.prathamdigital.ui.dashboard;
 
 import android.animation.Animator;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,19 +16,15 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.NotificationBadge;
-import com.pratham.prathamdigital.custom.shapes.ShapeOfView;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.topsheet.TopSheetBehavior;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
-import com.pratham.prathamdigital.ui.settings_activity.SettingsActivity;
-import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
@@ -46,21 +39,23 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     @BindView(R.id.main_root)
-    RelativeLayout main_root;
-    @BindView(R.id.avatar_view)
-    public LottieAnimationView avatar_view;
-    @BindView(R.id.back_view)
-    public LottieAnimationView back_view;
+    CoordinatorLayout main_root;
+    //    @BindView(R.id.avatar_view)
+//    public LottieAnimationView avatar_view;
+//    @BindView(R.id.back_view)
+//    public LottieAnimationView back_view;
     @BindView(R.id.download_notification)
     NotificationBadge download_notification;
     @BindView(R.id.download_badge)
     RelativeLayout download_badge;
-    @BindView(R.id.avatar_shape)
-    public ShapeOfView avatar_shape;
-    @BindView(R.id.search_shape)
-    public ShapeOfView search_shape;
+    //    @BindView(R.id.avatar_shape)
+//    public ShapeOfView avatar_shape;
+//    @BindView(R.id.search_shape)
+//    public ShapeOfView search_shape;
     @BindView(R.id.rv_level)
     public RecyclerView rv_level;
+    @BindView(R.id.top_sheet)
+    View top_sheet;
 
     public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
     public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
@@ -75,7 +70,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         ButterKnife.bind(this);
         if (savedInstanceState == null && getIntent().hasExtra(EXTRA_CIRCULAR_REVEAL_X) &&
                 getIntent().hasExtra(EXTRA_CIRCULAR_REVEAL_Y)) {
-            main_root.setVisibility(View.INVISIBLE);
+//            main_root.setVisibility(View.INVISIBLE);
             revealX = getIntent().getIntExtra(EXTRA_CIRCULAR_REVEAL_X, 0);
             revealY = getIntent().getIntExtra(EXTRA_CIRCULAR_REVEAL_Y, 0);
             ViewTreeObserver viewTreeObserver = main_root.getViewTreeObserver();
@@ -99,7 +94,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     protected void onResume() {
         super.onResume();
-        avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "avatars/rabbit.json"));
+//        avatar_view.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR, "avatars/rabbit.json"));
     }
 
     protected void revealActivity(int x, int y) {
@@ -120,19 +115,19 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
-    @OnClick(R.id.avatar_view)
-    public void openSettingsActivity() {
-        PrathamApplication.bubble_mp.start();
-        ActivityOptionsCompat options = ActivityOptionsCompat.
-                makeSceneTransitionAnimation(this, avatar_view, "transition");
-        Point points = PD_Utility.getCenterPointOfView(avatar_view);
-        int revealX = (int) points.x;
-        int revealY = (int) points.y;
-        Intent intent = new Intent(this, SettingsActivity.class);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
-    }
+//    @OnClick(R.id.avatar_view)
+//    public void openSettingsActivity() {
+//        PrathamApplication.bubble_mp.start();
+//        ActivityOptionsCompat options = ActivityOptionsCompat.
+//                makeSceneTransitionAnimation(this, avatar_view, "transition");
+//        Point points = PD_Utility.getCenterPointOfView(avatar_view);
+//        int revealX = (int) points.x;
+//        int revealY = (int) points.y;
+//        Intent intent = new Intent(this, SettingsActivity.class);
+//        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
+//        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
+//        ActivityCompat.startActivity(ActivityMain.this, intent, options.toBundle());
+//    }
 
     public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
         if (levelContents != null) {
@@ -175,35 +170,42 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         download_notification.setNumber(number);
     }
 
-    @OnClick(R.id.back_view)
-    public void setMainBack() {
-        onBackPressed();
-    }
+//    @OnClick(R.id.back_view)
+//    public void setMainBack() {
+//        onBackPressed();
+//    }
 
     @Override
     public void onBackPressed() {
-        if (avatar_view.getVisibility() == View.GONE)
-            EventBus.getDefault().post(PD_Constant.MAIN_BACK);
-        else {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("PraDigi")
-                    .setMessage("Do you want to exit?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
-                        }
+//        if (avatar_view.getVisibility() == View.GONE)
+//            EventBus.getDefault().post(PD_Constant.MAIN_BACK);
+//        else {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("PraDigi")
+                .setMessage("Do you want to exit?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
 
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
-
-        }
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
         EventBus.getDefault().post(detail);
+    }
+
+    @OnClick(R.id.pull_down_menu)
+    public void setPullDown() {
+        TopSheetBehavior topSheetBehavior = TopSheetBehavior.from(top_sheet);
+        if (topSheetBehavior.getState() == TopSheetBehavior.STATE_COLLAPSED)
+            topSheetBehavior.setState(TopSheetBehavior.STATE_EXPANDED);
+        else
+            topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
     }
 }

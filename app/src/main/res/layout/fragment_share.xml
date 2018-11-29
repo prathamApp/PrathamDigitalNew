@@ -41,7 +41,7 @@
                         app:lottie_fileName="share.json"
                         app:lottie_loop="true" />
 
-                    <com.pratham.prathamdigital.custom.textviews.PacificoTextView
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/lottie_share"
@@ -73,7 +73,7 @@
                         app:lottie_fileName="recieve.json"
                         app:lottie_loop="true" />
 
-                    <com.pratham.prathamdigital.custom.textviews.PacificoTextView
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/lottie_recieve"
@@ -97,7 +97,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
-            <com.pratham.prathamdigital.custom.edittexts.PacificoEditText
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
                 android:id="@+id/status"
                 android:layout_width="@dimen/_160sdp"
                 android:layout_height="wrap_content"

@@ -13,6 +13,7 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class Activity_VPlayer extends BaseActivity {
 
@@ -49,6 +50,11 @@ public class Activity_VPlayer extends BaseActivity {
         });
     }
 
+    @OnClick(R.id.close_video)
+    public void setClose_video() {
+        onBackPressed();
+    }
+
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -57,6 +63,7 @@ public class Activity_VPlayer extends BaseActivity {
         rs.gc();
         rs.freeMemory();
         this.finish();
+        overridePendingTransition(R.anim.nothing, R.anim.pop_out);
     }
 
     @Override

@@ -119,8 +119,14 @@
         <activity
             android:name=".ui.video_player.Activity_VPlayer"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:theme="@style/AppTheme.Dialog"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".BaseActivity" />
+        </activity>
         <activity
             android:name=".ui.web_view.Activity_WebView"
             android:configChanges="orientation|screenSize"

@@ -177,11 +177,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                EventMessage message = new EventMessage();
-                message.setMessage(PD_Constant.DISPLAY_CONTENT);
-                message.setContentList(totalContents);
-                EventBus.getDefault().post(message);
-//                contentView.displayContents(totalContents);
+                contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -199,11 +195,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                EventMessage message = new EventMessage();
-                message.setMessage(PD_Constant.DISPLAY_CONTENT);
-                message.setContentList(totalContents);
-                EventBus.getDefault().post(message);
-//                contentView.displayContents(totalContents);
+                contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -364,14 +356,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         BaseActivity.modalContentDao.addContentList(temp);
         filesDownloading.remove(downloadId);
 //        contentView.decreaseNotification(filesDownloading.size(), content, selectedNodeIds);
+        if (filesDownloading.size() == 0) {
+            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        }
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
         message.setDownlaodContentSize(filesDownloading.size());
         message.setContentDetail(content);
         EventBus.getDefault().post(message);
-        if (filesDownloading.size() == 0) {
-            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
-        }
     }
 
     @Override

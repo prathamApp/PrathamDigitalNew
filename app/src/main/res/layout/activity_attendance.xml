@@ -3,7 +3,7 @@
     android:id="@+id/main_attendance_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/charcoal">
+    android:background="@drawable/attendance_bkgd">
 
     <FrameLayout
         android:id="@+id/frame_attendance"

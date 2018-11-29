@@ -18,13 +18,13 @@
         android:src="@drawable/splash_light"
         tools:ignore="ContentDescription" />
 
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginRight="@dimen/_30sdp"
-        android:src="@drawable/splash_boy" />
+    <!--<ImageView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentRight="true"-->
+    <!--android:layout_alignParentBottom="true"-->
+    <!--android:layout_marginRight="@dimen/_30sdp"-->
+    <!--android:src="@drawable/splash_boy" />-->
 
     <ImageView
         android:id="@+id/iv_pradigi"
@@ -34,8 +34,17 @@
         android:padding="@dimen/_60sdp"
         android:scaleType="centerInside"
         android:src="@drawable/splash_title"
-        android:visibility="invisible"
+        android:visibility="gone"
         tools:ignore="ContentDescription" />
+
+    <com.pratham.prathamdigital.custom.svg_view.AnimatedSvgView
+        android:id="@+id/animated_svg_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        app:animatedSvgFillColors="@array/pradigi_logo_color"
+        app:animatedSvgGlyphStrings="@array/pradigi_logo"
+        app:animatedSvgTraceTimePerGlyph="200" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/avatar_view"

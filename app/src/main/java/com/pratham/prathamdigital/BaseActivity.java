@@ -58,7 +58,8 @@ public class BaseActivity extends ActivityManagePermission {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
+//                .activity(CatchoTransparentActivity.class)
+                .recipients("your-email@domain.com")
                 .build();
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);

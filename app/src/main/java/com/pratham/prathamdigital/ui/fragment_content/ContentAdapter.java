@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.card.MaterialCardView;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -87,7 +86,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
                     Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
-                    folderViewHolder.content_card.setCardBackgroundColor(PD_Utility.getRandomColorGradient());
+                    folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
                     folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
                     if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
                         folderViewHolder.folder_content_desc.setText("No description");
@@ -157,7 +156,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
                     Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
-                    folderViewHolder.content_card.setCardBackgroundColor(PD_Utility.getRandomColorGradient());
+                    folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
                     folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
                     if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
                         folderViewHolder.folder_content_desc.setText("No description");
@@ -272,7 +271,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
         TextView folder_content_desc;
         @Nullable
         @BindView(R.id.content_card)
-        MaterialCardView content_card;
+        RelativeLayout content_card;
 
         public FolderViewHolder(View itemView) {
             super(itemView);

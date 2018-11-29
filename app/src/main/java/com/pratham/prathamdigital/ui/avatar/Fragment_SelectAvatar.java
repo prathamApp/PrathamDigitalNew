@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -89,6 +90,10 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     private void initializeAdapter() {
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(), R.array.student_class, R.layout.simple_spinner_item);
+        spinner_class.setAdapter(adapter);
+        ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
+        spinner_age.setAdapter(adapter2);
         avatar_rv.setOrientation(DSVOrientation.HORIZONTAL);
         avatar_rv.addOnItemChangedListener(onItemChangedListener);
         avatar_rv.setAdapter(new AvatarAdapter(context, avatarList));

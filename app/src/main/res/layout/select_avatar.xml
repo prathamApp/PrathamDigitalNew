@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/pattern_bg"
+    android:background="@drawable/attendance_bkgd"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -13,84 +13,76 @@
         <View
             android:layout_width="@dimen/_150sdp"
             android:layout_height="@dimen/_150sdp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_15sdp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/_10sdp"
             android:background="@drawable/avatars_round_bg"
             android:elevation="@dimen/_10sdp" />
 
         <com.yarolegovich.discretescrollview.DiscreteScrollView
             android:id="@+id/avatar_rv"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_170sdp"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/_10sdp"
             android:background="@android:color/transparent"
             android:elevation="@dimen/_15sdp"
-            app:dsv_orientation="horizontal" />
+            app:dsv_orientation="vertical" />
 
-        <com.pratham.prathamdigital.custom.edittexts.PacificoEditText
-            android:id="@+id/et_child_name"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_below="@+id/avatar_rv"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/_100sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:background="@drawable/avatar_age_selected"
-            android:elevation="@dimen/_18sdp"
-            android:gravity="center"
-            android:hint="Name"
-            android:textColor="@color/purple"
-            android:textColorHint="@color/black_20" />
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_margin="@dimen/_10sdp"
+            android:layout_toRightOf="@+id/avatar_rv"
+            android:background="@drawable/avatar_dash_bkgd"
+            android:padding="@dimen/_15sdp">
 
-        <LinearLayout
-            android:id="@+id/spinner_ll"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_below="@+id/et_child_name"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="@dimen/_100sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:elevation="@dimen/_15sdp"
-            android:orientation="horizontal"
-            android:weightSum="1">
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/et_child_name"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@drawable/avatar_etxt_bkgd"
+                android:elevation="@dimen/_18sdp"
+                android:gravity="center"
+                android:hint="Name"
+                android:textColor="@color/white"
+                android:textColorHint="@color/white" />
 
             <Spinner
                 android:id="@+id/spinner_class"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="@dimen/_3sdp"
-                android:layout_weight=".5"
-                android:background="@drawable/avatar_age_selected"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_below="@+id/et_child_name"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/avatar_etxt_bkgd"
                 android:drawSelectorOnTop="true"
                 android:elevation="@dimen/_10sdp"
-                android:entries="@array/student_class"
                 android:textAlignment="center" />
 
             <Spinner
                 android:id="@+id/spinner_age"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_3sdp"
-                android:layout_weight=".5"
-                android:background="@drawable/avatar_age_selected"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_below="@+id/spinner_class"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/avatar_etxt_bkgd"
                 android:drawSelectorOnTop="true"
                 android:elevation="@dimen/_10sdp"
-                android:entries="@array/age"
                 android:textAlignment="center" />
-        </LinearLayout>
+        </RelativeLayout>
 
-        <Button
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
             android:id="@+id/btn_avatar_next"
             android:layout_width="@dimen/_150sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_below="@+id/spinner_ll"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_20sdp"
-            android:layout_marginBottom="@dimen/_20sdp"
-            android:background="@drawable/avatar_next_button_round_bg"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/inner_shadow"
             android:elevation="@dimen/_10sdp"
-            android:scaleType="centerCrop"
             android:text="Next"
-            android:textColor="@android:color/white" />
+            android:textColor="@color/white"
+            android:visibility="visible" />
 
     </RelativeLayout>
 </ScrollView>

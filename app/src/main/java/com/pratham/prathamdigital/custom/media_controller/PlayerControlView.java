@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.MediaController;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -206,8 +205,8 @@ public class PlayerControlView extends FrameLayout {
         int percent = player.getBufferPercentage();
         viewHolder.seekBar.setSecondaryProgress(percent * 10);
 
-        viewHolder.currentTimeText.setText(PD_Utility.formatTime(currentTime));
-        viewHolder.totalTimeText.setText(PD_Utility.formatTime(totalTime));
+//        viewHolder.currentTimeText.setText(PD_Utility.formatTime(currentTime));
+//        viewHolder.totalTimeText.setText(PD_Utility.formatTime(totalTime));
         return currentTime;
     }
 
@@ -388,8 +387,8 @@ public class PlayerControlView extends FrameLayout {
 
         public final LinearLayout controlsBackground;
         public final SeekBar seekBar;
-        public final TextView totalTimeText;
-        public final TextView currentTimeText;
+        //        public final TextView totalTimeText;
+//        public final TextView currentTimeText;
         public final PausePlayButton pausePlayButton;
 //        public final ImageButton fastForwardButton;
 //        public final ImageButton fastRewindButton;
@@ -404,8 +403,8 @@ public class PlayerControlView extends FrameLayout {
 //            skipNextButton = (ImageButton) view.findViewById(R.id.skip_next);
 //            skipPrevButton = (ImageButton) view.findViewById(R.id.skip_previous);
             seekBar = (SeekBar) view.findViewById(R.id.seek_bar);
-            totalTimeText = (TextView) view.findViewById(R.id.total_time_text);
-            currentTimeText = (TextView) view.findViewById(R.id.current_time_text);
+//            totalTimeText = (TextView) view.findViewById(R.id.total_time_text);
+//            currentTimeText = (TextView) view.findViewById(R.id.current_time_text);
         }
     }
 
@@ -448,7 +447,7 @@ public class PlayerControlView extends FrameLayout {
             long duration = player.getDuration();
             long newPosition = (duration * progress) / 1000L;
             player.seekTo((int) newPosition);
-            viewHolder.currentTimeText.setText(PD_Utility.formatTime((int) newPosition));
+//            viewHolder.currentTimeText.setText(PD_Utility.formatTime((int) newPosition));
         }
 
         @Override

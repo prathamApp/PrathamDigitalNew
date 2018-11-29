@@ -40,7 +40,7 @@
     </style>
 
     <style name="AppTheme.Dialog" parent="AppTheme.NoActionBar">
-        <!--<item name="android:windowIsTranslucent">true</item>-->
+        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/dialog_background_scrim</item>
         <!--<item name="android:windowAnimationStyle">@null</item>-->
         <!--<item name="android:windowContentTransitions">true</item>-->
@@ -123,7 +123,7 @@
         <item name="android:layout_margin">8dp</item>
     </style>
     <!--for transparent Activity-->
-    <style name="Theme.Transparent" parent="android:Theme">
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
@@ -131,6 +131,19 @@
         <item name="android:windowIsFloating">true</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
+    <style name="Animation.Design.TopSheetDialog" parent="Animation.AppCompat.Dialog">
+        <item name="android:windowEnterAnimation">@anim/top_sheet_slide_in</item>
+        <item name="android:windowExitAnimation">@anim/top_sheet_slide_out</item>
+    </style>
+
+    <style name="Widget.Design.TopSheet.Modal" parent="android:Widget">
+        <item name="android:background">?android:attr/colorBackground</item>
+        <item name="android:elevation">@dimen/_116sdp</item>
+        <item name="behavior_peekHeight">@dimen/_256sdp</item>
+        <item name="behavior_hideable">true</item>
+    </style>
+
     <!--<style name="button" parent="@android:style/Widget.Button">-->
     <!--<item name="com.firsteat.firsteat:font">fonts/Lato_Regular.ttf</item>-->
     <!--</style>-->

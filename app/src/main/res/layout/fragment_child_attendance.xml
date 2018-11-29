@@ -2,28 +2,34 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/village_three">
+    android:background="@drawable/attendance_bkgd">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_child"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_50sdp" />
+        android:layout_centerVertical="true" />
 
-    <Button
+    <include
+        layout="@layout/item_add_child"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/rv_child" />
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
         android:id="@+id/btn_attendance_next"
         android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_50sdp"
+        android:layout_height="@dimen/_40sdp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/avatar_next_button_round_bg"
+        android:background="@drawable/inner_shadow"
         android:elevation="@dimen/_10sdp"
-        android:scaleType="centerCrop"
         android:text="Next"
-        android:textColor="@android:color/white"
-        android:visibility="gone" />
-
+        android:textColor="@color/white"
+        android:visibility="visible" />
 </RelativeLayout>

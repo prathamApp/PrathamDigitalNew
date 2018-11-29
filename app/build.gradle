@@ -72,8 +72,6 @@ dependencies {
     //    annotationProcessor 'org.projectlombok:lombok:1.16.18'
     //    implementation project(':commons-net-3.6')
     //    implementation project(':commons-net-3.6-sources')
-    //    implementation 'com.github.aerdy:Android-Viger_View_Pager_PDF_OpenSource:1.2'
-    //    implementation 'com.github.karacken:karackencurllib:0.0.1'
     implementation 'com.airbnb.android:lottie:2.7.0'
     implementation 'com.mindorks.android:prdownloader:0.4.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
@@ -82,7 +80,6 @@ dependencies {
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.github.joielechong:zip4jandroid:1.0.1'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
-    //    implementation 'uk.co.jakelee:vidsta:1.0.0'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'io.nlopez.smartlocation:library:3.3.3'
     implementation 'com.google.firebase:firebase-messaging:17.3.3'
@@ -91,6 +88,5 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
     implementation 'com.github.eschao:android-PageFlip:1.0.2'
     implementation 'net.alhazmy13.catcho:library:1.1.0'
-    implementation 'com.nex3z:flow-layout:1.2.4'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.svg_view.AnimatedSvgView;
 import com.pratham.prathamdigital.custom.view_animators.Animate;
 import com.pratham.prathamdigital.custom.view_animators.Techniques;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
@@ -39,6 +40,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     ImageView iv_pradigi;
     @BindView(R.id.avatar_view)
     LottieAnimationView pingpong_view;
+    @BindView(R.id.animated_svg_view)
+    AnimatedSvgView animated_svg_view;
 
     SplashPresenterImpl splashPresenter;
     private Context mContext;
@@ -49,6 +52,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
         ButterKnife.bind(this);
+        animated_svg_view.start();
         mContext = this;
         splashPresenter = new SplashPresenterImpl(this, this);
         startLightsAnimation();

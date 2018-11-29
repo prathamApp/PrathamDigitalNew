@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,10 +37,7 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
     public ChildHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View v = null;
-        if (PrathamApplication.isTablet)
-            v = inflater.inflate(R.layout.item_child_attendance_two, parent, false);
-        else
-            v = inflater.inflate(R.layout.item_child_attendance, parent, false);
+        v = inflater.inflate(R.layout.item_child_attendance, parent, false);
         return new ChildHolder(v);
     }
 
@@ -50,11 +46,11 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
         pos = viewHolder.getAdapterPosition();
         viewHolder.child_name.setText(datalist.get(pos).getFullName());
         viewHolder.child_avatar.setAnimation(child_avatar.get(pos));
-        if (datalist.get(pos).isChecked()) {
-            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.green));
-        } else {
-            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.white));
-        }
+//        if (datalist.get(pos).isChecked()) {
+//            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.green));
+//        } else {
+//            viewHolder.card_avatar.setCardBackgroundColor(context.getResources().getColor(R.color.white));
+//        }
         int finalPos = pos;
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,8 +103,8 @@ public class ChildAdapter extends RecyclerView.Adapter<ChildAdapter.ChildHolder>
         TextView child_name;
         @BindView(R.id.child_avatar)
         LottieAnimationView child_avatar;
-        @BindView(R.id.card_avatar)
-        MaterialCardView card_avatar;
+//        @BindView(R.id.card_avatar)
+//        MaterialCardView card_avatar;
 
         public ChildHolder(@NonNull View itemView) {
             super(itemView);
