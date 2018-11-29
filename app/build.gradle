@@ -88,5 +88,6 @@ dependencies {
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'
     implementation 'com.github.eschao:android-PageFlip:1.0.2'
     implementation 'net.alhazmy13.catcho:library:1.1.0'
+    implementation 'com.github.tarek360.RichPath:animator:0.1.1'
 }
 apply plugin: 'com.google.gms.google-services'

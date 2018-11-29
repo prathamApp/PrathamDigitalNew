@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
@@ -21,11 +22,11 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.custom.svg_view.AnimatedSvgView;
-import com.pratham.prathamdigital.custom.view_animators.Animate;
-import com.pratham.prathamdigital.custom.view_animators.Techniques;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.richpath.RichPath;
+import com.richpath.RichPathView;
+import com.richpathanimator.RichPathAnimator;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,12 +37,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private static final String TAG = ActivitySplash.class.getSimpleName();
     @BindView(R.id.img_splash_light)
     ImageView img_splash_light;
-    @BindView(R.id.iv_pradigi)
-    ImageView iv_pradigi;
+    //    @BindView(R.id.iv_pradigi)
+//    ImageView iv_pradigi;
     @BindView(R.id.avatar_view)
     LottieAnimationView pingpong_view;
-    @BindView(R.id.animated_svg_view)
-    AnimatedSvgView animated_svg_view;
+    @BindView(R.id.rich)
+    RichPathView rich;
 
     SplashPresenterImpl splashPresenter;
     private Context mContext;
@@ -52,7 +53,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
         ButterKnife.bind(this);
-        animated_svg_view.start();
         mContext = this;
         splashPresenter = new SplashPresenterImpl(this, this);
         startLightsAnimation();
@@ -78,10 +78,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
         img_splash_light.setLayerType(View.LAYER_TYPE_NONE, null);
         objectAnimator.start();
-        iv_pradigi.setVisibility(View.VISIBLE);
-        Animate.with(Techniques.ZoomIn)
-                .duration(700)
-                .playOn(iv_pradigi);
+        rich.setVisibility(View.VISIBLE);
+//        Animate.with(Techniques.ZoomIn)
+//                .duration(700)
+//                .playOn(iv_pradigi);
+        final RichPath[] allPaths = rich.findAllRichPaths();
+        RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
         pingpong_view.setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override

@@ -37,14 +37,13 @@
         android:visibility="gone"
         tools:ignore="ContentDescription" />
 
-    <com.pratham.prathamdigital.custom.svg_view.AnimatedSvgView
-        android:id="@+id/animated_svg_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <com.richpath.RichPathView
+        android:id="@+id/rich"
+        android:layout_width="wrap_content"
         android:layout_centerInParent="true"
-        app:animatedSvgFillColors="@array/pradigi_logo_color"
-        app:animatedSvgGlyphStrings="@array/pradigi_logo"
-        app:animatedSvgTraceTimePerGlyph="200" />
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:vector="@drawable/ic_splash" />
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/avatar_view"
