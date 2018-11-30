@@ -1,35 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chid_attendance_reveal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/attendance_bkgd">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_child"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/attendance_bkgd">
 
-    <include
-        layout="@layout/item_add_child"
-        android:layout_width="@dimen/_120sdp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_toRightOf="@+id/rv_child" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:gravity="center">
 
-    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
-        android:id="@+id/btn_attendance_next"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/inner_shadow"
-        android:elevation="@dimen/_10sdp"
-        android:text="Next"
-        android:textColor="@color/white"
-        android:visibility="visible" />
-</RelativeLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rv_child"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <include
+                layout="@layout/item_add_child"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/rv_child" />
+        </RelativeLayout>
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_attendance_next"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/inner_shadow"
+            android:elevation="@dimen/_10sdp"
+            android:text="Next"
+            android:textColor="@color/white"
+            android:visibility="visible" />
+    </RelativeLayout>
+</com.pratham.prathamdigital.custom.CircularRevelLayout>

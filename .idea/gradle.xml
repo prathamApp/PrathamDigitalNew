@@ -9,8 +9,6 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/commons-net-3.6" />
-            <option value="$PROJECT_DIR$/commons-net-3.6-sources" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

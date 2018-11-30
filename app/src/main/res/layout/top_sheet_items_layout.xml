@@ -8,6 +8,7 @@
     android:orientation="horizontal">
 
     <RelativeLayout
+        android:id="@+id/top_sheet_content_home"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="match_parent">
 
@@ -38,6 +39,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/top_sheet_language"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="match_parent">
 
@@ -69,6 +71,7 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/top_sheet_search"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="match_parent">
 

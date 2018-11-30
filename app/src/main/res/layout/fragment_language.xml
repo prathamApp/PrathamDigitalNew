@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/root_language"
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/circular_language_reveal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    app:cardCornerRadius="@dimen/_10sdp"
-    app:cardElevation="@dimen/_7sdp"
-    app:cardUseCompatPadding="true">
+    android:background="@drawable/language_gradient_three">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_language"
+    <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/root_language"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/language_gradient_three" />
-</android.support.design.card.MaterialCardView>
+        android:gravity="center"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardElevation="@dimen/_7sdp">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_language"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_50sdp" />
+    </android.support.design.card.MaterialCardView>
+</com.pratham.prathamdigital.custom.CircularRevelLayout>

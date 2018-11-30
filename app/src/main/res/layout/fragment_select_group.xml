@@ -1,28 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/circular_group_reveal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/village_three">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_group"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_50sdp" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/attendance_bkgd">
 
-    <Button
-        android:id="@+id/btn_group_next"
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:background="@drawable/avatar_next_button_round_bg"
-        android:elevation="@dimen/_10sdp"
-        android:scaleType="centerCrop"
-        android:text="Next"
-        android:textColor="@android:color/white" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_50sdp" />
 
-</RelativeLayout>
+        <Button
+            android:id="@+id/btn_group_next"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/avatar_next_button_round_bg"
+            android:elevation="@dimen/_10sdp"
+            android:scaleType="centerCrop"
+            android:text="Next"
+            android:textColor="@android:color/white" />
+    </RelativeLayout>
+</com.pratham.prathamdigital.custom.CircularRevelLayout>

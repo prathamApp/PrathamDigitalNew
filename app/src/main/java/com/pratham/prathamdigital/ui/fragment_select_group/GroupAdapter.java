@@ -40,17 +40,17 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
         pos = viewHolder.getAdapterPosition();
         viewHolder.group_name.setText(datalist.get(pos).getGroupName());
-        if (datalist.get(pos).isSelected()) {
-            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.green));
-            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.white));
-        } else {
-            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.white));
-            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.black_20));
-        }
+//        if (datalist.get(pos).isSelected()) {
+//            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.green));
+//            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.white));
+//        } else {
+//            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.white));
+//            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.black_20));
+//        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                contractGroup.groupItemClicked(datalist.get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
+                contractGroup.groupItemClicked(viewHolder.itemView, datalist.get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
             }
         });
     }

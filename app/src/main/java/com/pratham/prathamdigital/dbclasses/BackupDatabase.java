@@ -32,7 +32,6 @@ public class BackupDatabase {
                     dst.close();
                 }
             } else {
-                //todo ask storage permission
                 EventBus.getDefault().post(PD_Constant.WRITE_PERMISSION);
             }
         } catch (Exception e) {

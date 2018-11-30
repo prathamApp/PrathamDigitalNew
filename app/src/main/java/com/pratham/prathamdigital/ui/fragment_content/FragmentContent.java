@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -46,9 +48,12 @@ import butterknife.OnClick;
 
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
-public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView, ContentContract.contentClick {
+public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView,
+        ContentContract.contentClick, CircularRevelLayout.CallBacks {
 
     private static final String TAG = FragmentContent.class.getSimpleName();
+    @BindView(R.id.circular_content_reveal)
+    CircularRevelLayout circular_content_reveal;
     @BindView(R.id.content_header)
     RelativeLayout content_header;
     //    @BindView(R.id.lottie_content_bkgd)
@@ -63,20 +68,11 @@ public class FragmentContent extends FragmentManagePermission implements Content
     RelativeLayout rl_network_error;
 
     ContentPresenterImpl contentPresenter;
-    //    ArrayList<Modal_ContentDetail> modal_contents;
     ContentAdapter contentAdapter;
     ContentContract.mainView mainView;
     Map<String, Integer> filesDownloading = new HashMap<>();
-
-    public static FragmentContent newInstance(int centerX, int centerY, int color) {
-        Bundle args = new Bundle();
-        args.putInt("cx", centerX);
-        args.putInt("cy", centerY);
-        args.putInt("color", color);
-        FragmentContent fragment = new FragmentContent();
-        fragment.setArguments(args);
-        return fragment;
-    }
+    private int revealX;
+    private int revealY;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -87,22 +83,21 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_content, container, false);
-//        if (getArguments() != null) {
-//            rootView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-//                @Override
-//                public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop,
-//                                           int oldRight, int oldBottom) {
-//                    v.removeOnLayoutChangeListener(this);
-//                    int cx = getArguments().getInt("cx");
-//                    int cy = getArguments().getInt("cy");
-//                    int radius = (int) Math.hypot(right, bottom);
-//                    Animator reveal = ViewAnimationUtils.createCircularReveal(v, cx, cy, 0, radius);
-//                    reveal.setInterpolator(new DecelerateInterpolator(2f));
-//                    reveal.setDuration(1000);
-//                    reveal.start();
-//                }
-//            });
-//        }
+        ButterKnife.bind(this, rootView);
+        circular_content_reveal.setDuration(1600);
+        circular_content_reveal.setListener(this);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_content_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_content_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_content_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
         return rootView;
     }
 
@@ -119,7 +114,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         contentPresenter = new ContentPresenterImpl(getActivity(), this);
     }
 
@@ -144,7 +138,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Subscribe
     public void onMainBackPressed(final String pressed) {
         Log.d(TAG, "onMainBackPressed:");
-        if (pressed.equalsIgnoreCase(PD_Constant.MAIN_BACK)) {
+        if (pressed.equalsIgnoreCase(PD_Constant.CONTENT_BACK)) {
             setContent_back();
         }
     }
@@ -452,5 +446,15 @@ public class FragmentContent extends FragmentManagePermission implements Content
         intent.putExtra("resId", contentDetail.getResourceid());
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.nothing);
         startActivity(intent);
+    }
+
+    @Override
+    public void onRevealed() {
+
+    }
+
+    @Override
+    public void onUnRevealed() {
+
     }
 }

@@ -1,80 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/circular_content_reveal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/transparent">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:id="@+id/rl_network_error"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone">
+        android:background="@android:color/transparent">
 
-        <!--<com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView-->
-        <!--android:id="@+id/txt_retry"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:text="@string/retry"-->
-        <!--android:textColor="@android:color/black"-->
-        <!--android:textSize="@dimen/_30sdp" />-->
-
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/lottie_content_bkgd"
+        <RelativeLayout
+            android:id="@+id/rl_network_error"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="fitCenter"
-            app:lottie_autoPlay="true"
-            app:lottie_fileName="network_error.json"
-            app:lottie_loop="true" />
+            android:visibility="gone">
 
-    </RelativeLayout>
-    <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
-    <com.pratham.prathamdigital.custom.GridRecyclerView
-        android:id="@+id/rv_content"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:columnWidth="@dimen/_130sdp"
-        android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
-        android:scrollbars="vertical" />
+            <!--<com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView-->
+            <!--android:id="@+id/txt_retry"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:text="@string/retry"-->
+            <!--android:textColor="@android:color/black"-->
+            <!--android:textSize="@dimen/_30sdp" />-->
 
-    <RelativeLayout
-        android:id="@+id/content_header"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_50sdp"
-        android:background="@color/green"
-        android:visibility="gone">
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_content_bkgd"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="fitCenter"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="network_error.json"
+                app:lottie_loop="true" />
 
-        <ImageView
-            android:id="@+id/content_back"
-            android:layout_width="@dimen/_80sdp"
+        </RelativeLayout>
+        <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
+        <com.pratham.prathamdigital.custom.GridRecyclerView
+            android:id="@+id/rv_content"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_gravity="center"
+            android:clipToPadding="false"
+            android:columnWidth="@dimen/_130sdp"
+            android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
+            android:scrollbars="vertical" />
+
+        <RelativeLayout
+            android:id="@+id/content_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_50sdp"
             android:background="@color/green"
-            android:padding="@dimen/_20sdp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/back_arrow" />
+            android:visibility="gone">
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/content_title"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/content_back"
-            android:gravity="center_vertical"
-            android:paddingStart="@dimen/_5sdp"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_20sdp" />
+            <ImageView
+                android:id="@+id/content_back"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="@color/green"
+                android:padding="@dimen/_20sdp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/back_arrow" />
 
-        <!--<android.support.v7.widget.RecyclerView-->
-        <!--android:id="@+id/rv_level"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="@dimen/_40sdp"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="@android:color/transparent" />-->
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/content_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/content_back"
+                android:gravity="center_vertical"
+                android:paddingStart="@dimen/_5sdp"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_20sdp" />
 
-        <!--</RelativeLayout>-->
+            <!--<android.support.v7.widget.RecyclerView-->
+            <!--android:id="@+id/rv_level"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="@dimen/_40sdp"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:background="@android:color/transparent" />-->
+
+            <!--</RelativeLayout>-->
+        </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</com.pratham.prathamdigital.custom.CircularRevelLayout>

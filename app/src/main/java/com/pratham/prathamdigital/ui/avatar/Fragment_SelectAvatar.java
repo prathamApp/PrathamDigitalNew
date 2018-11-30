@@ -1,19 +1,17 @@
 package com.pratham.prathamdigital.ui.avatar;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,6 +20,7 @@ import android.widget.Spinner;
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
@@ -41,9 +40,11 @@ import butterknife.OnTouch;
 
 import static com.pratham.prathamdigital.BaseActivity.studentDao;
 
-public class Fragment_SelectAvatar extends Fragment implements AvatarContract.avatarView {
+public class Fragment_SelectAvatar extends Fragment implements AvatarContract.avatarView, CircularRevelLayout.CallBacks {
 
     private static final String TAG = Fragment_SelectAvatar.class.getSimpleName();
+    @BindView(R.id.avatar_circular_reveal)
+    CircularRevelLayout avatar_circular_reveal;
     @BindView(R.id.et_child_name)
     EditText et_child_name;
     @BindView(R.id.avatar_rv)
@@ -66,13 +67,25 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.select_avatar, container, false);
+        ButterKnife.bind(this, rootView);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            avatar_circular_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    avatar_circular_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    avatar_circular_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
         return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         context = getActivity();
         avatarPresenter = new AvatarPresenterImpl(context, this);
     }
@@ -94,7 +107,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         spinner_class.setAdapter(adapter);
         ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
         spinner_age.setAdapter(adapter2);
-        avatar_rv.setOrientation(DSVOrientation.HORIZONTAL);
+        avatar_rv.setOrientation(DSVOrientation.VERTICAL);
         avatar_rv.addOnItemChangedListener(onItemChangedListener);
         avatar_rv.setAdapter(new AvatarAdapter(context, avatarList));
         avatar_rv.setItemTransitionTimeMillis(150);
@@ -145,16 +158,29 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     public void presentActivity(View view) {
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) context, view, "transition");
-//        Point points = PD_Utility.getCenterPointOfView(view);
-        Intent intent = new Intent(context, ActivityMain.class);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        mActivityIntent.putExtra(PD_Constant.REVEALX, outLocation[0]);
+        mActivityIntent.putExtra(PD_Constant.REVEALY, outLocation[1]);
+        startActivity(mActivityIntent);
+        getActivity().finish();
+        getActivity().overridePendingTransition(0, 0);
     }
 
     @Override
     public void openDashboard() {
         presentActivity(btn_avatar_next);
+    }
+
+    @Override
+    public void onRevealed() {
+
+    }
+
+    @Override
+    public void onUnRevealed() {
+
     }
 }

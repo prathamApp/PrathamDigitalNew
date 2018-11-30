@@ -136,9 +136,9 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     }
 
     @OnClick(R.id.btn_Start)
-    public void startButton() {
+    public void startButton(View view) {
         if (stdList.size() > 0)
-            setValues();
+            setValues(view);
         else
             Toast.makeText(QRLogin.this, "Please Add Student !!!", Toast.LENGTH_SHORT).show();
     }
@@ -184,7 +184,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     }
 
     // Start QRScan
-    private void setValues() {
+    private void setValues(View view) {
         attendances = new ArrayList<>();
 
         // todo Handle Session Start Webview service to handle session tracking
@@ -208,18 +208,20 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 s.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "defaultSession");
                 s.fromDate = PD_Utility.getCurrentDateTime();
                 s.toDate = "NA";
-
                 BaseActivity.sessionDao.insert(s);
-
                 if (startCameraScan != null) {
                     startCameraScan.stopCamera();
                 }
-
                 startService(new Intent(this, AppKillService.class));
                 Intent main = new Intent(QRLogin.this, ActivityMain.class);
+                int[] outLocation = new int[2];
+                view.getLocationOnScreen(outLocation);
+                outLocation[0] += view.getWidth() / 2;
+                main.putExtra(PD_Constant.REVEALX, outLocation[0]);
+                main.putExtra(PD_Constant.REVEALY, outLocation[1]);
                 startActivity(main);
                 finishAffinity();
-
+                overridePendingTransition(0, 0);
             }
         } catch (Exception e) {
             e.printStackTrace();

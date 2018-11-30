@@ -22,7 +22,7 @@ public class PD_Constant {
     public static final String GROUPID = "groupid";
     public static final String SETTINGS_BACK = "settings_back";
     public static final String STUDENTID = "studentid";
-    public static final String MAIN_BACK = "main_back";
+    public static final String CONTENT_BACK = "content_back";
     public static final String LEVEL_CLICKED = "level_clicked";
     public static final String PDF_DURATION = "pdf_duration";
     public static final String PDF_MESH_PIXELS = "pdf_mesh_pixels";
@@ -40,6 +40,9 @@ public class PD_Constant {
     public static final String WRITE_PERMISSION = "write_permission";
     public static final String DISPLAY_CONTENT = "display_content";
     public static final String DOWNLOAD_COMPLETE = "download_complete";
+    public static final String REVEALX = "REVEALX";
+    public static final String REVEALY = "REVEALY";
+    public static final String LANGUAGE_BACK = "language_back";
     public static String RASP_IP = "http://192.168.4.1:8080";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

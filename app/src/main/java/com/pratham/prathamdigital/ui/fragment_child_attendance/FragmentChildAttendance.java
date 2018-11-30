@@ -1,12 +1,9 @@
 package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -21,11 +19,11 @@ import android.widget.Toast;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
-import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -38,8 +36,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
-public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView {
+public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView, CircularRevelLayout.CallBacks {
 
+    @BindView(R.id.chid_attendance_reveal)
+    CircularRevelLayout chid_attendance_reveal;
     @BindView(R.id.rv_child)
     RecyclerView rv_child;
     @BindView(R.id.btn_attendance_next)
@@ -63,13 +63,25 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_child_attendance, container, false);
+        ButterKnife.bind(this, rootView);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            chid_attendance_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    chid_attendance_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    chid_attendance_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
         return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
         avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
@@ -179,18 +191,36 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     }
 
     public void presentActivity(View view) {
-        getActivity().startService(new Intent(getActivity(), AppKillService.class));
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getActivity(), view, "transition");
-        Intent intent = new Intent(getActivity(), ActivityMain.class);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
+        Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        mActivityIntent.putExtra(PD_Constant.REVEALX, outLocation[0]);
+        mActivityIntent.putExtra(PD_Constant.REVEALY, outLocation[1]);
+        startActivity(mActivityIntent);
         getActivity().finish();
+        getActivity().overridePendingTransition(0, 0);
     }
 
     @OnClick(R.id.add_child)
-    public void setAdd_child() {
+    public void setAdd_child(View view) {
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar(), R.id.frame_attendance,
-                null, Fragment_SelectAvatar.class.getSimpleName());
+                bundle, Fragment_SelectAvatar.class.getSimpleName());
+    }
+
+    @Override
+    public void onRevealed() {
+
+    }
+
+    @Override
+    public void onUnRevealed() {
+
     }
 }

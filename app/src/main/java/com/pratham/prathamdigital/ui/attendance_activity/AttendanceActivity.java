@@ -11,10 +11,8 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
-import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
 import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
-import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -37,11 +35,16 @@ public class AttendanceActivity extends BaseActivity {
                 ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getAllStudents();
                 Bundle bundle = new Bundle();
                 bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+                bundle.putInt(PD_Constant.REVEALX, 0);
+                bundle.putInt(PD_Constant.REVEALY, 0);
                 PD_Utility.showFragment(this, new FragmentChildAttendance(), R.id.frame_attendance,
                         bundle, FragmentChildAttendance.class.getSimpleName());
             } else {
+                Bundle bundle = new Bundle();
+                bundle.putInt(PD_Constant.REVEALX, 0);
+                bundle.putInt(PD_Constant.REVEALY, 0);
                 PD_Utility.showFragment(this, new Fragment_SelectAvatar(), R.id.frame_attendance,
-                        null, Fragment_SelectAvatar.class.getSimpleName());
+                        bundle, Fragment_SelectAvatar.class.getSimpleName());
             }
         }
     }
@@ -49,7 +52,7 @@ public class AttendanceActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_attendance);
-        if (f instanceof FragmentSelectAgeGroup) {
+        if (f instanceof FragmentSelectAgeGroup || getSupportFragmentManager().getBackStackEntryCount() == 1)
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("PraDigi")
@@ -59,14 +62,10 @@ public class AttendanceActivity extends BaseActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
                         }
-
                     })
                     .setNegativeButton("No", null)
                     .show();
-
-        } else if (f instanceof FragmentSelectGroup || f instanceof FragmentChildAttendance
-                || f instanceof AdminPanelFragment) {
+        else
             getSupportFragmentManager().popBackStack();
-        }
     }
 }

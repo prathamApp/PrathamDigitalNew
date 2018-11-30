@@ -9,11 +9,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.view.ViewTreeObserver;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
@@ -24,16 +25,18 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
-public class FragmentSelectGroup extends Fragment implements ContractGroup {
+public class FragmentSelectGroup extends Fragment implements ContractGroup, CircularRevelLayout.CallBacks {
 
     @BindView(R.id.rv_group)
     RecyclerView rv_group;
+    @BindView(R.id.circular_group_reveal)
+    CircularRevelLayout circular_group_reveal;
 
     GroupAdapter groupAdapter;
     ArrayList<Modal_Groups> groups;
-    Modal_Groups groupSelected;
+    private int revealX;
+    private int revealY;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,13 +47,25 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_select_group, container, false);
+        ButterKnife.bind(this, rootView);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_group_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_group_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_group_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
         return rootView;
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
         ArrayList<String> present_groups = new ArrayList<>();
         String groupId1 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID1);
         if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
@@ -115,48 +130,43 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup {
         }
     }
 
-//    @OnTouch(R.id.btn_attendance_next)
-//    public boolean setNextAvatar(View view, MotionEvent event) {
-//        revealX = (int) event.getRawX();
-//        revealY = (int) event.getY();
-//        return getActivity().onTouchEvent(event);
-//    }
+    //    @OnClick(R.id.btn_group_next)
+    public void setNext(View v, Modal_Groups modal_groups) {
+        PrathamApplication.bubble_mp.start();
+        ArrayList<Modal_Student> students = new ArrayList<>();
+        students.addAll(BaseActivity.studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
+        int[] outLocation = new int[2];
+        v.getLocationOnScreen(outLocation);
+        outLocation[0] += v.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+        bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
+                bundle, FragmentChildAttendance.class.getSimpleName());
+    }
 
-    @OnClick(R.id.btn_group_next)
-    public void setNext(View v) {
-        if (groupSelected != null) {
-            PrathamApplication.bubble_mp.start();
-            ArrayList<Modal_Student> students = new ArrayList<>();
-            students.addAll(BaseActivity.studentDao.getGroupwiseStudents(groupSelected.getGroupId()));
-            Bundle bundle = new Bundle();
-            bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
-            bundle.putString(PD_Constant.GROUPID, groupSelected.getGroupId());
-            PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
-                    bundle, FragmentChildAttendance.class.getSimpleName());
-        }else {
-            Toast.makeText(getContext(), "Please select Group !", Toast.LENGTH_SHORT).show();
-        }
+    @Override
+    public void groupItemClicked(View v, Modal_Groups modalGroup, int position) {
+//        groupSelected = modalGroup;
+        setNext(v, modalGroup);
+//        for (Modal_Groups gr : groups) {
+//            if (gr.getGroupId().equalsIgnoreCase(modalGroup.getGroupId())) {
+//                gr.setSelected(true);
+//            } else
+//                gr.setSelected(false);
+//        }
+//        setGroups(groups);
+    }
+
+    @Override
+    public void onRevealed() {
 
     }
 
     @Override
-    public void groupItemClicked(Modal_Groups modalGroup, int position) {
-        groupSelected = modalGroup;
-        for (Modal_Groups gr : groups) {
-            if (gr.getGroupId().equalsIgnoreCase(modalGroup.getGroupId())) {
-                gr.setSelected(true);
-            } else
-                gr.setSelected(false);
-        }
-        setGroups(groups);
+    public void onUnRevealed() {
+
     }
-
-//    public void presentActivity(View view) {
-//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) getActivity(), view, "transition");
-//        Intent intent = new Intent(getActivity(), ActivityMain.class);
-//        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_X, revealX);
-//        intent.putExtra(ActivityMain.EXTRA_CIRCULAR_REVEAL_Y, revealY);
-//        ActivityCompat.startActivity(getActivity(), intent, options.toBundle());
-//    }
-
 }
