@@ -9,15 +9,22 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
 import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups;
+import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,6 +45,24 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Nullable
@@ -64,6 +89,11 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @OnClick(R.id.btn_clearData)
     public void clearData() {
         adminPanelPresenter.clearData();
+    }
+
+    @OnClick(R.id.btn_push_data)
+    public void pushData() {
+        adminPanelPresenter.pushData();
     }
 
     @Override
@@ -120,5 +150,36 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Override
     public void onDataClearToast() {
         Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
+    }
+
+    @Subscribe
+    public void DataPushedSuccessfully(EventMessage msg) {
+        if (msg != null) {
+            if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
+                // todo pushed successfully dialog
+                new BlurPopupWindow.Builder(getContext())
+                        .setContentView(R.layout.app_success_dialog)
+                        .setGravity(Gravity.CENTER)
+                        .setScaleRatio(0.2f)
+                        .setDismissOnClickBack(true)
+                        .setDismissOnTouchBackground(true)
+                        .setBlurRadius(10)
+                        .setTintColor(0x30000000)
+                        .build()
+                        .show();
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
+                // todo push failed dialog
+                new BlurPopupWindow.Builder(getContext())
+                        .setContentView(R.layout.app_failure_dialog)
+                        .setGravity(Gravity.CENTER)
+                        .setScaleRatio(0.2f)
+                        .setDismissOnClickBack(true)
+                        .setDismissOnTouchBackground(true)
+                        .setBlurRadius(10)
+                        .setTintColor(0x30000000)
+                        .build()
+                        .show();
+            }
+        }
     }
 }

@@ -38,7 +38,7 @@ public class PrathamSmartSync extends AutoSync {
         }
     }
 
-    private void pushTabletJsons() {
+    public static void pushTabletJsons() {
         JSONArray scoreData = new JSONArray();
         List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
         if (scores != null && scores.size() > 0) {
@@ -159,7 +159,7 @@ public class PrathamSmartSync extends AutoSync {
 
     }
 
-    private void pushSmartphoneJsons() {
+    public static void pushSmartphoneJsons() {
 
     }
 }

@@ -43,6 +43,8 @@ public class PD_Constant {
     public static final String REVEALX = "REVEALX";
     public static final String REVEALY = "REVEALY";
     public static final String LANGUAGE_BACK = "language_back";
+    public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
+    public static final String PUSHFAILED = "push_failed";
     public static String RASP_IP = "http://192.168.4.1:8080";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String CONNECTION_TYPE = "";

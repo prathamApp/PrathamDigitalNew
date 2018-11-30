@@ -11,9 +11,12 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
+import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.greenrobot.eventbus.EventBus;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -105,13 +108,17 @@ public class PD_ApiRequest {
                     @Override
                     public void onResponse(String response) {
 //                        contentPresenter.notifySuccess(requestType, "success");
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        EventBus.getDefault().post(msg);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        if (contentPresenter != null)
-//                            contentPresenter.notifyError(requestType/*, null*/);
-                            Log.d("Error::", anError.getErrorDetail());
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.d("Error::", anError.getErrorDetail());
                         Log.d("Error::", anError.getMessage());
                         Log.d("Error::", anError.getResponse().toString());
                     }

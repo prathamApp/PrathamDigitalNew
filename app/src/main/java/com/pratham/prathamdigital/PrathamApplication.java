@@ -47,7 +47,7 @@ public class PrathamApplication extends Application {
     private static boolean isClient = true;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static final boolean isTablet = false;
+    public static final boolean isTablet = true;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);

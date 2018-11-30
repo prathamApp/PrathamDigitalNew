@@ -18,5 +18,6 @@ public interface AdminPanelContract {
     interface AdminPanelPresenter {
         public void checkLogin(String userName,String password);
         public void clearData();
+        public void pushData();
     }
 }
