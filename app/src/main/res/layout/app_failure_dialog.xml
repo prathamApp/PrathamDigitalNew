@@ -4,7 +4,7 @@
     android:layout_width="@dimen/_200sdp"
     android:layout_height="@dimen/_200sdp"
     android:layout_gravity="center"
-    android:gravity="center_horizontal"
+    android:gravity="center"
     android:orientation="vertical"
     app:sc_shadowColor="#40444444">
 
@@ -12,6 +12,7 @@
     <com.airbnb.lottie.LottieAnimationView
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
+        android:layout_margin="@dimen/_12sdp"
         app:lottie_autoPlay="true"
         app:lottie_fileName="error_cross.json"
         app:lottie_loop="true" />
@@ -19,7 +20,7 @@
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/_4sdp"
+        android:layout_margin="@dimen/_12sdp"
         android:gravity="center"
         android:text="Data  Pushing  Failed !"
         android:textColor="@android:color/holo_red_light"
@@ -29,7 +30,7 @@
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_4sdp"
+        android:layout_marginTop="@dimen/_12sdp"
         android:gravity="center_horizontal"
         android:text="Check your wifi is connected to Pratham Kolibri !"
         android:textColor="@color/charcoal"

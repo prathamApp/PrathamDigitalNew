@@ -43,5 +43,17 @@ change images of login --- done
 handle next nutton attendance childattendance, selectgroup --- done
 
 
+Nov 30
+Change login panel UI --- done
+Add push functionality to login panel --- done
+clear data confirmation --- done
 
-
+01 Dec 2018
+Push Status & Log Table in case of Tablet --- done
+Don't Push Student Table in case of Tablet --- done
+Push Student Table in case of Smartphone --- done
+Push Necessary Table in case of Smartphone --- done
+Don't push if no record --- done
+push button handle --- done
+update msg dialog UI --- done
+handle nulls in smart sync --- done

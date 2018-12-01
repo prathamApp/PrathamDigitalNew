@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/PrathamDigital.iml" filepath="$PROJECT_DIR$/PrathamDigital.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PrathamDigitalNewUI.iml" filepath="$PROJECT_DIR$/PrathamDigitalNewUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
