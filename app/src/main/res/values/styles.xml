@@ -20,7 +20,6 @@
     </style>
 
     <style name="AppTheme.Transparent" parent="AppTheme">
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
@@ -40,7 +39,6 @@
     </style>
 
     <style name="AppTheme.Dialog" parent="AppTheme.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@color/dialog_background_scrim</item>
         <!--<item name="android:windowAnimationStyle">@null</item>-->
         <!--<item name="android:windowContentTransitions">true</item>-->
@@ -53,7 +51,6 @@
 
     <style name="alert_dialog" parent="android:Theme.Dialog">
         <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">false</item>
         <item name="android:windowBackground">@color/float_transparent</item>
@@ -75,7 +72,6 @@
     <style name="cart_dialog" parent="@android:style/Theme.Holo.Light.Dialog">
         <item name="android:windowFrame">@null</item>
         <item name="android:windowIsFloating">true</item>
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:background">@android:color/transparent</item>
         <item name="android:windowBackground">@android:color/transparent</item>
@@ -124,7 +120,6 @@
     </style>
     <!--for transparent Activity-->
     <style name="Theme.Transparent" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowIsTranslucent">true</item>
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowNoTitle">true</item>

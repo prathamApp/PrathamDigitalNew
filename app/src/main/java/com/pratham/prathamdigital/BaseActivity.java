@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
@@ -53,9 +54,6 @@ public class BaseActivity extends ActivityManagePermission {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
 //                .activity(CatchoTransparentActivity.class)
@@ -66,7 +64,10 @@ public class BaseActivity extends ActivityManagePermission {
         ttsService.setSpeechRate(0.7f);
         ttsService.setLanguage(new Locale("en", "IN"));
 
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+
         super.onCreate(savedInstanceState);
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
@@ -111,6 +112,7 @@ public class BaseActivity extends ActivityManagePermission {
     }
 
     public static void hideSystemUI(Window window) {
+
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 

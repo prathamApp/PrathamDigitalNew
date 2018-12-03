@@ -77,7 +77,7 @@
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:resizeableActivity="false"
-            android:screenOrientation="sensorLandscape"
+
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,44 +89,29 @@
             android:name=".ui.QRLogin.QRLogin"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
+
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.dashboard.ActivityMain"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.attendance_activity.AttendanceActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <!--<activity-->
-        <!--android:name=".ui.connect_dialog.ConnectDialog"-->
-        <!--android:excludeFromRecents="true"-->
-        <!--android:screenOrientation="sensorLandscape"-->
-        <!--android:theme="@style/AppTheme.Dialog"-->
-        <!--android:windowSoftInputMode="stateHidden">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN" />-->
-        <!--<category android:name="android.intent.category.DEFAULT" />-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
         <activity
             android:name=".ui.pdf_viewer.Activity_PdfViewer"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.video_player.Activity_VPlayer"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="stateAlwaysHidden">
             <meta-data
@@ -137,27 +122,23 @@
             android:name=".ui.web_view.Activity_WebView"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.settings_activity.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.assign.Activity_AssignGroups"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CatchoTransparentActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <meta-data
