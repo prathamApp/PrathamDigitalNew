@@ -1,149 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/circular_main_reveal"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.dashboard.ActivityMain">
 
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main_root"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/content_background"
-        tools:context=".ui.dashboard.ActivityMain">
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/main_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#0d000000" />
+
+        <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
+        <!--android:id="@+id/avatar_shape"-->
+        <!--android:layout_width="@dimen/_60sdp"-->
+        <!--android:layout_height="@dimen/_60sdp"-->
+        <!--android:elevation="@dimen/_10sdp"-->
+        <!--app:shape_clip_drawable="@drawable/dashboard_half_circle">-->
+
+        <!--<View-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/red" />-->
+
+        <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/avatar_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerInside"-->
+        <!--app:lottie_autoPlay="true"-->
+        <!--app:lottie_loop="true" />-->
+
+        <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/back_view"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:scaleType="centerInside"-->
+        <!--android:visibility="gone"-->
+        <!--app:lottie_autoPlay="true"-->
+        <!--app:lottie_fileName="walking_arrow.json"-->
+        <!--app:lottie_loop="true" />-->
+        <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
+
+        <ImageView
+            android:id="@+id/pradigi_icon"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:elevation="@dimen/_10sdp"
+            android:src="@drawable/pratham_logo" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_level"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_8sdp" />
+
+        <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
+        <!--android:id="@+id/search_shape"-->
+        <!--android:layout_width="@dimen/_60sdp"-->
+        <!--android:layout_height="@dimen/_60sdp"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:elevation="@dimen/_10sdp"-->
+        <!--app:shape_clip_drawable="@drawable/dashboard_search_bkgd">-->
+
+        <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/dashboard_search"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:background="@color/red"-->
+        <!--android:scaleType="centerInside"-->
+        <!--app:lottie_autoPlay="true"-->
+        <!--app:lottie_fileName="search.json"-->
+        <!--app:lottie_loop="true" />-->
+        <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:id="@+id/download_badge"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:elevation="@dimen/_10sdp"
+            android:visibility="gone">
 
-            <FrameLayout
-                android:id="@+id/main_frame"
+            <com.airbnb.lottie.LottieAnimationView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#0d000000" />
+                android:background="@drawable/download_fab_bkgd"
+                android:padding="@dimen/_12sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="download.json"
+                app:lottie_loop="true" />
 
-            <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-            <!--android:id="@+id/avatar_shape"-->
-            <!--android:layout_width="@dimen/_60sdp"-->
-            <!--android:layout_height="@dimen/_60sdp"-->
-            <!--android:elevation="@dimen/_10sdp"-->
-            <!--app:shape_clip_drawable="@drawable/dashboard_half_circle">-->
+            <com.pratham.prathamdigital.custom.NotificationBadge
+                android:id="@+id/download_notification"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp" />
+        </RelativeLayout>
+    </RelativeLayout>
 
-            <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/red" />-->
+    <RelativeLayout
+        android:id="@+id/top_sheet"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_150sdp"
+        android:background="@android:color/transparent"
+        android:elevation="@dimen/_10sdp"
+        app:behavior_peekHeight="@dimen/_30sdp"
+        app:layout_behavior="@string/top_sheet_behavior">
 
-            <!--<com.airbnb.lottie.LottieAnimationView-->
-            <!--android:id="@+id/avatar_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:scaleType="centerInside"-->
-            <!--app:lottie_autoPlay="true"-->
-            <!--app:lottie_loop="true" />-->
-
-            <!--<com.airbnb.lottie.LottieAnimationView-->
-            <!--android:id="@+id/back_view"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:scaleType="centerInside"-->
-            <!--android:visibility="gone"-->
-            <!--app:lottie_autoPlay="true"-->
-            <!--app:lottie_fileName="walking_arrow.json"-->
-            <!--app:lottie_loop="true" />-->
-            <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
-
-            <ImageView
-                android:id="@+id/pradigi_icon"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_5sdp"
-                android:elevation="@dimen/_10sdp"
-                android:src="@drawable/pratham_logo" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_level"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_30sdp"
-                android:layout_marginLeft="@dimen/_30sdp"
-                android:layout_marginTop="@dimen/_8sdp" />
-
-            <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-            <!--android:id="@+id/search_shape"-->
-            <!--android:layout_width="@dimen/_60sdp"-->
-            <!--android:layout_height="@dimen/_60sdp"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:elevation="@dimen/_10sdp"-->
-            <!--app:shape_clip_drawable="@drawable/dashboard_search_bkgd">-->
-
-            <!--<com.airbnb.lottie.LottieAnimationView-->
-            <!--android:id="@+id/dashboard_search"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/red"-->
-            <!--android:scaleType="centerInside"-->
-            <!--app:lottie_autoPlay="true"-->
-            <!--app:lottie_fileName="search.json"-->
-            <!--app:lottie_loop="true" />-->
-            <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
+        <com.pratham.prathamdigital.custom.shapes.ShapeOfView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_110sdp"
+            android:elevation="@dimen/_10sdp"
+            app:shape_clip_drawable="@drawable/top_sheet_bkgd">
 
             <RelativeLayout
-                android:id="@+id/download_badge"
-                android:layout_width="@dimen/_50sdp"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginBottom="@dimen/_5sdp"
-                android:elevation="@dimen/_10sdp"
-                android:visibility="gone">
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/download_fab_bkgd"
-                    android:padding="@dimen/_12sdp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="download.json"
-                    app:lottie_loop="true" />
-
-                <com.pratham.prathamdigital.custom.NotificationBadge
-                    android:id="@+id/download_notification"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp" />
-            </RelativeLayout>
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/top_sheet"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_150sdp"
-            app:behavior_peekHeight="@dimen/_40sdp"
-            app:layout_behavior="@string/top_sheet_behavior">
-
-            <com.pratham.prathamdigital.custom.shapes.ShapeOfView
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_110sdp"
-                android:elevation="@dimen/_10sdp"
-                app:shape_clip_drawable="@drawable/top_sheet_bkgd">
+                android:layout_height="match_parent"
+                android:background="@color/white">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/white">
+                <include layout="@layout/top_sheet_items_layout" />
+            </RelativeLayout>
+        </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
 
-                    <include layout="@layout/top_sheet_items_layout" />
-                </RelativeLayout>
-            </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
+        <ImageView
+            android:id="@+id/pull_down_menu"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/top_sheet_pull_down" />
+    </RelativeLayout>
 
-            <ImageView
-                android:id="@+id/pull_down_menu"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:src="@drawable/top_sheet_pull_down" />
-        </RelativeLayout>
-    </android.support.design.widget.CoordinatorLayout>
-</com.pratham.prathamdigital.custom.CircularRevelLayout>
+</android.support.design.widget.CoordinatorLayout>

@@ -43,11 +43,18 @@ public class PD_Constant {
     public static final String REVEALX = "REVEALX";
     public static final String REVEALY = "REVEALY";
     public static final String LANGUAGE_BACK = "language_back";
+    public static final String NO_CONNECTION = "no_connection";
+    public static final String CONNECTION_NAME = "connection_name";
+    public static final String CONNECTION_TYPE = "connection_type";
+    public static final String WIFI = "wifi";
+    public static final String MOBILE = "mobile";
+    public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
+    public static final String STORAGE_ASKED = "storage_asked";
+    public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
     public static String RASP_IP = "http://192.168.4.1:8080";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
-    public static String CONNECTION_TYPE = "";
     public static String pradigiObbPath = "";
     public static String FTP_USERNAME = "pratham";
     public static String FTP_PASSWORD = "pratham";
@@ -116,6 +123,7 @@ public class PD_Constant {
     public static final int DEFAULT_ANIMATION_TIME = 300;
 
     public static final int POS_UPDATE_ALL = -1;
+
     public static enum URL {
 
         BROWSE_BY_ID(BASE_URL + "get?id="),

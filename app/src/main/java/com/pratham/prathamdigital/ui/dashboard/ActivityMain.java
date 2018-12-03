@@ -10,7 +10,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewAnimationUtils;
-import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.AnimationSet;
@@ -22,15 +21,18 @@ import android.widget.RelativeLayout;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.topsheet.TopSheetBehavior;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
+import com.pratham.prathamdigital.ui.import_db.Fragment_ImportData;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -45,8 +47,8 @@ import butterknife.OnClick;
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, LevelContract, CircularRevelLayout.CallBacks {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
-    @BindView(R.id.circular_main_reveal)
-    CircularRevelLayout circular_main_reveal;
+    //    @BindView(R.id.circular_main_reveal)
+//    CircularRevelLayout circular_main_reveal;
     @BindView(R.id.main_root)
     CoordinatorLayout main_root;
     //    @BindView(R.id.avatar_view)
@@ -68,10 +70,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @BindView(R.id.pull_down_menu)
     ImageView pull_down_menu;
 
-    public static final String EXTRA_CIRCULAR_REVEAL_X = "EXTRA_CIRCULAR_REVEAL_X";
-    public static final String EXTRA_CIRCULAR_REVEAL_Y = "EXTRA_CIRCULAR_REVEAL_Y";
-    private int revealX;
-    private int revealY;
     private RV_LevelAdapter levelAdapter;
     TopSheetBehavior topSheetBehavior = null;
 
@@ -80,20 +78,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
-//        circular_main_reveal.setDuration(500);
-//        circular_main_reveal.setListener(this);
-        if (savedInstanceState == null && getIntent() != null) {
-            revealX = getIntent().getIntExtra(PD_Constant.REVEALX, 0);
-            revealY = getIntent().getIntExtra(PD_Constant.REVEALY, 0);
-            circular_main_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_main_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_main_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
-        }
+
+        topSheetBehavior = TopSheetBehavior.from(top_sheet);
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, 0);
         bundle.putInt(PD_Constant.REVEALY, 0);
@@ -192,7 +178,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.pull_down_menu)
     public void setPullDown() {
-        topSheetBehavior = TopSheetBehavior.from(top_sheet);
         topSheetBehavior.setTopSheetCallback(new TopSheetBehavior.TopSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View bottomSheet, int newState) {
@@ -201,7 +186,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
             @Override
             public void onSlide(@NonNull View bottomSheet, float slideOffset, @Nullable Boolean isOpening) {
-                pull_down_menu.startAnimation(getRotationAnimationSet());
             }
         });
         if (topSheetBehavior.getState() == TopSheetBehavior.STATE_COLLAPSED)
@@ -259,6 +243,40 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         PD_Utility.showFragment(this, new FragmentLanguage(), R.id.main_frame,
                 bundle, FragmentLanguage.class.getSimpleName());
+        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @OnClick(R.id.top_sheet_import)
+    public void setTopSheetImport(View v) {
+        PrathamApplication.bubble_mp.start();
+        int[] outLocation = new int[2];
+        v.getLocationOnScreen(outLocation);
+        outLocation[0] += v.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        PD_Utility.showFragment(this, new Fragment_ImportData(), R.id.main_frame,
+                bundle, Fragment_ImportData.class.getSimpleName());
+        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
+    }
+
+    @OnClick(R.id.top_sheet_connect_wifi)
+    public void setTopSheetConnect() {
+        PrathamApplication.bubble_mp.start();
+        ConnectDialog connectDialog = new ConnectDialog(ActivityMain.this);
+        connectDialog.isDismissOnTouchBackground();
+        connectDialog.isDismissOnClickBack();
+        connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
+            @Override
+            public void onDismiss(BlurPopupWindow popupWindow) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(PD_Constant.REVEALX, 0);
+                bundle.putInt(PD_Constant.REVEALY, 0);
+                PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
+                        bundle, FragmentContent.class.getSimpleName());
+            }
+        });
+        new ConnectDialog(ActivityMain.this).show();
         topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
     }
 

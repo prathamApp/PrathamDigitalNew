@@ -6,6 +6,7 @@ import android.util.Log;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
@@ -16,13 +17,13 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.List;
 
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
+    private static Context context;
 
     @Override
     protected void onCreate(Context context) {
@@ -31,6 +32,7 @@ public class PrathamSmartSync extends AutoSync {
 
     @Override
     public void onSync(Context context) throws Exception {
+        this.context = context;
         Log.d(TAG, "onSync: ");
         if (PrathamApplication.isTablet) {
             // Push Tab related Jsons
@@ -42,12 +44,15 @@ public class PrathamSmartSync extends AutoSync {
     }
 
     public static void pushTabletJsons(Boolean isPressed) {
-
         // Score Table
         JSONArray scoreData = new JSONArray();
-        List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
-        if (scores != null && scores.size() > 0) {
-            try {
+        JSONArray sessionData = new JSONArray();
+        JSONArray attendanceData = new JSONArray();
+        String programId = "";
+        String collectedData = "";
+        try {
+            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
+            if (scores != null && scores.size() > 0) {
                 for (Modal_Score scoreObj : scores) {
                     JSONObject _obj = new JSONObject();
                     _obj.put("sessionId", scoreObj.getSessionID());
@@ -62,16 +67,10 @@ public class PrathamSmartSync extends AutoSync {
                     _obj.put("label", scoreObj.getLabel());
                     scoreData.put(_obj);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        // Session Table
-        JSONArray sessionData = new JSONArray();
-        List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
-        if (session != null && session.size() > 0) {
-            try {
+            // Session Table
+            List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
+            if (session != null && session.size() > 0) {
                 for (Modal_Session sessionObj : session) {
                     JSONObject _obj = new JSONObject();
                     _obj.put("sessionId", sessionObj.getSessionID());
@@ -79,48 +78,33 @@ public class PrathamSmartSync extends AutoSync {
                     _obj.put("toDate", sessionObj.getToDate());
                     sessionData.put(_obj);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        // Attendance Table     (get list of distinct session id)
-        List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-        JSONObject attendanceObject;
-        List<Integer> presentStudents;
-        JSONArray presentStudentsJsonArray;
-        JSONArray attendanceData = new JSONArray();
-        try {
+            // Attendance Table     (get list of distinct session id)
+            List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
+            JSONObject attendanceObject;
+            List<Integer> presentStudents;
+            JSONArray presentStudentsJsonArray;
             // get present grpid & present student ids
             for (int x = 0; x < distinctSessions.size(); x++) {
                 String grpID = "";
                 attendanceObject = new JSONObject();
                 presentStudentsJsonArray = new JSONArray();
-
                 grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
                 presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
-
                 presentStudentsJsonArray = new JSONArray();
                 for (int i = 0; i < presentStudents.size(); i++) {
                     JSONObject obj = new JSONObject();
                     obj.put("id", presentStudents.get(i));
                     presentStudentsJsonArray.put(obj);
                 }
-
                 attendanceObject.put("SessionID", distinctSessions.get(x));
                 attendanceObject.put("GroupID", grpID);
                 attendanceObject.put("PresentStudentIds", presentStudentsJsonArray);
-
                 Log.d("attendance obj :::", attendanceObject.toString());
                 attendanceData.put(attendanceObject);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        // Status Table
-        JSONObject statusObj = new JSONObject();
-        try {
+            // Status Table
+            JSONObject statusObj = new JSONObject();
             statusObj.put("ScoreCount", scores.size());
             statusObj.put("SessionCount", sessionData.length());
             statusObj.put("AttendanceCount", attendanceData.length());
@@ -140,23 +124,17 @@ public class PrathamSmartSync extends AutoSync {
             statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
             statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
             statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String programId = "";
-        String collectedData = "";
-
-        try {
             // Pushing File to Server
             programId = BaseActivity.statusDao.getValue("programId");
             collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
-            // Send only if new Data is available
             if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0) {
                 new PD_ApiRequest(PrathamApplication.getInstance(), null)
                         .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
                                 collectedData, programId, "USAGEDATA");
+                BackupDatabase.backup(context);
             } else {
                 if (isPressed) {
                     EventMessage msg = new EventMessage();
@@ -165,16 +143,20 @@ public class PrathamSmartSync extends AutoSync {
                 }
             }
         }
-
     }
 
     public static void pushSmartphoneJsons() {
-
         // Score Table
         JSONArray scoreData = new JSONArray();
-        List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
-        if (scores != null && scores.size() > 0) {
-            try {
+        JSONArray attendanceData = new JSONArray();
+        JSONArray studentData = new JSONArray();
+        JSONObject statusObj = new JSONObject();
+        JSONArray sessionData = new JSONArray();
+        String programId = "";
+        String collectedData = "";
+        try {
+            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
+            if (scores != null && scores.size() > 0) {
                 for (Modal_Score scoreObj : scores) {
                     JSONObject _obj = new JSONObject();
                     _obj.put("sessionId", scoreObj.getSessionID());
@@ -189,16 +171,10 @@ public class PrathamSmartSync extends AutoSync {
                     _obj.put("label", scoreObj.getLabel());
                     scoreData.put(_obj);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        // Session Table
-        JSONArray sessionData = new JSONArray();
-        List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
-        if (session != null && session.size() > 0) {
-            try {
+            // Session Table
+            List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
+            if (session != null && session.size() > 0) {
                 for (Modal_Session sessionObj : session) {
                     JSONObject _obj = new JSONObject();
                     _obj.put("sessionId", sessionObj.getSessionID());
@@ -206,50 +182,34 @@ public class PrathamSmartSync extends AutoSync {
                     _obj.put("toDate", sessionObj.getToDate());
                     sessionData.put(_obj);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        // Attendance Table     (get list of distinct session id)
-        List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-        JSONObject attendanceObject;
-        List<Integer> presentStudents;
-        JSONArray presentStudentsJsonArray;
-        JSONArray attendanceData = new JSONArray();
-        try {
+            // Attendance Table     (get list of distinct session id)
+            List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
+            JSONObject attendanceObject;
+            List<Integer> presentStudents;
+            JSONArray presentStudentsJsonArray;
             // get present grpid & present student ids
             for (int x = 0; x < distinctSessions.size(); x++) {
                 String grpID = "";
                 attendanceObject = new JSONObject();
                 presentStudentsJsonArray = new JSONArray();
-
                 grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
                 presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
-
                 presentStudentsJsonArray = null;
                 for (int i = 0; i < presentStudents.size(); i++) {
                     JSONObject obj = new JSONObject();
                     obj.put("id", presentStudents.get(i));
                     presentStudentsJsonArray.put(obj);
                 }
-
                 attendanceObject.put("SessionID", distinctSessions.get(x));
                 attendanceObject.put("GroupID", grpID);
                 attendanceObject.put("PresentStudentIds", presentStudentsJsonArray);
-
                 Log.d("attendance obj :::", attendanceObject.toString());
                 attendanceData.put(attendanceObject);
             }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        //For New Students data
-        List<Modal_Student> studentsList = BaseActivity.studentDao.getAllNewStudents();
-        JSONArray studentData = new JSONArray();
-        if (studentsList != null) {
-            try {
+            //For New Students data
+            List<Modal_Student> studentsList = BaseActivity.studentDao.getAllNewStudents();
+            if (studentsList != null) {
                 for (Modal_Student student : studentsList) {
                     JSONObject studentObj = new JSONObject();
                     studentObj.put("StudentID", student.getStudentId());
@@ -262,14 +222,8 @@ public class PrathamSmartSync extends AutoSync {
                     studentObj.put("GroupID", student.getGroupId());
                     studentData.put(studentObj);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-        }
-
-        // Status Table
-        JSONObject statusObj = new JSONObject();
-        try {
+            // Status Table
             statusObj.put("ScoreCount", scores.size());
             statusObj.put("SessionCount", sessionData.length());
             statusObj.put("AttendanceCount", attendanceData.length());
@@ -290,25 +244,19 @@ public class PrathamSmartSync extends AutoSync {
             statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
             statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
             statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String programId = "";
-        String collectedData = "";
-
-        try {
             // Pushing File to Server
             programId = BaseActivity.statusDao.getValue("programId");
             collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             // Send only if new Data is available
             if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0 || studentData.length() > 0) {
                 new PD_ApiRequest(PrathamApplication.getInstance(), null)
                         .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
                                 collectedData, programId, "USAGEDATA");
+                BackupDatabase.backup(context);
             }
         }
-
     }
 }

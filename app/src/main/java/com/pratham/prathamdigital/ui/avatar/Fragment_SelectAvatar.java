@@ -158,15 +158,11 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     public void presentActivity(View view) {
+        FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
-        int[] outLocation = new int[2];
-        view.getLocationOnScreen(outLocation);
-        outLocation[0] += view.getWidth() / 2;
-        mActivityIntent.putExtra(PD_Constant.REVEALX, outLocation[0]);
-        mActivityIntent.putExtra(PD_Constant.REVEALY, outLocation[1]);
         startActivity(mActivityIntent);
-        getActivity().finish();
-        getActivity().overridePendingTransition(0, 0);
+        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        getActivity().finishAfterTransition();
     }
 
     @Override

@@ -179,4 +179,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="top_sheet_behavior" translatable="false">com.pratham.prathamdigital.custom.topsheet.TopSheetBehavior</string>
+    <string name="switch_off_mobile_hotspot">Please switch off the mobile data and try again.</string>
+    <string name="Okay">Okay</string>
+    <string name="change">Change</string>
+    <string name="content_download_alert">Content will be downloaded in</string>
 </resources>

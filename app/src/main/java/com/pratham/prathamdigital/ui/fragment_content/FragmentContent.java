@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,10 @@ import android.widget.Toast;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -54,18 +57,20 @@ public class FragmentContent extends FragmentManagePermission implements Content
     private static final String TAG = FragmentContent.class.getSimpleName();
     @BindView(R.id.circular_content_reveal)
     CircularRevelLayout circular_content_reveal;
-    @BindView(R.id.content_header)
-    RelativeLayout content_header;
     //    @BindView(R.id.lottie_content_bkgd)
 //    LottieAnimationView lottie_content_bkgd;
     @BindView(R.id.rv_content)
     RecyclerView rv_content;
-    @BindView(R.id.content_back)
-    ImageView content_back;
-    @BindView(R.id.content_title)
-    TextView content_title;
+    //    @BindView(R.id.content_back)
+//    ImageView content_back;
+//    @BindView(R.id.content_title)
+//    TextView content_title;
+    @BindView(R.id.txt_wifi_status)
+    TextView txt_wifi_status;
     @BindView(R.id.rl_network_error)
     RelativeLayout rl_network_error;
+    @BindView(R.id.iv_wifi_status)
+    ImageView iv_wifi_status;
 
     ContentPresenterImpl contentPresenter;
     ContentAdapter contentAdapter;
@@ -84,7 +89,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_content, container, false);
         ButterKnife.bind(this, rootView);
-        circular_content_reveal.setDuration(1600);
         circular_content_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -174,7 +178,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void onResume() {
         super.onResume();
 //        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
-        PD_Utility.showDialog(getActivity());
+//        PD_Utility.showDialog(getActivity());
         contentPresenter.getContent(null);
 //        }
     }
@@ -251,10 +255,39 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
-        PrathamApplication.bubble_mp.start();
-        filesDownloading.put(contentDetail.getNodeid(), position);
+        if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
+            PrathamApplication.bubble_mp.start();
+            filesDownloading.put(contentDetail.getNodeid(), position);
 //        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
-        contentPresenter.downloadContent(contentDetail);
+            contentPresenter.downloadContent(contentDetail);
+        } else {
+            BlurPopupWindow builder = new BlurPopupWindow(getActivity());
+            BlurPopupWindow finalBuilder = builder;
+            builder = new BlurPopupWindow.Builder(getActivity())
+                    .setContentView(R.layout.download_alert_dialog)
+                    .bindClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, true);
+                            finalBuilder.dismiss();
+                        }
+                    }, R.id.btn_okay)
+                    .bindClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            finalBuilder.dismiss();
+                            ((ActivityMain) getActivity()).setTopSheetConnect();
+                        }
+                    }, R.id.btn_change)
+                    .setGravity(Gravity.CENTER)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(10)
+                    .setTintColor(0x30000000)
+                    .build();
+            TextView tv = (TextView) builder.findViewById(R.id.txt_download_alert);
+            tv.setText(getString(R.string.content_download_alert) + " " + PD_Constant.STORING_IN);
+            builder.show();
+        }
     }
 
     @Override
@@ -372,6 +405,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 public void permissionGranted() {
                     switch (contentDetail.getResourcetype().toLowerCase()) {
                         case PD_Constant.GAME:
+                            Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
                             openGame(contentDetail);
                             break;
                         case PD_Constant.VIDEO:
@@ -450,11 +484,21 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void onRevealed() {
-
+        PD_Utility.getConnectivityStatus(getActivity());
     }
 
     @Override
     public void onUnRevealed() {
 
+    }
+
+    @Subscribe
+    public void setConnectionStatus(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
+                txt_wifi_status.setText(message.getConnection_name());
+                iv_wifi_status.setImageDrawable(message.getConnection_resource());
+            }
+        }
     }
 }

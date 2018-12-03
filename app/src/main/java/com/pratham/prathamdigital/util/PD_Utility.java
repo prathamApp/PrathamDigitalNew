@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.util;
 
 import android.animation.TimeInterpolator;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningServiceInfo;
@@ -31,6 +32,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.ColorInt;
@@ -40,6 +42,8 @@ import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
+import android.text.format.Formatter;
 import android.util.Base64;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -63,9 +67,11 @@ import com.google.gson.Gson;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 
+import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.BufferedReader;
@@ -110,6 +116,12 @@ public class PD_Utility {
     private static String TAG = "Utility";
     static Dialog mDateTimeDialog = null;
     private static Dialog dialog;
+    public static final int TYPE_WIFI = 1;
+    public static final int TYPE_MOBILE = 2;
+    public static final int TYPE_NOT_CONNECTED = 0;
+    public static final int NETWORK_STATUS_NOT_CONNECTED = 0;
+    public static final int NETWORK_STATUS_WIFI = 1;
+    public static final int NETWORK_STATUS_MOBILE = 2;
 
     public static final Pattern otp_pattern = Pattern.compile("(|^)\\d{4}");
     private static List<Integer> colors;
@@ -1591,12 +1603,15 @@ public class PD_Utility {
                 if (!file.exists())
                     file.createNewFile();
                 file.delete();
+                PD_Constant.STORING_IN = "SD-Card";
                 return intDir[1].getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();
+                PD_Constant.STORING_IN = "Internal Storage";
                 return intDir[0].getAbsolutePath();
             }
         } else {
+            PD_Constant.STORING_IN = "Internal Storage";
             return intDir[0].getAbsolutePath();
         }
     }
@@ -1840,5 +1855,61 @@ public class PD_Utility {
         if (dialog != null)
             dialog.dismiss();
         dialog = null;
+    }
+
+    public static long getAvailableSpaceInGB(Context context, String path) {
+        final long SIZE_KB = 1024L;
+        final long SIZE_GB = SIZE_KB * SIZE_KB * SIZE_KB;
+        long availableSpace = -1L;
+        StatFs stat = new StatFs(path);
+        availableSpace = (long) stat.getAvailableBlocks() * (long) stat.getBlockSize();
+        Log.d(TAG, "getAvailableSpaceInGB:" + Formatter.formatFileSize(context, availableSpace));
+        return availableSpace / SIZE_GB;
+    }
+
+    public static String formatSize(long size) {
+        String suffix = null;
+        if (size >= 1024) {
+            suffix = " KB";
+            size /= 1024;
+            if (size >= 1024) {
+                suffix = " MB";
+                size /= 1024;
+            }
+        }
+        StringBuilder resultBuffer = new StringBuilder(Long.toString(size));
+        int commaOffset = resultBuffer.length() - 3;
+        while (commaOffset > 0) {
+            resultBuffer.insert(commaOffset, ',');
+            commaOffset -= 3;
+        }
+        if (suffix != null) resultBuffer.append(suffix);
+        return resultBuffer.toString();
+    }
+
+    @SuppressLint("MissingPermission")
+    public static void getConnectivityStatus(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.CONNECTION_STATUS);
+        if (null != activeNetwork) {
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_WIFI) {
+                message.setConnection_resource(context.getResources().getDrawable(R.drawable.ic_dialog_connect_wifi_item));
+                message.setConnection_name(PrathamApplication.wiseF.getCurrentNetwork().getSSID());
+                EventBus.getDefault().post(message);
+            }
+            if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE) {
+                TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+                String carrierName = manager.getNetworkOperatorName();
+                message.setConnection_resource(context.getResources().getDrawable(R.drawable.ic_4g_network));
+                message.setConnection_name(carrierName);
+                EventBus.getDefault().post(message);
+            }
+        } else {
+            message.setConnection_resource(context.getResources().getDrawable(R.drawable.ic_no_wifi));
+            message.setConnection_name(PD_Constant.NO_CONNECTION);
+        }
+        EventBus.getDefault().post(message);
     }
 }

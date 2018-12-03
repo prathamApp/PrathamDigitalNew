@@ -64,16 +64,18 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
         <receiver
-            android:name=".util.ConnectivityReceiver"
+            android:name=".services.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
             </intent-filter>
         </receiver>
 
         <activity
             android:name=".ui.splash.ActivitySplash"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:resizeableActivity="false"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden">
@@ -86,34 +88,38 @@
         <activity
             android:name=".ui.QRLogin.QRLogin"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.dashboard.ActivityMain"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.attendance_activity.AttendanceActivity"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".ui.connect_dialog.ConnectDialog"
-            android:excludeFromRecents="true"
-            android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.Dialog"
-            android:windowSoftInputMode="stateHidden">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
+        <!--<activity-->
+        <!--android:name=".ui.connect_dialog.ConnectDialog"-->
+        <!--android:excludeFromRecents="true"-->
+        <!--android:screenOrientation="sensorLandscape"-->
+        <!--android:theme="@style/AppTheme.Dialog"-->
+        <!--android:windowSoftInputMode="stateHidden">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN" />-->
+        <!--<category android:name="android.intent.category.DEFAULT" />-->
+        <!--</intent-filter>-->
+        <!--</activity>-->
         <activity
             android:name=".ui.pdf_viewer.Activity_PdfViewer"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -130,34 +136,30 @@
         <activity
             android:name=".ui.web_view.Activity_WebView"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.settings_activity.SettingsActivity"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.assign.Activity_AssignGroups"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".CatchoTransparentActivity"
             android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
-        <receiver android:name=".util.NetworkChangeReceiver">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1d9330f62c878e9baee0e17b985180647272403" />

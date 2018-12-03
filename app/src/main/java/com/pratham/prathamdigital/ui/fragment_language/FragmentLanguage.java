@@ -81,7 +81,6 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        initializeAdapter();
     }
 
     @Override
@@ -130,7 +129,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
 
     @Override
     public void onRevealed() {
-
+        initializeAdapter();
     }
 
     @Override

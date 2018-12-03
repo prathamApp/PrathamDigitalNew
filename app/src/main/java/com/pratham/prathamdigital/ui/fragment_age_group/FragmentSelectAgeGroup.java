@@ -135,9 +135,10 @@ public class FragmentSelectAgeGroup extends Fragment {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
         if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            ConnectDialog connectDialog = new ConnectDialog();
-            connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
-            connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
+            ConnectDialog connectDialog = new ConnectDialog(getActivity());
+            connectDialog.show();
+//            connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
+//            connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
         } else {
             onActivityResult(3, Activity.RESULT_OK, null);
         }

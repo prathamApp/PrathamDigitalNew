@@ -1,12 +1,8 @@
 package com.pratham.prathamdigital;
 
 import android.app.Application;
-import android.app.Service;
 import android.content.Context;
-import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.media.SoundPool;
-import android.os.Vibrator;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 
@@ -29,25 +25,25 @@ import java.util.HashMap;
 public class PrathamApplication extends Application {
     private static PrathamApplication mInstance;
     public static WiseFy wiseF;
-    private static boolean isSlient = false;
-    private static boolean isVIBRATE = true;
-    private static SoundPool notiMediaplayer;
-    private static Vibrator notiVibrator;
+    //    private static boolean isSlient = false;
+//    private static boolean isVIBRATE = true;
+//    private static SoundPool notiMediaplayer;
+//    private static Vibrator notiVibrator;
     public static HashMap<String, FileState> sendFileStates;
     public static HashMap<String, FileState> recieveFileStates;
     public static String IMAG_PATH;
-    public static String THUMBNAIL_PATH;
+    //    public static String THUMBNAIL_PATH;
     public static String VOICE_PATH;
     public static String VEDIO_PATH;
-    public static String APK_PATH;
+    //    public static String APK_PATH;
     public static String MUSIC_PATH;
     public static String FILE_PATH;
-    public static String SAVE_PATH;
-    public static String CAMERA_IMAGE_PATH;
-    private static boolean isClient = true;
+    //    public static String SAVE_PATH;
+//    public static String CAMERA_IMAGE_PATH;
+//    private static boolean isClient = true;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static final boolean isTablet = true;
+    public static final boolean isTablet = false;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -59,10 +55,10 @@ public class PrathamApplication extends Application {
         if (mInstance == null) {
             mInstance = this;
         }
+        FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         sendFileStates = new HashMap<String, FileState>();
         recieveFileStates = new HashMap<String, FileState>();
-        FastSave.init(getApplicationContext());
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
                 .setReadTimeout(20000)
                 .setConnectTimeout(20000)
@@ -83,12 +79,11 @@ public class PrathamApplication extends Application {
         return mInstance;
     }
 
-    private void initNotification() {
-        notiMediaplayer = new SoundPool(3, AudioManager.STREAM_SYSTEM, 5);
-        // notiSoundPoolID = notiMediaplayer.load(this, R.raw.crystalring, 1);
-        notiVibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
-    }
-
+    //    private void initNotification() {
+//        notiMediaplayer = new SoundPool(3, AudioManager.STREAM_SYSTEM, 5);
+//        // notiSoundPoolID = notiMediaplayer.load(this, R.raw.crystalring, 1);
+//        notiVibrator = (Vibrator) getSystemService(Service.VIBRATOR_SERVICE);
+//    }
     public void setPradigiPath() {
         pradigiPath = PD_Utility.getInternalPath(this) + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         File f = new File(pradigiPath);

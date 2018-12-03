@@ -1,39 +1,39 @@
 package com.pratham.prathamdigital.ui.connect_dialog;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiConfiguration;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.isupatches.wisefy.callbacks.AddNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.ConnectToNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.GetNearbyAccessPointsCallbacks;
 import com.isupatches.wisefy.callbacks.GetSavedNetworkCallbacks;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -42,53 +42,105 @@ import butterknife.OnClick;
 
 import static com.pratham.prathamdigital.PrathamApplication.wiseF;
 
-public class ConnectDialog extends DialogFragment {
+public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
 
     private static final String TAG = ConnectDialog.class.getSimpleName();
     private Context context;
-    private ConnectInterface connectInterface;
     @BindView(R.id.wifi_list)
-    ListView wifi_list;
-    @BindView(R.id.refresh)
-    LottieAnimationView refresh;
+    RecyclerView wifi_list;
+    //    @BindView(R.id.refresh)
+//    LottieAnimationView refresh;
     @BindView(R.id.dialog_txt)
     TextView dialog_txt;
+    @BindView(R.id.rl_enter_password)
+    RelativeLayout rl_enter_password;
+    @BindView(R.id.rl_connect_option)
+    RelativeLayout rl_connect_option;
+    @BindView(R.id.rl_progress)
+    RelativeLayout rl_progress;
+    @BindView(R.id.et_wifi_pass)
+    EditText et_wifi_pass;
+    @BindView(R.id.wifi_back)
+    ImageView wifi_back;
 
-    String ssid;
-    String[] wifi_result;
+    private String ssid;
+    private String password;
+    private ArrayList<String> wifi_result;
+    private WifiAdapter adapter;
+
+    public ConnectDialog(@NonNull Context context) {
+        super(context);
+    }
 
     @SuppressLint("MissingPermission")
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.dialog_connecction, container);
+    protected View createContentView(ViewGroup parent) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connecction, parent, false);
         ButterKnife.bind(this, view);
-        PrathamApplication.wiseF.getNearbyAccessPoints(true, nearbyAccessPointsCallbacks);
-        getDialog().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        mHandler = new Handler();
+        this.isDismissOnTouchBackground();
+        this.isDismissOnClickBack();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mHandler.sendEmptyMessage(2);
+            }
+        }, 300);
         return view;
     }
 
-//    @SuppressLint("MissingPermission")
-//    @NonNull
-//    @Override
-//    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-//        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//        return null;
-//    }
-
     @SuppressLint("HandlerLeak")
     Handler mHandler = new Handler() {
+        @SuppressLint("MissingPermission")
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(PrathamApplication.getInstance(),
-                            R.layout.connect_dialog_item, android.R.id.text1, wifi_result);
+                    adapter = new WifiAdapter(getContext(), wifi_result, ConnectDialog.this);
+                    wifi_list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                    wifi_list.setHasFixedSize(true);
                     wifi_list.setAdapter(adapter);
-                    wifi_list.setOnItemClickListener(onItemClickListener);
                     break;
                 case 1:
+                    rl_progress.setVisibility(GONE);
                     dialog_txt.setText("Failed");
+                    break;
+                case 2:
+                    if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                        wifi_list.setVisibility(GONE);
+                        rl_connect_option.setVisibility(VISIBLE);
+                    } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+                        wifi_list.setVisibility(VISIBLE);
+                        rl_connect_option.setVisibility(GONE);
+                        PrathamApplication.wiseF.getNearbyAccessPoints(true, nearbyAccessPointsCallbacks);
+                    } else {
+                        wifi_list.setVisibility(VISIBLE);
+                        rl_connect_option.setVisibility(GONE);
+                        if (!PrathamApplication.wiseF.isWifiEnabled())
+                            PrathamApplication.wiseF.enableWifi();
+                        PrathamApplication.wiseF.getNearbyAccessPoints(true, nearbyAccessPointsCallbacks);
+                    }
+                    break;
+                case 3:
+                    try {
+                        @SuppressLint("WrongConstant")
+                        Object sbservice = getContext().getSystemService("statusbar");
+                        Class<?> statusbarManager = Class.forName("android.app.StatusBarManager");
+                        Method showsb = statusbarManager.getMethod("expand");
+                        showsb.invoke(sbservice);
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 4:
+                    rl_progress.setVisibility(VISIBLE);
                     break;
             }
         }
@@ -96,10 +148,9 @@ public class ConnectDialog extends DialogFragment {
     GetNearbyAccessPointsCallbacks nearbyAccessPointsCallbacks = new GetNearbyAccessPointsCallbacks() {
         @Override
         public void retrievedNearbyAccessPoints(@NotNull List<ScanResult> scanResults) {
-            wifi_result = new String[scanResults.size()];
-            for (int i = 0; i < scanResults.size(); i++) {
-                wifi_result[i] = scanResults.get(i).SSID;
-            }
+            wifi_result = new ArrayList<>();
+            for (ScanResult sc : scanResults)
+                wifi_result.add(sc.SSID);
             mHandler.sendEmptyMessage(0);
         }
 
@@ -109,32 +160,13 @@ public class ConnectDialog extends DialogFragment {
         }
     };
 
-    @SuppressLint("MissingPermission")
-    @OnClick(R.id.refresh)
-    public void setRefresh() {
-        PrathamApplication.wiseF.getNearbyAccessPoints(true, nearbyAccessPointsCallbacks);
-    }
-
-    ListView.OnItemClickListener onItemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            ssid = (String) wifi_list.getItemAtPosition(position);
-            if (ssid.equalsIgnoreCase(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-                dialog_txt.setText("Connecting...");
-                if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
-                    wiseF.disconnectFromCurrentNetwork();
-                }
-                wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
-            } else {
-                Toast.makeText(getActivity(), "Please select " + PD_Constant.PRATHAM_KOLIBRI_HOTSPOT, Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
-
     GetSavedNetworkCallbacks savedNetworkCallbacks = new GetSavedNetworkCallbacks() {
         @Override
         public void savedNetworkNotFound() {
-            addNetwork(ssid);
+            if (!password.isEmpty())
+                addNetwork(ssid, password);
+            else
+                addOpenNetwork(ssid);
         }
 
         @Override
@@ -149,8 +181,29 @@ public class ConnectDialog extends DialogFragment {
         }
     };
 
-    private void addNetwork(String ssid) {
-        PrathamApplication.wiseF.addWPA2Network(ssid, PD_Constant.WIFI_AP_PASSWORD, new AddNetworkCallbacks() {
+    private void addOpenNetwork(String ssid) {
+        PrathamApplication.wiseF.addOpenNetwork(ssid, new AddNetworkCallbacks() {
+            @Override
+            public void failureAddingNetwork(int i) {
+                Log.d(TAG, "failureAddingNetwork: ");
+                mHandler.sendEmptyMessage(1);
+            }
+
+            @Override
+            public void networkAdded(int i, @NotNull WifiConfiguration wifiConfiguration) {
+                connectToNetwork(ssid);
+            }
+
+            @Override
+            public void wisefyFailure(int i) {
+                Log.d(TAG, "wisefyFailure: ");
+                mHandler.sendEmptyMessage(1);
+            }
+        });
+    }
+
+    private void addNetwork(String ssid, String pass) {
+        PrathamApplication.wiseF.addWPA2Network(ssid, pass, new AddNetworkCallbacks() {
             @Override
             public void failureAddingNetwork(int i) {
                 Log.d(TAG, "failureAddingNetwork: ");
@@ -174,10 +227,6 @@ public class ConnectDialog extends DialogFragment {
         PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
-//                Intent intent = new Intent();
-//                setResult(Activity.RESULT_OK, intent);
-//                finish();
-                getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, getActivity().getIntent());
                 dismiss();
             }
 
@@ -199,5 +248,58 @@ public class ConnectDialog extends DialogFragment {
                 Log.d(TAG, "wisefyFailure: ");
             }
         });
+    }
+
+    @Override
+    public void wifiClicked(String wifi_name) {
+        PrathamApplication.bubble_mp.start();
+        ssid = wifi_name;
+        if (ssid.equalsIgnoreCase(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            password = PD_Constant.WIFI_AP_PASSWORD;
+            dialog_txt.setText("Connecting...");
+            if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
+                wiseF.disconnectFromCurrentNetwork();
+                wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
+            }
+        } else {
+            rl_enter_password.setVisibility(VISIBLE);
+            wifi_back.setVisibility(VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.btn_connect_wifi)
+    public void setBtnConnectWifi() {
+        PrathamApplication.bubble_mp.start();
+        if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
+            mHandler.sendEmptyMessage(4);
+            password = et_wifi_pass.getText().toString();
+            wiseF.disconnectFromCurrentNetwork();
+            wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
+        }
+    }
+
+    @OnClick(R.id.btn_try_again)
+    public void setTryButton() {
+        PrathamApplication.bubble_mp.start();
+        if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+            mHandler.sendEmptyMessage(3);
+        else {
+            rl_connect_option.setVisibility(GONE);
+            wifi_list.setVisibility(VISIBLE);
+        }
+    }
+
+    @OnClick(R.id.wifi_refresh)
+    public void setRefresh() {
+        PrathamApplication.bubble_mp.start();
+        mHandler.sendEmptyMessage(2);
+    }
+
+    @OnClick(R.id.wifi_back)
+    public void setWifiBack() {
+        rl_connect_option.setVisibility(GONE);
+        rl_enter_password.setVisibility(GONE);
+        wifi_list.setVisibility(VISIBLE);
+        wifi_back.setVisibility(GONE);
     }
 }

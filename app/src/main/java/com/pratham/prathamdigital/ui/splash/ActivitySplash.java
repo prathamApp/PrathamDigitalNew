@@ -101,6 +101,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                 .bindClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+
                     }
                 }, R.id.btn_update)
                 .setGravity(Gravity.CENTER)

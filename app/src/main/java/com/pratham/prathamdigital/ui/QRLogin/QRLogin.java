@@ -212,16 +212,12 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 if (startCameraScan != null) {
                     startCameraScan.stopCamera();
                 }
+                FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
                 startService(new Intent(this, AppKillService.class));
                 Intent main = new Intent(QRLogin.this, ActivityMain.class);
-                int[] outLocation = new int[2];
-                view.getLocationOnScreen(outLocation);
-                outLocation[0] += view.getWidth() / 2;
-                main.putExtra(PD_Constant.REVEALX, outLocation[0]);
-                main.putExtra(PD_Constant.REVEALY, outLocation[1]);
                 startActivity(main);
-                finishAffinity();
-                overridePendingTransition(0, 0);
+                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                finishAfterTransition();
             }
         } catch (Exception e) {
             e.printStackTrace();
