@@ -255,6 +255,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         PrathamApplication.bubble_mp.start();
         ssid = wifi_name;
         if (ssid.equalsIgnoreCase(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            mHandler.sendEmptyMessage(4);
             password = PD_Constant.WIFI_AP_PASSWORD;
             dialog_txt.setText("Connecting...");
             if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
@@ -301,5 +302,17 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         rl_enter_password.setVisibility(GONE);
         wifi_list.setVisibility(VISIBLE);
         wifi_back.setVisibility(GONE);
+    }
+
+    public static class Builder extends BlurPopupWindow.Builder<ConnectDialog> {
+        public Builder(Context context) {
+            super(context);
+            this.setScaleRatio(0.25f).setBlurRadius(8).setTintColor(0x30000000);
+        }
+
+        @Override
+        protected ConnectDialog createPopupWindow() {
+            return new ConnectDialog(mContext);
+        }
     }
 }

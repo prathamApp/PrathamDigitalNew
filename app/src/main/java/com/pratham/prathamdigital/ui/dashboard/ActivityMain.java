@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.dashboard;
 
 import android.animation.Animator;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -12,19 +11,17 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
-import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.NotificationBadge;
-import com.pratham.prathamdigital.custom.topsheet.TopSheetBehavior;
+import com.pratham.prathamdigital.custom.topsheet.TopSheetDialog;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
@@ -32,7 +29,6 @@ import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
-import com.pratham.prathamdigital.ui.import_db.Fragment_ImportData;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -44,7 +40,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ActivityMain extends BaseActivity implements ContentContract.mainView, LevelContract, CircularRevelLayout.CallBacks {
+public class ActivityMain extends BaseActivity implements ContentContract.mainView, LevelContract {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     //    @BindView(R.id.circular_main_reveal)
@@ -65,13 +61,13 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 //    public ShapeOfView search_shape;
     @BindView(R.id.rv_level)
     public RecyclerView rv_level;
-    @BindView(R.id.top_sheet)
-    View top_sheet;
+    //    @BindView(R.id.top_sheet)
+//    View top_sheet;
     @BindView(R.id.pull_down_menu)
     ImageView pull_down_menu;
 
     private RV_LevelAdapter levelAdapter;
-    TopSheetBehavior topSheetBehavior = null;
+    TopSheetDialog dialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,7 +75,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         setContentView(R.layout.main_activity);
         ButterKnife.bind(this);
 
-        topSheetBehavior = TopSheetBehavior.from(top_sheet);
+//        topSheetBehavior = TopSheetBehavior.from(top_sheet);
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, 0);
         bundle.putInt(PD_Constant.REVEALY, 0);
@@ -166,11 +162,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         download_notification.setNumber(number);
     }
 
-//    @OnClick(R.id.back_view)
-//    public void setMainBack() {
-//        onBackPressed();
-//    }
-
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
         EventBus.getDefault().post(detail);
@@ -178,111 +169,86 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.pull_down_menu)
     public void setPullDown() {
-        topSheetBehavior.setTopSheetCallback(new TopSheetBehavior.TopSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View bottomSheet, int newState) {
-
-            }
-
-            @Override
-            public void onSlide(@NonNull View bottomSheet, float slideOffset, @Nullable Boolean isOpening) {
-            }
-        });
-        if (topSheetBehavior.getState() == TopSheetBehavior.STATE_COLLAPSED)
-            topSheetBehavior.setState(TopSheetBehavior.STATE_EXPANDED);
-        else
-            topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
+        dialog = new TopSheetDialog(this);
+        dialog.setContentView(R.layout.top_sheet_items_layout);
+        LinearLayout top_sheet_content_home = (LinearLayout) dialog.findViewById(R.id.top_sheet_content_home);
+        LinearLayout top_sheet_language = (LinearLayout) dialog.findViewById(R.id.top_sheet_language);
+//        LinearLayout top_sheet_import = (LinearLayout) dialog.findViewById(R.id.top_sheet_import);
+        LinearLayout top_sheet_connect_wifi = (LinearLayout) dialog.findViewById(R.id.top_sheet_connect_wifi);
+        top_sheet_content_home.setOnClickListener(setTop_sheet_Content_Home);
+        top_sheet_language.setOnClickListener(setTop_sheet_Language);
+//        top_sheet_import.setOnClickListener(setTopSheetImport);
+        top_sheet_connect_wifi.setOnClickListener(setTopSheetConnect);
+        dialog.show();
     }
 
-    private Animation getRotationAnimationSet() {
-        AnimationSet animSet = new AnimationSet(true);
-        animSet.setInterpolator(new AccelerateDecelerateInterpolator());
-        animSet.setFillAfter(true);
-        animSet.setFillEnabled(true);
-        final RotateAnimation animRotate = new RotateAnimation(0.0f, -180.0f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f,
-                RotateAnimation.RELATIVE_TO_SELF, 0.5f);
-        animRotate.setDuration(700);
-        animRotate.setFillAfter(true);
-        animSet.addAnimation(animRotate);
-        return animSet;
-    }
+    View.OnClickListener setTop_sheet_Content_Home = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PrathamApplication.bubble_mp.start();
+            int[] outLocation = new int[2];
+            v.getLocationOnScreen(outLocation);
+            outLocation[0] += v.getWidth() / 2;
+            Bundle bundle = new Bundle();
+            bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+            bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+            PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
+                    bundle, FragmentContent.class.getSimpleName());
+            dialog.dismiss();
+        }
+    };
+    View.OnClickListener setTop_sheet_Language = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PrathamApplication.bubble_mp.start();
+            int[] outLocation = new int[2];
+            v.getLocationOnScreen(outLocation);
+            outLocation[0] += v.getWidth() / 2;
+            Bundle bundle = new Bundle();
+            bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+            bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+            PD_Utility.showFragment(ActivityMain.this, new FragmentLanguage(), R.id.main_frame,
+                    bundle, FragmentLanguage.class.getSimpleName());
+            dialog.dismiss();
+        }
+    };
+    //    View.OnClickListener setTopSheetImport = new View.OnClickListener() {
+//        @Override
+//        public void onClick(View v) {
+//            PrathamApplication.bubble_mp.start();
+//            int[] outLocation = new int[2];
+//            v.getLocationOnScreen(outLocation);
+//            outLocation[0] += v.getWidth() / 2;
+//            Bundle bundle = new Bundle();
+//            bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+//            bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+//            PD_Utility.showFragment(ActivityMain.this, new Fragment_ImportData(), R.id.main_frame,
+//                    bundle, Fragment_ImportData.class.getSimpleName());
+//            dialog.dismiss();
+//        }
+//    };
+    View.OnClickListener setTopSheetConnect = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            PrathamApplication.bubble_mp.start();
+            ConnectDialog connectDialog = new ConnectDialog.Builder(ActivityMain.this).build();
+            connectDialog.isDismissOnTouchBackground();
+            connectDialog.isDismissOnClickBack();
+            connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss(BlurPopupWindow popupWindow) {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(PD_Constant.REVEALX, 0);
+                    bundle.putInt(PD_Constant.REVEALY, 0);
+                    PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
+                            bundle, FragmentContent.class.getSimpleName());
+                }
+            });
+            connectDialog.show();
+            dialog.dismiss();
+        }
+    };
 
-    @Override
-    public void onRevealed() {
-
-    }
-
-    @Override
-    public void onUnRevealed() {
-
-    }
-
-    @OnClick(R.id.top_sheet_content_home)
-    public void setTop_sheet_Content_Home(View v) {
-        PrathamApplication.bubble_mp.start();
-        int[] outLocation = new int[2];
-        v.getLocationOnScreen(outLocation);
-        outLocation[0] += v.getWidth() / 2;
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
-        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(this, new FragmentContent(), R.id.main_frame,
-                bundle, FragmentContent.class.getSimpleName());
-        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
-    }
-
-    @OnClick(R.id.top_sheet_language)
-    public void setTop_sheet_Language(View v) {
-        PrathamApplication.bubble_mp.start();
-        int[] outLocation = new int[2];
-        v.getLocationOnScreen(outLocation);
-        outLocation[0] += v.getWidth() / 2;
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
-        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(this, new FragmentLanguage(), R.id.main_frame,
-                bundle, FragmentLanguage.class.getSimpleName());
-        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
-    }
-
-    @OnClick(R.id.top_sheet_import)
-    public void setTopSheetImport(View v) {
-        PrathamApplication.bubble_mp.start();
-        int[] outLocation = new int[2];
-        v.getLocationOnScreen(outLocation);
-        outLocation[0] += v.getWidth() / 2;
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
-        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(this, new Fragment_ImportData(), R.id.main_frame,
-                bundle, Fragment_ImportData.class.getSimpleName());
-        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
-    }
-
-    @OnClick(R.id.top_sheet_connect_wifi)
-    public void setTopSheetConnect() {
-        PrathamApplication.bubble_mp.start();
-        ConnectDialog connectDialog = new ConnectDialog(ActivityMain.this);
-        connectDialog.isDismissOnTouchBackground();
-        connectDialog.isDismissOnClickBack();
-        connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
-            @Override
-            public void onDismiss(BlurPopupWindow popupWindow) {
-                Bundle bundle = new Bundle();
-                bundle.putInt(PD_Constant.REVEALX, 0);
-                bundle.putInt(PD_Constant.REVEALY, 0);
-                PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
-                        bundle, FragmentContent.class.getSimpleName());
-            }
-        });
-        new ConnectDialog(ActivityMain.this).show();
-        topSheetBehavior.setState(TopSheetBehavior.STATE_COLLAPSED);
-    }
-
-    //    @OnClick(R.id.top_sheet_search)
-//    public void setTop_sheet_Search(View v) {
-//    }
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame);

@@ -78,6 +78,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     Map<String, Integer> filesDownloading = new HashMap<>();
     private int revealX;
     private int revealY;
+    BlurPopupWindow download_builder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -140,10 +141,11 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Subscribe
-    public void onMainBackPressed(final String pressed) {
-        Log.d(TAG, "onMainBackPressed:");
-        if (pressed.equalsIgnoreCase(PD_Constant.CONTENT_BACK)) {
-            setContent_back();
+    public void onMainBackPressed(EventMessage pressed) {
+        if (pressed != null) {
+            if (pressed.getMessage().equalsIgnoreCase(PD_Constant.CONTENT_BACK)) {
+                setContent_back();
+            }
         }
     }
 
@@ -254,29 +256,28 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Override
-    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail) {
+    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view) {
         if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
+            contentAdapter.reveal(reveal_view);
             PrathamApplication.bubble_mp.start();
             filesDownloading.put(contentDetail.getNodeid(), position);
 //        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
             contentPresenter.downloadContent(contentDetail);
         } else {
-            BlurPopupWindow builder = new BlurPopupWindow(getActivity());
-            BlurPopupWindow finalBuilder = builder;
-            builder = new BlurPopupWindow.Builder(getActivity())
+            download_builder = new BlurPopupWindow.Builder(getActivity())
                     .setContentView(R.layout.download_alert_dialog)
                     .bindClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, true);
-                            finalBuilder.dismiss();
+                            onDownloadClicked(position, contentDetail, reveal_view);
+                            download_builder.dismiss();
                         }
                     }, R.id.btn_okay)
                     .bindClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            finalBuilder.dismiss();
-                            ((ActivityMain) getActivity()).setTopSheetConnect();
+                            download_builder.dismiss();
                         }
                     }, R.id.btn_change)
                     .setGravity(Gravity.CENTER)
@@ -284,9 +285,9 @@ public class FragmentContent extends FragmentManagePermission implements Content
                     .setBlurRadius(10)
                     .setTintColor(0x30000000)
                     .build();
-            TextView tv = (TextView) builder.findViewById(R.id.txt_download_alert);
+            TextView tv = (TextView) download_builder.findViewById(R.id.txt_download_alert);
             tv.setText(getString(R.string.content_download_alert) + " " + PD_Constant.STORING_IN);
-            builder.show();
+            download_builder.show();
         }
     }
 

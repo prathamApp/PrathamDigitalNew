@@ -1,5 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
+import android.view.View;
+
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public interface ContentContract {
     interface contentClick {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
 
-        void onDownloadClicked(int position, Modal_ContentDetail contentDetail);
+        void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view);
 
         void openContent(int position, Modal_ContentDetail contentDetail);
     }

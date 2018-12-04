@@ -134,8 +134,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                         fileViewHolder.rl_download.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                reveal(fileViewHolder.rl_reveal);
-                                contentClick.onDownloadClicked(holder.getAdapterPosition(), contentDetail);
+                                contentClick.onDownloadClicked(holder.getAdapterPosition(), contentDetail, fileViewHolder.rl_reveal);
                             }
                         });
                         fileViewHolder.itemView.setOnClickListener(null);
