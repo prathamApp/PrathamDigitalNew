@@ -147,9 +147,11 @@ public class SinglePageRender extends PageRender {
 
             // 1. draw background bitmap
             Bitmap background = LoadBitmapTask.get(mContext).getBitmap();
-            Rect rect = new Rect(0, 0, width, height);
-            mCanvas.drawBitmap(background, null, rect, p);
-            background.recycle();
+            if (background != null) {
+                Rect rect = new Rect(0, 0, width, height);
+                mCanvas.drawBitmap(background, null, rect, p);
+                background.recycle();
+            }
             background = null;
         }
 

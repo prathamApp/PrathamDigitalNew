@@ -3,24 +3,34 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/_120sdp"
     android:layout_height="wrap_content"
-    android:clickable="true">
+    android:clickable="true"
+    android:focusable="true">
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/child_avatar"
+    <com.pratham.prathamdigital.custom.elastic_view.ElasticView
+        android:id="@+id/child_view"
         android:layout_width="@dimen/_90sdp"
         android:layout_height="@dimen/_90sdp"
         android:layout_centerHorizontal="true"
-        android:background="@drawable/child_attendance_bkgd"
+        android:clickable="false"
         android:elevation="@dimen/_10sdp"
-        android:scaleType="centerInside"
-        app:lottie_autoPlay="true"
-        app:lottie_loop="true" />
+        app:cardCornerRadius="@dimen/_20sdp">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/child_avatar"
+            android:layout_width="@dimen/_90sdp"
+            android:layout_height="@dimen/_90sdp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/child_attendance_bkgd"
+            android:scaleType="centerInside"
+            app:lottie_autoPlay="true"
+            app:lottie_loop="true" />
+    </com.pratham.prathamdigital.custom.elastic_view.ElasticView>
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:id="@+id/child_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/child_avatar"
+        android:layout_below="@+id/e1"
         android:layout_centerHorizontal="true"
         android:gravity="center"
         android:paddingLeft="@dimen/_5sdp"

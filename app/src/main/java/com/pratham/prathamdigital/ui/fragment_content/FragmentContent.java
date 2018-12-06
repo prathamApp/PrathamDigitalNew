@@ -125,6 +125,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onStart() {
         super.onStart();
+        PD_Utility.showDialog(getActivity());
+        contentPresenter.getContent(null);
         EventBus.getDefault().register(this);
     }
 
@@ -181,7 +183,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         super.onResume();
 //        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
 //        PD_Utility.showDialog(getActivity());
-        contentPresenter.getContent(null);
 //        }
     }
 
@@ -206,8 +207,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         if (rv_content.getVisibility() == View.GONE)
             rv_content.setVisibility(View.VISIBLE);
         if (!content.isEmpty()) {
-            //            modal_contents = new ArrayList<>();
-            //            modal_contents.addAll(content);
             if (contentAdapter == null) {
                 contentAdapter = new ContentAdapter(getActivity(), content, FragmentContent.this);
                 rv_content.setHasFixedSize(true);
@@ -261,7 +260,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
             contentAdapter.reveal(reveal_view);
             PrathamApplication.bubble_mp.start();
             filesDownloading.put(contentDetail.getNodeid(), position);
-//        contentAdapter.updateList(contentPresenter.getUpdatedList(contentDetail));
             contentPresenter.downloadContent(contentDetail);
         } else {
             download_builder = new BlurPopupWindow.Builder(getActivity())

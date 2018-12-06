@@ -36,10 +36,10 @@ public class ConnectivityReceiver extends BroadcastReceiver {
                 .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.CONNECTION_STATUS);
-        if (wifi.isConnected()) {
+        if (wifi != null && wifi.isConnected()) {
             message.setConnection_resource(context.getResources().getDrawable(R.drawable.ic_dialog_connect_wifi_item));
             message.setConnection_name(PrathamApplication.wiseF.getCurrentNetwork().getSSID());
-        } else if (mobile.isConnected()) {
+        } else if (mobile != null && mobile.isConnected()) {
             TelephonyManager manager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
             String carrierName = manager.getNetworkOperatorName();
             message.setConnection_resource(context.getResources().getDrawable(R.drawable.ic_4g_network));

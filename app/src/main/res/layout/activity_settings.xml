@@ -1,70 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main_settings_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/village_two">
-
-    <android.support.design.card.MaterialCardView
-        android:id="@+id/tab_card"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_marginLeft="@dimen/_3sdp"
-        android:layout_marginTop="@dimen/_3sdp"
-        app:cardBackgroundColor="@color/red"
-        app:cardCornerRadius="@dimen/_5sdp"
-        app:cardElevation="@dimen/_10sdp">
-
-        <RelativeLayout
-            android:id="@+id/settings_tab_holder"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/red"
-            android:orientation="horizontal">
-
-            <View
-                android:id="@+id/sliding_strip"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:background="@color/dark_yellow" />
-
-            <ImageView
-                android:id="@+id/settings_back"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/settings_back_arrow"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/settings_language"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/settings_back"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/settings_language"
-                android:visibility="visible" />
-
-            <ImageView
-                android:id="@+id/settings_share"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/settings_language"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/settings_share"
-                android:visibility="gone" />
-
-            <ImageView
-                android:id="@+id/settings"
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="match_parent"
-                android:layout_toRightOf="@+id/settings_share"
-                android:padding="@dimen/_8sdp"
-                android:src="@drawable/settings_tools"
-                android:visibility="gone" />
-        </RelativeLayout>
-    </android.support.design.card.MaterialCardView>
+    android:background="@drawable/attendance_bkgd">
 
     <com.pratham.prathamdigital.custom.CustomSwipeableViewPager
         android:id="@+id/settings_vp"

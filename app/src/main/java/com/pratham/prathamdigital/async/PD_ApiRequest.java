@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.async;
 
 import android.content.Context;
-import android.preference.PreferenceManager;
 import android.util.Base64;
 import android.util.Log;
 
@@ -11,6 +10,7 @@ import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -99,8 +99,7 @@ public class PD_ApiRequest {
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
                 .addBodyParameter("filter_name", filter_name)
                 .addBodyParameter("table_name", table_name)
-                .addBodyParameter("facility", PreferenceManager.getDefaultSharedPreferences(mContext)
-                        .getString("FACILITY", ""))
+                .addBodyParameter("facility", FastSave.getInstance().getString(PD_Constant.FACILITY_ID, ""))
                 .addBodyParameter("data", data)
                 .setPriority(Priority.HIGH)
                 .build()
@@ -172,5 +171,4 @@ public class PD_ApiRequest {
                     }
                 });
     }
-
 }

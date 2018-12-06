@@ -55,11 +55,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         });
     }
 
-    public void updateGroupItems(final ArrayList<Modal_Groups> newGroups) {
-        datalist = newGroups;
-        notifyDataSetChanged();
-    }
-
     @Override
     public int getItemCount() {
         return datalist.size();

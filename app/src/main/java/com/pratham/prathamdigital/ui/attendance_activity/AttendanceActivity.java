@@ -68,4 +68,9 @@ public class AttendanceActivity extends BaseActivity {
         else
             getSupportFragmentManager().popBackStack();
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
 }

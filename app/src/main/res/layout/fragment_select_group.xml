@@ -13,21 +13,20 @@
             android:id="@+id/rv_group"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_50sdp" />
+            android:layout_centerInParent="true" />
 
-        <Button
-            android:id="@+id/btn_group_next"
-            android:layout_width="@dimen/_150sdp"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/avatar_next_button_round_bg"
-            android:elevation="@dimen/_10sdp"
-            android:scaleType="centerCrop"
-            android:text="Next"
-            android:textColor="@android:color/white" />
+        <!--<Button-->
+        <!--android:id="@+id/btn_group_next"-->
+        <!--android:layout_width="@dimen/_150sdp"-->
+        <!--android:layout_height="@dimen/_50sdp"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_marginTop="@dimen/_10sdp"-->
+        <!--android:layout_marginBottom="@dimen/_10sdp"-->
+        <!--android:background="@drawable/avatar_next_button_round_bg"-->
+        <!--android:elevation="@dimen/_10sdp"-->
+        <!--android:scaleType="centerCrop"-->
+        <!--android:text="Next"-->
+        <!--android:textColor="@android:color/white" />-->
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

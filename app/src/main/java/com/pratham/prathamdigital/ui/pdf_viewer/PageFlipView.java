@@ -46,7 +46,7 @@ public class PageFlipView extends GLSurfaceView implements Renderer {
         // load preferences
         mDuration = FastSave.getInstance().getInt(PD_Constant.PDF_DURATION, 1000);
         int pixelsOfMesh = FastSave.getInstance().getInt(PD_Constant.PDF_MESH_PIXELS, 10);
-        boolean isAuto = FastSave.getInstance().getBoolean(PD_Constant.PDF_PAGE_MODE, true);
+        boolean isAuto = FastSave.getInstance().getBoolean(PD_Constant.PDF_PAGE_MODE, false);
 
         // create PageFlip
         mPageFlip = new PageFlip(context);

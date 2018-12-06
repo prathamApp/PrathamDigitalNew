@@ -82,7 +82,6 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         } else {
             get8to14Groups(present_groups);
         }
-        setGroups(groups);
     }
 
     private void get3to6Groups(ArrayList<String> allGroups) {
@@ -117,20 +116,16 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Override
     public void onResume() {
         super.onResume();
+        setGroups(groups);
     }
 
     public void setGroups(ArrayList<Modal_Groups> groups) {
-        if (groupAdapter == null) {
-            groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
-            rv_group.setHasFixedSize(true);
-            rv_group.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            rv_group.setAdapter(groupAdapter);
-        } else {
-            groupAdapter.updateGroupItems(groups);
-        }
+        groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
+        rv_group.setHasFixedSize(true);
+        rv_group.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rv_group.setAdapter(groupAdapter);
     }
 
-    //    @OnClick(R.id.btn_group_next)
     public void setNext(View v, Modal_Groups modal_groups) {
         PrathamApplication.bubble_mp.start();
         ArrayList<Modal_Student> students = new ArrayList<>();
@@ -149,15 +144,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
 
     @Override
     public void groupItemClicked(View v, Modal_Groups modalGroup, int position) {
-//        groupSelected = modalGroup;
+        PrathamApplication.bubble_mp.start();
         setNext(v, modalGroup);
-//        for (Modal_Groups gr : groups) {
-//            if (gr.getGroupId().equalsIgnoreCase(modalGroup.getGroupId())) {
-//                gr.setSelected(true);
-//            } else
-//                gr.setSelected(false);
-//        }
-//        setGroups(groups);
     }
 
     @Override

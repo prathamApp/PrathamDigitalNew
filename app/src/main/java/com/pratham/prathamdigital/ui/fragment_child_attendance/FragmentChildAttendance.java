@@ -82,6 +82,12 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        students = new ArrayList<>();
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
         avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
@@ -100,33 +106,25 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         setChilds(students);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
     public void setChilds(ArrayList<Modal_Student> childs) {
-        if (childAdapter == null) {
-            childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentChildAttendance.this);
-            rv_child.setHasFixedSize(true);
-            rv_child.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-            rv_child.setAdapter(childAdapter);
-        } else {
-            childAdapter.notifyDataSetChanged();
-        }
+        childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentChildAttendance.this);
+        rv_child.setHasFixedSize(true);
+        rv_child.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rv_child.setAdapter(childAdapter);
     }
 
     @Override
-    public void childItemClicked(Modal_Student student, int position) {
+    public void childItemClicked(Modal_Student stud, int position) {
         PrathamApplication.bubble_mp.start();
         for (Modal_Student stu : students) {
-            if (stu.getStudentId().equalsIgnoreCase(student.getStudentId())) {
+            if (stu.getStudentId().equalsIgnoreCase(stud.getStudentId())) {
                 if (stu.isChecked()) stu.setChecked(false);
                 else stu.setChecked(true);
+                stud = stu;
                 break;
             }
         }
-        setChilds(students);
+        childAdapter.notifyItemChanged(position, stud);
     }
 
     @Override
@@ -163,7 +161,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         if (checkedStds.size() > 0) {
             PrathamApplication.bubble_mp.start();
             FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
-            markAttendance(students);
+            markAttendance(checkedStds);
             presentActivity(v);
         } else {
             Toast.makeText(getContext(), "Please Select Students !", Toast.LENGTH_SHORT).show();

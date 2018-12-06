@@ -217,7 +217,8 @@ public final class LoadBitmapTask implements Runnable {
      */
     private void cleanQueue() {
         for (int i = 0; i < mQueue.size(); ++i) {
-            mQueue.get(i).recycle();
+            if (mQueue.get(i) != null)
+                mQueue.get(i).recycle();
         }
         mQueue.clear();
     }

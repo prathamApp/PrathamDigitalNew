@@ -261,6 +261,8 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
                 wiseF.disconnectFromCurrentNetwork();
                 wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
+            } else {
+                dismiss();
             }
         } else {
             rl_enter_password.setVisibility(VISIBLE);

@@ -54,6 +54,7 @@ public class Activity_PdfViewer extends BaseActivity implements GestureDetector.
         backpressedFlag = true;
         addScoreToDB();
         setResult(RESULT_CANCELED);
+        finish();
     }
 
     @Override

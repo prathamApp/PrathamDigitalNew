@@ -18,6 +18,7 @@ import android.view.ViewGroup;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
@@ -116,6 +117,7 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.iv_age_3_to_6)
     public void open3to6Groups() {
+        PrathamApplication.bubble_mp.start();
         Bundle bundle = new Bundle();
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, true);
         PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
@@ -124,6 +126,7 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.iv_age_8_to_14)
     public void open8to14Groups() {
+        PrathamApplication.bubble_mp.start();
         Bundle bundle = new Bundle();
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
         PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
@@ -135,7 +138,15 @@ public class FragmentSelectAgeGroup extends Fragment {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
         if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            ConnectDialog connectDialog = new ConnectDialog(getActivity());
+            ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity()).build();
+            connectDialog.isDismissOnClickBack();
+            connectDialog.isDismissOnTouchBackground();
+            connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
+                @Override
+                public void onDismiss(BlurPopupWindow popupWindow) {
+                    onActivityResult(3, Activity.RESULT_OK, null);
+                }
+            });
             connectDialog.show();
 //            connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
 //            connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());

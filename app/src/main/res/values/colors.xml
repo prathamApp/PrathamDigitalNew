@@ -74,5 +74,6 @@
 
     <color name="button">#2E96BB</color>
     <color name="simple_white">#FFFFFF</color>
-
+    <color name="startColor">#59FFFFFF</color>
+    <color name="endColor">#23FFFFFF</color>
 </resources>

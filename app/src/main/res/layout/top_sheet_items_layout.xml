@@ -1,124 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.scaling_view.ScalingLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/top_scaling"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_120sdp"
-    android:background="@android:color/transparent">
+    android:layout_height="@dimen/_50sdp"
+    android:layout_gravity="center_horizontal"
+    android:background="@color/red"
+    android:elevation="@dimen/_12sdp"
+    android:stateListAnimator="@animator/sl_state_animator"
+    app:radiusFactor="1">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/tab_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top"
-        android:background="@color/purple"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:layout_gravity="center"
+        app:cardBackgroundColor="@color/red"
+        app:cardCornerRadius="@dimen/_5sdp"
+        app:cardElevation="@dimen/_10sdp">
 
-        <LinearLayout
-            android:id="@+id/top_sheet_content_home"
-            android:layout_width="@dimen/_70sdp"
+        <RelativeLayout
+            android:id="@+id/sheet_tab_holder"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:background="@color/red"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/sliding_strip"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_4sdp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/white" />
 
             <ImageView
+                android:id="@+id/sheet_home"
                 android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:padding="@dimen/_6sdp"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_10sdp"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_content_home" />
 
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="Home"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/top_sheet_language"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
             <ImageView
+                android:id="@+id/sheet_language"
                 android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:padding="@dimen/_6sdp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/sheet_home"
+                android:padding="@dimen/_8sdp"
+                android:visibility="visible"
                 app:srcCompat="@drawable/ic_language" />
 
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:id="@+id/top_txt_language"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="Language"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/top_sheet_search"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
             <ImageView
+                android:id="@+id/sheet_connect"
                 android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:padding="@dimen/_6sdp"
-                app:srcCompat="@drawable/ic_search" />
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="Search"
-                android:textColor="@android:color/black" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/top_sheet_import"
-            android:layout_width="@dimen/_70sdp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:padding="@dimen/_6sdp"
-                app:srcCompat="@drawable/ic_import" />
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="Import"
-                android:textColor="@color/white" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/top_sheet_connect_wifi"
-            android:layout_width="@dimen/_80sdp"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical">
-
-            <ImageView
-                android:layout_width="@dimen/_60sdp"
-                android:layout_height="@dimen/_60sdp"
-                android:padding="@dimen/_6sdp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/sheet_language"
+                android:padding="@dimen/_8sdp"
                 app:srcCompat="@drawable/ic_wifi_signal" />
 
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:maxLines="1"
-                android:text="Connect"
-                android:textColor="@color/white" />
-        </LinearLayout>
-    </LinearLayout>
-</RelativeLayout>
+            <ImageView
+                android:id="@+id/sheet_search"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/sheet_connect"
+                android:padding="@dimen/_8sdp"
+                app:srcCompat="@drawable/ic_search" />
+        </RelativeLayout>
+    </android.support.design.card.MaterialCardView>
+</com.pratham.prathamdigital.custom.scaling_view.ScalingLayout>

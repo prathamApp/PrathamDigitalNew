@@ -81,14 +81,12 @@ public class PrathamSmartSync extends AutoSync {
             }
             // Attendance Table     (get list of distinct session id)
             List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-            JSONObject attendanceObject;
+            JSONObject attendanceObject = new JSONObject();
             List<Integer> presentStudents;
-            JSONArray presentStudentsJsonArray;
+            JSONArray presentStudentsJsonArray = new JSONArray();
             // get present grpid & present student ids
             for (int x = 0; x < distinctSessions.size(); x++) {
                 String grpID = "";
-                attendanceObject = new JSONObject();
-                presentStudentsJsonArray = new JSONArray();
                 grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
                 presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
                 presentStudentsJsonArray = new JSONArray();
@@ -185,17 +183,14 @@ public class PrathamSmartSync extends AutoSync {
             }
             // Attendance Table     (get list of distinct session id)
             List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-            JSONObject attendanceObject;
+            JSONObject attendanceObject = new JSONObject();
             List<Integer> presentStudents;
-            JSONArray presentStudentsJsonArray;
+            JSONArray presentStudentsJsonArray = new JSONArray();
             // get present grpid & present student ids
             for (int x = 0; x < distinctSessions.size(); x++) {
                 String grpID = "";
-                attendanceObject = new JSONObject();
-                presentStudentsJsonArray = new JSONArray();
                 grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
                 presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
-                presentStudentsJsonArray = null;
                 for (int i = 0; i < presentStudents.size(); i++) {
                     JSONObject obj = new JSONObject();
                     obj.put("id", presentStudents.get(i));

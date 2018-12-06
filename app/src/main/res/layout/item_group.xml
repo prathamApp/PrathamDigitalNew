@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.elastic_view.ElasticView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/group_card"
     android:layout_width="@dimen/_150sdp"
@@ -7,7 +7,9 @@
     android:layout_gravity="center"
     android:layout_marginLeft="@dimen/_5sdp"
     android:layout_marginRight="@dimen/_5sdp"
+    android:clickable="true"
     android:elevation="0dp"
+    android:focusable="true"
     app:cardBackgroundColor="#43f578ed"
     app:cardCornerRadius="@dimen/_75sdp">
 
@@ -15,6 +17,7 @@
         android:layout_width="@dimen/_120sdp"
         android:layout_height="@dimen/_120sdp"
         android:layout_gravity="center"
+        android:clickable="false"
         app:cardBackgroundColor="#A77AEC"
         app:cardCornerRadius="@dimen/_60sdp">
 
@@ -23,6 +26,7 @@
             android:layout_width="@dimen/_100sdp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:clickable="false"
             android:gravity="center"
             android:paddingLeft="@dimen/_5sdp"
             android:paddingRight="@dimen/_5sdp"
@@ -30,5 +34,4 @@
             android:textColor="@color/white"
             android:textSize="@dimen/_17sdp" />
     </android.support.design.card.MaterialCardView>
-
-</android.support.design.card.MaterialCardView>
+</com.pratham.prathamdigital.custom.elastic_view.ElasticView>

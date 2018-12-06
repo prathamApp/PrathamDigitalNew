@@ -18,37 +18,6 @@
             android:layout_height="match_parent"
             android:background="#0d000000" />
 
-        <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-        <!--android:id="@+id/avatar_shape"-->
-        <!--android:layout_width="@dimen/_60sdp"-->
-        <!--android:layout_height="@dimen/_60sdp"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--app:shape_clip_drawable="@drawable/dashboard_half_circle">-->
-
-        <!--<View-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/red" />-->
-
-        <!--<com.airbnb.lottie.LottieAnimationView-->
-        <!--android:id="@+id/avatar_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scaleType="centerInside"-->
-        <!--app:lottie_autoPlay="true"-->
-        <!--app:lottie_loop="true" />-->
-
-        <!--<com.airbnb.lottie.LottieAnimationView-->
-        <!--android:id="@+id/back_view"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:scaleType="centerInside"-->
-        <!--android:visibility="gone"-->
-        <!--app:lottie_autoPlay="true"-->
-        <!--app:lottie_fileName="walking_arrow.json"-->
-        <!--app:lottie_loop="true" />-->
-        <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
-
         <ImageView
             android:id="@+id/pradigi_icon"
             android:layout_width="@dimen/_50sdp"
@@ -62,27 +31,8 @@
             android:id="@+id/rv_level"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
-            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginLeft="@dimen/_37sdp"
             android:layout_marginTop="@dimen/_8sdp" />
-
-        <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-        <!--android:id="@+id/search_shape"-->
-        <!--android:layout_width="@dimen/_60sdp"-->
-        <!--android:layout_height="@dimen/_60sdp"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--app:shape_clip_drawable="@drawable/dashboard_search_bkgd">-->
-
-        <!--<com.airbnb.lottie.LottieAnimationView-->
-        <!--android:id="@+id/dashboard_search"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:background="@color/red"-->
-        <!--android:scaleType="centerInside"-->
-        <!--app:lottie_autoPlay="true"-->
-        <!--app:lottie_fileName="search.json"-->
-        <!--app:lottie_loop="true" />-->
-        <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
 
         <RelativeLayout
             android:id="@+id/download_badge"
@@ -108,40 +58,10 @@
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp" />
         </RelativeLayout>
+
+        <include
+            layout="@layout/top_sheet_items_layout"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_50sdp" />
     </RelativeLayout>
-
-    <!--<RelativeLayout-->
-    <!--android:id="@+id/top_sheet"-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="@dimen/_150sdp"-->
-    <!--android:background="@android:color/transparent"-->
-    <!--android:elevation="@dimen/_10sdp"-->
-    <!--app:behavior_peekHeight="@dimen/_30sdp"-->
-    <!--app:layout_behavior="@string/top_sheet_behavior">-->
-
-    <!--<com.pratham.prathamdigital.custom.shapes.ShapeOfView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="@dimen/_110sdp"-->
-    <!--android:elevation="@dimen/_10sdp"-->
-    <!--app:shape_clip_drawable="@drawable/top_sheet_bkgd">-->
-
-    <!--<RelativeLayout-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent"-->
-    <!--android:background="@color/white">-->
-
-    <!--<include layout="@layout/top_sheet_items_layout" />-->
-    <!--</RelativeLayout>-->
-    <!--</com.pratham.prathamdigital.custom.shapes.ShapeOfView>-->
-
-    <ImageView
-        android:id="@+id/pull_down_menu"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="-32dp"
-        android:src="@drawable/top_sheet_pull_down" />
-    <!--</RelativeLayout>-->
-
 </android.support.design.widget.CoordinatorLayout>

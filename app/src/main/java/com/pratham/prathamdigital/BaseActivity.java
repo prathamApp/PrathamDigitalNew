@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.pratham.prathamdigital.custom.fluid_keyboard.FluidContentResizer;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -27,8 +28,6 @@ import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
-
-import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -54,21 +53,24 @@ public class BaseActivity extends ActivityManagePermission {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        super.onCreate(savedInstanceState);
+        FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
+//        Catcho.Builder(this)
 //                .activity(CatchoTransparentActivity.class)
-                .recipients("your-email@domain.com")
-                .build();
+//                .recipients("your-email@domain.com")
+//                .build();
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
         ttsService.setSpeechRate(0.7f);
         ttsService.setLanguage(new Locale("en", "IN"));
 
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
-
-        super.onCreate(savedInstanceState);
         PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
         attendanceDao = db.getAttendanceDao();
         crLdao = db.getCrLdao();
