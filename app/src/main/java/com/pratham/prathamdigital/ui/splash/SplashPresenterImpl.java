@@ -21,7 +21,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.GoogleAuthProvider;
 import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -134,8 +133,9 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             status.setValue(email);
             status.setDescription("");
             BaseActivity.statusDao.insert(status);
-            AuthCredential credential = GoogleAuthProvider.getCredential(token, null);
-            firebaseAuthWithGoogle(credential);
+//            AuthCredential credential = GoogleAuthProvider.getCredential(token, null);
+//            firebaseAuthWithGoogle(credential);
+            checkStudentList();
         }
     }
 

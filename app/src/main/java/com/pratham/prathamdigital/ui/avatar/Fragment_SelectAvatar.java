@@ -18,11 +18,15 @@ import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -158,12 +162,32 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     public void presentActivity(View view) {
+        getActivity().startService(new Intent(getActivity(), AppKillService.class));
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
     }
+
+    public void markAttendance(Modal_Student stud) {
+        FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
+        ArrayList<Attendance> attendances = new ArrayList<>();
+        Attendance attendance = new Attendance();
+        attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+        attendance.StudentID = stud.getStudentId();
+        attendance.Date = PD_Utility.getCurrentDateTime();
+        attendance.GroupID = "SmartPhone";
+        FastSave.getInstance().saveString(PD_Constant.GROUPID, "SmartPhone");
+        attendances.add(attendance);
+        BaseActivity.attendanceDao.insertAttendance(attendances);
+        Modal_Session s = new Modal_Session();
+        s.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        s.setFromDate(PD_Utility.getCurrentDateTime());
+        s.setToDate("NA");
+        BaseActivity.sessionDao.insert(s);
+    }
+
 
     @Override
     public void openDashboard() {

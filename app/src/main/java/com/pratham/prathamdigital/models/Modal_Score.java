@@ -36,7 +36,8 @@ public class Modal_Score {
     private int Level;
     @SerializedName("Label")
     private String Label;
-    private int sentFlag;
+    @SerializedName("sentFlag")
+    public int sentFlag;
 
     @Override
     public String toString() {
@@ -170,4 +171,5 @@ public class Modal_Score {
     public void setLabel(String label) {
         Label = label;
     }
+
 }

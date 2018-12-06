@@ -17,6 +17,8 @@ public class Modal_Session {
     public String fromDate;
     @SerializedName("toDate")
     public String toDate;
+    @SerializedName("sentFlag")
+    public int sentFlag;
 
     @Override
     public String toString() {
@@ -24,6 +26,7 @@ public class Modal_Session {
                 "SessionID='" + SessionID + '\'' +
                 ", fromDate='" + fromDate + '\'' +
                 ", toDate='" + toDate + '\'' +
+                ", sentFlag=" + sentFlag +
                 '}';
     }
 
@@ -50,5 +53,13 @@ public class Modal_Session {
 
     public void setToDate(String toDate) {
         this.toDate = toDate;
+    }
+
+    public int getSentFlag() {
+        return sentFlag;
+    }
+
+    public void setSentFlag(int sentFlag) {
+        this.sentFlag = sentFlag;
     }
 }

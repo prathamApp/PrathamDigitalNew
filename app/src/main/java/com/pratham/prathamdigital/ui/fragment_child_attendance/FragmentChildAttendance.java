@@ -24,6 +24,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -190,6 +191,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     public void presentActivity(View view) {
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
+        getActivity().startService(new Intent(getActivity(), AppKillService.class));
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
