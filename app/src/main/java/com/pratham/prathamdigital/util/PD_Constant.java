@@ -142,6 +142,7 @@ public class PD_Constant {
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
+        POST_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;

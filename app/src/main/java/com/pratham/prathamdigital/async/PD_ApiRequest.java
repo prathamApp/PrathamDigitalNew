@@ -8,6 +8,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -114,6 +115,34 @@ public class PD_ApiRequest {
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.d("Error::", anError.getErrorDetail());
+                        Log.d("Error::", anError.getMessage());
+                        Log.d("Error::", anError.getResponse().toString());
+                    }
+                });
+    }
+
+    public void pushDataToInternet(final String requestType, String url, JSONObject data) {
+        AndroidNetworking.post(url)
+//                .addHeaders("Content-Type", "application/json")
+                .addBodyParameter(data)
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        BaseActivity.logDao.deleteLogs();
+                        BackupDatabase.backup(mContext);
+//                        EventMessage msg = new EventMessage();
+//                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+//                        EventBus.getDefault().post(msg);
                     }
 
                     @Override

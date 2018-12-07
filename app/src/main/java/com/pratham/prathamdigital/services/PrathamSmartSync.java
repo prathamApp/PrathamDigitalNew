@@ -44,13 +44,15 @@ public class PrathamSmartSync extends AutoSync {
     public static void pushTabletJsons(Boolean isPressed) {
         try {
             String programID = "";
+            Gson gson = new Gson();
             // create Root Json(result)
             JSONObject rootJson = new JSONObject();
-
             //fetch all logs
             List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs();
-            JSONArray logArray = new JSONArray(allLogs);
-
+            JSONArray logArray = new JSONArray();
+            for (Modal_Log att : allLogs) {
+                logArray.put(new JSONObject(gson.toJson(att)));
+            }
             //fetch updated status
             List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
             JSONObject metadataJson = new JSONObject();
@@ -59,27 +61,22 @@ public class PrathamSmartSync extends AutoSync {
                 if (status.getStatusKey().equalsIgnoreCase("programId"))
                     programID = status.getValue();
             }
-
             //fetch all data based on sessionId
             JSONObject sessionJson = new JSONObject();
             if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
                 String s_id = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
-                Gson gson = new Gson();
-
                 //fetch attendance
                 List<Attendance> newAttendance = BaseActivity.attendanceDao.getNewAttendances(s_id);
                 JSONArray attendanceArray = new JSONArray();
                 for (Attendance att : newAttendance) {
                     attendanceArray.put(new JSONObject(gson.toJson(att)));
                 }
-
                 //fetch Scores & convert to Json Array
                 List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores(s_id);
                 JSONArray scoreArray = new JSONArray();
                 for (Modal_Score score : newScores) {
                     scoreArray.put(new JSONObject(gson.toJson(score)));
                 }
-
                 JSONArray studentArray = new JSONArray();
                 if (!PrathamApplication.isTablet) {
                     //fetch Students & convert to Json Array
@@ -88,7 +85,6 @@ public class PrathamSmartSync extends AutoSync {
                         studentArray.put(new JSONObject(gson.toJson(std)));
                     }
                 }
-
                 // fetch Session Data
                 Modal_Session session = BaseActivity.sessionDao.getSession(s_id);
                 sessionJson.put(PD_Constant.SESSIONID, session.getSessionID());
@@ -110,7 +106,8 @@ public class PrathamSmartSync extends AutoSync {
                                 .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
                                         rootJson.toString(), programID, PD_Constant.USAGEDATA);
                     else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                        //todo call internet api
+                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                                .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_INTERNET_URL.toString(), rootJson);
                     }
 
                 } else {
