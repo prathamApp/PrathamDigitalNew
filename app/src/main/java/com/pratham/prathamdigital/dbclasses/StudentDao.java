@@ -33,10 +33,10 @@ public interface StudentDao {
     @Query("SELECT * FROM Students")
     public List<Modal_Student> getAllStudents();
 
-    @Query("select * from Students where sentFlag = 1")
+    @Query("select * from Students where sentFlag = 0")
     List<Modal_Student> getAllNewStudents();
 
-    @Query("update Students set sentFlag=0 where sentFlag= 1")
+    @Query("update Students set sentFlag=1 where sentFlag= 0")
     void updateSentStudentFlags();
 
     @Query("select FullName from Students where StudentID = :studentID")

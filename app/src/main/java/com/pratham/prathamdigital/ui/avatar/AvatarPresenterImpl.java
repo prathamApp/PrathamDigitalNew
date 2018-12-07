@@ -6,8 +6,6 @@ import android.os.AsyncTask;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.models.Modal_Student;
 
-import java.util.ArrayList;
-
 public class AvatarPresenterImpl implements AvatarContract.avatarPresenter {
     Context context;
     AvatarContract.avatarView avatarView;
@@ -29,7 +27,6 @@ public class AvatarPresenterImpl implements AvatarContract.avatarPresenter {
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            studentDao.insertStudent(modal_student);
             return null;
         }
 

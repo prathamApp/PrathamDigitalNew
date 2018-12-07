@@ -9,8 +9,10 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -107,6 +109,8 @@ public class PD_ApiRequest {
                     @Override
                     public void onResponse(String response) {
 //                        contentPresenter.notifySuccess(requestType, "success");
+                        BaseActivity.logDao.deleteLogs();
+                        BackupDatabase.backup(mContext);
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         EventBus.getDefault().post(msg);

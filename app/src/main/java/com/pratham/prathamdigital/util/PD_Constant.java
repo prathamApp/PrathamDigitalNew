@@ -50,6 +50,15 @@ public class PD_Constant {
     public static final String MOBILE = "mobile";
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";
+    public static final String FROMDATE = "fromDate";
+    public static final String TODATE = "toDate";
+    public static final String SCORE = "scores";
+    public static final String ATTENDANCE = "attendances";
+    public static final String SESSION = "session";
+    public static final String LOGS = "logs";
+    public static final String STUDENTS = "students";
+    public static final String METADATA = "metadata";
+    public static final String USAGEDATA = "USAGEDATA";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
@@ -130,6 +139,7 @@ public class PD_Constant {
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
+        DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");

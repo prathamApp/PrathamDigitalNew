@@ -178,6 +178,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             attendance.StudentID = stu.getStudentId();
             attendance.Date = PD_Utility.getCurrentDateTime();
             attendance.GroupID = groupID;
+            attendance.sentFlag = 0;
             FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
             attendances.add(attendance);
         }

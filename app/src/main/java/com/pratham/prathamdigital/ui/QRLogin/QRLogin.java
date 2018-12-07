@@ -199,6 +199,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                     attendance.StudentID = stdList.get(i).getStudentId();
                     attendance.Date = PD_Utility.getCurrentDateTime();
                     attendance.GroupID = "QR";
+                    attendance.sentFlag = 0;
                     FastSave.getInstance().saveString(PD_Constant.GROUPID, attendance.GroupID);
                     attendances.add(attendance);
                 }

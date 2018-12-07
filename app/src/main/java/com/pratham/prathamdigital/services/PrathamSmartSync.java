@@ -6,10 +6,14 @@ import android.util.Log;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
+import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
+import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -45,12 +49,12 @@ public class PrathamSmartSync extends AutoSync {
 
     public static void pushTabletJsons(Boolean isPressed) {
         // Score Table
-        JSONArray scoreData = new JSONArray();
+        try {
+   /*JSONArray scoreData = new JSONArray();
         JSONArray sessionData = new JSONArray();
         JSONArray attendanceData = new JSONArray();
         String programId = "";
         String collectedData = "";
-        try {
             List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
             if (scores != null && scores.size() > 0) {
                 for (Modal_Score scoreObj : scores) {
@@ -124,22 +128,65 @@ public class PrathamSmartSync extends AutoSync {
             statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
             // Pushing File to Server
             programId = BaseActivity.statusDao.getValue("programId");
-            collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + "}";
+            collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + "}";*/
+            String programID = "";
+            JSONObject rootJson = new JSONObject();
+            //fetch all logs
+            List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs();
+            JSONArray logArray = new JSONArray(allLogs);
+            //fetch all new students
+            List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
+            JSONArray studentArray = new JSONArray(newStudents);
+            //fetch updated status
+            List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
+            JSONObject metadataJson = new JSONObject();
+            for (Modal_Status status : metadata) {
+                metadataJson.put(status.getStatusKey(), status.getValue());
+                if (status.getStatusKey().equalsIgnoreCase("programId"))
+                    programID = status.getValue();
+            }
+            //fetch all data based on sessionId
+            JSONObject sessionJson = new JSONObject();
+            if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
+                String s_id = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+                //fetch attendance
+                List<Attendance> newAttendance = BaseActivity.attendanceDao.getNewAttendances(s_id);
+                JSONArray attendanceArray = new JSONArray(newAttendance);
+                //fetch Scores
+                List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores(s_id);
+                JSONArray scoreArray = new JSONArray(newScores);
+
+                Modal_Session session = BaseActivity.sessionDao.getSession(s_id);
+                sessionJson.put(PD_Constant.SESSIONID, session.getSessionID());
+                sessionJson.put(PD_Constant.FROMDATE, session.getFromDate());
+                sessionJson.put(PD_Constant.TODATE, session.getToDate());
+                sessionJson.put(PD_Constant.SCORE, scoreArray);
+                sessionJson.put(PD_Constant.ATTENDANCE, attendanceArray);
+                rootJson.put(PD_Constant.SESSION, sessionJson);
+                rootJson.put(PD_Constant.LOGS, logArray);
+                rootJson.put(PD_Constant.STUDENTS, studentArray);
+                rootJson.put(PD_Constant.METADATA, metadataJson);
+                if (newAttendance != null && newAttendance.size() > 0) {
+                    new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                            .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
+                                    rootJson.toString(), programID, PD_Constant.USAGEDATA);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0) {
-                new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                        .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
-                                collectedData, programId, "USAGEDATA");
-                BackupDatabase.backup(context);
-            } else {
-                if (isPressed) {
-                    EventMessage msg = new EventMessage();
-                    msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
-                    EventBus.getDefault().post(msg);
-                }
+//            if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0) {
+//                new PD_ApiRequest(PrathamApplication.getInstance(), null)
+//                        .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
+//                                collectedData, programId, "USAGEDATA");
+//                BackupDatabase.backup(context);
+//            } else {
+            if (isPressed) {
+                EventMessage msg = new EventMessage();
+                msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                EventBus.getDefault().post(msg);
             }
+//            }
         }
     }
 
@@ -153,7 +200,7 @@ public class PrathamSmartSync extends AutoSync {
         String programId = "";
         String collectedData = "";
         try {
-            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
+            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores("");
             if (scores != null && scores.size() > 0) {
                 for (Modal_Score scoreObj : scores) {
                     JSONObject _obj = new JSONObject();
@@ -252,6 +299,14 @@ public class PrathamSmartSync extends AutoSync {
                                 collectedData, programId, "USAGEDATA");
                 BackupDatabase.backup(context);
             }
+        }
+    }
+
+    public void pushData() {
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

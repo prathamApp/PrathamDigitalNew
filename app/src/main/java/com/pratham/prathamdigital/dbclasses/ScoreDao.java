@@ -27,8 +27,8 @@ public interface ScoreDao {
     @Delete
     void deleteAll(Modal_Score... scores);
 
-    @Query("select * from Score where sentFlag = 0")
-    List<Modal_Score> getAllNewScores();
+    @Query("select * from Score where sentFlag = 0 AND SessionID=:s_id")
+    List<Modal_Score> getAllNewScores(String s_id);
 
     @Query("DELETE FROM Score")
     void deleteAllScores();

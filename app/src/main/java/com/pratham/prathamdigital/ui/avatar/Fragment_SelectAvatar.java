@@ -63,7 +63,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     ArrayList<String> avatarList = new ArrayList<>();
     private Context context;
     private String avatar_selected = "";
-    AvatarPresenterImpl avatarPresenter;
     int revealX;
     int revealY;
 
@@ -91,7 +90,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         context = getActivity();
-        avatarPresenter = new AvatarPresenterImpl(context, this);
     }
 
     @Override
@@ -156,12 +154,14 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
         modal_student.setAge(spinner_age.getSelectedItem().toString());
         modal_student.setGender("M");
-        modal_student.setSentFlag(1);
+        modal_student.setSentFlag(0);
         modal_student.setAvatarName(avatar_selected);
-        avatarPresenter.addStudent(modal_student, studentDao);
+        studentDao.insertStudent(modal_student);
+        markAttendance(modal_student);
+        presentActivity();
     }
 
-    public void presentActivity(View view) {
+    public void presentActivity() {
         getActivity().startService(new Intent(getActivity(), AppKillService.class));
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
@@ -178,6 +178,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         attendance.StudentID = stud.getStudentId();
         attendance.Date = PD_Utility.getCurrentDateTime();
         attendance.GroupID = "SmartPhone";
+        attendance.sentFlag = 0;
         FastSave.getInstance().saveString(PD_Constant.GROUPID, "SmartPhone");
         attendances.add(attendance);
         BaseActivity.attendanceDao.insertAttendance(attendances);
@@ -191,7 +192,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     @Override
     public void openDashboard() {
-        presentActivity(btn_avatar_next);
     }
 
     @Override
