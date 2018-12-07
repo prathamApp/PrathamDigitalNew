@@ -3,11 +3,11 @@ package com.pratham.prathamdigital.services;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Log;
@@ -17,7 +17,6 @@ import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
@@ -38,105 +37,20 @@ public class PrathamSmartSync extends AutoSync {
     public void onSync(Context context) throws Exception {
         this.context = context;
         Log.d(TAG, "onSync: ");
-        if (PrathamApplication.isTablet) {
-            // Push Tab related Jsons
-            pushTabletJsons(false);
-        } else {
-            // Push Smartphone related Jsons
-            pushSmartphoneJsons();
-        }
+        // Push Tab related Jsons
+        pushTabletJsons(false);
     }
 
     public static void pushTabletJsons(Boolean isPressed) {
-        // Score Table
         try {
-   /*JSONArray scoreData = new JSONArray();
-        JSONArray sessionData = new JSONArray();
-        JSONArray attendanceData = new JSONArray();
-        String programId = "";
-        String collectedData = "";
-            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores();
-            if (scores != null && scores.size() > 0) {
-                for (Modal_Score scoreObj : scores) {
-                    JSONObject _obj = new JSONObject();
-                    _obj.put("sessionId", scoreObj.getSessionID());
-                    _obj.put("deviceId", scoreObj.getDeviceID());
-                    _obj.put("resourceId", scoreObj.getResourceID());
-                    _obj.put("questionId", scoreObj.getQuestionId());
-                    _obj.put("scoredMarks", scoreObj.getScoredMarks());
-                    _obj.put("totalMarks", scoreObj.getTotalMarks());
-                    _obj.put("startDateTime", scoreObj.getStartDateTime());
-                    _obj.put("endDateTime", scoreObj.getEndDateTime());
-                    _obj.put("level", scoreObj.getLevel());
-                    _obj.put("label", scoreObj.getLabel());
-                    scoreData.put(_obj);
-                }
-            }
-            // Session Table
-            List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
-            if (session != null && session.size() > 0) {
-                for (Modal_Session sessionObj : session) {
-                    JSONObject _obj = new JSONObject();
-                    _obj.put("sessionId", sessionObj.getSessionID());
-                    _obj.put("fromDate", sessionObj.getFromDate());
-                    _obj.put("toDate", sessionObj.getToDate());
-                    sessionData.put(_obj);
-                }
-            }
-            // Attendance Table     (get list of distinct session id)
-            List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-            JSONObject attendanceObject = new JSONObject();
-            List<Integer> presentStudents;
-            JSONArray presentStudentsJsonArray = new JSONArray();
-            // get present grpid & present student ids
-            for (int x = 0; x < distinctSessions.size(); x++) {
-                String grpID = "";
-                grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
-                presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
-                presentStudentsJsonArray = new JSONArray();
-                for (int i = 0; i < presentStudents.size(); i++) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("id", presentStudents.get(i));
-                    presentStudentsJsonArray.put(obj);
-                }
-                attendanceObject.put("SessionID", distinctSessions.get(x));
-                attendanceObject.put("GroupID", grpID);
-                attendanceObject.put("PresentStudentIds", presentStudentsJsonArray);
-                Log.d("attendance obj :::", attendanceObject.toString());
-                attendanceData.put(attendanceObject);
-            }
-            // Status Table
-            JSONObject statusObj = new JSONObject();
-            statusObj.put("ScoreCount", scores.size());
-            statusObj.put("SessionCount", sessionData.length());
-            statusObj.put("AttendanceCount", attendanceData.length());
-            statusObj.put("CRLID", BaseActivity.statusDao.getValue("crlId"));
-            statusObj.put("TransId", PD_Utility.getUUID().toString());
-            statusObj.put("DeviceId", BaseActivity.statusDao.getValue("deviceId"));
-            statusObj.put("ActivatedDate", BaseActivity.statusDao.getValue("ActivatedDate"));
-            statusObj.put("ActivatedForGroups", BaseActivity.statusDao.getValue("ActivatedForGroups"));
-            statusObj.put("Latitude", BaseActivity.statusDao.getValue("Latitude"));
-            statusObj.put("Longitude", BaseActivity.statusDao.getValue("Longitude"));
-            statusObj.put("GPSDateTime", BaseActivity.statusDao.getValue("GPSDateTime"));
-            statusObj.put("SerialID", BaseActivity.statusDao.getValue("SerialID"));
-            statusObj.put("apkVersion", BaseActivity.statusDao.getValue("apkVersion"));
-            statusObj.put("appName", BaseActivity.statusDao.getValue("appName"));
-            statusObj.put("gpsFixDuration", BaseActivity.statusDao.getValue("gpsFixDuration"));
-            statusObj.put("wifiMAC", BaseActivity.statusDao.getValue("wifiMAC"));
-            statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
-            statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
-            statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
-            // Pushing File to Server
-            programId = BaseActivity.statusDao.getValue("programId");
-            collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + "}";*/
             String programID = "";
+            // create Root Json(result)
             JSONObject rootJson = new JSONObject();
+
             //fetch all logs
             List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs();
             JSONArray logArray = new JSONArray(allLogs);
-            //fetch all new students
-            List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
-            JSONArray studentArray = new JSONArray(newStudents);
+
             //fetch updated status
             List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
             JSONObject metadataJson = new JSONObject();
@@ -145,168 +59,71 @@ public class PrathamSmartSync extends AutoSync {
                 if (status.getStatusKey().equalsIgnoreCase("programId"))
                     programID = status.getValue();
             }
+
             //fetch all data based on sessionId
             JSONObject sessionJson = new JSONObject();
             if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
                 String s_id = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
+                Gson gson = new Gson();
+
                 //fetch attendance
                 List<Attendance> newAttendance = BaseActivity.attendanceDao.getNewAttendances(s_id);
-                JSONArray attendanceArray = new JSONArray(newAttendance);
-                //fetch Scores
-                List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores(s_id);
-                JSONArray scoreArray = new JSONArray(newScores);
+                JSONArray attendanceArray = new JSONArray();
+                for (Attendance att : newAttendance) {
+                    attendanceArray.put(new JSONObject(gson.toJson(att)));
+                }
 
+                //fetch Scores & convert to Json Array
+                List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores(s_id);
+                JSONArray scoreArray = new JSONArray();
+                for (Modal_Score score : newScores) {
+                    scoreArray.put(new JSONObject(gson.toJson(score)));
+                }
+
+                JSONArray studentArray = new JSONArray();
+                if (!PrathamApplication.isTablet) {
+                    //fetch Students & convert to Json Array
+                    List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
+                    for (Modal_Student std : newStudents) {
+                        studentArray.put(new JSONObject(gson.toJson(std)));
+                    }
+                }
+
+                // fetch Session Data
                 Modal_Session session = BaseActivity.sessionDao.getSession(s_id);
                 sessionJson.put(PD_Constant.SESSIONID, session.getSessionID());
                 sessionJson.put(PD_Constant.FROMDATE, session.getFromDate());
                 sessionJson.put(PD_Constant.TODATE, session.getToDate());
                 sessionJson.put(PD_Constant.SCORE, scoreArray);
                 sessionJson.put(PD_Constant.ATTENDANCE, attendanceArray);
+
+                if (!PrathamApplication.isTablet)
+                    rootJson.put(PD_Constant.STUDENTS, studentArray);
                 rootJson.put(PD_Constant.SESSION, sessionJson);
                 rootJson.put(PD_Constant.LOGS, logArray);
-                rootJson.put(PD_Constant.STUDENTS, studentArray);
                 rootJson.put(PD_Constant.METADATA, metadataJson);
+
+                // send if new records found
                 if (newAttendance != null && newAttendance.size() > 0) {
-                    new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                            .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
-                                    rootJson.toString(), programID, PD_Constant.USAGEDATA);
+                    if (PrathamApplication.isTablet && PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                                .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
+                                        rootJson.toString(), programID, PD_Constant.USAGEDATA);
+                    else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+                        //todo call internet api
+                    }
+
+                } else {
+                    if (isPressed) {
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        EventBus.getDefault().post(msg);
+                    }
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-//            if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0) {
-//                new PD_ApiRequest(PrathamApplication.getInstance(), null)
-//                        .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
-//                                collectedData, programId, "USAGEDATA");
-//                BackupDatabase.backup(context);
-//            } else {
-            if (isPressed) {
-                EventMessage msg = new EventMessage();
-                msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
-                EventBus.getDefault().post(msg);
-            }
-//            }
         }
     }
 
-    public static void pushSmartphoneJsons() {
-        // Score Table
-        JSONArray scoreData = new JSONArray();
-        JSONArray attendanceData = new JSONArray();
-        JSONArray studentData = new JSONArray();
-        JSONObject statusObj = new JSONObject();
-        JSONArray sessionData = new JSONArray();
-        String programId = "";
-        String collectedData = "";
-        try {
-            List<Modal_Score> scores = BaseActivity.scoreDao.getAllNewScores("");
-            if (scores != null && scores.size() > 0) {
-                for (Modal_Score scoreObj : scores) {
-                    JSONObject _obj = new JSONObject();
-                    _obj.put("sessionId", scoreObj.getSessionID());
-                    _obj.put("deviceId", scoreObj.getDeviceID());
-                    _obj.put("resourceId", scoreObj.getResourceID());
-                    _obj.put("questionId", scoreObj.getQuestionId());
-                    _obj.put("scoredMarks", scoreObj.getScoredMarks());
-                    _obj.put("totalMarks", scoreObj.getTotalMarks());
-                    _obj.put("startDateTime", scoreObj.getStartDateTime());
-                    _obj.put("endDateTime", scoreObj.getEndDateTime());
-                    _obj.put("level", scoreObj.getLevel());
-                    _obj.put("label", scoreObj.getLabel());
-                    scoreData.put(_obj);
-                }
-            }
-            // Session Table
-            List<Modal_Session> session = BaseActivity.sessionDao.getAllSessions();
-            if (session != null && session.size() > 0) {
-                for (Modal_Session sessionObj : session) {
-                    JSONObject _obj = new JSONObject();
-                    _obj.put("sessionId", sessionObj.getSessionID());
-                    _obj.put("fromDate", sessionObj.getFromDate());
-                    _obj.put("toDate", sessionObj.getToDate());
-                    sessionData.put(_obj);
-                }
-            }
-            // Attendance Table     (get list of distinct session id)
-            List<String> distinctSessions = BaseActivity.attendanceDao.getAllDistinctSessions();
-            JSONObject attendanceObject = new JSONObject();
-            List<Integer> presentStudents;
-            JSONArray presentStudentsJsonArray = new JSONArray();
-            // get present grpid & present student ids
-            for (int x = 0; x < distinctSessions.size(); x++) {
-                String grpID = "";
-                grpID = BaseActivity.attendanceDao.GetGrpIDBySessionID(distinctSessions.get(x));
-                presentStudents = BaseActivity.attendanceDao.GetAllPresentStdBySessionId(distinctSessions.get(x));
-                for (int i = 0; i < presentStudents.size(); i++) {
-                    JSONObject obj = new JSONObject();
-                    obj.put("id", presentStudents.get(i));
-                    presentStudentsJsonArray.put(obj);
-                }
-                attendanceObject.put("SessionID", distinctSessions.get(x));
-                attendanceObject.put("GroupID", grpID);
-                attendanceObject.put("PresentStudentIds", presentStudentsJsonArray);
-                Log.d("attendance obj :::", attendanceObject.toString());
-                attendanceData.put(attendanceObject);
-            }
-            //For New Students data
-            List<Modal_Student> studentsList = BaseActivity.studentDao.getAllNewStudents();
-            if (studentsList != null) {
-                for (Modal_Student student : studentsList) {
-                    JSONObject studentObj = new JSONObject();
-                    studentObj.put("StudentID", student.getStudentId());
-                    studentObj.put("FirstName", student.getFirstName());
-                    studentObj.put("MiddleName", student.getMiddleName());
-                    studentObj.put("LastName", student.getLastName());
-                    studentObj.put("Age", student.getAge());
-                    studentObj.put("Class", student.getStud_Class());
-                    studentObj.put("Gender", student.getGender());
-                    studentObj.put("GroupID", student.getGroupId());
-                    studentData.put(studentObj);
-                }
-            }
-            // Status Table
-            statusObj.put("ScoreCount", scores.size());
-            statusObj.put("SessionCount", sessionData.length());
-            statusObj.put("AttendanceCount", attendanceData.length());
-            statusObj.put("CRLID", BaseActivity.statusDao.getValue("crlId"));
-            statusObj.put("NewStudentsCount", studentData.length());
-            statusObj.put("TransId", PD_Utility.getUUID().toString());
-            statusObj.put("DeviceId", BaseActivity.statusDao.getValue("deviceId"));
-            statusObj.put("ActivatedDate", BaseActivity.statusDao.getValue("ActivatedDate"));
-            statusObj.put("ActivatedForGroups", BaseActivity.statusDao.getValue("ActivatedForGroups"));
-            statusObj.put("Latitude", BaseActivity.statusDao.getValue("Latitude"));
-            statusObj.put("Longitude", BaseActivity.statusDao.getValue("Longitude"));
-            statusObj.put("GPSDateTime", BaseActivity.statusDao.getValue("GPSDateTime"));
-            statusObj.put("SerialID", BaseActivity.statusDao.getValue("SerialID"));
-            statusObj.put("apkVersion", BaseActivity.statusDao.getValue("apkVersion"));
-            statusObj.put("appName", BaseActivity.statusDao.getValue("appName"));
-            statusObj.put("gpsFixDuration", BaseActivity.statusDao.getValue("gpsFixDuration"));
-            statusObj.put("wifiMAC", BaseActivity.statusDao.getValue("wifiMAC"));
-            statusObj.put("apkType", BaseActivity.statusDao.getValue("apkType"));
-            statusObj.put("prathamCode", BaseActivity.statusDao.getValue("prathamCode"));
-            statusObj.put("programId", BaseActivity.statusDao.getValue("programId"));
-            // Pushing File to Server
-            programId = BaseActivity.statusDao.getValue("programId");
-            collectedData = "{ \"metadata\": " + statusObj + ", \"scoreData\": " + scoreData + ", \"sessionData\": " + sessionData + ", \"attendanceData\": " + attendanceData + ", \"newStudentsData\": " + studentData + "}";
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Send only if new Data is available
-            if (scoreData.length() > 0 || sessionData.length() > 0 || attendanceData.length() > 0 || studentData.length() > 0) {
-                new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                        .pushDataToRaspberry("USAGEDATA", PD_Constant.RASP_IP + "/pratham/datastore/",
-                                collectedData, programId, "USAGEDATA");
-                BackupDatabase.backup(context);
-            }
-        }
-    }
-
-    public void pushData() {
-        try {
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
 }
