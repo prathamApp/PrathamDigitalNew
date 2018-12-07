@@ -29,8 +29,8 @@ public interface SessionDao {
     @Delete
     void deleteAll(Modal_Session... sessions);
 
-    @Query("select * from Session")
-    List<Modal_Session> getAllSessions();
+    @Query("select * from Session where sentFlag=0")
+    List<Modal_Session> getAllNewSessions();
 
     @Query("UPDATE Session SET toDate = :toDate where SessionID = :SessionID")
     void UpdateToDate(String SessionID, String toDate);

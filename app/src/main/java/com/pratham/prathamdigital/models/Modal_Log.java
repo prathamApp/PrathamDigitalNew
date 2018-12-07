@@ -20,12 +20,14 @@ public class Modal_Log {
     public String methodName;
     @SerializedName("errorType")
     public String errorType;
-    @SerializedName("groupId")
-    public String groupId;
+    @SerializedName("sessionId")
+    public String sessionId;
     @SerializedName("deviceId")
     public String deviceId;
     @SerializedName("LogDetail")
     public String LogDetail;
+    @SerializedName("sentFlag")
+    public int sentFlag;
 
     @Override
     public String toString() {
@@ -36,7 +38,7 @@ public class Modal_Log {
                 ", exceptionStackTrace='" + exceptionStackTrace + '\'' +
                 ", methodName='" + methodName + '\'' +
                 ", errorType='" + errorType + '\'' +
-                ", groupId='" + groupId + '\'' +
+                ", sessionId='" + sessionId + '\'' +
                 ", deviceId='" + deviceId + '\'' +
                 ", LogDetail='" + LogDetail + '\'' +
                 '}';
@@ -90,12 +92,20 @@ public class Modal_Log {
         this.errorType = errorType;
     }
 
-    public String getGroupId() {
-        return groupId;
+    public String getSessionId() {
+        return sessionId;
     }
 
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
+
+    public int getSentFlag() {
+        return sentFlag;
+    }
+
+    public void setSentFlag(int sentFlag) {
+        this.sentFlag = sentFlag;
     }
 
     public String getDeviceId() {

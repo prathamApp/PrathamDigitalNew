@@ -17,6 +17,6 @@ public interface LogDao {
     @Query("DELETE FROM Logs")
     public void deleteLogs();
 
-    @Query("select * from Logs")
-    public List<Modal_Log> getAllLogs();
+    @Query("select * from Logs where sentFlag=0 AND sessionId=:s_id")
+    public List<Modal_Log> getAllLogs(String s_id);
 }
