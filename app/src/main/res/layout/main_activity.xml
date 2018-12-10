@@ -26,13 +26,15 @@
             android:layout_marginTop="@dimen/_5sdp"
             android:elevation="@dimen/_10sdp"
             android:src="@drawable/pratham_logo" />
+        <!--
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/rv_level"
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/_30sdp"
-            android:layout_marginLeft="@dimen/_37sdp"
-            android:layout_marginTop="@dimen/_8sdp" />
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_level"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginLeft="@dimen/_37sdp"
+                    android:layout_marginTop="@dimen/_8sdp" />
+        -->
 
         <RelativeLayout
             android:id="@+id/download_badge"
@@ -58,6 +60,12 @@
                 android:layout_width="@dimen/_28sdp"
                 android:layout_height="@dimen/_28sdp" />
         </RelativeLayout>
+
+        <View
+            android:id="@+id/outer_area"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent" />
 
         <include
             layout="@layout/top_sheet_items_layout"

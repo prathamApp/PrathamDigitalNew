@@ -22,7 +22,7 @@ public class CatchoTransparentActivity extends BaseActivity {
         log.setExceptionMessage(error.toString());
         log.setExceptionStackTrace(error.getError());
         log.setMethodName("NO_METHOD");
-        log.setGroupId(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         log.setDeviceId(PD_Utility.getDeviceSerialID());
         BaseActivity.logDao.insertLog(log);
         finish();

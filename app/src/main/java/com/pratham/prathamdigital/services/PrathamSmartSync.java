@@ -10,6 +10,7 @@ import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Log;
+import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
@@ -18,6 +19,7 @@ import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -46,6 +48,7 @@ public class PrathamSmartSync extends AutoSync {
             JSONObject rootJson = new JSONObject();
             Gson gson = new Gson();
             //iterate through all new sessions
+            JSONArray sessionArray = new JSONArray();
             List<Modal_Session> newSessions = BaseActivity.sessionDao.getAllNewSessions();
             for (Modal_Session session : newSessions) {
                 //fetch all logs
@@ -53,14 +56,6 @@ public class PrathamSmartSync extends AutoSync {
                 List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs(session.getSessionID());
                 for (Modal_Log log : allLogs)
                     logArray.put(new JSONObject(gson.toJson(log)));
-                //fetch updated status
-                JSONObject metadataJson = new JSONObject();
-                List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
-                for (Modal_Status status : metadata) {
-                    metadataJson.put(status.getStatusKey(), status.getValue());
-                    if (status.getStatusKey().equalsIgnoreCase("programId"))
-                        programID = status.getValue();
-                }
                 //fetch attendance
                 JSONArray attendanceArray = new JSONArray();
                 List<Attendance> newAttendance = BaseActivity.attendanceDao.getNewAttendances(session.getSessionID());
@@ -73,14 +68,6 @@ public class PrathamSmartSync extends AutoSync {
                 for (Modal_Score score : newScores) {
                     scoreArray.put(new JSONObject(gson.toJson(score)));
                 }
-                //fetch Students & convert to Json Array
-                JSONArray studentArray = new JSONArray();
-                if (!PrathamApplication.isTablet) {
-                    List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
-                    for (Modal_Student std : newStudents) {
-                        studentArray.put(new JSONObject(gson.toJson(std)));
-                    }
-                }
                 // fetch Session Data
                 JSONObject sessionJson = new JSONObject();
                 sessionJson.put(PD_Constant.SESSIONID, session.getSessionID());
@@ -90,13 +77,29 @@ public class PrathamSmartSync extends AutoSync {
                 sessionJson.put(PD_Constant.ATTENDANCE, attendanceArray);
                 sessionJson.put(PD_Constant.LOGS, logArray);
 
-                if (!PrathamApplication.isTablet)
-                    rootJson.put(PD_Constant.STUDENTS, studentArray);
-                rootJson.put(PD_Constant.SESSION, sessionJson);
-                rootJson.put(PD_Constant.METADATA, metadataJson);
+                sessionArray.put(sessionJson);
             }
             // send if new records found
             if (newSessions != null && newSessions.size() > 0) {
+                //fetch Students & convert to Json Array
+                JSONArray studentArray = new JSONArray();
+                if (!PrathamApplication.isTablet) {
+                    List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
+                    for (Modal_Student std : newStudents)
+                        studentArray.put(new JSONObject(gson.toJson(std)));
+                }
+                //fetch updated status
+                JSONObject metadataJson = new JSONObject();
+                List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
+                for (Modal_Status status : metadata) {
+                    metadataJson.put(status.getStatusKey(), status.getValue());
+                    if (status.getStatusKey().equalsIgnoreCase("programId"))
+                        programID = status.getValue();
+                }
+                if (!PrathamApplication.isTablet)
+                    rootJson.put(PD_Constant.STUDENTS, studentArray);
+                rootJson.put(PD_Constant.SESSION, sessionArray);
+                rootJson.put(PD_Constant.METADATA, metadataJson);
                 if (PrathamApplication.isTablet && PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
                     new PD_ApiRequest(PrathamApplication.getInstance(), null)
                             .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
@@ -114,6 +117,26 @@ public class PrathamSmartSync extends AutoSync {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Subscribe
+    public void updateFlagsWhenPushed(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
+                Gson gson = new Gson();
+                Modal_PushData pushedData = gson.fromJson(message.getPushData(), Modal_PushData.class);
+                for (Modal_PushData.Modal_PushSession.Modal_PushSessionData pushed :
+                        pushedData.getPushSession().getPushSessionData()) {
+                    BaseActivity.sessionDao.updateFlag(pushed.getSessionId());
+                    for (Modal_Score score : pushed.getScores())
+                        BaseActivity.scoreDao.updateFlag(pushed.getSessionId());
+                    for (Attendance att : pushed.getAttendances())
+                        BaseActivity.attendanceDao.updateSentFlag(pushed.getSessionId());
+                }
+                for (Modal_Student student : pushedData.getStudents())
+                    BaseActivity.studentDao.updateSentStudentFlags(student.getStudentId());
+            }
         }
     }
 }

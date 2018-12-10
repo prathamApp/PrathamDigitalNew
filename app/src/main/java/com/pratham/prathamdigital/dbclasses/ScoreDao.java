@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
 
 import com.pratham.prathamdigital.models.Modal_Score;
 
@@ -18,8 +17,8 @@ public interface ScoreDao {
     @Insert
     long[] insertAll(Modal_Score... score);
 
-    @Update
-    int update(Modal_Score score);
+    @Query("UPDATE Score SET sentFlag = 1 where SessionID = :s_id")
+    int updateFlag(String s_id);
 
     @Delete
     void delete(Modal_Score score);

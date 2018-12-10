@@ -36,8 +36,8 @@ public interface StudentDao {
     @Query("select * from Students where sentFlag = 0")
     List<Modal_Student> getAllNewStudents();
 
-    @Query("update Students set sentFlag=1 where sentFlag= 0")
-    void updateSentStudentFlags();
+    @Query("update Students set sentFlag=1 where StudentId=:s_id")
+    void updateSentStudentFlags(String s_id);
 
     @Query("select FullName from Students where StudentID = :studentID")
     String getStudentName(String studentID);

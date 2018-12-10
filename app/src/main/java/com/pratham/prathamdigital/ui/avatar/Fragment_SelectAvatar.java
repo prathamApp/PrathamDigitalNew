@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
@@ -141,24 +142,27 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @OnClick(R.id.btn_avatar_next)
     public void setNext() {
         PrathamApplication.bubble_mp.start();
-        FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
-        Modal_Student modal_student = new Modal_Student();
-        modal_student.setStudentId(PD_Utility.getUUID().toString());
-        modal_student.setFullName(et_child_name.getText().toString());
-        modal_student.setGroupId("SmartPhone");
-        modal_student.setGroupName("SmartPhone");
-        modal_student.setGroupName("SmartPhone");
-        modal_student.setFirstName(et_child_name.getText().toString());
-        modal_student.setMiddleName(et_child_name.getText().toString());
-        modal_student.setLastName(et_child_name.getText().toString());
-        modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
-        modal_student.setAge(spinner_age.getSelectedItem().toString());
-        modal_student.setGender("M");
-        modal_student.setSentFlag(0);
-        modal_student.setAvatarName(avatar_selected);
-        studentDao.insertStudent(modal_student);
-        markAttendance(modal_student);
-        presentActivity();
+        if (!et_child_name.getText().toString().isEmpty()) {
+            FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
+            Modal_Student modal_student = new Modal_Student();
+            modal_student.setStudentId(PD_Utility.getUUID().toString());
+            modal_student.setFullName(et_child_name.getText().toString());
+            modal_student.setGroupId("SmartPhone");
+            modal_student.setGroupName("SmartPhone");
+            modal_student.setGroupName("SmartPhone");
+            modal_student.setFirstName(et_child_name.getText().toString());
+            modal_student.setMiddleName(et_child_name.getText().toString());
+            modal_student.setLastName(et_child_name.getText().toString());
+            modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
+            modal_student.setAge(spinner_age.getSelectedItem().toString());
+            modal_student.setGender("M");
+            modal_student.setSentFlag(0);
+            modal_student.setAvatarName(avatar_selected);
+            studentDao.insertStudent(modal_student);
+            markAttendance(modal_student);
+            presentActivity();
+        } else
+            Toast.makeText(getActivity(), "Please enter the name", Toast.LENGTH_SHORT).show();
     }
 
     public void presentActivity() {

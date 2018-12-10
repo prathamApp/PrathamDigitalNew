@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.video_player;
 
+import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -9,6 +10,7 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
@@ -34,8 +36,16 @@ public class Activity_VPlayer extends BaseActivity {
         myVideo = getIntent().getStringExtra("videoPath");
         StartTime = PD_Utility.getCurrentDateTime();
         resId = getIntent().getStringExtra("resId");
-
+        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
+            stopService(new Intent(this, BackgroundSoundService.class));
         initializePlayer(myVideo);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
+            stopService(new Intent(this, BackgroundSoundService.class));
     }
 
     private void initializePlayer(String myVideo) {

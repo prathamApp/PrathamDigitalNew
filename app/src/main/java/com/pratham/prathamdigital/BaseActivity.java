@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital;
 
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -22,12 +23,15 @@ import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
+
+import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -62,10 +66,10 @@ public class BaseActivity extends ActivityManagePermission {
         super.onCreate(savedInstanceState);
         FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
-//        Catcho.Builder(this)
+        Catcho.Builder(this)
 //                .activity(CatchoTransparentActivity.class)
-//                .recipients("your-email@domain.com")
-//                .build();
+                .recipients("your-email@domain.com")
+                .build();
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
         ttsService.setSpeechRate(0.7f);
@@ -92,6 +96,16 @@ public class BaseActivity extends ActivityManagePermission {
     protected void onResume() {
         super.onResume();
         requestLocation();
+        if (!PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
+            startService(new Intent(this, BackgroundSoundService.class));
+        BackupDatabase.backup(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
+            stopService(new Intent(this, BackgroundSoundService.class));
         BackupDatabase.backup(this);
     }
 
@@ -126,12 +140,6 @@ public class BaseActivity extends ActivityManagePermission {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
         );
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        BackupDatabase.backup(this);
     }
 
     public void requestLocation() {

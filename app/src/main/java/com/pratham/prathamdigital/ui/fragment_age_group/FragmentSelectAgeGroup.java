@@ -116,19 +116,29 @@ public class FragmentSelectAgeGroup extends Fragment {
     }
 
     @OnClick(R.id.iv_age_3_to_6)
-    public void open3to6Groups() {
+    public void open3to6Groups(View view) {
         PrathamApplication.bubble_mp.start();
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
         Bundle bundle = new Bundle();
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, true);
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
     @OnClick(R.id.iv_age_8_to_14)
-    public void open8to14Groups() {
+    public void open8to14Groups(View view) {
         PrathamApplication.bubble_mp.start();
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
         Bundle bundle = new Bundle();
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }

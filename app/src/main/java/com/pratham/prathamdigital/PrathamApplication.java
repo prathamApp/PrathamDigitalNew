@@ -43,7 +43,7 @@ public class PrathamApplication extends Application {
 //    private static boolean isClient = true;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static final boolean isTablet = true;
+    public static final boolean isTablet = false;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -57,6 +57,7 @@ public class PrathamApplication extends Application {
         }
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
+        setPradigiPath();
         sendFileStates = new HashMap<String, FileState>();
         recieveFileStates = new HashMap<String, FileState>();
         PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
@@ -66,7 +67,6 @@ public class PrathamApplication extends Application {
         PRDownloader.initialize(getApplicationContext(), config);
         wiseF = new WiseFy.Brains(getApplicationContext()).logging(true).getSmarts();
         AutoSync.start(mInstance);
-        setPradigiPath();
     }
 
     @Override

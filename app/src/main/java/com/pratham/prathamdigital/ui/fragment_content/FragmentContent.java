@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -27,7 +28,8 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.dashboard.LevelContract;
+import com.pratham.prathamdigital.ui.dashboard.RV_LevelAdapter;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
@@ -52,7 +54,7 @@ import butterknife.OnClick;
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView,
-        ContentContract.contentClick, CircularRevelLayout.CallBacks {
+        ContentContract.contentClick, CircularRevelLayout.CallBacks, LevelContract {
 
     private static final String TAG = FragmentContent.class.getSimpleName();
     @BindView(R.id.circular_content_reveal)
@@ -63,8 +65,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
     RecyclerView rv_content;
     //    @BindView(R.id.content_back)
 //    ImageView content_back;
-//    @BindView(R.id.content_title)
-//    TextView content_title;
+    @BindView(R.id.rv_level)
+    public RecyclerView rv_level;
     @BindView(R.id.txt_wifi_status)
     TextView txt_wifi_status;
     @BindView(R.id.rl_network_error)
@@ -74,6 +76,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     ContentPresenterImpl contentPresenter;
     ContentAdapter contentAdapter;
+    private RV_LevelAdapter levelAdapter;
     ContentContract.mainView mainView;
     Map<String, Integer> filesDownloading = new HashMap<>();
     private int revealX;
@@ -125,8 +128,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onStart() {
         super.onStart();
-        PD_Utility.showDialog(getActivity());
-        contentPresenter.getContent(null);
         EventBus.getDefault().register(this);
     }
 
@@ -152,14 +153,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @Subscribe
-    public void onLevelClicked(final Modal_ContentDetail detail) {
-        Log.d(TAG, "onLevelClicked:");
-        PrathamApplication.bubble_mp.start();
-        PD_Utility.showDialog(getActivity());
-        contentPresenter.getContent(detail);
-    }
-
-    @Subscribe
     public void decrease(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
@@ -181,9 +174,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onResume() {
         super.onResume();
-//        if (((ActivityMain) getActivity()).avatar_view.getVisibility() == View.VISIBLE) {
-//        PD_Utility.showDialog(getActivity());
-//        }
+        if (levelAdapter == null) {
+            PD_Utility.showDialog(getActivity());
+            contentPresenter.getContent(null);
+        }
     }
 
     @Override
@@ -232,14 +226,36 @@ public class FragmentContent extends FragmentManagePermission implements Content
             } else {
                 contentAdapter.updateList(content);
                 rv_content.scheduleLayoutAnimation();
+                rv_content.smoothScrollToPosition(0);
             }
         }
         contentPresenter.getLevels();
     }
 
+    public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
+        if (levelContents != null) {
+            if (levelAdapter == null) {
+                levelAdapter = new RV_LevelAdapter(getActivity(), levelContents, FragmentContent.this);
+                rv_level.setHasFixedSize(true);
+                rv_level.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                rv_level.setAdapter(levelAdapter);
+            } else {
+                levelAdapter.updateList(levelContents);
+            }
+        }
+    }
+
+    @Override
+    public void levelClicked(Modal_ContentDetail detail) {
+        Log.d(TAG, "onLevelClicked:");
+        PrathamApplication.bubble_mp.start();
+        PD_Utility.showDialog(getActivity());
+        contentPresenter.getContent(detail);
+    }
+
     @Override
     public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
-        ((ActivityMain) getActivity()).showLevels(levelContents);
+        showLevels(levelContents);
     }
 
     @Override
@@ -291,78 +307,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void hideViews() {
-        //hide search
-//        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
-//                .dp().translationX(0, 100)
-//                .duration(900)
-//                .onStop(new AnimationListener.Stop() {
-//                    @Override
-//                    public void onStop() {
-//                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.GONE);
-//                    }
-//                })
-//                .start();
-        //hide avatar
-//        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
-//                .dp().translationX(0, 100)
-//                .duration(900)
-//                .onStart(new AnimationListener.Start() {
-//                    @Override
-//                    public void onStart() {
-//                        //show back
-//                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
-//                                .dp().translationX(100, 0)
-//                                .duration(900)
-//                                .onStart(new AnimationListener.Start() {
-//                                    @Override
-//                                    public void onStart() {
-//                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.VISIBLE);
-//                                    }
-//                                })
-//                                .start();
-//                    }
-//                })
-//                .onStop(new AnimationListener.Stop() {
-//                    @Override
-//                    public void onStop() {
-//                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.GONE);
-//                    }
-//                })
-//                .start();
     }
 
     @Override
     public void showViews() {
-//        ViewAnimator.animate(((ActivityMain) getActivity()).avatar_view)
-//                .dp().translationX(100, 0)
-//                .duration(900)
-//                .onStart(new AnimationListener.Start() {
-//                    @Override
-//                    public void onStart() {
-//                        ((ActivityMain) getActivity()).avatar_view.setVisibility(View.VISIBLE);
-//                        ViewAnimator.animate(((ActivityMain) getActivity()).back_view)
-//                                .dp().translationX(0, 100)
-//                                .duration(900)
-//                                .onStop(new AnimationListener.Stop() {
-//                                    @Override
-//                                    public void onStop() {
-//                                        ((ActivityMain) getActivity()).back_view.setVisibility(View.GONE);
-//                                    }
-//                                })
-//                                .start();
-//                    }
-//                })
-//                .start();
-//        ViewAnimator.animate(((ActivityMain) getActivity()).search_shape)
-//                .dp().translationX(100, 0)
-//                .duration(900)
-//                .onStart(new AnimationListener.Start() {
-//                    @Override
-//                    public void onStart() {
-//                        ((ActivityMain) getActivity()).search_shape.setVisibility(View.VISIBLE);
-//                    }
-//                })
-//                .start();
     }
 
     @Override

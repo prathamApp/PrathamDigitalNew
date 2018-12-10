@@ -141,6 +141,7 @@
             android:parentActivityName=".BaseActivity"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1d9330f62c878e9baee0e17b985180647272403" />
@@ -151,6 +152,9 @@
         <service
             android:name=".services.auto_sync.AutoSyncService"
             android:exported="false" />
+        <service
+            android:name=".services.BackgroundSoundService"
+            android:enabled="true" />
 
         <receiver
             android:name=".services.auto_sync.AutoSyncNetworkReceiver"
@@ -185,7 +189,7 @@
             android:resource="@xml/autosync" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/ic_app_logo_" />
+            android:resource="@mipmap/ic_launcher" />
         <!--
              Set color used with incoming notification messages. This is used when no color is set for the incoming
              notification message. See README(https://goo.gl/6BKBk7) for more.

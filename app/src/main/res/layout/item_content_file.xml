@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
-                android:src="@drawable/ic_app_logo_" />
+                android:src="@mipmap/ic_launcher" />
 
             <RelativeLayout
                 android:id="@+id/rl_play_content"

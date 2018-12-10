@@ -1036,8 +1036,8 @@ public class PD_Utility {
      * @param mContext
      * @return
      */
-    public static boolean isMyServiceRunning(Class<?> serviceClass,
-                                             Context mContext) {
+    public static boolean isServiceRunning(Class<?> serviceClass,
+                                           Context mContext) {
         ActivityManager manager = (ActivityManager) mContext
                 .getSystemService(Context.ACTIVITY_SERVICE);
         for (RunningServiceInfo service : manager

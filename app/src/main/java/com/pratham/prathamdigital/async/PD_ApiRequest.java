@@ -114,6 +114,7 @@ public class PD_ApiRequest {
                         BackupDatabase.backup(mContext);
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        msg.setPushData(data);
                         EventBus.getDefault().post(msg);
                     }
 
@@ -140,9 +141,10 @@ public class PD_ApiRequest {
                     public void onResponse(JSONObject response) {
                         BaseActivity.logDao.deleteLogs();
                         BackupDatabase.backup(mContext);
-//                        EventMessage msg = new EventMessage();
-//                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
-//                        EventBus.getDefault().post(msg);
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        msg.setPushData(data.toString());
+                        EventBus.getDefault().post(msg);
                     }
 
                     @Override

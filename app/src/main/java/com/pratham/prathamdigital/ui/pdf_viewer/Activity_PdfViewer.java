@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.pdf_viewer;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -13,6 +14,7 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -85,6 +87,8 @@ public class Activity_PdfViewer extends BaseActivity implements GestureDetector.
     @Override
     protected void onResume() {
         super.onResume();
+        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
+            stopService(new Intent(this, BackgroundSoundService.class));
         LoadBitmapTask.get(this).start();
         flipView.onResume();
     }

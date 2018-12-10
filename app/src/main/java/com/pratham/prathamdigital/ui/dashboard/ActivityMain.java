@@ -7,8 +7,6 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -23,7 +21,6 @@ import com.pratham.prathamdigital.custom.scaling_view.ScalingLayout;
 import com.pratham.prathamdigital.custom.scaling_view.ScalingLayoutListener;
 import com.pratham.prathamdigital.custom.scaling_view.State;
 import com.pratham.prathamdigital.models.EventMessage;
-import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -34,13 +31,11 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 
-import java.util.ArrayList;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ActivityMain extends BaseActivity implements ContentContract.mainView, LevelContract {
+public class ActivityMain extends BaseActivity implements ContentContract.mainView {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     @BindView(R.id.main_root)
@@ -49,15 +44,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     NotificationBadge download_notification;
     @BindView(R.id.download_badge)
     RelativeLayout download_badge;
-    @BindView(R.id.rv_level)
-    public RecyclerView rv_level;
     @BindView(R.id.top_scaling)
     ScalingLayout top_scaling;
+    @BindView(R.id.outer_area)
+    View outer_area;
     @BindView(R.id.tab_card)
     MaterialCardView tab_card;
     @BindView(R.id.sliding_strip)
     View sliding_strip;
-    private RV_LevelAdapter levelAdapter;
     @BindView(R.id.sheet_tab_holder)
     RelativeLayout sheet_tab_holder;
 
@@ -84,19 +78,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         PrathamApplication.bubble_mp.start();
         DownloadListFragment fragment = new DownloadListFragment();
         fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
-    }
-
-    public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
-        if (levelContents != null) {
-            if (levelAdapter == null) {
-                levelAdapter = new RV_LevelAdapter(ActivityMain.this, levelContents, ActivityMain.this);
-                rv_level.setHasFixedSize(true);
-                rv_level.setLayoutManager(new LinearLayoutManager(ActivityMain.this, LinearLayoutManager.HORIZONTAL, false));
-                rv_level.setAdapter(levelAdapter);
-            } else {
-                levelAdapter.updateList(levelContents);
-            }
-        }
     }
 
     @Override
@@ -127,24 +108,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         download_notification.setNumber(number);
     }
 
-    @Override
-    public void levelClicked(Modal_ContentDetail detail) {
-        EventBus.getDefault().post(detail);
-    }
-
     @OnClick(R.id.pradigi_icon)
     public void setPullDown() {
-//        dialog = new TopSheetDialog(this);
-//        dialog.setContentView(R.layout.top_sheet_items_layout);
-//        LinearLayout top_sheet_content_home = (LinearLayout) dialog.findViewById(R.id.top_sheet_content_home);
-//        LinearLayout top_sheet_language = (LinearLayout) dialog.findViewById(R.id.top_sheet_language);
-////        LinearLayout top_sheet_import = (LinearLayout) dialog.findViewById(R.id.top_sheet_import);
-//        LinearLayout top_sheet_connect_wifi = (LinearLayout) dialog.findViewById(R.id.top_sheet_connect_wifi);
-//        top_sheet_content_home.setOnClickListener(setTop_sheet_Content_Home);
-//        top_sheet_language.setOnClickListener(setTop_sheet_Language);
-////        top_sheet_import.setOnClickListener(setTopSheetImport);
-//        top_sheet_connect_wifi.setOnClickListener(setTopSheetConnect);
-//        dialog.show();
         setTop_scaling();
     }
 
@@ -223,6 +188,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
                 @Override
                 public void onAnimationEnd(View view) {
+                    outer_area.setVisibility(View.GONE);
                     tab_card.setVisibility(View.INVISIBLE);
                 }
 
@@ -239,6 +205,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             ViewCompat.animate(tab_card).alpha(1).setDuration(200).setListener(new ViewPropertyAnimatorListener() {
                 @Override
                 public void onAnimationStart(View view) {
+                    outer_area.setVisibility(View.VISIBLE);
                     tab_card.setVisibility(View.VISIBLE);
                 }
 
@@ -261,6 +228,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             }
 
             if (progress < 1) {
+                outer_area.setVisibility(View.GONE);
                 tab_card.setVisibility(View.INVISIBLE);
             }
         }
@@ -299,5 +267,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         setTop_scaling();
                     }
                 }).start();
+    }
+
+    @OnClick(R.id.outer_area)
+    public void onRootTouch(View v) {
+        if (top_scaling.getState() == State.EXPANDED)
+            top_scaling.collapse();
     }
 }

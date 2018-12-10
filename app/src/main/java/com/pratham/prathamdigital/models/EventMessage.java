@@ -11,6 +11,7 @@ public class EventMessage {
     ArrayList<Modal_ContentDetail> content;
     Drawable connection_resource;
     String connection_name;
+    String pushData;
 
     public ArrayList<Modal_ContentDetail> getContent() {
         return content;
@@ -66,5 +67,13 @@ public class EventMessage {
 
     public void setContentList(ArrayList<Modal_ContentDetail> content) {
         this.content = content;
+    }
+
+    public String getPushData() {
+        return pushData;
+    }
+
+    public void setPushData(String pushData) {
+        this.pushData = pushData;
     }
 }

@@ -20,8 +20,8 @@ public interface AttendanceDao {
     @Query("SELECT * FROM Attendance")
     public List<Attendance> getAllAttendances();
 
-    @Query("UPDATE Attendance SET sentFlag=:pushStatus WHERE AttendanceID=:aID")
-    void updateSentFlag(int pushStatus, String aID);
+    @Query("UPDATE Attendance SET sentFlag=1 WHERE SessionID=:s_id")
+    void updateSentFlag(String s_id);
 
     @Query("SELECT * FROM Attendance WHERE sentFlag=0 AND SessionID=:s_id")
     public List<Attendance> getNewAttendances(String s_id);

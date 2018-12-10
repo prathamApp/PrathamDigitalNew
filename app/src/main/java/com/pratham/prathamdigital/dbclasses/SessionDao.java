@@ -4,7 +4,6 @@ import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
 import android.database.Cursor;
 
 import com.pratham.prathamdigital.models.Modal_Session;
@@ -20,8 +19,8 @@ public interface SessionDao {
     @Insert
     long[] insertAll(Modal_Session... sessions);
 
-    @Update
-    int update(Modal_Session session);
+    @Query("UPDATE Session SET sentFlag = 1 where SessionID = :s_id")
+    int updateFlag(String s_id);
 
     @Delete
     void delete(Modal_Session session);
