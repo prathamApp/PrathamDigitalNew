@@ -14,6 +14,9 @@ public interface VillageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public void insertAllVillages(List<Modal_Village> villagesList);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public void insertVillage(Modal_Village modal_village);
+
     @Query("DELETE FROM Village")
     public void deleteAllVillages();
 

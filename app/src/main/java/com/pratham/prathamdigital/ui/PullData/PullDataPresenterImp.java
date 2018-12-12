@@ -11,6 +11,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -64,10 +65,14 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     @Override
     public void proccessVillageData(String block) {
         ArrayList<Village> villageName = new ArrayList();
-        for (Modal_Village village : vilageList.get(0).getData()) {
-            if (block.equalsIgnoreCase(village.getBlock().trim()))
-                villageName.add(new Village(village.getVillageId(), village.getVillageName()));
+
+        for (RaspVillage raspVillage : vilageList) {
+            for (Modal_Village village : raspVillage.getData()) {
+                if (block.equalsIgnoreCase(village.getBlock().trim()))
+                    villageName.add(new Village(village.getVillageId(), village.getVillageName()));
+            }
         }
+
         if (!villageName.isEmpty()) {
             pullDataView.showVillageDialog(villageName);
         }
@@ -127,9 +132,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                                 blockList.add("NO BLOCKS");
                             } else {
                                 blockList.add("Select block");
-                                for (Modal_Village village : vilageList.get(0).getData()) {
-                                    blockList.add(village.getBlock());
+                                for (RaspVillage raspVillage : vilageList) {
+                                    for (Modal_Village village : raspVillage.getData()) {
+                                        blockList.add(village.getBlock());
+                                    }
                                 }
+
                             }
                             LinkedHashSet hs = new LinkedHashSet(blockList);
                             blockList.clear();
@@ -208,8 +216,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 Type listType = new TypeToken<List<RaspStudent>>() {
                 }.getType();
                 List<RaspStudent> studentListTemp = gson.fromJson(json, listType);
-                if (studentListTemp != null) {
-                    studentList.addAll(studentListTemp.get(0).getData());
+                for (RaspStudent raspStudent : studentListTemp) {
+                    for (Modal_Student student : raspStudent.getData()) {
+                        studentList.add(student);
+                    }
                 }
                 loadGroups();
                 //dismissDialog();
@@ -274,8 +284,11 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 Type listType = new TypeToken<List<RaspGroup>>() {
                 }.getType();
                 List<RaspGroup> groupListTemp = gson.fromJson(json, listType);
-                if (groupListTemp != null) {
-                    groupList.addAll(groupListTemp.get(0).getData());
+                for (RaspGroup raspGroup : groupListTemp) {
+                    for (Modal_Groups modal_groups : raspGroup.getData()) {
+                        groupList.add(modal_groups);
+                    }
+
                 }
                 loadCRL();
             }
@@ -338,7 +351,11 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         }.getType();
                         ArrayList<RaspCrl> crlListTemp = gson.fromJson(response.toString(), listType);
                         crlList.clear();
-                        crlList.addAll(crlListTemp.get(0).getData());
+                        for (RaspCrl raspCrl : crlListTemp) {
+                            for (Modal_Crl modal_crl : raspCrl.getData()) {
+                                crlList.add(modal_crl);
+                            }
+                        }
                         pullDataView.closeProgressDialog();
                         pullDataView.enableSaveButton();
                     }
@@ -354,10 +371,11 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void saveData() {
+
         BaseActivity.crLdao.insertAllCRL(crlList);
         BaseActivity.studentDao.insertAllStudents(studentList);
         BaseActivity.groupDao.insertAllGroups(groupList);
-        BaseActivity.villageDao.insertAllVillages(vilageList.get(0).getData());
+        saveDownloadedVillages();
 
         switch (selectedProgram) {
             case APIs.HL:
@@ -378,6 +396,19 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         }
         Toast.makeText(context, "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
         pullDataView.openLoginActivity();
+    }
+
+    private void saveDownloadedVillages() {
+        List<Modal_Village> allStudent = vilageList.get(0).getData();
+        for (Modal_Village village : allStudent) {
+            for (String id : villageIDList) {
+                if (id.equals(String.valueOf(village.getVillageId()))) {
+                    BaseActivity.villageDao.insertVillage(village);
+                    break;
+                }
+            }
+        }
+        BackupDatabase.backup(context);
     }
 
     @Override

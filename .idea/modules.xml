@@ -2,8 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/PrathamDigital.iml" filepath="$PROJECT_DIR$/PrathamDigital.iml" />
-      <module fileurl="file://$PROJECT_DIR$/PrathamDigitalNewUI.iml" filepath="$PROJECT_DIR$/PrathamDigitalNewUI.iml" />
+      <module fileurl="file://E:\github\PrathamDigitalNew\PrathamDigital.iml" filepath="E:\github\PrathamDigitalNew\PrathamDigital.iml" />
+      <module fileurl="file://$PROJECT_DIR$/PrathamDigitalNew.iml" filepath="$PROJECT_DIR$/PrathamDigitalNew.iml" />
+      <module fileurl="file://E:\github\PrathamDigitalNew\PrathamDigitalNewUI.iml" filepath="E:\github\PrathamDigitalNew\PrathamDigitalNewUI.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
