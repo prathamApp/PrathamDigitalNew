@@ -15,13 +15,10 @@ import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.richpath.RichPath;
@@ -44,7 +41,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @BindView(R.id.rich)
     RichPathView rich;
 
-    SplashPresenterImpl splashPresenter;
+    SplashContract.splashPresenter splashPresenter;
     private Context mContext;
     GoogleApiClient mGoogleApiClient;
 
@@ -61,12 +58,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     protected void onResume() {
         super.onResume();
-        if (!PrathamApplication.isTablet) {
-            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
-            if (mGoogleApiClient == null && !signedIn) {
-                mGoogleApiClient = splashPresenter.configureSignIn();
-            }
-        }
+//        if (!PrathamApplication.isTablet) {
+//            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
+//            if (mGoogleApiClient == null && !signedIn) {
+//                mGoogleApiClient = splashPresenter.configureSignIn();
+//            }
+//        }
         // Populate initial values
         splashPresenter.populateDefaultDB();
     }
@@ -114,12 +111,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
     @Override
     public void signInUsingGoogle() {
-        if (!FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false)) {
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
-        } else {
-            splashPresenter.checkStudentList();
-        }
+//        if (!FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false)) {
+//            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
+//            startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
+//        } else {
+//        splashPresenter.checkStudentList();
+        splashPresenter.checkIfContentinSDCard();
+//        }
     }
 
     @Override

@@ -12,6 +12,33 @@ public class EventMessage {
     Drawable connection_resource;
     String connection_name;
     String pushData;
+    String downloadId;
+    String file_name;
+    long progress;
+
+    public long getProgress() {
+        return progress;
+    }
+
+    public void setProgress(long progress) {
+        this.progress = progress;
+    }
+
+    public String getDownloadId() {
+        return downloadId;
+    }
+
+    public void setDownloadId(String downloadId) {
+        this.downloadId = downloadId;
+    }
+
+    public String getFile_name() {
+        return file_name;
+    }
+
+    public void setFile_name(String file_name) {
+        this.file_name = file_name;
+    }
 
     public ArrayList<Modal_ContentDetail> getContent() {
         return content;

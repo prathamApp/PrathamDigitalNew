@@ -11,7 +11,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -408,7 +407,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 }
             }
         }
-        BackupDatabase.backup(context);
     }
 
     @Override

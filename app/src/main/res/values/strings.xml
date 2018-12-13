@@ -72,6 +72,8 @@
         <item>avatars/acrobatics.json</item>
     </string-array>
     <string-array name="student_class">
+        <item>Class 1</item>
+        <item>Class 2</item>
         <item>Class 3</item>
         <item>Class 4</item>
         <item>Class 5</item>
@@ -79,6 +81,8 @@
         <item>Class 7</item>
         <item>Class 8</item>
         <item>Class 9</item>
+        <item>Class 10</item>
+        <item>Class 12</item>
     </string-array>
     <string-array name="age">
         <item>Age 3</item>
@@ -88,6 +92,15 @@
         <item>Age 7</item>
         <item>Age 8</item>
         <item>Age 9</item>
+        <item>Age 10</item>
+        <item>Age 11</item>
+        <item>Age 12</item>
+        <item>Age 13</item>
+        <item>Age 14</item>
+        <item>Age 15</item>
+        <item>Age 16</item>
+        <item>Age 17</item>
+        <item>Age 18</item>
     </string-array>
 
 

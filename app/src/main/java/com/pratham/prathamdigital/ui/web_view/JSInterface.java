@@ -318,10 +318,7 @@ public class JSInterface {
     @JavascriptInterface
     public void addScore(String tempResId, int questionId, int scorefromGame, int totalMarks, int level, String startTime) {
         try {
-            if (PrathamApplication.isTablet)
-                addScoreForTablet(resId, "_", questionId, scorefromGame, totalMarks, level, startTime, "_");
-            else
-                addScoreForSmartPhone(resId, "_", questionId, scorefromGame, totalMarks, level, startTime, "_");
+            addScore(resId, "_", questionId, scorefromGame, totalMarks, level, startTime, "_");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -331,36 +328,19 @@ public class JSInterface {
     @JavascriptInterface
     public void addScore(String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
         try {
-            if (PrathamApplication.isTablet)
-                addScoreForTablet(resId, piStudId, questionId, scorefromGame, totalMarks, level, startTime, label);
-            else
-                addScoreForSmartPhone(resId, piStudId, questionId, scorefromGame, totalMarks, level, startTime, label);
+            addScore(resId, piStudId, questionId, scorefromGame, totalMarks, level, startTime, label);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void addScoreForSmartPhone(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
+    private void addScore(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
         Modal_Score modal_score = new Modal_Score();
         modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
-        modal_score.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
-        modal_score.setDeviceID(PD_Utility.getDeviceID());
-        modal_score.setResourceID(tempResId);
-        modal_score.setQuestionId(questionId);
-        modal_score.setScoredMarks(scorefromGame);
-        modal_score.setTotalMarks(totalMarks);
-        modal_score.setStartDateTime(startTime);
-        modal_score.setEndDateTime(PD_Utility.getCurrentDateTime());
-        modal_score.setLevel(level);
-        modal_score.setLabel(piStudId + "," + label);
-        modal_score.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modal_score);
-    }
-
-    private void addScoreForTablet(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
-        Modal_Score modal_score = new Modal_Score();
-        modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
-        modal_score.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        if (PrathamApplication.isTablet)
+            modal_score.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        else
+            modal_score.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
         modal_score.setDeviceID(PD_Utility.getDeviceID());
         modal_score.setResourceID(tempResId);
         modal_score.setQuestionId(questionId);

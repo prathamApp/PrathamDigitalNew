@@ -284,19 +284,20 @@ public class Modal_Rasp_Content {
             modal_contentDetail.setNodeeage("");
             modal_contentDetail.setNodedesc(modal_rasp_content.getDescription());
             for (Modal_Rasp_ContentFilesItem filesItem : modal_rasp_content.getFiles()) {
+                String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
+                        .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
+                //fileNameWithoutExtn
+                filename = filename.substring(0, filename.lastIndexOf("."));
                 if (filesItem.isThumbnail()) {
-                    modal_contentDetail.setNodeimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
+                    modal_contentDetail.setNodeimage(filename);
                     modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
                 } else {
                     if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
                         modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
-                        String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
-                                .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
-                        filename = filename.substring(0, filename.lastIndexOf("."));
                         modal_contentDetail.setNodekeywords(filename);
                     } else {
                         modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
-                        String filename = filesItem.getStorageUrl().toString()
+                        filename = filesItem.getStorageUrl().toString()
                                 .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
                         filename = filename.substring(0, filename.lastIndexOf("."));
                         modal_contentDetail.setNodekeywords(filename);

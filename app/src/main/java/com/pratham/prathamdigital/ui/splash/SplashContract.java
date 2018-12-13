@@ -1,5 +1,7 @@
 package com.pratham.prathamdigital.ui.splash;
 
+import android.content.Intent;
+
 public interface SplashContract {
     interface splashview {
         void showAppUpdateDialog();
@@ -14,6 +16,22 @@ public interface SplashContract {
     }
 
     interface splashPresenter {
+        void checkIfContentinSDCard();
+
+        void populateDefaultDB();
+
+        void checkConnectivity();
+
+        void checkStudentList();
+
+        void validateSignIn(Intent data);
+
         void checkVersion(String latestVersion);
+
+        void copyingExistingDb();
+
+        void failedCopyingExistingDb();
+
+        void successCopyingExistingDb(String absolutePath);
     }
 }

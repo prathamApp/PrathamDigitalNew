@@ -43,7 +43,9 @@ public class PrathamApplication extends Application {
 //    private static boolean isClient = true;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static final boolean isTablet = true;
+    public static final boolean isTablet = false;
+    public static boolean contentExistOnSD = false;
+    public static String contentSDPath = "";
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -88,6 +90,11 @@ public class PrathamApplication extends Application {
         pradigiPath = PD_Utility.getInternalPath(this) + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         File f = new File(pradigiPath);
         if (!f.exists()) f.mkdirs();
+    }
+
+    public void setExistingSDContentPath(String path) {
+        contentExistOnSD = true;
+        contentSDPath = path + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
     }
 }
 

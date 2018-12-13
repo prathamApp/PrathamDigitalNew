@@ -2,6 +2,6 @@
 <autosync>
     <listener
         name="com.pratham.prathamdigital.services.PrathamSmartSync"
-        every="1 minutes"
+        every="5 minutes"
         range="10 seconds" />
 </autosync>

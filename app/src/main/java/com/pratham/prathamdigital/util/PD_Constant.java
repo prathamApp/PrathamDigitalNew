@@ -59,6 +59,15 @@ public class PD_Constant {
     public static final String STUDENTS = "students";
     public static final String METADATA = "metadata";
     public static final String USAGEDATA = "USAGEDATA";
+    public static final String DOWNLOAD_URL = "download_url";
+    public static final String DIR_PATH = "dir_path";
+    public static final String FILE_NAME = "file_name";
+    public static final String DOWNLOAD_ID = "download_id";
+    public static final String DOWNLOAD_CONTENT = "download_content";
+    public static final String DOWNLOAD_STARTED = "download_started";
+    public static final String DOWNLOAD_UPDATE = "download_update";
+    public static final String FOLDER_NAME = "folder_name";
+    public static final String PRADIGI_FOLDER = "PRADIGI";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
@@ -142,7 +151,8 @@ public class PD_Constant {
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
-        POST_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
+        POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
+        POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;

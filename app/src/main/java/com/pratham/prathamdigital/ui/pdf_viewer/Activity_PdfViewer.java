@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
@@ -21,7 +21,7 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import java.util.ArrayList;
 
 public class Activity_PdfViewer extends BaseActivity implements GestureDetector.OnGestureListener, PDFContract.pdf_View {
-    private String StartTime;
+    private String startTime;
     private String resId;
     private boolean backpressedFlag = false;
     PageFlipView flipView;
@@ -36,7 +36,7 @@ public class Activity_PdfViewer extends BaseActivity implements GestureDetector.
         pdf_presenter = new PDF_PresenterImpl(this, this);
         detector = new GestureDetector(this);
         page_flip_mp = MediaPlayer.create(this, R.raw.page_flip);
-        StartTime = PD_Utility.getCurrentDateTime();
+        startTime = PD_Utility.getCurrentDateTime();
         resId = getIntent().getStringExtra("resId");
         pdf_presenter.generateImageFromPdf(getIntent().getStringExtra("pdfPath"));
         FastSave.getInstance().saveInt(PD_Constant.PDF_DURATION, 1000);
@@ -70,17 +70,21 @@ public class Activity_PdfViewer extends BaseActivity implements GestureDetector.
 
     public void addScoreToDB() {
         Modal_Score modalScore = new Modal_Score();
-        modalScore.setSessionID("");
-        modalScore.setStudentID("");
-        modalScore.setResourceID("");
+        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        if (PrathamApplication.isTablet)
+            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        else
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+        modalScore.setDeviceID(PD_Utility.getDeviceID());
+        modalScore.setResourceID(resId);
         modalScore.setQuestionId(0);
         modalScore.setScoredMarks(0);
-        modalScore.setTotalMarks(0);
-        // Unique Device ID
-        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        modalScore.setDeviceID(deviceId.equals(null) ? "0000" : deviceId);
-        modalScore.setStartDateTime(PD_Utility.getCurrentDateTime());
+        modalScore.setTotalMarks((bitmaps.size() > 0) ? bitmaps.size() : 0);
+        modalScore.setStartDateTime(startTime);
         modalScore.setEndDateTime(PD_Utility.getCurrentDateTime());
+        modalScore.setLevel(0);
+        modalScore.setLabel("_");
+        modalScore.setSentFlag(0);
         BaseActivity.scoreDao.insert(modalScore);
     }
 

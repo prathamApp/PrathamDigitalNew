@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.custom.fluid_keyboard.FluidContentResizer;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
@@ -23,6 +24,11 @@ import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_PushData;
+import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
@@ -67,8 +73,8 @@ public class BaseActivity extends ActivityManagePermission {
         FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
-                .recipients("your-email@domain.com")
+                .activity(CatchoTransparentActivity.class)
+//                .recipients("your-email@domain.com")
                 .build();
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
@@ -189,6 +195,26 @@ public class BaseActivity extends ActivityManagePermission {
     public void requestStoragePermission(final String permission) {
         if (permission.equalsIgnoreCase(PD_Constant.WRITE_PERMISSION)) {
             requestWritePermission();
+        }
+    }
+
+    @Subscribe
+    public void updateFlagsWhenPushed(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
+                Gson gson = new Gson();
+                Modal_PushData pushedData = gson.fromJson(message.getPushData(), Modal_PushData.class);
+                for (Modal_PushData.Modal_PushSessionData pushed :
+                        pushedData.getPushSession()) {
+                    BaseActivity.sessionDao.updateFlag(pushed.getSessionId());
+                    for (Modal_Score score : pushed.getScores())
+                        BaseActivity.scoreDao.updateFlag(pushed.getSessionId());
+                    for (Attendance att : pushed.getAttendances())
+                        BaseActivity.attendanceDao.updateSentFlag(pushed.getSessionId());
+                }
+                for (Modal_Student student : pushedData.getStudents())
+                    BaseActivity.studentDao.updateSentStudentFlags(student.getStudentId());
+            }
         }
     }
 }

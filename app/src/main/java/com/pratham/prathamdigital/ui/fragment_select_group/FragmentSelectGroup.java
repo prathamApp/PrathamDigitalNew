@@ -48,6 +48,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_select_group, container, false);
         ButterKnife.bind(this, rootView);
+        circular_group_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -155,6 +156,22 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
 
     @Override
     public void onUnRevealed() {
-
+//        Bundle bundle = new Bundle();
+//        bundle.putInt(PD_Constant.REVEALX, 0);
+//        bundle.putInt(PD_Constant.REVEALY, 0);
+//        PD_Utility.showFragment(getActivity(), new FragmentContent(), R.id.main_frame,
+//                bundle, FragmentContent.class.getSimpleName());
+//        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(FragmentSelectGroup.class.getSimpleName());
+//        if (fragment != null)
+//            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
+
+//    @Subscribe
+//    public void onbackPressed(EventMessage message) {
+//        if (message != null) {
+//            if (message.getMessage().equalsIgnoreCase(FragmentSelectGroup.class.getSimpleName())) {
+//                circular_group_reveal.unReveal();
+//            }
+//        }
+//    }
 }

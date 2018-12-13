@@ -77,7 +77,7 @@
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:resizeableActivity="false"
-
+            android:screenOrientation="userLandscape"
             android:windowSoftInputMode="stateAlwaysHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -89,29 +89,33 @@
             android:name=".ui.QRLogin.QRLogin"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
-
+            android:screenOrientation="userLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.dashboard.ActivityMain"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.attendance_activity.AttendanceActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.pdf_viewer.Activity_PdfViewer"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.video_player.Activity_VPlayer"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme.Dialog"
             android:windowSoftInputMode="stateAlwaysHidden">
             <meta-data
@@ -122,17 +126,20 @@
             android:name=".ui.web_view.Activity_WebView"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.settings_activity.SettingsActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".ui.assign.Activity_AssignGroups"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="userLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -155,6 +162,9 @@
         <service
             android:name=".services.BackgroundSoundService"
             android:enabled="true" />
+        <service
+            android:name=".services.DownloadService"
+            android:exported="false" />
 
         <receiver
             android:name=".services.auto_sync.AutoSyncNetworkReceiver"
@@ -215,8 +225,5 @@
             android:name=".services.AppKillService"
             android:enabled="true"
             android:stopWithTask="false" />
-
-
     </application>
-
 </manifest>

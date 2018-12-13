@@ -221,30 +221,6 @@ public class PD_Utility {
                     .addToBackStack(TAG)
                     .commit();
         }
-
-
-//        if (mActivity instanceof CW_Tab_One) {
-//            DEBUG_LOG(1, TAG, "From " + mActivity.getLocalClassName());
-//            ((CW_Tab_One) mActivity).getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.cw_container, mFragment, TAG)
-//                    .addToBackStack(TAG).commit();
-//        } else if (mActivity instanceof CW_Tab_Two) {
-//            ((CW_Tab_Two) mActivity).getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.cw_container, mFragment, TAG)
-//                    .addToBackStack(TAG).commit();
-//
-//        } else if (mActivity instanceof CW_Tab_Three) {
-//            ((CW_Tab_Three) mActivity).getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.cw_container, mFragment, TAG)
-//                    .addToBackStack(TAG).commit();
-//
-//        } else if (mActivity instanceof CW_Authentication) {
-//            DEBUG_LOG(1, TAG, "From " + mActivity.getLocalClassName());
-//
-//            ((CW_Authentication) mActivity).getSupportFragmentManager()
-//                    .beginTransaction().replace(R.id.auth_container, mFragment, TAG)
-//                    .addToBackStack(TAG).commit();
-//        }
     }
 
     public static void setLocale(Context context, String lang) {
@@ -333,6 +309,25 @@ public class PD_Utility {
         Calendar cal = Calendar.getInstance();
         DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         return dateFormat.format(cal.getTime());
+    }
+
+    public static long getTimeDifference(String start, String end) {
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+            Date date1 = simpleDateFormat.parse(start);
+            Date date2 = simpleDateFormat.parse(end);
+
+            long difference = date2.getTime() - date1.getTime();
+//        days = (int) (difference / (1000 * 60 * 60 * 24));
+//        hours = (int) ((difference - (1000 * 60 * 60 * 24 * days)) / (1000 * 60 * 60));
+//        min = (int) (difference - (1000 * 60 * 60 * 24 * days) - (1000 * 60 * 60 * hours)) / (1000 * 60);
+//        hours = (hours < 0 ? -hours : hours);
+            Log.i("time_diff", " :: " + difference);
+            return difference;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
     }
 
     public static int convertDpToPixels(float dp, Context context) {

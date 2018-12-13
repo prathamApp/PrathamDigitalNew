@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -38,11 +39,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     ContentContract.contentView contentView;
     //    ArrayList<Modal_ContentDetail> totalContents;
     ArrayList<Modal_ContentDetail> levelContents;
-    Map<Integer, Modal_FileDownloading> filesDownloading = new HashMap<>();
+    Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
 
     public ContentPresenterImpl(Context context, ContentContract.contentView contentView) {
         this.context = context;
         this.contentView = contentView;
+        EventBus.getDefault().register(this);
     }
 
     public void getContent(Modal_ContentDetail contentDetail) {
@@ -241,10 +243,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
                 Modal_DownloadContent download_content = gson.fromJson(jsonObject.toString(), Modal_DownloadContent.class);
-                download_content.getNodelist().get(download_content.getNodelist().size() - 1).
-                        setResourcepath(pradigiPath + "/Pratham" + download_content.getFoldername()
-                                + "/" + download_content.getNodelist().get(download_content.getNodelist().size() - 1)
-                                .getResourcepath());
+//                download_content.getNodelist().get(download_content.getNodelist().size() - 1).
+//                        setResourcepath(pradigiPath + "/Pratham" + download_content.getFoldername()
+//                                + "/" + download_content.getNodelist().get(download_content.getNodelist().size() - 1)
+//                                .getResourcepath());
                 Modal_ContentDetail contentDetail = download_content.getNodelist().get(download_content.getNodelist().size() - 1);
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
@@ -313,57 +315,134 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 
     @Override
     public void fileDownloadStarted(int downloadId, String filename, Modal_ContentDetail contentDetail) {
-        Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
-        modal_fileDownloading.setDownloadId(downloadId);
-        modal_fileDownloading.setFilename(filename);
-        modal_fileDownloading.setProgress(0);
-        modal_fileDownloading.setContentDetail(contentDetail);
-        filesDownloading.put(downloadId, modal_fileDownloading);
-        contentView.increaseNotification(filesDownloading.size());
-        for (Modal_ContentDetail detail : levelContents) {
-            if (detail.getNodeserverimage() != null) {
-                String f_name = detail.getNodeserverimage()
-                        .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
-                PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
+//        Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+//        modal_fileDownloading.setDownloadId(String.valueOf(downloadId));
+//        modal_fileDownloading.setFilename(filename);
+//        modal_fileDownloading.setProgress(0);
+//        modal_fileDownloading.setContentDetail(contentDetail);
+//        filesDownloading.put(String.valueOf(downloadId), modal_fileDownloading);
+//        contentView.increaseNotification(filesDownloading.size());
+//        for (Modal_ContentDetail detail : levelContents) {
+//            if (detail.getNodeserverimage() != null) {
+//                String f_name = detail.getNodeserverimage()
+//                        .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
+//                PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
+//            }
+//        }
+    }
+
+    @Subscribe
+    public void eventFileDownloadStarted(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
+                Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+                modal_fileDownloading.setDownloadId(message.getDownloadId());
+                modal_fileDownloading.setFilename(message.getFile_name());
+                modal_fileDownloading.setProgress(0);
+                modal_fileDownloading.setContentDetail(message.getContentDetail());
+                filesDownloading.put(message.getDownloadId(), modal_fileDownloading);
+                contentView.increaseNotification(filesDownloading.size());
+                for (Modal_ContentDetail detail : levelContents) {
+                    if (detail.getNodeserverimage() != null) {
+                        String f_name = detail.getNodeserverimage()
+                                .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
+                        PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
+                    }
+                }
+            }
+        }
+    }
+
+    @Subscribe
+    public void eventUpdateFileProgress(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_UPDATE)) {
+                String downloadId = message.getDownloadId();
+                String filename = message.getFile_name();
+                int progress = (int) message.getProgress();
+                Log.d(TAG, "updateFileProgress: " + downloadId + ":::" + filename + ":::" + progress);
+                if (filesDownloading.get(downloadId) != null && filesDownloading.get(downloadId).getProgress() != progress) {
+                    Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+                    modal_fileDownloading.setDownloadId(String.valueOf(downloadId));
+                    modal_fileDownloading.setFilename(filename);
+                    modal_fileDownloading.setProgress(progress);
+                    modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
+                    filesDownloading.put(String.valueOf(downloadId), modal_fileDownloading);
+                    EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+                }
+            }
+        }
+    }
+
+    @Subscribe
+    public void eventOnDownloadCompleted(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
+                String downloadId = message.getDownloadId();
+                Log.d(TAG, "updateFileProgress: " + downloadId);
+                ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+                temp.addAll(levelContents);
+                Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
+                content.setContentType("file");
+                content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                content.setDownloaded(true);
+                temp.add(content);
+                for (Modal_ContentDetail d : temp) {
+                    String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
+                    d.setNodeimage(img_name);
+                    d.setDownloaded(true);
+                    d.setOnSDCard(false);
+                }
+                BaseActivity.modalContentDao.addContentList(temp);
+                filesDownloading.remove(downloadId);
+//        contentView.decreaseNotification(filesDownloading.size(), content, selectedNodeIds);
+                if (filesDownloading.size() == 0) {
+                    EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+                }
+                EventMessage msg = new EventMessage();
+                msg.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
+                msg.setDownlaodContentSize(filesDownloading.size());
+                msg.setContentDetail(content);
+                EventBus.getDefault().post(msg);
             }
         }
     }
 
     @Override
     public void updateFileProgress(int downloadId, String filename, int progress) {
-        Log.d(TAG, "updateFileProgress: " + downloadId + ":::" + filename + ":::" + progress);
-        if (filesDownloading.get(downloadId) != null && filesDownloading.get(downloadId).getProgress() != progress) {
-            Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
-            modal_fileDownloading.setDownloadId(downloadId);
-            modal_fileDownloading.setFilename(filename);
-            modal_fileDownloading.setProgress(progress);
-            modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
-            filesDownloading.put(downloadId, modal_fileDownloading);
-            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
-        }
+//        Log.d(TAG, "updateFileProgress: " + downloadId + ":::" + filename + ":::" + progress);
+//        if (filesDownloading.get(downloadId) != null && filesDownloading.get(downloadId).getProgress() != progress) {
+//            Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+//            modal_fileDownloading.setDownloadId(String.valueOf(downloadId));
+//            modal_fileDownloading.setFilename(filename);
+//            modal_fileDownloading.setProgress(progress);
+//            modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
+//            filesDownloading.put(String.valueOf(downloadId), modal_fileDownloading);
+//            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+//        }
     }
 
     @Override
     public void onDownloadCompleted(final int downloadId) {
-        Log.d(TAG, "updateFileProgress: " + downloadId);
-        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-        temp.addAll(levelContents);
-        Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
-        content.setContentType("file");
-        content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-        content.setDownloaded(true);
-        temp.add(content);
-        BaseActivity.modalContentDao.addContentList(temp);
-        filesDownloading.remove(downloadId);
-//        contentView.decreaseNotification(filesDownloading.size(), content, selectedNodeIds);
-        if (filesDownloading.size() == 0) {
-            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
-        }
-        EventMessage message = new EventMessage();
-        message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
-        message.setDownlaodContentSize(filesDownloading.size());
-        message.setContentDetail(content);
-        EventBus.getDefault().post(message);
+//        Log.d(TAG, "updateFileProgress: " + downloadId);
+//        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+//        temp.addAll(levelContents);
+//        Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
+//        content.setContentType("file");
+//        content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+//        content.setDownloaded(true);
+//        temp.add(content);
+//        BaseActivity.modalContentDao.addContentList(temp);
+//        filesDownloading.remove(downloadId);
+////        contentView.decreaseNotification(filesDownloading.size(), content, selectedNodeIds);
+//        if (filesDownloading.size() == 0) {
+//            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+//        }
+//        EventMessage message = new EventMessage();
+//        message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
+//        message.setDownlaodContentSize(filesDownloading.size());
+//        message.setContentDetail(content);
+//        EventBus.getDefault().post(message);
     }
 
     @Override

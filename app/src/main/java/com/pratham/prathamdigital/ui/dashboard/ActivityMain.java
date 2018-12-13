@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.dashboard;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.card.MaterialCardView;
@@ -10,6 +11,7 @@ import android.support.v4.view.ViewPropertyAnimatorListener;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.BaseActivity;
@@ -20,6 +22,9 @@ import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.scaling_view.ScalingLayout;
 import com.pratham.prathamdigital.custom.scaling_view.ScalingLayoutListener;
 import com.pratham.prathamdigital.custom.scaling_view.State;
+import com.pratham.prathamdigital.custom.spotlight.SpotlightListener;
+import com.pratham.prathamdigital.custom.spotlight.SpotlightSequence;
+import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
@@ -54,6 +59,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     View sliding_strip;
     @BindView(R.id.sheet_tab_holder)
     RelativeLayout sheet_tab_holder;
+    @BindView(R.id.pradigi_icon)
+    ImageView pradigi_icon;
+    @BindView(R.id.sheet_connect)
+    ImageView sheet_connect;
+    @BindView(R.id.sheet_home)
+    ImageView sheet_home;
+    @BindView(R.id.sheet_language)
+    ImageView sheet_language;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +84,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     protected void onResume() {
         super.onResume();
+        showIntro();
     }
 
     @OnClick(R.id.download_badge)
@@ -274,4 +288,41 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         if (top_scaling.getState() == State.EXPANDED)
             top_scaling.collapse();
     }
+
+    private void showIntro() {
+        SpotlightView spotlightView = new SpotlightView.Builder(ActivityMain.this)
+                .introAnimationDuration(400)
+                .enableRevealAnimation(true)
+                .performClick(true)
+                .fadeinTextDuration(400)
+                .headingTvColor(Color.parseColor("#eb273f"))
+                .headingTvSize(32)
+                .headingTvText("Open Menu")
+                .subHeadingTvColor(Color.parseColor("#ffffff"))
+                .subHeadingTvSize(16)
+                .subHeadingTvText("Click here and Open Menu")
+                .maskColor(Color.parseColor("#dc000000"))
+                .target(pradigi_icon)
+                .lineAnimDuration(400)
+                .lineAndArcColor(Color.parseColor("#eb273f"))
+                .dismissOnTouch(false)
+                .dismissOnBackPress(true)
+                .enableDismissAfterShown(true)
+                .setListener(spotlightListener)
+                .usageId("pradigi_icon") //UNIQUE ID
+                .show();
+    }
+
+    SpotlightListener spotlightListener = new SpotlightListener() {
+        @Override
+        public void onUserClicked(String spotlightViewId) {
+            if (top_scaling.getState() == State.EXPANDED)
+                SpotlightSequence.getInstance(ActivityMain.this, null)
+                        .addSpotlight(sheet_home, "DISPLAY CONTENT", "Click here to view contents", "sheet_home")
+                        .addSpotlight(sheet_language, "CHANGE LANGUAGE", "Click here to change Language", "sheet_language")
+                        .addSpotlight(sheet_connect, "CONNECT WIFI", "Click here to connect wifi", "sheet_connect")
+                        .addSpotlight(sheet_connect, "CONNECT WIFI", "Click here to connect wifi", "sheet_connect")
+                        .startSequence();
+        }
+    };
 }

@@ -25,12 +25,17 @@ import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.async.CopyExistingDb;
 import com.pratham.prathamdigital.async.GetLatestVersion;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Modal_Status;
+import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,6 +71,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+    @Override
     public void checkConnectivity() {
         if (PrathamApplication.isTablet) {
             splashview.redirectToAttendance();
@@ -116,6 +122,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     }
 
+    @Override
     public void validateSignIn(Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
         if (result.isSuccess()) {
@@ -155,6 +162,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 });
     }
 
+    @Override
     public void checkStudentList() {
         // todo redirect to age grp tablet
         if (!BaseActivity.studentDao.getAllStudents().isEmpty()) {
@@ -167,7 +175,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         // todo redirect to age grp tablet
     }
 
-    // TODO populateDefaultDB();
+    @Override
     public void populateDefaultDB() {
         Modal_Status statusObj = new Modal_Status();
 
@@ -344,7 +352,38 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = verCode;
             BaseActivity.statusDao.insert(statusObj);
         }
+    }
+
+    @Override
+    public void checkIfContentinSDCard() {
+        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
+        if (sdPath.size() > 0) {
+            File file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER);
+            if (file.exists()) {
+                File db_file = new File(file.getAbsolutePath(), PrathamDatabase.DB_NAME);
+                if (db_file.exists()) {
+                    new CopyExistingDb(file, db_file, SplashPresenterImpl.this).execute();
+                } else
+                    checkStudentList();
+            } else
+                checkStudentList();
+        } else
+            checkStudentList();
+    }
+
+    @Override
+    public void copyingExistingDb() {
 
     }
 
+    @Override
+    public void failedCopyingExistingDb() {
+        checkStudentList();
+    }
+
+    @Override
+    public void successCopyingExistingDb(String absolutePath) {
+        PrathamApplication.getInstance().setExistingSDContentPath(absolutePath);
+        checkStudentList();
+    }
 }

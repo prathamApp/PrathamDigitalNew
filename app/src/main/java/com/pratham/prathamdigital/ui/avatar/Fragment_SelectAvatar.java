@@ -72,6 +72,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.select_avatar, container, false);
         ButterKnife.bind(this, rootView);
+        avatar_circular_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -110,6 +111,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         spinner_class.setAdapter(adapter);
         ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
         spinner_age.setAdapter(adapter2);
+//        spinner_age.setOnItemSelectedListener(spinner _age_listener);
         avatar_rv.setOrientation(DSVOrientation.VERTICAL);
         avatar_rv.addOnItemChangedListener(onItemChangedListener);
         avatar_rv.setAdapter(new AvatarAdapter(context, avatarList));
@@ -122,6 +124,22 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                 .build());
 //        avatar_rv.smoothScrollToPosition(0);
     }
+
+//    AdapterView.OnItemSelectedListener spinner_age_listener = new AdapterView.OnItemSelectedListener() {
+//        @Override
+//        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//            ArrayList<String> classes = new ArrayList<String>(Arrays.asList(getActivity().getResources().getStringArray(R.array.student_class)));
+//            ArrayList<String> tempClass = new ArrayList<>();
+//            for (String cl : classes) {
+//
+//            }
+//        }
+//
+//        @Override
+//        public void onNothingSelected(AdapterView<?> parent) {
+//
+//        }
+//    };
 
     DiscreteScrollView.OnItemChangedListener onItemChangedListener = new DiscreteScrollView.OnItemChangedListener() {
         @Override
@@ -203,8 +221,20 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     }
 
+
     @Override
     public void onUnRevealed() {
-
+//        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+//        if (fragment != null)
+//            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
+
+//    @Subscribe
+//    public void onbackPressed(EventMessage message) {
+//        if (message != null) {
+//            if (message.getMessage().equalsIgnoreCase(TAG)) {
+//                avatar_circular_reveal.unReveal();
+//            }
+//        }
+//    }
 }

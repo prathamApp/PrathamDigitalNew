@@ -18,12 +18,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -85,7 +87,15 @@ public class ContentAdapter extends RecyclerView.Adapter {
                 case FOLDER_TYPE:
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-                    Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                    if (contentDetail.isDownloaded())
+                        if (contentDetail.isOnSDCard())
+                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                        else
+                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                    else
+                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
                     folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
                     folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
                     if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
@@ -102,7 +112,15 @@ public class ContentAdapter extends RecyclerView.Adapter {
                 case FILE_TYPE:
                     //file type
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
-                    Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                    if (contentDetail.isDownloaded())
+                        if (contentDetail.isOnSDCard())
+                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                        else
+                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                    else
+                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
                     if (fileViewHolder.rl_reveal.getVisibility() == View.VISIBLE)
                         unreveal(fileViewHolder.rl_reveal);
                     if (contentDetail.isDownloaded()) {
@@ -154,7 +172,15 @@ public class ContentAdapter extends RecyclerView.Adapter {
                 case FOLDER_TYPE:
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-                    Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                    if (contentDetail.isDownloaded())
+                        if (contentDetail.isOnSDCard())
+                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                        else
+                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
+                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                    else
+                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
                     folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
                     folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
                     if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
@@ -206,15 +232,19 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
     public void reveal(View view) {
         // previously invisible view
-        int centerX = view.getWidth();
-        int centerY = view.getHeight();
-        int startRadius = 0;
-        int endRadius = (int) Math.hypot(view.getWidth(), view.getHeight());
-        Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
-        anim.setInterpolator(new AccelerateDecelerateInterpolator());
-        anim.setDuration(300);
-        view.setVisibility(View.VISIBLE);
-        anim.start();
+        try {
+            int centerX = view.getWidth();
+            int centerY = view.getHeight();
+            int startRadius = 0;
+            int endRadius = (int) Math.hypot(view.getWidth(), view.getHeight());
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+            anim.setDuration(300);
+            view.setVisibility(View.VISIBLE);
+            anim.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void unreveal(View view) {

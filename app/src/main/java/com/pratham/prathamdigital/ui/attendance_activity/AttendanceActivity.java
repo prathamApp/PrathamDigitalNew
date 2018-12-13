@@ -52,7 +52,7 @@ public class AttendanceActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_attendance);
-        if (f instanceof FragmentSelectAgeGroup || getSupportFragmentManager().getBackStackEntryCount() == 1)
+        if (/*f instanceof FragmentSelectAgeGroup || */getSupportFragmentManager().getBackStackEntryCount() == 1) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("PraDigi")
@@ -65,8 +65,18 @@ public class AttendanceActivity extends BaseActivity {
                     })
                     .setNegativeButton("No", null)
                     .show();
-        else
+//        else if (f instanceof FragmentSelectGroup) {
+//            msg.setMessage(FragmentSelectGroup.class.getSimpleName());
+//            EventBus.getDefault().post(msg);
+//        } else if (f instanceof FragmentChildAttendance) {
+//            msg.setMessage(FragmentChildAttendance.class.getSimpleName());
+//            EventBus.getDefault().post(msg);
+//        } else if (f instanceof Fragment_SelectAvatar) {
+//            msg.setMessage(Fragment_SelectAvatar.class.getSimpleName());
+//            EventBus.getDefault().post(msg);
+        } else {
             getSupportFragmentManager().popBackStack();
+        }
     }
 
     @Override

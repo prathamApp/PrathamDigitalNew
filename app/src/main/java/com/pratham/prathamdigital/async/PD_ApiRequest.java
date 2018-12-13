@@ -24,6 +24,7 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
 
 /**
  * Created by HP on 30-12-2016.
@@ -187,12 +188,12 @@ public class PD_ApiRequest {
         return returnThis;
     }
 
-
     public static void downloadImage(String url, String filename) {
         File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
         if (!dir.exists()) dir.mkdirs();
         AndroidNetworking.download(url, dir.getAbsolutePath(), filename)
                 .setPriority(Priority.HIGH)
+                .setExecutor(Executors.newSingleThreadExecutor())
                 .build()
                 .startDownload(new DownloadListener() {
                     @Override

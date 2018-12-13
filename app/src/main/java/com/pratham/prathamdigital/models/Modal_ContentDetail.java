@@ -2,14 +2,15 @@ package com.pratham.prathamdigital.models;
 
 
 import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "TableContent")
-public class Modal_ContentDetail implements Comparable {
+public class Modal_ContentDetail implements Comparable, Parcelable {
     @PrimaryKey
     @NonNull
     @SerializedName("nodeid")
@@ -42,6 +43,43 @@ public class Modal_ContentDetail implements Comparable {
     private String parentid;
     private String contentType;
     private boolean isDownloaded = false;
+    //for offline content sharing
+    private boolean onSDCard = false;
+
+    public Modal_ContentDetail() {
+    }
+
+    protected Modal_ContentDetail(Parcel in) {
+        nodeid = in.readString();
+        nodetype = in.readString();
+        nodetitle = in.readString();
+        nodekeywords = in.readString();
+        nodeeage = in.readString();
+        nodedesc = in.readString();
+        nodeimage = in.readString();
+        nodeserverimage = in.readString();
+        resourceid = in.readString();
+        resourcetype = in.readString();
+        resourcepath = in.readString();
+        level = in.readInt();
+        content_language = in.readString();
+        parentid = in.readString();
+        contentType = in.readString();
+        isDownloaded = in.readByte() != 0;
+        onSDCard = in.readByte() != 0;
+    }
+
+    public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
+        @Override
+        public Modal_ContentDetail createFromParcel(Parcel in) {
+            return new Modal_ContentDetail(in);
+        }
+
+        @Override
+        public Modal_ContentDetail[] newArray(int size) {
+            return new Modal_ContentDetail[size];
+        }
+    };
 
     @Override
     public String toString() {
@@ -191,6 +229,14 @@ public class Modal_ContentDetail implements Comparable {
         this.contentType = contentType;
     }
 
+    public boolean isOnSDCard() {
+        return onSDCard;
+    }
+
+    public void setOnSDCard(boolean onSDCard) {
+        this.onSDCard = onSDCard;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -201,5 +247,31 @@ public class Modal_ContentDetail implements Comparable {
         } else {
             return 0;
         }
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nodeid);
+        dest.writeString(nodetype);
+        dest.writeString(nodetitle);
+        dest.writeString(nodekeywords);
+        dest.writeString(nodeeage);
+        dest.writeString(nodedesc);
+        dest.writeString(nodeimage);
+        dest.writeString(nodeserverimage);
+        dest.writeString(resourceid);
+        dest.writeString(resourcetype);
+        dest.writeString(resourcepath);
+        dest.writeInt(level);
+        dest.writeString(content_language);
+        dest.writeString(parentid);
+        dest.writeString(contentType);
+        dest.writeByte((byte) (isDownloaded ? 1 : 0));
+        dest.writeByte((byte) (onSDCard ? 1 : 0));
     }
 }

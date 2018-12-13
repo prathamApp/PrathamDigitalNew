@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 
 import com.pratham.prathamdigital.socket.entity.MusicEntity;
 import com.pratham.prathamdigital.socket.entity.PictureEntity;
@@ -128,16 +130,27 @@ public class FileUtils {
         return true;
     }
 
-    public static String getSDPath() {
-        File sdDir = null;
-        boolean sdCardExist = Environment.getExternalStorageState().equals(
-                android.os.Environment.MEDIA_MOUNTED); // 判断sd卡是否存在
-        if (sdCardExist) {
-            sdDir = Environment.getExternalStorageDirectory();// 获取跟目录
-            return sdDir.getAbsolutePath();
-        } else {
-            return Environment.getDataDirectory().getAbsolutePath();
+    public static ArrayList<String> getExtSdCardPaths(Context con) {
+        ArrayList<String> paths = new ArrayList<String>();
+        File[] files = ContextCompat.getExternalFilesDirs(con, "external");
+        File firstFile = files[0];
+        for (File file : files) {
+            if (file != null && !file.equals(firstFile)) {
+                int index = file.getAbsolutePath().lastIndexOf("/Android/data");
+                if (index < 0) {
+                    Log.w("", "Unexpected external file dir: " + file.getAbsolutePath());
+                } else {
+                    String path = file.getAbsolutePath().substring(0, index);
+                    try {
+                        path = new File(path).getCanonicalPath();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    paths.add(path);
+                }
+            }
         }
+        return paths;
     }
 
     public static List<PictureFolderEntity> getPictureFolderList(Context context) {

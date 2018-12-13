@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_age_group_bkgd">
+    android:background="@drawable/age_group_bkgd">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/scan_qr"
@@ -36,16 +36,15 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:paddingRight="@dimen/_80sdp"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_img_3_to_6" />
+            android:paddingTop="@dimen/_10sdp"
+            app:srcCompat="@drawable/img_3_to_6" />
 
         <ImageView
             android:id="@+id/iv_age_8_to_14"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/ic_img_8_to_14" />
+            android:paddingTop="@dimen/_10sdp"
+            app:srcCompat="@drawable/img_8_to_14" />
     </LinearLayout>
 </RelativeLayout>

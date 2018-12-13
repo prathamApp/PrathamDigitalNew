@@ -37,8 +37,10 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 
-public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView, CircularRevelLayout.CallBacks {
+public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView,
+        CircularRevelLayout.CallBacks {
 
+    private static final String TAG = FragmentChildAttendance.class.getSimpleName();
     @BindView(R.id.chid_attendance_reveal)
     CircularRevelLayout chid_attendance_reveal;
     @BindView(R.id.rv_child)
@@ -65,6 +67,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_child_attendance, container, false);
         ButterKnife.bind(this, rootView);
+        chid_attendance_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -218,6 +221,17 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     @Override
     public void onUnRevealed() {
-
+//        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+//        if (fragment != null)
+//            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
+
+//    @Subscribe
+//    public void onbackPressed(EventMessage message) {
+//        if (message != null) {
+//            if (message.getMessage().equalsIgnoreCase(TAG)) {
+//                chid_attendance_reveal.unReveal();
+//            }
+//        }
+//    }
 }

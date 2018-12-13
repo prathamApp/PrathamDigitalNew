@@ -1,16 +1,20 @@
 package com.pratham.prathamdigital.models;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 public class Modal_PushData {
-    Modal_PushSession pushSession;
+    @SerializedName("session")
+    List<Modal_PushSessionData> pushSession;
+    @SerializedName("students")
     List<Modal_Student> students;
 
-    public Modal_PushSession getPushSession() {
+    public List<Modal_PushSessionData> getPushSession() {
         return pushSession;
     }
 
-    public void setPushSession(Modal_PushSession pushSession) {
+    public void setPushSession(List<Modal_PushSessionData> pushSession) {
         this.pushSession = pushSession;
     }
 
@@ -22,46 +26,36 @@ public class Modal_PushData {
         this.students = students;
     }
 
-    public class Modal_PushSession {
-        List<Modal_PushSessionData> pushSessionData;
+    public class Modal_PushSessionData {
+        @SerializedName("sessionid")
+        String sessionId;
+        @SerializedName("scores")
+        List<Modal_Score> scores;
+        @SerializedName("attendances")
+        List<Attendance> attendances;
 
-        public List<Modal_PushSessionData> getPushSessionData() {
-            return pushSessionData;
+        public String getSessionId() {
+            return sessionId;
         }
 
-        public void setPushSessionData(List<Modal_PushSessionData> pushSessionData) {
-            this.pushSessionData = pushSessionData;
+        public void setSessionId(String sessionId) {
+            this.sessionId = sessionId;
         }
 
-        public class Modal_PushSessionData {
-            String sessionId;
-            List<Modal_Score> scores;
-            List<Attendance> attendances;
+        public List<Modal_Score> getScores() {
+            return scores;
+        }
 
-            public String getSessionId() {
-                return sessionId;
-            }
+        public void setScores(List<Modal_Score> scores) {
+            this.scores = scores;
+        }
 
-            public void setSessionId(String sessionId) {
-                this.sessionId = sessionId;
-            }
+        public List<Attendance> getAttendances() {
+            return attendances;
+        }
 
-            public List<Modal_Score> getScores() {
-                return scores;
-            }
-
-            public void setScores(List<Modal_Score> scores) {
-                this.scores = scores;
-            }
-
-            public List<Attendance> getAttendances() {
-                return attendances;
-            }
-
-            public void setAttendances(List<Attendance> attendances) {
-                this.attendances = attendances;
-            }
+        public void setAttendances(List<Attendance> attendances) {
+            this.attendances = attendances;
         }
     }
-
 }

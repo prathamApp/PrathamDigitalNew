@@ -3,14 +3,16 @@ package com.pratham.prathamdigital.ui.video_player;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.widget.VideoView;
 
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.services.BackgroundSoundService;
+import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import butterknife.BindView;
@@ -25,8 +27,9 @@ public class Activity_VPlayer extends BaseActivity {
     PlayerControlView player_control_view;
 
     private String myVideo;
-    private String StartTime;
+    private String startTime = "no_resource";
     private String resId;
+    private long videoDuration = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +37,6 @@ public class Activity_VPlayer extends BaseActivity {
         setContentView(R.layout.activity_generic_vplayer);
         ButterKnife.bind(this);
         myVideo = getIntent().getStringExtra("videoPath");
-        StartTime = PD_Utility.getCurrentDateTime();
         resId = getIntent().getStringExtra("resId");
         if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
             stopService(new Intent(this, BackgroundSoundService.class));
@@ -55,7 +57,9 @@ public class Activity_VPlayer extends BaseActivity {
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
+                startTime = PD_Utility.getCurrentDateTime();
                 player_control_view.show();
+                videoDuration = videoView.getDuration();
             }
         });
     }
@@ -83,18 +87,23 @@ public class Activity_VPlayer extends BaseActivity {
     }
 
     public void addScoreToDB() {
+        String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();
-        modalScore.setSessionID("");
-        modalScore.setStudentID("");
-        modalScore.setResourceID("");
+        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        if (PrathamApplication.isTablet)
+            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        else
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+        modalScore.setDeviceID(PD_Utility.getDeviceID());
+        modalScore.setResourceID(resId);
         modalScore.setQuestionId(0);
-        modalScore.setScoredMarks(0);
-        modalScore.setTotalMarks(0);
-        // Unique Device ID
-        String deviceId = Settings.Secure.getString(getApplicationContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-        modalScore.setDeviceID(deviceId.equals(null) ? "0000" : deviceId);
-        modalScore.setStartDateTime(PD_Utility.getCurrentDateTime());
-        modalScore.setEndDateTime(PD_Utility.getCurrentDateTime());
+        modalScore.setScoredMarks((int) PD_Utility.getTimeDifference(startTime, endTime));
+        modalScore.setTotalMarks((int) videoDuration);
+        modalScore.setStartDateTime(startTime);
+        modalScore.setEndDateTime(endTime);
+        modalScore.setLevel(0);
+        modalScore.setLabel("_");
+        modalScore.setSentFlag(0);
         BaseActivity.scoreDao.insert(modalScore);
     }
 }

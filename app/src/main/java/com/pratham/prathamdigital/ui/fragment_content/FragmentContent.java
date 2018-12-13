@@ -445,6 +445,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
                 txt_wifi_status.setText(message.getConnection_name());
                 iv_wifi_status.setImageDrawable(message.getConnection_resource());
+                contentPresenter.checkConnectionForRaspberry();
             }
         }
     }

@@ -10,7 +10,6 @@ import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Log;
-import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
@@ -19,7 +18,6 @@ import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -100,13 +98,17 @@ public class PrathamSmartSync extends AutoSync {
                     rootJson.put(PD_Constant.STUDENTS, studentArray);
                 rootJson.put(PD_Constant.SESSION, sessionArray);
                 rootJson.put(PD_Constant.METADATA, metadataJson);
-                if (PrathamApplication.isTablet && PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+                if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
                     new PD_ApiRequest(PrathamApplication.getInstance(), null)
                             .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
                                     rootJson.toString(), programID, PD_Constant.USAGEDATA);
                 else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                    new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                            .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_INTERNET_URL.toString(), rootJson);
+                    if (PrathamApplication.isTablet)
+                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                                .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
+                    else
+                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
+                                .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
                 }
             } else {
                 if (isPressed) {
@@ -117,26 +119,6 @@ public class PrathamSmartSync extends AutoSync {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    @Subscribe
-    public void updateFlagsWhenPushed(EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
-                Gson gson = new Gson();
-                Modal_PushData pushedData = gson.fromJson(message.getPushData(), Modal_PushData.class);
-                for (Modal_PushData.Modal_PushSession.Modal_PushSessionData pushed :
-                        pushedData.getPushSession().getPushSessionData()) {
-                    BaseActivity.sessionDao.updateFlag(pushed.getSessionId());
-                    for (Modal_Score score : pushed.getScores())
-                        BaseActivity.scoreDao.updateFlag(pushed.getSessionId());
-                    for (Attendance att : pushed.getAttendances())
-                        BaseActivity.attendanceDao.updateSentFlag(pushed.getSessionId());
-                }
-                for (Modal_Student student : pushedData.getStudents())
-                    BaseActivity.studentDao.updateSentStudentFlags(student.getStudentId());
-            }
         }
     }
 }

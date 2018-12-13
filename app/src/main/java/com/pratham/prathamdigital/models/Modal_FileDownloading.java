@@ -3,7 +3,7 @@ package com.pratham.prathamdigital.models;
 import android.support.annotation.NonNull;
 
 public class Modal_FileDownloading implements Comparable {
-    int downloadId;
+    String downloadId;
     String filename;
     int progress;
     Modal_ContentDetail contentDetail;
@@ -26,11 +26,11 @@ public class Modal_FileDownloading implements Comparable {
         this.contentDetail = contentDetail;
     }
 
-    public int getDownloadId() {
+    public String getDownloadId() {
         return downloadId;
     }
 
-    public void setDownloadId(int downloadId) {
+    public void setDownloadId(String downloadId) {
         this.downloadId = downloadId;
     }
 

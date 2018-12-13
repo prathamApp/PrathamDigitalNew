@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.async;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.downloader.Error;
@@ -14,6 +15,7 @@ import com.downloader.Progress;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.interfaces.ProgressUpdate;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.services.DownloadService;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -58,7 +60,14 @@ public class ZipDownloader {
             }
         }
         Log.d("internal_file", mydir.getAbsolutePath());
-        downloadFile(url, mydir.getAbsolutePath(), filename);
+//        downloadFile(url, mydir.getAbsolutePath(), filename);
+        Intent intent = new Intent(context, DownloadService.class);
+        intent.putExtra(PD_Constant.DOWNLOAD_URL, url);
+        intent.putExtra(PD_Constant.DIR_PATH, mydir.getAbsolutePath());
+        intent.putExtra(PD_Constant.FILE_NAME, filename);
+        intent.putExtra(PD_Constant.FOLDER_NAME, foldername);
+        intent.putExtra(PD_Constant.DOWNLOAD_CONTENT, contentDetail);
+        context.startService(intent);
     }
 
     public void downloadFile(String url, final String dirpath, final String f_name) {
@@ -103,7 +112,7 @@ public class ZipDownloader {
                     @Override
                     public void onDownloadComplete() {
                         if (foldername.equalsIgnoreCase("Game")) {
-                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
+//                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
                         } else {
                             contentPresenter.onDownloadCompleted(downloadId);
                         }
