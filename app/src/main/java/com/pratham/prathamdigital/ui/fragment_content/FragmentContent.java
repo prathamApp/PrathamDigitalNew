@@ -416,7 +416,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     private void openGame(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_WebView.class);
         String f_path;
-        String folder_path;
 //        if (!contentDetail.getResourcepath().contains("http://")) {
 ////            f_path = contentDetail.getResourcepath();
 //            folder_path = contentDetail.getResourcepath().replace("index.html", "");
@@ -426,15 +425,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
 //                    new StringTokenizer(contentDetail.getNodekeywords() + "/index.html", "/").nextToken() + "/";
 //        }
         if (contentDetail.isOnSDCard()) {
-            folder_path = PrathamApplication.contentSDPath + "/PrathamGame/";
-            f_path = folder_path + contentDetail.getResourcepath();
+            f_path = PrathamApplication.contentSDPath + "/PrathamGame/" + contentDetail.getResourcepath();
         } else {
-            folder_path = pradigiPath + "/PrathamGame/";
-            f_path = folder_path + contentDetail.getResourcepath();
+            f_path = pradigiPath + "/PrathamGame/" + contentDetail.getResourcepath();
         }
 
         intent.putExtra("index_path", f_path);
-        intent.putExtra("path", folder_path);
         intent.putExtra("resId", contentDetail.getResourceid());
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.nothing);
         startActivity(intent);

@@ -141,9 +141,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                     PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-                String url = contentDetail.getResourcepath();
-                String fileName = contentDetail.getResourcepath().substring(
-                        contentDetail.getResourcepath().lastIndexOf('/') + 1);
+                String url = contentDetail.getNodekeywords();
+                String fileName = contentDetail.getNodekeywords().substring(
+                        contentDetail.getNodekeywords().lastIndexOf('/') + 1);
                 String foldername = contentDetail.getResourcetype();
                 new ZipDownloader(context, ContentPresenterImpl.this, null
                         , url, foldername, fileName, pradigiPath, contentDetail);

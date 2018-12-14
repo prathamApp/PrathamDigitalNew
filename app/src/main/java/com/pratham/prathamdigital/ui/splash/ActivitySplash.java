@@ -53,6 +53,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         mContext = this;
         splashPresenter = new SplashPresenterImpl(this, this);
         startLightsAnimation();
+        splashPresenter.populateDefaultDB();
     }
 
     @Override
@@ -65,7 +66,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //            }
 //        }
         // Populate initial values
-        splashPresenter.populateDefaultDB();
     }
 
     private void startLightsAnimation() {
@@ -85,7 +85,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                splashPresenter.checkConnectivity();
+                splashPresenter.checkIfContentinSDCard();
+//                splashPresenter.checkConnectivity();
             }
         }, 2000);
     }
@@ -116,7 +117,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //            startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
 //        } else {
 //        splashPresenter.checkStudentList();
-        splashPresenter.checkIfContentinSDCard();
 //        }
     }
 

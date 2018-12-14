@@ -71,21 +71,6 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
-    @Override
-    public void checkConnectivity() {
-        if (PrathamApplication.isTablet) {
-            splashview.redirectToAttendance();
-        } else {
-            if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                getVersion();
-            } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-                getVersion();
-            } else {
-                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
-            }
-        }
-    }
-
     public GoogleApiClient configureSignIn() {
         // Configure sign-in to request the user’s basic profile like name and email
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -355,6 +340,22 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     }
 
     @Override
+    public void checkConnectivity() {
+        if (PrathamApplication.isTablet) {
+            splashview.redirectToAttendance();
+        } else {
+            if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+                getVersion();
+            } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                getVersion();
+            } else {
+//                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
+                checkStudentList();
+            }
+        }
+    }
+
+    @Override
     public void checkIfContentinSDCard() {
         ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
         if (sdPath.size() > 0) {
@@ -364,11 +365,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 if (db_file.exists()) {
                     new CopyExistingDb(file, db_file, SplashPresenterImpl.this).execute();
                 } else
-                    checkStudentList();
+                    checkConnectivity();
             } else
-                checkStudentList();
+                checkConnectivity();
         } else
-            checkStudentList();
+            checkConnectivity();
     }
 
     @Override

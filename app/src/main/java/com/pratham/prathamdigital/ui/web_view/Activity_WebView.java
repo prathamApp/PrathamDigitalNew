@@ -13,6 +13,8 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import java.io.File;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -33,7 +35,7 @@ public class Activity_WebView extends BaseActivity {
         startTime = PD_Utility.getCurrentDateTime();
 
         String index_path = getIntent().getStringExtra("index_path");
-        String path = getIntent().getStringExtra("path");
+        String path = new File(index_path).getParent() + "/";
         String resId = getIntent().getStringExtra("resId");
         createWebView(index_path, path, resId);
     }
