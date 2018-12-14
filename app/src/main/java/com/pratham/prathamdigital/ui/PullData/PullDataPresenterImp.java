@@ -272,34 +272,36 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void downloadGroups(String url) {
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        groupCount++;
+                        String json = response.toString();
+                        Gson gson = new Gson();
+                        Type listType = new TypeToken<List<RaspGroup>>() {
+                        }.getType();
+                        List<RaspGroup> groupListTemp = gson.fromJson(json, listType);
+                        for (RaspGroup raspGroup : groupListTemp) {
+                            for (Modal_Groups modal_groups : raspGroup.getData()) {
+                                groupList.add(modal_groups);
+                            }
 
-        AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
-            @Override
-            public void onResponse(JSONArray response) {
-                groupCount++;
-                String json = response.toString();
-                Gson gson = new Gson();
-                Type listType = new TypeToken<List<RaspGroup>>() {
-                }.getType();
-                List<RaspGroup> groupListTemp = gson.fromJson(json, listType);
-                for (RaspGroup raspGroup : groupListTemp) {
-                    for (Modal_Groups modal_groups : raspGroup.getData()) {
-                        groupList.add(modal_groups);
+                        }
+                        loadCRL();
                     }
 
-                }
-                loadCRL();
-            }
-
-            @Override
-            public void onError(ANError error) {
-                studentList.clear();
-                pullDataView.closeProgressDialog();
-                pullDataView.showErrorToast();
-                // dismissDialog();
-            }
-        });
+                    @Override
+                    public void onError(ANError error) {
+                        studentList.clear();
+                        pullDataView.closeProgressDialog();
+                        pullDataView.showErrorToast();
+                        // dismissDialog();
+                    }
+                });
     }
 
     private void loadCRL() {
@@ -339,8 +341,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void downloadCRL(String url) {
-        AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build()
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -397,15 +401,21 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     }
 
     private void saveDownloadedVillages() {
-        List<Modal_Village> allStudent = vilageList.get(0).getData();
-        for (Modal_Village village : allStudent) {
-            for (String id : villageIDList) {
-                if (id.equals(String.valueOf(village.getVillageId()))) {
-                    BaseActivity.villageDao.insertVillage(village);
-                    break;
-                }
+//        List<Modal_Village> allStudent = vilageList.get(0).getData();
+        for (RaspVillage vill : vilageList) {
+            for (Modal_Village v : vill.getData()) {
+                if (villageIDList.contains(String.valueOf(v.getVillageId())))
+                    BaseActivity.villageDao.insertVillage(v);
             }
         }
+//        for (Modal_Village village : allStudent) {
+//            for (String id : villageIDList) {
+//                if (id.equals(String.valueOf(village.getVillageId()))) {
+//                    BaseActivity.villageDao.insertVillage(village);
+//                    break;
+//                }
+//            }
+//        }
     }
 
     @Override
