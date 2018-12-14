@@ -113,20 +113,30 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     public void shoConfermationDialog(int crlListCnt, int studentListcnt, int groupListCnt, int villageListCnt) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Material_Light_Dialog);
         dialogBuilder.setCancelable(false);
-        dialogBuilder.setTitle("Data Preview");
-        dialogBuilder.setMessage("CRLList : " + crlListCnt + "\nstudentList : " + studentListcnt + "\ngroupsList : " + groupListCnt + "\nvillageList : " + villageListCnt);
-        dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                pullDataPresenter.saveData();
+        if (studentListcnt > 0) {
+            dialogBuilder.setTitle("Data Preview");
+            dialogBuilder.setMessage("CRLList : " + crlListCnt + "\nstudentList : " + studentListcnt + "\ngroupsList : " + groupListCnt + "\nvillageList : " + villageListCnt);
+            dialogBuilder.setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    pullDataPresenter.saveData();
 
-            }
-        });
-        dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                pullDataPresenter.clearLists();
-            }
-        });
-        dialogBuilder.show();
+                }
+            });
+            dialogBuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    pullDataPresenter.clearLists();
+                }
+            });
+            dialogBuilder.show();
+        } else {
+            dialogBuilder.setTitle("   No students to save..         ");
+            dialogBuilder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int whichButton) {
+                    pullDataPresenter.clearLists();
+                }
+            });
+            dialogBuilder.show();
+        }
     }
 
     @Override
