@@ -41,11 +41,9 @@ import com.pratham.prathamdigital.util.PermissionUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.StringTokenizer;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -155,7 +153,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Subscribe
     public void decrease(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
                 if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
                     contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
                 mainView.hideNotificationBadge(message.getDownlaodContentSize());
@@ -379,13 +377,16 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openPdf(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_PdfViewer.class);
-        File directory = new File(pradigiPath + "/PrathamPdf");
         String f_path;
-        if (!contentDetail.getResourcepath().contains("http://")) {
-            f_path = contentDetail.getResourcepath();
-        } else {
-            f_path = "file:///" + directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + ".pdf";
-        }
+//        if (!contentDetail.getResourcepath().contains("http://")) {
+//            f_path = contentDetail.getResourcepath();
+//        } else {
+//            f_path = "file:///" + directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + ".pdf";
+//        }
+        if (contentDetail.isOnSDCard())
+            f_path = PrathamApplication.contentSDPath + "/PrathamPdf/" + contentDetail.getResourcepath();
+        else
+            f_path = pradigiPath + "/PrathamPdf/" + contentDetail.getResourcepath();
         intent.putExtra("pdfPath", f_path);
         intent.putExtra("pdfTitle", contentDetail.getNodetitle());
         intent.putExtra("resId", contentDetail.getResourceid());
@@ -395,13 +396,16 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openVideo(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_VPlayer.class);
-        File directory = new File(pradigiPath + "/PrathamVideo");
         String f_path;
-        if (!contentDetail.getResourcepath().contains("http://")) {
-            f_path = contentDetail.getResourcepath();
-        } else {
-            f_path = "file:///" + directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + ".mp4";
-        }
+//        if (!contentDetail.getResourcepath().contains("http://")) {
+//            f_path = contentDetail.getResourcepath();
+//        } else {
+//            f_path = "file:///" + directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + ".mp4";
+//        }
+        if (contentDetail.isOnSDCard())
+            f_path = PrathamApplication.contentSDPath + "/PrathamVideo/" + contentDetail.getResourcepath();
+        else
+            f_path = pradigiPath + "/PrathamVideo/" + contentDetail.getResourcepath();
         intent.putExtra("videoPath", f_path);
         intent.putExtra("videoTitle", contentDetail.getNodetitle());
         intent.putExtra("resId", contentDetail.getResourceid());
@@ -411,17 +415,24 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private void openGame(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_WebView.class);
-        File directory = new File(pradigiPath + "/PrathamGame");
         String f_path;
         String folder_path;
-        if (!contentDetail.getResourcepath().contains("http://")) {
-            f_path = contentDetail.getResourcepath();
-            folder_path = contentDetail.getResourcepath().replace("index.html", "");
+//        if (!contentDetail.getResourcepath().contains("http://")) {
+////            f_path = contentDetail.getResourcepath();
+//            folder_path = contentDetail.getResourcepath().replace("index.html", "");
+//        } else {
+////            f_path = directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + "/index.html";
+//            folder_path = directory.getAbsolutePath() + "/" +
+//                    new StringTokenizer(contentDetail.getNodekeywords() + "/index.html", "/").nextToken() + "/";
+//        }
+        if (contentDetail.isOnSDCard()) {
+            folder_path = PrathamApplication.contentSDPath + "/PrathamGame/";
+            f_path = folder_path + contentDetail.getResourcepath();
         } else {
-            f_path = directory.getAbsolutePath() + "/" + contentDetail.getNodekeywords() + "/index.html";
-            folder_path = directory.getAbsolutePath() + "/" +
-                    new StringTokenizer(contentDetail.getNodekeywords() + "/index.html", "/").nextToken() + "/";
+            folder_path = pradigiPath + "/PrathamGame/";
+            f_path = folder_path + contentDetail.getResourcepath();
         }
+
         intent.putExtra("index_path", f_path);
         intent.putExtra("path", folder_path);
         intent.putExtra("resId", contentDetail.getResourceid());

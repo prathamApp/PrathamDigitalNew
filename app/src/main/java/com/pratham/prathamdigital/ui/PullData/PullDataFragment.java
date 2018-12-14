@@ -80,7 +80,6 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
                 disableSaveButton();
                 if (pos <= 0) {
                     clearBlockSpinner();
-
                 } else {
                     int selectedRadioButtonId = radioGroupPrograms.getCheckedRadioButtonId();
                     if (selectedRadioButtonId == -1) {

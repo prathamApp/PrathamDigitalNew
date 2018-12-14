@@ -293,14 +293,20 @@ public class Modal_Rasp_Content {
                     modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
                 } else {
                     if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
-                        modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
-                        modal_contentDetail.setNodekeywords(filename);
-                    } else {
-                        modal_contentDetail.setResourcepath(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
+                        modal_contentDetail.setResourcepath(filename + "/index.html");
+                    } else if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Video")) {
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
                         filename = filesItem.getStorageUrl().toString()
                                 .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
                         filename = filename.substring(0, filename.lastIndexOf("."));
-                        modal_contentDetail.setNodekeywords(filename);
+                        modal_contentDetail.setResourcepath(filename + ".mp4");
+                    } else if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Pdf")) {
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
+                        filename = filesItem.getStorageUrl().toString()
+                                .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
+                        filename = filename.substring(0, filename.lastIndexOf("."));
+                        modal_contentDetail.setResourcepath(filename + ".pdf");
                     }
                 }
             }

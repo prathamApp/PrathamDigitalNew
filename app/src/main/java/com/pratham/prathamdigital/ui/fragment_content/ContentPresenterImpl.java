@@ -388,8 +388,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 content.setDownloaded(true);
                 temp.add(content);
                 for (Modal_ContentDetail d : temp) {
-                    String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
-                    d.setNodeimage(img_name);
+                    if (d.getNodeimage() != null) {
+                        String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
+                        d.setNodeimage(img_name);
+                    }
                     d.setDownloaded(true);
                     d.setOnSDCard(false);
                 }
@@ -400,7 +402,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                     EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
                 }
                 EventMessage msg = new EventMessage();
-                msg.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
+                msg.setMessage(PD_Constant.FILE_DOWNLOAD_COMPLETE);
                 msg.setDownlaodContentSize(filesDownloading.size());
                 msg.setContentDetail(content);
                 EventBus.getDefault().post(msg);

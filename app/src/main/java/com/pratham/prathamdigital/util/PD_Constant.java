@@ -68,6 +68,7 @@ public class PD_Constant {
     public static final String DOWNLOAD_UPDATE = "download_update";
     public static final String FOLDER_NAME = "folder_name";
     public static final String PRADIGI_FOLDER = "PRADIGI";
+    public static final String FILE_DOWNLOAD_COMPLETE = "file_download_complete";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

@@ -105,6 +105,7 @@ public class PD_ApiRequest {
                 .addBodyParameter("table_name", table_name)
                 .addBodyParameter("facility", FastSave.getInstance().getString(PD_Constant.FACILITY_ID, ""))
                 .addBodyParameter("data", data)
+                .setExecutor(Executors.newSingleThreadExecutor())
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsString(new StringRequestListener() {

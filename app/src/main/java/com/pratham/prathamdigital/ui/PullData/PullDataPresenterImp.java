@@ -370,7 +370,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void saveData() {
-
         BaseActivity.crLdao.insertAllCRL(crlList);
         BaseActivity.studentDao.insertAllStudents(studentList);
         BaseActivity.groupDao.insertAllGroups(groupList);

@@ -69,7 +69,7 @@ public class DownloadService extends Service {
             this.f_name = f_name;
             this.folder_name = folder_name;
             this.content = content;
-            this.downloadID = content.getResourceid();
+            this.downloadID = content.getNodeid();
         }
 
         @Override

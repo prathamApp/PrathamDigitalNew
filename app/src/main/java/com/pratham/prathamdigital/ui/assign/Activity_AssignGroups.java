@@ -205,7 +205,7 @@ public class Activity_AssignGroups extends BaseActivity {
 
 //        Toast.makeText(this, ""+vilID, Toast.LENGTH_SHORT).show();
 
-        if (VillagesSpinnerValue > 0 || programID.equals("2")) {
+//        if (VillagesSpinnerValue > 0 || programID.equals("2")) {
 
             // Showing Groups from Database
             checkBoxIds = null;
@@ -255,10 +255,10 @@ public class Activity_AssignGroups extends BaseActivity {
             LinearLayoutGroups.startAnimation(animation1);
 
             allocateGroups.setVisibility(View.VISIBLE);
-        } else {
-            assignGroup1.removeAllViews();
-            assignGroup2.removeAllViews();
-        }
+//        } else {
+//            assignGroup1.removeAllViews();
+//            assignGroup2.removeAllViews();
+//        }
 
     }
 
