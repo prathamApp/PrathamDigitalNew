@@ -90,10 +90,14 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     if (contentDetail.isDownloaded())
                         if (contentDetail.isOnSDCard())
                             Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(folderViewHolder.folder_content_image);
                         else
                             Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(folderViewHolder.folder_content_image);
                     else
                         Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
                     folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
@@ -115,10 +119,14 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     if (contentDetail.isDownloaded())
                         if (contentDetail.isOnSDCard())
                             Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(fileViewHolder.file_content_image);
                         else
                             Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(fileViewHolder.file_content_image);
                     else
                         Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
                     if (fileViewHolder.rl_reveal.getVisibility() == View.VISIBLE)
@@ -175,10 +183,14 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     if (contentDetail.isDownloaded())
                         if (contentDetail.isOnSDCard())
                             Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(folderViewHolder.folder_content_image);
                         else
                             Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
+                                    .resize(130, 130)
+                                    .placeholder(R.drawable.ic_app_logo_)
+                                    .into(folderViewHolder.folder_content_image);
                     else
                         Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
                     folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());

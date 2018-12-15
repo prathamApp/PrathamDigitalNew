@@ -94,7 +94,7 @@ public class PrathamApplication extends Application {
 
     public void setExistingSDContentPath(String path) {
         contentExistOnSD = true;
-        contentSDPath = path + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
+        contentSDPath = path /*+ "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)*/;
     }
 }
 

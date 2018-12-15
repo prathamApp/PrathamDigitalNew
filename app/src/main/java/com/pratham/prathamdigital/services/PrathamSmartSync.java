@@ -94,6 +94,7 @@ public class PrathamSmartSync extends AutoSync {
                     if (status.getStatusKey().equalsIgnoreCase("programId"))
                         programID = status.getValue();
                 }
+                metadataJson.put(PD_Constant.SCORE_COUNT, (metadata.size() > 0) ? metadata.size() : 0);
                 if (!PrathamApplication.isTablet)
                     rootJson.put(PD_Constant.STUDENTS, studentArray);
                 rootJson.put(PD_Constant.SESSION, sessionArray);

@@ -27,11 +27,5 @@ public interface SplashContract {
         void validateSignIn(Intent data);
 
         void checkVersion(String latestVersion);
-
-        void copyingExistingDb();
-
-        void failedCopyingExistingDb();
-
-        void successCopyingExistingDb(String absolutePath);
     }
 }

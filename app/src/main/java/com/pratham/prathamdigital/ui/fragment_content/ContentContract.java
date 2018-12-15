@@ -16,7 +16,7 @@ public interface ContentContract {
 
         void hideViews();
 
-        void showViews();
+        void exitApp();
 
         void increaseNotification(int number);
 

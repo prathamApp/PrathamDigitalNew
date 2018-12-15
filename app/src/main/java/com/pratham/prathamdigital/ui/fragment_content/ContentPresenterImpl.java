@@ -111,7 +111,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     private void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
-        if (parentId == null) {
+        if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
                     .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
         } else {
@@ -122,7 +122,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
-        if (parentId == null) {
+        if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             new PD_ApiRequest(context, ContentPresenterImpl.this)
                     .getContentFromInternet(PD_Constant.INTERNET_HEADER,
                             PD_Constant.URL.GET_TOP_LEVEL_NODE
@@ -260,26 +260,28 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 
     private ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
             , final ArrayList<Modal_ContentDetail> onlineContents) {
-        ArrayList<Modal_ContentDetail> temp = null;
         if (!totalContents.isEmpty()) {
-            temp = new ArrayList<>();
-            for (Modal_ContentDetail online : onlineContents) {
+            for (Modal_ContentDetail total : totalContents) {
                 boolean found = false;
-                for (Modal_ContentDetail total : totalContents) {
-                    if (online.getNodeid().equalsIgnoreCase(total.getNodeid())) {
-                        found = true;
-                        temp.add(total);                    //content is downloaded}
+                for (int i = 0; i < onlineContents.size(); i++) {
+                    boolean replaced = false;
+                    if (onlineContents.get(i).getNodeid().equalsIgnoreCase(total.getNodeid())) {
+                        onlineContents.set(i, total);                    //content is downloaded
+                        replaced = true;
+                    }
+                    if (replaced) {
+                        found = true;                              //content not found in list, just add it
                         break;
                     }
                 }
-                if (found) continue;
-                else temp.add(online);                   //content is not downloaded
+                if (!found)
+                    onlineContents.add(total);
             }
-            if (!filesDownloading.isEmpty()) {
-                ArrayList<Modal_FileDownloading> mfd = new ArrayList<Modal_FileDownloading>(filesDownloading.values());
-                temp = removeIfCurrentlyDownloading(temp, mfd);
-            }
-            return temp;
+//            if (!filesDownloading.isEmpty()) {
+//                ArrayList<Modal_FileDownloading> mfd = new ArrayList<Modal_FileDownloading>(filesDownloading.values());
+//                temp = removeIfCurrentlyDownloading(temp, mfd);
+//            }
+            return onlineContents;
         } else
             return onlineContents;
     }
@@ -349,6 +351,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                         PD_ApiRequest.downloadImage(detail.getNodeserverimage(), f_name);
                     }
                 }
+                String f_name = message.getContentDetail().getNodeserverimage()
+                        .substring(message.getContentDetail().getNodeserverimage().lastIndexOf('/') + 1);
+                PD_ApiRequest.downloadImage(message.getContentDetail().getNodeserverimage(), f_name);
             }
         }
     }
@@ -361,7 +366,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 String filename = message.getFile_name();
                 int progress = (int) message.getProgress();
                 Log.d(TAG, "updateFileProgress: " + downloadId + ":::" + filename + ":::" + progress);
-                if (filesDownloading.get(downloadId) != null && filesDownloading.get(downloadId).getProgress() != progress) {
+                if (filesDownloading.get(downloadId) != null /*&& filesDownloading.get(downloadId).getProgress() != progress*/) {
                     Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
                     modal_fileDownloading.setDownloadId(String.valueOf(downloadId));
                     modal_fileDownloading.setFilename(filename);
@@ -463,25 +468,18 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     }
 
     public void showPreviousContent() {
-        if (levelContents.isEmpty()) {
-            contentView.showViews();
-            new GetDownloadedContent(null).execute();
+        if (levelContents == null || levelContents.isEmpty()) {
+            contentView.exitApp();
+//            new GetDownloadedContent(null).execute();
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
             contentView.displayHeader(contentDetail);
             new GetDownloadedContent(contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
             if (levelContents.isEmpty())
-                contentView.showViews();
+                contentView.exitApp();
         }
     }
-
-//    public ArrayList<Modal_ContentDetail> getUpdatedList(Modal_ContentDetail contentDetail) {
-//////        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-//////        temp.addAll(totalContents);
-////        totalContents.remove(contentDetail);
-////        return totalContents;
-////    }
 
     public void getLevels() {
         if (levelContents != null) {
@@ -498,16 +496,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
 
         public GetDownloadedContent(String parentId) {
             this.parentId = parentId;
-//            totalContents = new ArrayList<>();
         }
 
         @Override
         protected Object doInBackground(Object[] objects) {
-            if (parentId != null)
+            if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty())
                 return BaseActivity.modalContentDao.getChild(parentId);
             else
                 return BaseActivity.modalContentDao.getParents();
-//            return null;
         }
 
         @Override

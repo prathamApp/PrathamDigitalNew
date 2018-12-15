@@ -7,10 +7,12 @@ import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.pratham.prathamdigital.async.UnzipAsync;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -101,6 +103,8 @@ public class DownloadService extends Service {
                 }
                 // getting file length
                 int lenghtOfFile = connection.getContentLength();
+                if (lenghtOfFile < 0)
+                    lenghtOfFile = (content.getLevel() > 0) ? content.getLevel() : 1;
                 // input stream to read file - with 8k buffer
                 input = connection.getInputStream();
                 // Output stream to write file
@@ -126,10 +130,25 @@ public class DownloadService extends Service {
                 // closing streams/**/
                 if (input != null)
                     input.close();
-                return true;
+                if (folder_name.equalsIgnoreCase(PD_Constant.GAME)) {
+                    unzipFile(dir_path + "/" + f_name, dir_path);
+                    return true;
+                } else {
+                    return false;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 return false;
+            }
+        }
+
+        private void unzipFile(String source, String destination) {
+            ZipFile zipFile = null;
+            try {
+                zipFile = new ZipFile(source);
+                zipFile.extractAll(destination);
+            } catch (ZipException e) {
+                e.printStackTrace();
             }
         }
 
@@ -152,14 +171,10 @@ public class DownloadService extends Service {
         protected void onPostExecute(Boolean result) {
             Log.d(TAG, "onPostExecute");
             if (result) {
-                if (folder_name.equalsIgnoreCase(PD_Constant.GAME))
-                    new UnzipAsync(dir_path + "/" + f_name, dir_path, downloadID).execute();
-                else {
-                    EventMessage message = new EventMessage();
-                    message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
-                    message.setDownloadId(downloadID);
-                    EventBus.getDefault().post(message);
-                }
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.DOWNLOAD_COMPLETE);
+                message.setDownloadId(downloadID);
+                EventBus.getDefault().post(message);
             }
             stopSelf();
         }

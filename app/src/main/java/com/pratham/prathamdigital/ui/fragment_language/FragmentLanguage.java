@@ -14,6 +14,8 @@ import android.view.ViewTreeObserver;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.async.copy_db.CopyExistingDb;
+import com.pratham.prathamdigital.async.copy_db.Interface_copyingDb;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -30,7 +32,8 @@ import java.util.ArrayList;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class FragmentLanguage extends Fragment implements ContractLanguage, CircularRevelLayout.CallBacks {
+public class FragmentLanguage extends Fragment implements ContractLanguage, CircularRevelLayout.CallBacks,
+        Interface_copyingDb {
 
     private static final String TAG = FragmentLanguage.class.getSimpleName();
     @BindView(R.id.circular_language_reveal)
@@ -124,7 +127,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
-        circular_language_reveal.unReveal();
+        new CopyExistingDb(getActivity(), FragmentLanguage.this).execute();
     }
 
     @Override
@@ -173,4 +176,19 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         }
     }
 
+    @Override
+    public void copyingExistingDb() {
+
+    }
+
+    @Override
+    public void successCopyingExistingDb(String path) {
+        PrathamApplication.getInstance().setExistingSDContentPath(path);
+        circular_language_reveal.unReveal();
+    }
+
+    @Override
+    public void failedCopyingExistingDb() {
+        circular_language_reveal.unReveal();
+    }
 }

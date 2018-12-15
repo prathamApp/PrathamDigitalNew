@@ -25,24 +25,21 @@ import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.async.CopyExistingDb;
 import com.pratham.prathamdigital.async.GetLatestVersion;
+import com.pratham.prathamdigital.async.copy_db.CopyExistingDb;
+import com.pratham.prathamdigital.async.copy_db.Interface_copyingDb;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Modal_Status;
-import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import java.io.File;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
-        GoogleApiClient.OnConnectionFailedListener {
+        GoogleApiClient.OnConnectionFailedListener, Interface_copyingDb {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
     Context context;
     SplashContract.splashview splashview;
@@ -199,6 +196,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = PD_Utility.getDeviceID();
             BaseActivity.statusDao.insert(statusObj);
         }
+        if (BaseActivity.statusDao.getKey("DeviceName") == null) {
+            statusObj.statusKey = "DeviceName";
+            statusObj.value = PD_Utility.getDeviceName();
+            BaseActivity.statusDao.insert(statusObj);
+        }
         if (BaseActivity.statusDao.getKey("ActivatedDate") == null) {
             statusObj.statusKey = "ActivatedDate";
             statusObj.value = "";
@@ -349,7 +351,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
                 getVersion();
             } else {
-//                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
+                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
                 checkStudentList();
             }
         }
@@ -357,19 +359,20 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void checkIfContentinSDCard() {
-        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
-        if (sdPath.size() > 0) {
-            File file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER);
-            if (file.exists()) {
-                File db_file = new File(file.getAbsolutePath(), PrathamDatabase.DB_NAME);
-                if (db_file.exists()) {
-                    new CopyExistingDb(file, db_file, SplashPresenterImpl.this).execute();
-                } else
-                    checkConnectivity();
-            } else
-                checkConnectivity();
-        } else
-            checkConnectivity();
+//        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
+//        if (sdPath.size() > 0) {
+//            File file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER + "/" +
+//                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+//            if (file.exists()) {
+//                File db_file = new File(file.getAbsolutePath(), PrathamDatabase.DB_NAME);
+//                if (db_file.exists()) {
+        new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+//                } else
+//                    checkConnectivity();
+//            } else
+//                checkConnectivity();
+//        } else
+//            checkConnectivity();
     }
 
     @Override

@@ -284,14 +284,16 @@ public class Modal_Rasp_Content {
             modal_contentDetail.setNodeeage("");
             modal_contentDetail.setNodedesc(modal_rasp_content.getDescription());
             for (Modal_Rasp_ContentFilesItem filesItem : modal_rasp_content.getFiles()) {
-                String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
-                        .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
-                //fileNameWithoutExtn
-                filename = filename.substring(0, filename.lastIndexOf("."));
                 if (filesItem.isThumbnail()) {
+                    String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
+                            .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
                     modal_contentDetail.setNodeimage(filename);
                     modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
                 } else {
+                    String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
+                            .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
+                    //fileNameWithoutExtn
+                    filename = filename.substring(0, filename.lastIndexOf("."));
                     if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
                         modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
                         modal_contentDetail.setResourcepath(filename + "/index.html");
@@ -308,10 +310,10 @@ public class Modal_Rasp_Content {
                         filename = filename.substring(0, filename.lastIndexOf("."));
                         modal_contentDetail.setResourcepath(filename + ".pdf");
                     }
+                    modal_contentDetail.setLevel(filesItem.getFileSize());
                 }
             }
             modal_contentDetail.setResourceid(modal_rasp_content.getContentId());
-            modal_contentDetail.setLevel(modal_rasp_content.getNumCoachContents());
             modal_contentDetail.setParentid(modal_rasp_content.getParent());
         } catch (Exception e) {
             e.printStackTrace();

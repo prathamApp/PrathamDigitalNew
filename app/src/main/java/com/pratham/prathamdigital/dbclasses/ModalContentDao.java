@@ -21,7 +21,7 @@ public interface ModalContentDao {
     @Delete
     void deleteContent(Modal_ContentDetail contentDetail);
 
-    @Query("SELECT * FROM TableContent WHERE parentid ISNULL")
+    @Query("SELECT * FROM TableContent WHERE parentid ISNULL or parentid = 0 or parentid=''")
     public List<Modal_ContentDetail> getParents();
 
     @Query("SELECT * FROM TableContent WHERE parentid=:id")
