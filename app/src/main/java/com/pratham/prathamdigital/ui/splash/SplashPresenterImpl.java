@@ -25,10 +25,10 @@ import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.async.CopyExistingDb;
 import com.pratham.prathamdigital.async.GetLatestVersion;
-import com.pratham.prathamdigital.async.copy_db.CopyExistingDb;
-import com.pratham.prathamdigital.async.copy_db.Interface_copyingDb;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -39,7 +39,7 @@ import java.util.List;
 import static android.content.Context.ACTIVITY_SERVICE;
 
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
-        GoogleApiClient.OnConnectionFailedListener, Interface_copyingDb {
+        GoogleApiClient.OnConnectionFailedListener, Interface_copying {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
     Context context;
     SplashContract.splashview splashview;
@@ -50,6 +50,9 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     public SplashPresenterImpl(Context context, SplashContract.splashview splashview) {
         this.context = context;
         this.splashview = splashview;
+    }
+
+    public SplashPresenterImpl() {
     }
 
     public void getVersion() {
@@ -376,17 +379,17 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     }
 
     @Override
-    public void copyingExistingDb() {
+    public void copyingExisting() {
 
     }
 
     @Override
-    public void failedCopyingExistingDb() {
+    public void failedCopyingExisting() {
         checkStudentList();
     }
 
     @Override
-    public void successCopyingExistingDb(String absolutePath) {
+    public void successCopyingExisting(String absolutePath) {
         PrathamApplication.getInstance().setExistingSDContentPath(absolutePath);
         checkStudentList();
     }

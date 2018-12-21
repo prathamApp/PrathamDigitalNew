@@ -5,33 +5,35 @@ package com.pratham.prathamdigital.models;
  * Created by PEF on 24/01/2018.
  */
 
-public class File_Model {
+public class File_Model implements Comparable {
+    int progress;
+    Modal_ContentDetail detail;
 
-//    public FTPFile mfile;
-//    public String fileName;
-//    public boolean isFile;
-//
-//    public FTPFile getMfile() {
-//        return mfile;
-//    }
-//
-//    public void setMfile(FTPFile mfile) {
-//        this.mfile = mfile;
-//    }
-//
-//    public String getFileName() {
-//        return fileName;
-//    }
-//
-//    public void setFileName(String fileName) {
-//        this.fileName = fileName;
-//    }
-//
-//    public boolean isFile() {
-//        return isFile;
-//    }
-//
-//    public void setFile(boolean file) {
-//        isFile = file;
-//    }
+    public int getProgress() {
+        return progress;
+    }
+
+    public void setProgress(int progress) {
+        this.progress = progress;
+    }
+
+    public Modal_ContentDetail getDetail() {
+        return detail;
+    }
+
+    public void setDetail(Modal_ContentDetail detail) {
+        this.detail = detail;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        File_Model compare = (File_Model) o;
+        if (compare.getDetail().getNodeid() != null) {
+            if (compare.getDetail().getNodeid().equalsIgnoreCase(this.detail.getNodeid()))
+                return 0;
+            else return 1;
+        } else {
+            return 0;
+        }
+    }
 }

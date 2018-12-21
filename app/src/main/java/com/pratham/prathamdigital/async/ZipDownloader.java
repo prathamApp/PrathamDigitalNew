@@ -4,14 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.downloader.Error;
-import com.downloader.OnCancelListener;
-import com.downloader.OnDownloadListener;
-import com.downloader.OnPauseListener;
-import com.downloader.OnProgressListener;
-import com.downloader.OnStartOrResumeListener;
-import com.downloader.PRDownloader;
-import com.downloader.Progress;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.interfaces.ProgressUpdate;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -70,61 +62,61 @@ public class ZipDownloader {
         context.startService(intent);
     }
 
-    public void downloadFile(String url, final String dirpath, final String f_name) {
-//        wakeLock.acquire();
-//        DownloadRequest request = null;
-        downloadId = PRDownloader.download(url, dirpath, f_name)
-                .build()
-                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
-                    @Override
-                    public void onStartOrResume() {
-                        contentPresenter.fileDownloadStarted(downloadId, filename, contentDetail);
-                    }
-                })
-                .setOnPauseListener(new OnPauseListener() {
-                    @Override
-                    public void onPause() {
-                        contentPresenter.onDownloadPaused(downloadId);
-                    }
-                })
-                .setOnCancelListener(new OnCancelListener() {
-                    @Override
-                    public void onCancel() {
-                        contentPresenter.ondownloadCancelled(downloadId);
-                    }
-                })
-                .setOnProgressListener(new OnProgressListener() {
-                    long progg = 0;
-
-                    @Override
-                    public void onProgress(Progress progress) {
-                        long progressPercent = 0;
-//                        if (progress.totalBytes == -1) {
-//                            if (progg == 0) progg = progress.currentBytes;
-//                            progressPercent = progress.currentBytes / progg;
-//                        } else
-                        progressPercent = progress.currentBytes * 100 / progress.totalBytes;
-                        Log.d("onProgress::", "" + progressPercent);
-                        contentPresenter.updateFileProgress(downloadId, f_name, (int) progressPercent);
-                    }
-                })
-                .start(new OnDownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        if (foldername.equalsIgnoreCase("Game")) {
-//                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
-                        } else {
-                            contentPresenter.onDownloadCompleted(downloadId);
-                        }
-                    }
-
-                    @Override
-                    public void onError(Error error) {
-                        Log.d(TAG, "onError: content download error");
-                        contentPresenter.ondownloadError(f_name);
-                    }
-                });
-    }
+//    public void downloadFile(String url, final String dirpath, final String f_name) {
+////        wakeLock.acquire();
+////        DownloadRequest request = null;
+//        downloadId = PRDownloader.download(url, dirpath, f_name)
+//                .build()
+//                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
+//                    @Override
+//                    public void onStartOrResume() {
+//                        contentPresenter.fileDownloadStarted(downloadId, filename, contentDetail);
+//                    }
+//                })
+//                .setOnPauseListener(new OnPauseListener() {
+//                    @Override
+//                    public void onPause() {
+//                        contentPresenter.onDownloadPaused(downloadId);
+//                    }
+//                })
+//                .setOnCancelListener(new OnCancelListener() {
+//                    @Override
+//                    public void onCancel() {
+//                        contentPresenter.ondownloadCancelled(downloadId);
+//                    }
+//                })
+//                .setOnProgressListener(new OnProgressListener() {
+//                    long progg = 0;
+//
+//                    @Override
+//                    public void onProgress(Progress progress) {
+//                        long progressPercent = 0;
+////                        if (progress.totalBytes == -1) {
+////                            if (progg == 0) progg = progress.currentBytes;
+////                            progressPercent = progress.currentBytes / progg;
+////                        } else
+//                        progressPercent = progress.currentBytes * 100 / progress.totalBytes;
+//                        Log.d("onProgress::", "" + progressPercent);
+//                        contentPresenter.updateFileProgress(downloadId, f_name, (int) progressPercent);
+//                    }
+//                })
+//                .start(new OnDownloadListener() {
+//                    @Override
+//                    public void onDownloadComplete() {
+//                        if (foldername.equalsIgnoreCase("Game")) {
+////                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
+//                        } else {
+//                            contentPresenter.onDownloadCompleted(downloadId);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onError(Error error) {
+//                        Log.d(TAG, "onError: content download error");
+//                        contentPresenter.ondownloadError(f_name);
+//                    }
+//                });
+//    }
 }
 
 

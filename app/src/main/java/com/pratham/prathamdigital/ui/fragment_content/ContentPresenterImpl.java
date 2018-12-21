@@ -1,16 +1,17 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.async.GetDownloadedContent;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
@@ -33,7 +34,7 @@ import java.util.Map;
 
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
-public class ContentPresenterImpl implements ContentContract.contentPresenter {
+public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
     Context context;
     ContentContract.contentView contentView;
@@ -50,7 +51,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
     public void getContent(Modal_ContentDetail contentDetail) {
         //fetching content from database first
         if (contentDetail == null) {
-            new GetDownloadedContent(null).execute();
+            new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
         } else {
             if (levelContents == null) levelContents = new ArrayList<>();
             if (levelContents.isEmpty()) contentView.hideViews();
@@ -67,7 +68,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
             }
             if (!found) levelContents.add(contentDetail);
             contentView.displayHeader(contentDetail);
-            new GetDownloadedContent(contentDetail.getNodeid()).execute();
+            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
         }
     }
 
@@ -390,7 +391,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
                 Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
                 content.setContentType("file");
                 content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-                content.setDownloaded(true);
                 temp.add(content);
                 for (Modal_ContentDetail d : temp) {
                     if (d.getNodeimage() != null) {
@@ -474,7 +474,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
             contentView.displayHeader(contentDetail);
-            new GetDownloadedContent(contentDetail.getParentid()).execute();
+            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
             if (levelContents.isEmpty())
                 contentView.exitApp();
@@ -491,25 +491,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter {
         }
     }
 
-    private class GetDownloadedContent extends AsyncTask {
-        String parentId;
-
-        public GetDownloadedContent(String parentId) {
-            this.parentId = parentId;
-        }
-
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty())
-                return BaseActivity.modalContentDao.getChild(parentId);
-            else
-                return BaseActivity.modalContentDao.getParents();
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
-        }
+    @Override
+    public void downloadedContents(Object o, String parentId) {
+        checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
     }
 }

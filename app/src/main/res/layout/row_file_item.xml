@@ -4,6 +4,7 @@
     android:id="@+id/card_view"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_80sdp"
+    android:clickable="true"
     card_view:cardBackgroundColor="#FFFFFF"
     card_view:cardCornerRadius="@dimen/_5sdp"
     card_view:cardElevation="@dimen/_5sdp"
@@ -13,7 +14,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.airbnb.lottie.LottieAnimationView
+        <com.pratham.prathamdigital.custom.progress_layout.ProgressLayout
+            android:id="@+id/progressLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            card_view:c_borderWidth="@dimen/_1sdp"
+            card_view:c_isShowDesc="false"
+            card_view:c_max="100"
+            card_view:c_progressColor="@color/green" />
+
+        <ImageView
             android:id="@+id/file_icon"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
@@ -27,24 +37,25 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_margin="@dimen/_6sdp"
-            android:layout_toLeftOf="@+id/btn_send_files"
+            android:layout_toLeftOf="@+id/btn_send"
             android:layout_toEndOf="@+id/file_icon"
             android:gravity="center_vertical"
-            android:textColor="@color/colorPrimary"
+            android:text="sdsdsd"
+            android:textColor="@android:color/black"
             android:textSize="@dimen/_16sdp"
             android:textStyle="bold" />
 
-        <Button
-            android:id="@+id/btn_send_files"
-            android:layout_width="@dimen/_60sdp"
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
             android:layout_height="@dimen/_30sdp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/_3sdp"
-            android:background="@drawable/avatar_next_button_round_bg"
-            android:scaleType="centerCrop"
-            android:text="Send"
-            android:textColor="@android:color/white" />
+            android:background="@drawable/file_sharing_item_bkgd"
+            android:clickable="false"
+            android:elevation="@dimen/_5sdp"
+            android:text="Send" />
 
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

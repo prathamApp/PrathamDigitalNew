@@ -65,6 +65,15 @@
                 android:layout_toRightOf="@+id/sheet_connect"
                 android:padding="@dimen/_8sdp"
                 app:srcCompat="@drawable/ic_search" />
+
+            <ImageView
+                android:id="@+id/sheet_share"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="match_parent"
+                android:layout_toRightOf="@+id/sheet_search"
+                android:padding="@dimen/_8sdp"
+                app:srcCompat="@drawable/ic_send" />
+
         </RelativeLayout>
     </android.support.design.card.MaterialCardView>
 </com.pratham.prathamdigital.custom.scaling_view.ScalingLayout>

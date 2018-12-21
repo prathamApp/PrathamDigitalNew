@@ -33,12 +33,6 @@
         <attr name="minHorizontalSpacing" format="dimension" />
         <attr name="verticalSpacing" format="dimension" />
     </declare-styleable>
-    <declare-styleable name="progressLayout">
-        <attr name="emptyColor" format="color" />
-        <attr name="loadedColor" format="color" />
-        <attr name="maxProgress" format="integer" />
-        <attr name="autoProgress" format="boolean" />
-    </declare-styleable>
     <declare-styleable name="CarouselPicker">
         <attr name="items_visible" />
     </declare-styleable>
@@ -224,5 +218,15 @@
     </declare-styleable>
     <declare-styleable name="ScalingLayout">
         <attr name="radiusFactor" format="float" />
+    </declare-styleable>
+    <declare-styleable name="ProgressLayout">
+        <attr name="c_progressColor" format="color" />
+        <attr name="c_progressDescColor" format="color" />
+        <attr name="c_progressRadius" format="dimension" />
+        <attr name="c_max" format="integer" />
+        <attr name="c_progress" format="integer" />
+        <attr name="c_borderWidth" format="dimension" />
+        <attr name="c_progressDesc" format="string" />
+        <attr name="c_isShowDesc" format="boolean" />
     </declare-styleable>
 </resources>

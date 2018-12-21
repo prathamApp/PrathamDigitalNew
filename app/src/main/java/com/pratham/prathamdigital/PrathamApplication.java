@@ -6,11 +6,8 @@ import android.media.MediaPlayer;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 
-import com.downloader.PRDownloader;
-import com.downloader.PRDownloaderConfig;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.socket.entity.FileState;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -43,7 +40,7 @@ public class PrathamApplication extends Application {
 //    private static boolean isClient = true;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static final boolean isTablet = true;
+    public static final boolean isTablet = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
 
@@ -62,13 +59,13 @@ public class PrathamApplication extends Application {
         setPradigiPath();
         sendFileStates = new HashMap<String, FileState>();
         recieveFileStates = new HashMap<String, FileState>();
-        PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
-                .setReadTimeout(20000)
-                .setConnectTimeout(20000)
-                .build();
-        PRDownloader.initialize(getApplicationContext(), config);
+//        PRDownloaderConfig config = PRDownloaderConfig.newBuilder()
+//                .setReadTimeout(20000)
+//                .setConnectTimeout(20000)
+//                .build();
+//        PRDownloader.initialize(getApplicationContext(), config);
         wiseF = new WiseFy.Brains(getApplicationContext()).logging(true).getSmarts();
-        AutoSync.start(mInstance);
+//        AutoSync.start(mInstance);
     }
 
     @Override

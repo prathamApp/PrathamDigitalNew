@@ -1907,4 +1907,18 @@ public class PD_Utility {
         }
         EventBus.getDefault().post(message);
     }
+
+    public static long folderSize(File directory) {
+        long length = 0;
+        File[] f = directory.listFiles();
+        for (File file : f) {
+            if (file != null) {
+                if (file.isFile())
+                    length += file.length();
+                else
+                    length += folderSize(file);
+            }
+        }
+        return length;
+    }
 }

@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.async.copy_db;
+package com.pratham.prathamdigital.async;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
+import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
@@ -25,17 +26,17 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
     File db_file;
     File folder_file;
     Context context;
-    Interface_copyingDb interface_copyingDb;
+    Interface_copying interface_copying;
 
-    public CopyExistingDb(Context context, Interface_copyingDb interface_copyingDb) {
+    public CopyExistingDb(Context context, Interface_copying interface_copying) {
         this.context = context;
-        this.interface_copyingDb = interface_copyingDb;
+        this.interface_copying = interface_copying;
     }
 
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        interface_copyingDb.copyingExistingDb();
+        interface_copying.copyingExisting();
     }
 
     @Override
@@ -209,8 +210,8 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
     protected void onPostExecute(Boolean copied) {
         super.onPostExecute(copied);
         if (copied)
-            interface_copyingDb.successCopyingExistingDb(folder_file.getAbsolutePath());
+            interface_copying.successCopyingExisting(folder_file.getAbsolutePath());
         else
-            interface_copyingDb.failedCopyingExistingDb();
+            interface_copying.failedCopyingExisting();
     }
 }

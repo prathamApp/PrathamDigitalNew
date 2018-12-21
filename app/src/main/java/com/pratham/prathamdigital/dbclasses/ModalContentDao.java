@@ -22,10 +22,15 @@ public interface ModalContentDao {
     void deleteContent(Modal_ContentDetail contentDetail);
 
     @Query("SELECT * FROM TableContent WHERE parentid ISNULL or parentid = 0 or parentid=''")
-    public List<Modal_ContentDetail> getParents();
+    public List<Modal_ContentDetail> getParentsHeaders();
 
     @Query("SELECT * FROM TableContent WHERE parentid=:id")
-    public List<Modal_ContentDetail> getChild(String id);
+    public List<Modal_ContentDetail> getChildsOfParent(String id);
 
+    @Query("SELECT * FROM TableContent WHERE nodeid=:id")
+    public Modal_ContentDetail getContent(String id);
+
+    @Query("SELECT * FROM TableContent WHERE parentid=:id")
+    public Modal_ContentDetail getParentContent(String id);
 }
 

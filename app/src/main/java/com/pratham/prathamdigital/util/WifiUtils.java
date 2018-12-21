@@ -79,7 +79,7 @@ public class WifiUtils {
                 this.exit();
             }
         };
-        timerCheck.start(10, 1000);
+        timerCheck.start(12, 1000);
     }
 
     private static void startAp(String ssid, String passwd) {

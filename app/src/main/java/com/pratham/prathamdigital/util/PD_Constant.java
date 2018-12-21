@@ -70,6 +70,12 @@ public class PD_Constant {
     public static final String PRADIGI_FOLDER = "PRADIGI";
     public static final String FILE_DOWNLOAD_COMPLETE = "file_download_complete";
     public static final String SCORE_COUNT = "ScoreCount";
+    public static final String SHOWCOUNT = "showcount";
+    public static final String FTP_RECIEVED = "FTP_RECIEVED";
+    public static final String FOLDER = "folder";
+    public static final String FILE_SHARE_PROGRESS = "file_share_progress";
+    public static final String SHARE_BACK = "share_back";
+    public static final String CLOSE_FTP_SERVER = "close_ftp_server";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

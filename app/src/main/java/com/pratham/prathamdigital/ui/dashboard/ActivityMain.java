@@ -25,12 +25,14 @@ import com.pratham.prathamdigital.custom.scaling_view.State;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightListener;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightSequence;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
+import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
+import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -124,7 +126,13 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @OnClick(R.id.pradigi_icon)
     public void setPullDown() {
-        setTop_scaling();
+        if (!FsService.isRunning()) {
+            setTop_scaling();
+        } else {
+            EventMessage msg = new EventMessage();
+            msg.setMessage(PD_Constant.CLOSE_FTP_SERVER);
+            EventBus.getDefault().post(msg);
+        }
     }
 
     @OnClick(R.id.sheet_language)
@@ -155,6 +163,20 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 bundle, FragmentContent.class.getSimpleName());
     }
 
+    @OnClick(R.id.sheet_share)
+    public void setSheetShare(View view) {
+        animate(view);
+        PrathamApplication.bubble_mp.start();
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve(), R.id.main_frame,
+                bundle, FragmentShareRecieve.class.getSimpleName());
+    }
+
     @OnClick(R.id.sheet_connect)
     public void setSheetConnect(View view) {
         animate(view);
@@ -176,6 +198,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 //        return onTouchEvent(event);
     }
 
+
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame);
@@ -186,6 +209,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         } else if (fragment instanceof FragmentLanguage) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.LANGUAGE_BACK);
+            EventBus.getDefault().post(message);
+        } else if (fragment instanceof FragmentShareRecieve) {
+            EventMessage message = new EventMessage();
+            message.setMessage(PD_Constant.SHARE_BACK);
             EventBus.getDefault().post(message);
         }
     }

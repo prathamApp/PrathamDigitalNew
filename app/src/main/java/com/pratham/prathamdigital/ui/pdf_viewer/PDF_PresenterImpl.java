@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.pdf_viewer;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
 import java.io.File;
@@ -34,6 +35,7 @@ public class PDF_PresenterImpl {
                 // close the page
                 page.close();
             }
+            if (renderer != null) renderer.close();
             pdf_view.recievedBitmaps(pdf);
         } catch (IOException e) {
             e.printStackTrace();
@@ -43,8 +45,9 @@ public class PDF_PresenterImpl {
     private ParcelFileDescriptor getSeekableFileDescriptor(String resPath) {
         ParcelFileDescriptor fd = null;
         try {
-            fd = ParcelFileDescriptor.open(new File(resPath),
-                    ParcelFileDescriptor.MODE_READ_ONLY);
+//            fd = ParcelFileDescriptor.open(new File(resPath),
+//                    ParcelFileDescriptor.MODE_READ_ONLY);
+            fd = context.getContentResolver().openFileDescriptor(Uri.fromFile(new File(resPath)), "r");
         } catch (Exception e) {
             e.printStackTrace();
         }

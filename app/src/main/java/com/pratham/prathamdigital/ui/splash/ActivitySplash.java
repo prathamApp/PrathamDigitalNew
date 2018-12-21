@@ -19,6 +19,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
+import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.richpath.RichPath;
@@ -54,6 +55,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         splashPresenter = new SplashPresenterImpl(this, this);
         startLightsAnimation();
         splashPresenter.populateDefaultDB();
+        PrathamSmartSync.pushTabletJsons(false);
     }
 
     @Override

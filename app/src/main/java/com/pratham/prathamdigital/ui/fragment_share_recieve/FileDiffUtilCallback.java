@@ -3,14 +3,15 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.support.annotation.Nullable;
 import android.support.v7.util.DiffUtil;
 
-import java.io.File;
-import java.util.List;
+import com.pratham.prathamdigital.models.File_Model;
+
+import java.util.ArrayList;
 
 public class FileDiffUtilCallback extends DiffUtil.Callback {
-    List<File> newList;
-    List<File> oldList;
+    ArrayList<File_Model> newList;
+    ArrayList<File_Model> oldList;
 
-    public FileDiffUtilCallback(List<File> newList, List<File> oldList) {
+    public FileDiffUtilCallback(ArrayList<File_Model> newList, ArrayList<File_Model> oldList) {
         this.newList = newList;
         this.oldList = oldList;
     }

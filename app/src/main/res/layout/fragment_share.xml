@@ -1,17 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/circular_share_reveal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:gravity="center"
-    app:cardBackgroundColor="@color/white"
-    app:cardCornerRadius="@dimen/_10sdp"
-    app:cardElevation="@dimen/_7sdp"
-    app:cardUseCompatPadding="true">
+    android:layout_height="match_parent">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/white">
 
         <LinearLayout
             android:id="@+id/root_share"
@@ -90,12 +87,14 @@
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_250sdp"
             android:layout_centerInParent="true"
+            android:clickable="false"
             android:visibility="gone">
 
             <com.pratham.prathamdigital.custom.CircularProgress
                 android:id="@+id/circleProgress"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:clickable="false" />
 
             <com.pratham.prathamdigital.custom.edittexts.IndieEditText
                 android:id="@+id/status"
@@ -103,6 +102,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_50sdp"
+                android:clickable="false"
                 android:gravity="center"
                 android:lineSpacingMultiplier="1.5"
                 android:textColor="@color/black_20"
@@ -113,11 +113,13 @@
             android:id="@+id/searchCircle"
             android:layout_width="@dimen/_250sdp"
             android:layout_height="@dimen/_250sdp"
+            android:clickable="false"
             android:layout_centerInParent="true"
             android:visibility="gone">
 
             <com.pratham.prathamdigital.custom.SearchView
                 android:id="@+id/searchView"
+                android:clickable="false"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
         </RelativeLayout>
@@ -129,4 +131,4 @@
             android:layout_margin="@dimen/_10sdp"
             android:visibility="gone" />
     </RelativeLayout>
-</android.support.design.card.MaterialCardView>
+</com.pratham.prathamdigital.custom.CircularRevelLayout>
