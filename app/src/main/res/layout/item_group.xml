@@ -10,6 +10,7 @@
     android:clickable="true"
     android:elevation="0dp"
     android:focusable="true"
+    app:flexibility="3"
     app:cardBackgroundColor="#43f578ed"
     app:cardCornerRadius="@dimen/_75sdp">
 

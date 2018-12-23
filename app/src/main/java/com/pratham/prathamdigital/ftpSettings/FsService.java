@@ -183,7 +183,7 @@ public class FsService extends Service implements Runnable {
             return;
         }
 
-        // @TODO: when using ethernet, is it needed to take wifi lock?
+        // when using ethernet, is it needed to take wifi lock?
         takeWifiLock();
         takeWakeLock();
 
@@ -209,7 +209,7 @@ public class FsService extends Service implements Runnable {
                 wifiListener.start();
             }
             try {
-                // TODO: think about using ServerSocket, and just closing
+                //  think about using ServerSocket, and just closing
                 // the main socket to send an exit signal
                 Thread.sleep(WAKE_INTERVAL_MS);
             } catch (InterruptedException e) {

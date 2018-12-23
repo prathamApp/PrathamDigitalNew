@@ -11,6 +11,9 @@ import android.util.Log;
 
 import com.pratham.prathamdigital.PrathamApplication;
 
+import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -32,8 +35,8 @@ public enum MediaUpdater {
         @Override
         public void onScanCompleted(String path, Uri uri) {
             Log.i(TAG, "Scan completed: " + path + " : " + uri);
+            EventBus.getDefault().post(new File(path));
         }
-
     }
 
     public static void notifyFileCreated(String path) {

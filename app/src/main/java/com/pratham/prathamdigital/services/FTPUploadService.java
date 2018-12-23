@@ -16,7 +16,7 @@ public class FTPUploadService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null) {
-//            FTPFileUploadTask task = new FTPFileUploadTask(url, dir_path, f_name, folder_name, content, FTPUploadService.this);
+//            FTPContentUploadTask task = new FTPContentUploadTask(url, dir_path, f_name, folder_name, content, FTPUploadService.this);
 //            task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
         }
         return START_NOT_STICKY;

@@ -76,6 +76,9 @@ public class PD_Constant {
     public static final String FILE_SHARE_PROGRESS = "file_share_progress";
     public static final String SHARE_BACK = "share_back";
     public static final String CLOSE_FTP_SERVER = "close_ftp_server";
+    public static final String FTP_CLIENT_CONNECTED = "ftp_client_connected";
+    public static final String APK_SHARE_PROGRESS = "apk_share_progress";
+    public static final String APK = "apk";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

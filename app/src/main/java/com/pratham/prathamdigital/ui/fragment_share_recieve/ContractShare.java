@@ -2,7 +2,9 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public interface ContractShare {
@@ -20,6 +22,8 @@ public interface ContractShare {
         void disconnectFTP();
 
         void closeFTPJoin();
+
+        void showRecieving(ArrayList<Modal_ReceivingFilesThroughFTP> filesRecieving);
     }
 
     interface sharePresenter {
@@ -33,6 +37,8 @@ public interface ContractShare {
 
         void sendFiles(Modal_ContentDetail detail);
 
-        void readRecievedFiles();
+        void readRecievedFiles(File filePath);
+
+        void showFilesRecieving(File filePath);
     }
 }

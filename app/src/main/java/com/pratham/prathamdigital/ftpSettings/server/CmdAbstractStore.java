@@ -36,7 +36,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 abstract public class CmdAbstractStore extends FtpCmd {
-    private final static String TAG = "CmdAbstractStore"; // TODO: .class.getSimpleName()
+    private final static String TAG = "CmdAbstractStore";
     // from abstract class
     public static final String message = "TEMPLATE!!";
 
@@ -163,7 +163,6 @@ abstract public class CmdAbstractStore extends FtpCmd {
                             // dedicatedWriter.enqueueBuffer(buffer, numRead);
                             if (sessionThread.isBinaryMode()) {
                                 out.write(buffer, 0, numRead);
-
                             } else {
                                 // ASCII mode, substitute \r\n to \n
                                 int startPos = 0, endPos;
@@ -237,6 +236,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                 out.close();
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
         if (errString != null) {

@@ -62,7 +62,7 @@ public class CmdRNTO extends FtpCmd implements Runnable {
             Log.i(TAG, "RNTO from file: " + fromFile.getPath());
 
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
-                // TODO: this code is working around a bug that java6 and before cannot
+                // this code is working around a bug that java6 and before cannot
                 // reliable move a file, once java7 is supported by Dalvik, this code can
                 // be replaced with Files.move()
                 File tmpFile = null;

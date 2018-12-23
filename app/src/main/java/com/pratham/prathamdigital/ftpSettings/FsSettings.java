@@ -63,7 +63,7 @@ public class FsSettings {
     }
 
     public static FtpUser getUser(String username) {
-        // TODO: on java 8 (and android support) we can use getUsers().stream.filter(...)
+        // on java 8 (and android support) we can use getUsers().stream.filter(...)
         for (FtpUser user : getUsers()) {
             if (user.getUsername().equals(username))
                 return user;
@@ -83,7 +83,7 @@ public class FsSettings {
     }
 
     public static void removeUser(String username) {
-        // TODO: on java 8 (and android support) we can use getUsers().removeIf(...)
+        // on java 8 (and android support) we can use getUsers().removeIf(...)
         SharedPreferences sp = getSharedPreferences();
         Gson gson = new Gson();
         List<FtpUser> users = getUsers();
@@ -126,7 +126,7 @@ public class FsSettings {
 
     public static int getPortNumber() {
 //        final SharedPreferences sp = getSharedPreferences();
-        // TODO: port is always an number, so store this accordenly
+        // port is always an number, so store this accordingly
 //        String portString = sp.getString("portNum", "2121");
 //        int port = Integer.valueOf(portString);
 //        Log.v(TAG, "Using port: " + port);

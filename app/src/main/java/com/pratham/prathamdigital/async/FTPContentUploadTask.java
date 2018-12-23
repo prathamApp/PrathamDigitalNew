@@ -14,9 +14,8 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.URLEncoder;
 
-public class FTPFileUploadTask extends AsyncTask {
+public class FTPContentUploadTask extends AsyncTask {
     FTPClient client;
     long lenghtOfFile;
     Context context;
@@ -25,7 +24,7 @@ public class FTPFileUploadTask extends AsyncTask {
     String contentType;
     String downloadId;
 
-    public FTPFileUploadTask(Context context, FTPClient client, String localPath, String contentType, String downloadId) {
+    public FTPContentUploadTask(Context context, FTPClient client, String localPath, String contentType, String downloadId) {
         this.context = context;
         this.client = client;
         this.localPath = localPath;
@@ -45,7 +44,7 @@ public class FTPFileUploadTask extends AsyncTask {
     protected Object doInBackground(Object[] objects) {
         try {
             // use local passive mode to pass firewall
-//            client.enterLocalPassiveMode();
+            client.enterLocalPassiveMode();
             client.makeDirectory(contentType);
             if (contentType.equalsIgnoreCase("PrathamGame")) {
                 remoteDirPath += new File(localPath).getName();
@@ -95,9 +94,6 @@ public class FTPFileUploadTask extends AsyncTask {
     public void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath) {
         try {
             File localFile = new File(localFilePath);
-            String name = URLEncoder.encode(localFile.getName(), "UTF-8");
-//            String parent = localFile.getParent();
-//            localFile = new File(parent + "/" + name);
             total += localFile.length();
             FileInputStream in = new FileInputStream(localFile);
             boolean result = ftpClient.storeFile(remoteFilePath, in);
@@ -122,5 +118,6 @@ public class FTPFileUploadTask extends AsyncTask {
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
+
     }
 }

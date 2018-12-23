@@ -124,7 +124,7 @@ public class FileUtils {
             }
 
         } catch (Exception e) {
-            // TODO: handle exception
+            // handle exception
             return false;
         }
         return true;

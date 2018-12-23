@@ -36,12 +36,14 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
+import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.SearchView;
 import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.socket.entity.Users;
 import com.pratham.prathamdigital.socket.udp.IPMSGConst;
@@ -57,6 +59,7 @@ import com.pratham.prathamdigital.util.WifiUtils;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -96,8 +99,12 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     RelativeLayout rl_recieve_block;
     @BindView(R.id.rv_files)
     RecyclerView rv_files;
+    @BindView(R.id.rv_files_receiving)
+    RecyclerView rv_files_receiving;
     @BindView(R.id.circular_share_reveal)
     CircularRevelLayout circular_share_reveal;
+    @BindView(R.id.share_title)
+    TextView share_title;
 
     private List<String> mList = new ArrayList<>();
     private UDPMessageListener mUDPListener;
@@ -107,6 +114,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private String serverIPaddres;
     ContractShare.sharePresenter sharePresenter;
     FileListAdapter fileListAdapter;
+    ReceivedFileListAdapter receivedFileListAdapter;
     HashMap<String, File_Model> filesSent = new HashMap<>();
     HashMap<String, Integer> filesSentPosition = new HashMap<>();
     private int revealX;
@@ -191,7 +199,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     @OnClick(R.id.rl_recieve)
     public void setRl_recieve() {
-        //todo close hotspot if active and start wifi
+        WifiUtils.closeWifiAp();
+        if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();
         share = false;
         if (isPermissionsGranted(getActivity(),
                 new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
@@ -324,8 +333,9 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                sharePresenter.showFolders(null);
+                                share_title.setText("Share Contents");
                                 hideViewsandShowFolders();
+                                sharePresenter.showFolders(null);
                             }
                         }, 2000);
                     }
@@ -335,6 +345,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     };
 
     private void hideViewsandShowFolders() {
+        root_share.setClickable(false);
         shareCircle.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
         rl_recieve_block.setVisibility(View.GONE);
@@ -446,12 +457,15 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         filesSentPosition.clear();
         if (rv_files.getVisibility() == View.GONE)
             rv_files.setVisibility(View.VISIBLE);
+        if (rv_files_receiving.getVisibility() == View.VISIBLE)
+            rv_files_receiving.setVisibility(View.GONE);
         if (fileListAdapter == null) {
             //initialize adapter
             fileListAdapter = new FileListAdapter(getActivity(), contents, FragmentShareRecieve.this);
             rv_files.setHasFixedSize(true);
-            rv_files.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            rv_files.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
             rv_files.setAdapter(fileListAdapter);
+            rv_files.scheduleLayoutAnimation();
         } else {
             fileListAdapter.updateList(contents);
             rv_files.smoothScrollToPosition(0);
@@ -459,15 +473,30 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     @Override
-    public void hotspotStarted() {
-
+    public void showRecieving(ArrayList<Modal_ReceivingFilesThroughFTP> filesRecieving) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (rv_files.getVisibility() == View.VISIBLE)
+                    rv_files.setVisibility(View.GONE);
+                if (rv_files_receiving.getVisibility() == View.GONE)
+                    rv_files_receiving.setVisibility(View.VISIBLE);
+                if (receivedFileListAdapter == null) {
+                    //initialize adapter
+                    receivedFileListAdapter = new ReceivedFileListAdapter(getActivity(), filesRecieving);
+                    rv_files_receiving.setHasFixedSize(true);
+                    rv_files_receiving.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+                    rv_files_receiving.setAdapter(receivedFileListAdapter);
+                } else {
+                    receivedFileListAdapter.updateList(filesRecieving);
+                }
+            }
+        });
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-        }
+    public void hotspotStarted() {
+
     }
 
     public void setIPaddress() {
@@ -513,8 +542,25 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 sharePresenter.traverseFolderBackward();
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER)) {
                 disconnectFTP();
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FTP_CLIENT_CONNECTED)) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        share_title.setText("Files Receiving");
+                        hideViewsandShowFolders();
+                        Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         }
+    }
+
+    @Subscribe
+    public void filesCurrentlyRecieving(File recievedFile) {
+        if (recievedFile != null) {
+            sharePresenter.showFilesRecieving(recievedFile);
+        }
+
     }
 
     @Override

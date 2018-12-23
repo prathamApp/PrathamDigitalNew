@@ -202,7 +202,7 @@ public abstract class FtpCmd implements Runnable {
         String retString = input.substring(firstSpacePosition + 1);
 
         // Remove trailing whitespace
-        // todo: trailing whitespace may be significant, just remove \r\n
+        // trailing whitespace may be significant, just remove \r\n
         retString = retString.replaceAll("\\s+$", "");
 
         if (!silent) {

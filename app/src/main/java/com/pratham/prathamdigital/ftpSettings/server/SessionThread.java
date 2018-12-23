@@ -22,6 +22,10 @@ package com.pratham.prathamdigital.ftpSettings.server;
 import android.util.Log;
 
 import com.pratham.prathamdigital.ftpSettings.FsSettings;
+import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.util.PD_Constant;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -39,7 +43,7 @@ import static com.pratham.prathamdigital.util.PD_Utility.getVersion;
 
 public class SessionThread extends Thread {
 
-    private static final int MAX_AUTH_FAILS = 3;
+    private static final int MAX_AUTH_FAILS = 5;
     public static final int DATA_CHUNK_SIZE = 65536;  // do file I/O in 64k chunks
     private static final String TAG = SessionThread.class.getSimpleName();
 
@@ -346,6 +350,9 @@ public class SessionThread extends Thread {
         if (authenticated) {
             Log.d(TAG, "Authentication complete");
             userAuthenticated = true;
+            EventMessage msg = new EventMessage();
+            msg.setMessage(PD_Constant.FTP_CLIENT_CONNECTED);
+            EventBus.getDefault().post(msg);
         } else {
             authFails++;
             Log.d(TAG, "Auth failed: " + authFails + "/" + MAX_AUTH_FAILS);

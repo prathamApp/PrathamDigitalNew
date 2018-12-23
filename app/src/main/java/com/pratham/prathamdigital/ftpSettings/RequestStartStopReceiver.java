@@ -37,7 +37,7 @@ public class RequestStartStopReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "Received: " + intent.getAction());
 
-        // TODO: analog code as in ServerPreferenceActivity.start/stopServer(), refactor
+        // analog code as in ServerPreferenceActivity.start/stopServer(), refactor
         try {
             if (intent.getAction().equals(FsService.ACTION_START_FTPSERVER)) {
                 Intent serverService = new Intent(context, FsService.class);

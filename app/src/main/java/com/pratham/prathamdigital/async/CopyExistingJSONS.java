@@ -19,53 +19,39 @@ import java.util.List;
 public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
 
     Context context;
+    File filePath;
     Interface_copying interface_copying;
 
-    public CopyExistingJSONS(Context context, Interface_copying interface_copying) {
+    public CopyExistingJSONS(Context context, File filePath) {
         this.context = context;
-        this.interface_copying = interface_copying;
-    }
-
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        interface_copying.copyingExisting();
+        this.filePath = filePath;
     }
 
     @Override
     protected Boolean doInBackground(String... strings) {
         try {
-            File parent;
-            if (PrathamApplication.contentExistOnSD)
-                parent = new File(PrathamApplication.contentSDPath);
-            else
-                parent = new File(PrathamApplication.pradigiPath);
-            if (parent.isDirectory() && parent.exists()) {
-                for (File childs : parent.listFiles()) {
-                    if (childs.getName().endsWith(".json")) {
-                        try {
-                            FileInputStream is = new FileInputStream(childs);
-                            int size = is.available();
-                            byte[] buffer = new byte[size];
-                            is.read(buffer);
-                            is.close();
-                            String mResponse = new String(buffer);
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
-                            }.getType();
-                            List<Modal_ContentDetail> tempContents = gson.fromJson(mResponse, listType);
-                            for (Modal_ContentDetail detail : tempContents) {
-                                detail.setDownloaded(true);
-                                if (PrathamApplication.contentExistOnSD) detail.setOnSDCard(true);
-                                else detail.setOnSDCard(false);
-                            }
-                            BaseActivity.modalContentDao.addContentList(tempContents);
-                            childs.delete();//todo this might give crash. Please check
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+            try {
+                if (filePath.exists()) {
+                    FileInputStream is = new FileInputStream(filePath);
+                    int size = is.available();
+                    byte[] buffer = new byte[size];
+                    is.read(buffer);
+                    is.close();
+                    String mResponse = new String(buffer);
+                    Gson gson = new Gson();
+                    Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
+                    }.getType();
+                    List<Modal_ContentDetail> tempContents = gson.fromJson(mResponse, listType);
+                    for (Modal_ContentDetail detail : tempContents) {
+                        detail.setDownloaded(true);
+                        if (PrathamApplication.contentExistOnSD) detail.setOnSDCard(true);
+                        else detail.setOnSDCard(false);
                     }
+                    BaseActivity.modalContentDao.addContentList(tempContents);
+                    filePath.delete();
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
             return true;
         } catch (Exception e) {

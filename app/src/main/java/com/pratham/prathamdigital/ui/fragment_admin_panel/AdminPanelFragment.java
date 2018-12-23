@@ -156,7 +156,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
-                // todo pushed successfully dialog
                 new BlurPopupWindow.Builder(getContext())
                         .setContentView(R.layout.app_success_dialog)
                         .setGravity(Gravity.CENTER)
@@ -168,7 +167,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
                         .build()
                         .show();
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
-                // todo push failed dialog
                 new BlurPopupWindow.Builder(getContext())
                         .setContentView(R.layout.app_failure_dialog)
                         .setGravity(Gravity.CENTER)

@@ -11,7 +11,7 @@
     app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="@dimen/_10sdp"
     app:cardElevation="@dimen/_5sdp"
-    app:flexibility="8">
+    app:flexibility="3">
 
     <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"

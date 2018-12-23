@@ -6,10 +6,10 @@
     android:background="?android:attr/selectableItemBackground"
     android:clickable="true"
     android:focusable="true"
-    app:flexibility="8"
     android:stateListAnimator="@animator/lift_on_touch"
     app:cardCornerRadius="@dimen/_10sdp"
-    app:cardElevation="@dimen/_5sdp">
+    app:cardElevation="@dimen/_5sdp"
+    app:flexibility="3">
 
     <android.support.design.card.MaterialCardView
         android:layout_width="match_parent"

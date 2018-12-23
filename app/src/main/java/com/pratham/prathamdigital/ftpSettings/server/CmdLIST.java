@@ -132,7 +132,6 @@ public class CmdLIST extends CmdAbstractListing implements Runnable {
         if (file.isDirectory()) {
             response.append("drwxr-xr-x 1 owner group");
         } else {
-            // TODO: think about special files, symlinks, devices
             response.append("-rw-r--r-- 1 owner group");
         }
 

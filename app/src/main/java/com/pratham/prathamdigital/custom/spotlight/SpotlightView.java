@@ -686,7 +686,7 @@ public class SpotlightView extends FrameLayout {
 
 
         //check up or down
-        if (targetView.getPoint().y > screenHeight / 2) {//Down TODO: add a logic for by 2
+        if (targetView.getPoint().y > screenHeight / 2) {//Down
             if (targetView.getPoint().x > screenWidth / 2) {//Right
                 animPoints.add(new AnimPoint((targetView.getViewRight() - targetView.getViewWidth() / 2),
                         targetView.getPoint().y - circleShape.getRadius() - extraPaddingForArc, (targetView.getViewRight() - targetView.getViewWidth() / 2),

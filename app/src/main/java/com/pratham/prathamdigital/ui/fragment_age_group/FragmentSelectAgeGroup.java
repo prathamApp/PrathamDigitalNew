@@ -56,7 +56,6 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @OnClick(R.id.scan_qr)
     public void setScanQR() {
-        //todo check camera permission
         checkPermission();
     }
 

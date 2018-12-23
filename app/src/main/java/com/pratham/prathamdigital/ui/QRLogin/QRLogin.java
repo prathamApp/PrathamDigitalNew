@@ -186,8 +186,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     // Start QRScan
     private void setValues(View view) {
         attendances = new ArrayList<>();
-
-        // todo Handle Session Start Webview service to handle session tracking
         try {
 
             if (stdList != null && stdList.size() > 0) {
@@ -365,7 +363,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             std = new Modal_Student(sid, sname, "QRGroupID");
             if (totalStudents < 6) {
 
-                // todo Parse json & separate id & name
                 String resultID = "", resultName = "";
                 try {
                     JSONObject jsonobject = new JSONObject(result.getText());

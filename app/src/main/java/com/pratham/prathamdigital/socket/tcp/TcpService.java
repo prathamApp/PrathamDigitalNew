@@ -103,7 +103,7 @@ public class TcpService implements Runnable {
                 serviceSocket.close();
                 serviceSocket = null;
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 e.printStackTrace();
             }
         while (SCAN_FLAG == true)
@@ -144,7 +144,7 @@ public class TcpService implements Runnable {
                 input = socket.getInputStream();
                 dataInput = new DataInputStream(input);
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 SCAN_RECIEVE = false;
                 e.printStackTrace();
             }

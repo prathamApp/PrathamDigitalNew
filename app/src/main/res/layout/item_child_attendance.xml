@@ -11,7 +11,7 @@
         android:layout_width="@dimen/_90sdp"
         android:layout_height="@dimen/_90sdp"
         android:layout_centerHorizontal="true"
-        android:clickable="false"
+        android:clickable="true"
         android:elevation="@dimen/_10sdp"
         app:cardCornerRadius="@dimen/_20sdp">
 
@@ -20,6 +20,7 @@
             android:layout_width="@dimen/_90sdp"
             android:layout_height="@dimen/_90sdp"
             android:layout_centerHorizontal="true"
+            android:clickable="false"
             android:background="@drawable/child_attendance_bkgd"
             android:scaleType="centerInside"
             app:lottie_autoPlay="true"

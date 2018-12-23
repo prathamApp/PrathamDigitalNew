@@ -8,24 +8,32 @@ import org.apache.commons.net.ftp.FTPClient;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 
-public class FTPFileJsonUploadTask extends AsyncTask {
+public class FTPSingleFileUploadTask extends AsyncTask {
     FTPClient client;
     Context context;
     String localFilePath;
+    boolean isImage;
 
-    public FTPFileJsonUploadTask(Context context, FTPClient client, String localFilePath) {
+    public FTPSingleFileUploadTask(Context context, FTPClient client, String localFilePath, boolean isImage) {
         this.context = context;
         this.client = client;
         this.localFilePath = localFilePath;
+        this.isImage = isImage;
     }
 
     @Override
     protected Object doInBackground(Object[] objects) {
         try {
-            // use local passive mode to pass firewall
-//            client.enterLocalPassiveMode();
-            String remoteFilePath = "/" + new File(localFilePath).getName();
+            client.enterLocalPassiveMode();
+            String remoteFilePath = null;
+            if (isImage) {
+                client.makeDirectory("PrathamImages");
+                remoteFilePath = "/PrathamImages/" + new File(localFilePath).getName();
+            } else {
+                remoteFilePath = "/" + new File(localFilePath).getName();
+            }
             uploadSingleFile(client, localFilePath, remoteFilePath);
             return true;
         } catch (Exception e) {
@@ -34,18 +42,16 @@ public class FTPFileJsonUploadTask extends AsyncTask {
         }
     }
 
+
     public void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath) {
         try {
             File localFile = new File(localFilePath);
-//            PackageManager pm = PrathamApplication.getInstance().getPackageManager();
-//            ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
-//            File localFile = new File(ai.publicSourceDir);
             FileInputStream in = new FileInputStream(localFile);
             boolean result = ftpClient.storeFile(remoteFilePath, in);
             Log.v("upload_result:::", "" + result);
-            if (result) localFile.delete();
+            if (result && !isImage) localFile.delete();
             in.close();
-        } catch (Exception e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

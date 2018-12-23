@@ -1,6 +1,11 @@
 package com.pratham.prathamdigital.ui.dashboard;
 
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.card.MaterialCardView;
@@ -8,6 +13,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
@@ -37,6 +43,8 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
+
+import java.io.File;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -135,6 +143,28 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
+    @OnClick(R.id.pradigi_exit)
+    public void ExitApp() {
+        if (!FsService.isRunning()) {
+            new AlertDialog.Builder(ActivityMain.this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("PraDigi")
+                    .setMessage("Do you want to exit?")
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finishAffinity();
+                        }
+                    })
+                    .setNegativeButton("No", null)
+                    .show();
+        } else {
+            EventMessage msg = new EventMessage();
+            msg.setMessage(PD_Constant.CLOSE_FTP_SERVER);
+            EventBus.getDefault().post(msg);
+        }
+    }
+
     @OnClick(R.id.sheet_language)
     public void setSheetLanguage(View view) {
         animate(view);
@@ -175,6 +205,25 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve(), R.id.main_frame,
                 bundle, FragmentShareRecieve.class.getSimpleName());
+    }
+
+    @OnClick(R.id.sheet_apk_share)
+    public void shareAPK(View view) {
+        animate(view);
+        PrathamApplication.bubble_mp.start();
+        try {
+            Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+            PackageManager pm = PrathamApplication.getInstance().getPackageManager();
+            ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
+            File localFile = new File(ai.publicSourceDir);
+            intentShareFile.setType("*/*");
+            intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + localFile.getAbsolutePath()));
+            intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
+            intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
+            startActivity(Intent.createChooser(intentShareFile, "Share through"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @OnClick(R.id.sheet_connect)

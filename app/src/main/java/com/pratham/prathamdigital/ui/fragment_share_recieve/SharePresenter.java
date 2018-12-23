@@ -3,26 +3,27 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.WifiConfiguration;
-import android.os.AsyncTask;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.isupatches.wisefy.callbacks.AddNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.ConnectToNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.GetSavedNetworkCallbacks;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.CopyExistingJSONS;
-import com.pratham.prathamdigital.async.FTPFileJsonUploadTask;
-import com.pratham.prathamdigital.async.FTPFileUploadTask;
-import com.pratham.prathamdigital.async.FTPImageUploadTask;
+import com.pratham.prathamdigital.async.FTPContentUploadTask;
+import com.pratham.prathamdigital.async.FTPSingleFileUploadTask;
 import com.pratham.prathamdigital.async.GetDownloadedContent;
 import com.pratham.prathamdigital.ftpSettings.ConnectToFTP;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.interfaces.FTPConnected;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
 import com.pratham.prathamdigital.services.MessageReveiver;
 import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
@@ -31,13 +32,15 @@ import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class SharePresenter implements DownloadedContents, ContractShare.sharePresenter, FTPConnected {
     private static final String TAG = SharePresenter.class.getSimpleName();
@@ -45,6 +48,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     ContractShare.shareView shareView;
     FTPClient ftpClient;
     ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
+    HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
 
     public SharePresenter(Context context, ContractShare.shareView shareView) {
         this.context = context;
@@ -176,28 +180,27 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     public void onFTPConnected(boolean connected, FTPClient client) {
         if (connected) {
             this.ftpClient = client;
-//            startConnectionDisconnectlistener(client);
+            startConnectionDisconnectlistener(client);
         }
     }
 
-//    private void startConnectionDisconnectlistener(FTPClient client) {
-//        new Timer().schedule(new TimerTask() {
-//            @SuppressLint("MissingPermission")
-//            @Override
-//            public void run() {
-//                String name = PrathamApplication.wiseF.getCurrentNetwork().getSSID();
-//                try {
-//                    if (!name.contains("Pratham_")) {
-//                        cancel();
-//                        ftpClient.disconnect();
-//                        shareView.closeFTPJoin();
-//                    }
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }, new Date(System.currentTimeMillis() + 2500), 2500);
-//    }
+    private void startConnectionDisconnectlistener(FTPClient client) {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    client.getStatus();
+                    Log.d(TAG, "run::" + client.getStatus());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    shareView.closeFTPJoin();
+                    timer.cancel();
+                }
+            }
+        }, new Date(System.currentTimeMillis() + 2000), 2000);
+
+    }
 
     @Override
     public void sendFiles(Modal_ContentDetail detail) {
@@ -224,16 +227,17 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             if (file.exists()) {
                 File contentJson = createJsonFileForContent(detail);
                 if (contentJson != null) {
-                    FTPFileUploadTask task = new FTPFileUploadTask(context, ftpClient, dirPath,
+//                    for Content Transfer
+                    FTPContentUploadTask contentTask = new FTPContentUploadTask(context, ftpClient, dirPath,
                             detail.getResourcetype(), detail.getNodeid());
-                    task.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-//                    //for content Image Transfer
+                    contentTask.execute();
+////                    for content Image Transfer
                     imgDirPath += "/PrathamImages/" + detail.getNodeimage();
-                    FTPImageUploadTask imgtask = new FTPImageUploadTask(context, ftpClient, imgDirPath);
-                    imgtask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
-//                    //for file Json Transfer
-                    FTPFileJsonUploadTask jsontask = new FTPFileJsonUploadTask(context, ftpClient, contentJson.getAbsolutePath());
-                    jsontask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+                    FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient, imgDirPath, true);
+                    imgtask.execute();
+////                    for file Json Transfer
+                    FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, contentJson.getAbsolutePath(), false);
+                    jsontask.execute();
                 }
             } else {
                 Toast.makeText(context, "File not found.", Toast.LENGTH_SHORT).show();
@@ -243,14 +247,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     private File createJsonFileForContent(Modal_ContentDetail detail) {
         try {
-            JSONArray array = new JSONArray();
-            ArrayList<Modal_ContentDetail> temp = levels;
+            ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
+            temp.addAll(levels);
             temp.add(detail);
-            Gson gson = new Gson();
-            for (Modal_ContentDetail d : temp) {
-                String toJson = gson.toJson(d);
-                array.put(toJson);
-            }
+            Gson gson = new GsonBuilder().create();
+            JsonArray array = gson.toJsonTree(temp).getAsJsonArray();
             File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + detail.getNodetitle() + ".json");
             FileWriter writer = new FileWriter(file.getAbsolutePath());
             writer.write(array.toString());
@@ -265,8 +266,43 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     }
 
     @Override
-    public void readRecievedFiles() {
+    public void readRecievedFiles(File filePath) {
         //read recieved jsons and insert to DB
-        new CopyExistingJSONS(context, null).execute();
+        new CopyExistingJSONS(context, filePath).execute();
+    }
+
+    @Override
+    public void showFilesRecieving(File filePath) {
+        Modal_ReceivingFilesThroughFTP modal = new Modal_ReceivingFilesThroughFTP();
+        if (filePath.getAbsolutePath().contains("PrathamGame")) {
+            String[] sub = filePath.getAbsolutePath().split("PrathamGame/");
+            String game_name = sub[1].split("/")[0];
+            String game_parts = sub[1];
+            modal.setGameName(game_name);
+            modal.setGamePart(game_parts);
+            modal.setGameType(PD_Constant.GAME);
+            filesRecieving.put(game_name, modal);
+            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+        } else if (filePath.getAbsolutePath().contains("PrathamVideo")) {
+            String[] sub = filePath.getAbsolutePath().split("PrathamVideo/");
+            String vid_name = filePath.getName();
+            String vid_parts = sub[1];
+            modal.setGameName(vid_name);
+            modal.setGamePart(vid_parts);
+            modal.setGameType(PD_Constant.VIDEO);
+            filesRecieving.put(vid_name, modal);
+            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+        } else if (filePath.getAbsolutePath().contains("PrathamPDF")) {
+            String[] sub = filePath.getAbsolutePath().split("PrathamPDF/");
+            String pdf_name = filePath.getName();
+            String pdf_parts = sub[1];
+            modal.setGameName(pdf_name);
+            modal.setGamePart(pdf_parts);
+            modal.setGameType(PD_Constant.PDF);
+            filesRecieving.put(pdf_name, modal);
+            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+        } else if (filePath.getAbsolutePath().endsWith(".json")) {
+            readRecievedFiles(filePath);
+        }
     }
 }

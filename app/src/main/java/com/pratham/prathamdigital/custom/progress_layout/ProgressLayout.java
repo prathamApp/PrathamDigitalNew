@@ -31,16 +31,16 @@ public class ProgressLayout extends View {
     private int mBorderWidth;
     private boolean mIsShowDesc;
 
-    private int DEFAULT_MAX = 10;
+    private int DEFAULT_MAX = 100;
     private int DEFAULT_PROGRESS = 0;
     private int DEFAULT_RADIUS = (int) TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP, 5, getResources().getDisplayMetrics());
-    private int DEFAULT_BORDER_COLOR = Color.parseColor("#FE78A6");
-    private int DEFAULT_PROGRESS_COLOR = Color.parseColor("#FE78A6");
-    private int DEFAULT_PROGRESS_DESC_COLOR = Color.parseColor("#B4B4B4");
+    private int DEFAULT_BORDER_COLOR = Color.parseColor("#7A8B5A");
+    private int DEFAULT_PROGRESS_COLOR = Color.parseColor("#7A8B5A");
+    private int DEFAULT_PROGRESS_DESC_COLOR = Color.parseColor("#7A8B5A");
     private int DEFAULT_BORDER_WIDTH = (int) TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP, 1, getResources().getDisplayMetrics());
-    private boolean DEFAULT_ISSHOWDESC = true;
+            TypedValue.COMPLEX_UNIT_DIP, 0, getResources().getDisplayMetrics());
+    private boolean DEFAULT_ISSHOWDESC = false;
 
     private int mWidth;
     private int mHeight;
@@ -277,21 +277,11 @@ public class ProgressLayout extends View {
 
     }
 
-    /**
-     * 得到ProgressBar的最大进度
-     *
-     * @return
-     */
     public int getMax() {
         return mMax;
 
     }
 
-    /**
-     * 获取当前ProgressBar的进度
-     *
-     * @return
-     */
     public final int getProgress() {
 
         return mProgress;
@@ -302,11 +292,6 @@ public class ProgressLayout extends View {
         invalidateView();
     }
 
-    /**
-     * 设置当前进度条的进度(默认动画时间1.5s)
-     *
-     * @param progress
-     */
     public void setCurProgress(final int progress) {
 
         ObjectAnimator animator = ObjectAnimator.ofInt(this, "progress", progress).setDuration(1500);
@@ -322,12 +307,6 @@ public class ProgressLayout extends View {
         animator.start();
     }
 
-    /**
-     * 设置当前进度条的进度
-     *
-     * @param progress 目标进度
-     * @param duration 动画时长
-     */
     public void setCurProgress(final int progress, long duration) {
 
         ObjectAnimator animator = ObjectAnimator.ofInt(this, "progress", progress).setDuration(duration);
@@ -344,21 +323,11 @@ public class ProgressLayout extends View {
 
     }
 
-    /**
-     * 设置ProgressBar的颜色
-     *
-     * @param color
-     */
     public void setProgressColor(int color) {
         mProgressColor = color;
         invalidateView();
     }
 
-    /**
-     * 设置是否显示当前进度
-     *
-     * @param isShowDesc true:显示
-     */
     public void setIsShowDesc(boolean isShowDesc) {
 
         mIsShowDesc = isShowDesc;

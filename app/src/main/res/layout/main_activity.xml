@@ -22,19 +22,20 @@
             android:id="@+id/pradigi_icon"
             android:layout_width="@dimen/_50sdp"
             android:layout_height="@dimen/_50sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_5sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:elevation="@dimen/_10sdp"
             android:src="@drawable/pratham_logo" />
-        <!--
 
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/rv_level"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/_30sdp"
-                    android:layout_marginLeft="@dimen/_37sdp"
-                    android:layout_marginTop="@dimen/_8sdp" />
-        -->
+        <ImageView
+            android:id="@+id/pradigi_exit"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:elevation="@dimen/_10sdp"
+            app:srcCompat="@drawable/ic_exit" />
 
         <RelativeLayout
             android:id="@+id/download_badge"
@@ -64,9 +65,9 @@
         <View
             android:id="@+id/outer_area"
             android:layout_width="match_parent"
-            android:visibility="gone"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:visibility="gone" />
 
         <include
             layout="@layout/top_sheet_items_layout"

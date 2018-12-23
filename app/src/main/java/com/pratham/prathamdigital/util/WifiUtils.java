@@ -450,7 +450,7 @@ public class WifiUtils {
             mThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    // TODO Auto-generated method stub
+                    //  Auto-generated method stub
                     while (!mExitFlag) {
                         mCount++;
                         if (mCount < mTimeOutCount) {
@@ -458,7 +458,7 @@ public class WifiUtils {
                             try {
                                 Thread.sleep(mSleepTime);
                             } catch (InterruptedException e) {
-                                // TODO Auto-generated catch block
+                                // Auto-generated catch block
                                 e.printStackTrace();
                                 exit();
                             }

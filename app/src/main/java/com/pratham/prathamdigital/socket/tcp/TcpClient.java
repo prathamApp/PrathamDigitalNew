@@ -221,7 +221,7 @@ public class TcpClient implements Runnable {
 
                 PrathamApplication.sendFileStates.remove(fs.filePath);
             } catch (UnknownHostException e) {
-                // TODO Auto-generated catch block
+                // Auto-generated catch block
                 SEND_FLAG = false;
                 e.printStackTrace();
             } catch (IOException e) {

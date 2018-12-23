@@ -90,7 +90,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 downloadblock(url);
                 break;
            /* case APIs.UP:
-                //todo urban
                 url = APIs.UPpullVillagesURL + selectedBlock;
                 downloadblock(url);
                 break;
@@ -179,7 +178,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                     loadStudent(url);
                     break;
               /*  case APIs.UP:
-                    //todo urban
                     url = APIs.UPpullStudentsURL + id;
                     loadStudent(url);
                     break;
@@ -246,7 +244,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                         downloadGroups(urlgroup);
                         break;
                    /* case APIs.UP:
-                        //todo urban
                         urlgroup = APIs.UPpullGroupsURL + id;
                         downloadGroups(urlgroup);
                         break;
@@ -316,7 +313,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                     downloadCRL(crlURL);
                     break;
                /* case APIs.UP:
-                    //todo urban
                     crlURL = APIs.UPpullCrlsURL + selectedBlock;
                     downloadCRL(crlURL);
                     break;
