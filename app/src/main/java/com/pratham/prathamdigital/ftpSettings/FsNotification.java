@@ -29,7 +29,7 @@ import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 
 public class FsNotification extends BroadcastReceiver {
 
@@ -78,7 +78,7 @@ public class FsNotification extends BroadcastReceiver {
         CharSequence contentTitle = context.getString(R.string.notification_title);
         CharSequence contentText = String.format(context.getString(R.string.notification_text), iptext);
 
-        Intent notificationIntent = new Intent(context, ActivityMain.class);
+        Intent notificationIntent = new Intent(context, ActivityMain_.class);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent contentIntent = PendingIntent.getActivity(context, 0, notificationIntent, 0);
 
@@ -90,7 +90,7 @@ public class FsNotification extends BroadcastReceiver {
 
         int preferenceIcon = android.R.drawable.ic_menu_preferences;
         CharSequence preferenceText = context.getString(R.string.notif_settings_text);
-        Intent preferenceIntent = new Intent(context, ActivityMain.class);
+        Intent preferenceIntent = new Intent(context, ActivityMain_.class);
         preferenceIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent preferencePendingIntent = PendingIntent.getActivity(context, 0, preferenceIntent, 0);
 

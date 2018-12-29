@@ -42,6 +42,7 @@ public class DownloadDiffUtilCallback extends DiffUtil.Callback {
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        return newList.get(newItemPosition);
+        return super.getChangePayload(oldItemPosition, newItemPosition);
+//        return newList.get(newItemPosition);
     }
 }

@@ -30,6 +30,8 @@ import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
 import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,6 +44,7 @@ import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
 
+@EBean
 public class SharePresenter implements DownloadedContents, ContractShare.sharePresenter, FTPConnected {
     private static final String TAG = SharePresenter.class.getSimpleName();
     Context context;
@@ -50,11 +53,16 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
     HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
 
-    public SharePresenter(Context context, ContractShare.shareView shareView) {
+    public SharePresenter(Context context) {
         this.context = context;
-        this.shareView = shareView;
     }
 
+    @Override
+    public void setView(FragmentShareRecieve fragmentShareRecieve) {
+        this.shareView = (ContractShare.shareView) fragmentShareRecieve;
+    }
+
+    @Background
     @Override
     public void connectToWify(String ssid) {
         PrathamApplication.wiseF.getSavedNetwork(ssid, new GetSavedNetworkCallbacks() {
@@ -159,6 +167,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         UDPMessageListener.sendUDPdata(command);
     }
 
+    @Background
     @Override
     public void downloadedContents(Object o, String parentId) {
         ArrayList<File_Model> downloads = new ArrayList<>();
@@ -184,7 +193,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         }
     }
 
-    private void startConnectionDisconnectlistener(FTPClient client) {
+    @Background
+    public void startConnectionDisconnectlistener(FTPClient client) {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
             @Override
@@ -202,6 +212,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     }
 
+    @Background
     @Override
     public void sendFiles(Modal_ContentDetail detail) {
         if (ftpClient != null) {
@@ -271,6 +282,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         new CopyExistingJSONS(context, filePath).execute();
     }
 
+    @Background
     @Override
     public void showFilesRecieving(File filePath) {
         Modal_ReceivingFilesThroughFTP modal = new Modal_ReceivingFilesThroughFTP();

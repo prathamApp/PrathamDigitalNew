@@ -1,8 +1,7 @@
-package com.pratham.prathamdigital.ui.dashboard;
+package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,7 @@ import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.ui.fragment_content.ContentDiffUtilCallback;
+import com.stolets.rxdiffutil.Swappable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,12 +22,12 @@ import butterknife.ButterKnife;
  * Created by HP on 01-08-2017.
  */
 
-public class RV_LevelAdapter extends RecyclerView.Adapter {
+public class RV_LevelAdapter extends RecyclerView.Adapter implements Swappable<Modal_ContentDetail> {
 
     public static final int LAST_ITEM = 1;
     public static final int NORMAL_ITEM = 2;
     private Context context;
-    private ArrayList<Modal_ContentDetail> levels;
+    private List<Modal_ContentDetail> levels;
     private LevelContract levelContract;
 
     public RV_LevelAdapter(Context context, ArrayList<Modal_ContentDetail> levels, LevelContract levelContract) {
@@ -106,16 +105,25 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, levels));
-        levels.clear();
-        this.levels.addAll(newList);
-        diffResult.dispatchUpdatesTo(this);
+//    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
+//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, levels));
+//        levels.clear();
+//        this.levels.addAll(newList);
+//        diffResult.dispatchUpdatesTo(this);
+//    }
+
+    @Override
+    public void swapData(@NonNull List<Modal_ContentDetail> newData) {
+        this.levels = newData;
     }
 
     @Override
     public int getItemCount() {
         return levels.size();
+    }
+
+    public List<Modal_ContentDetail> getData() {
+        return levels;
     }
 
     public class NormalItemViewHolder extends RecyclerView.ViewHolder {

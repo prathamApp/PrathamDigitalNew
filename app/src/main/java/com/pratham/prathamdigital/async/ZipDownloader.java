@@ -12,11 +12,14 @@ import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.EBean;
+
 import java.io.File;
 
 /**
  * Created by User on 16/11/15.
  */
+@EBean
 public class ZipDownloader {
 
     private static final String TAG = ZipDownloader.class.getSimpleName();
@@ -26,12 +29,15 @@ public class ZipDownloader {
     Context context;
     ContentContract.contentPresenter contentPresenter;
     private File fileWithinMyDir;
-    //    public PowerManager.WakeLock wakeLock;
     String foldername;
-    int downloadId;
+    //    int downloadId;
     Modal_ContentDetail contentDetail;
 
-    public ZipDownloader(Context context, ContentContract.contentPresenter contentPresenter, ProgressUpdate progressUpdate
+    public ZipDownloader(Context context) {
+        this.context = context;
+    }
+
+    public void initialize(Context context, ContentContract.contentPresenter contentPresenter, ProgressUpdate progressUpdate
             , String url, String foldername, String f_name, String pradigiPath, Modal_ContentDetail contentDetail) {
         this.context = context;
         PD_Utility.DEBUG_LOG(1, "url:::", url);
@@ -52,7 +58,6 @@ public class ZipDownloader {
             }
         }
         Log.d("internal_file", mydir.getAbsolutePath());
-//        downloadFile(url, mydir.getAbsolutePath(), filename);
         Intent intent = new Intent(context, DownloadService.class);
         intent.putExtra(PD_Constant.DOWNLOAD_URL, url);
         intent.putExtra(PD_Constant.DIR_PATH, mydir.getAbsolutePath());
@@ -61,62 +66,6 @@ public class ZipDownloader {
         intent.putExtra(PD_Constant.DOWNLOAD_CONTENT, contentDetail);
         context.startService(intent);
     }
-
-//    public void downloadFile(String url, final String dirpath, final String f_name) {
-////        wakeLock.acquire();
-////        DownloadRequest request = null;
-//        downloadId = PRDownloader.download(url, dirpath, f_name)
-//                .build()
-//                .setOnStartOrResumeListener(new OnStartOrResumeListener() {
-//                    @Override
-//                    public void onStartOrResume() {
-//                        contentPresenter.fileDownloadStarted(downloadId, filename, contentDetail);
-//                    }
-//                })
-//                .setOnPauseListener(new OnPauseListener() {
-//                    @Override
-//                    public void onPause() {
-//                        contentPresenter.onDownloadPaused(downloadId);
-//                    }
-//                })
-//                .setOnCancelListener(new OnCancelListener() {
-//                    @Override
-//                    public void onCancel() {
-//                        contentPresenter.ondownloadCancelled(downloadId);
-//                    }
-//                })
-//                .setOnProgressListener(new OnProgressListener() {
-//                    long progg = 0;
-//
-//                    @Override
-//                    public void onProgress(Progress progress) {
-//                        long progressPercent = 0;
-////                        if (progress.totalBytes == -1) {
-////                            if (progg == 0) progg = progress.currentBytes;
-////                            progressPercent = progress.currentBytes / progg;
-////                        } else
-//                        progressPercent = progress.currentBytes * 100 / progress.totalBytes;
-//                        Log.d("onProgress::", "" + progressPercent);
-//                        contentPresenter.updateFileProgress(downloadId, f_name, (int) progressPercent);
-//                    }
-//                })
-//                .start(new OnDownloadListener() {
-//                    @Override
-//                    public void onDownloadComplete() {
-//                        if (foldername.equalsIgnoreCase("Game")) {
-////                            new UnzipAsync(dirpath + "/" + f_name, dirpath, contentPresenter, downloadId).execute();
-//                        } else {
-//                            contentPresenter.onDownloadCompleted(downloadId);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onError(Error error) {
-//                        Log.d(TAG, "onError: content download error");
-//                        contentPresenter.ondownloadError(f_name);
-//                    }
-//                });
-//    }
 }
 
 

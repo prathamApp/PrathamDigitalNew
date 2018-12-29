@@ -32,7 +32,7 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -213,7 +213,7 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                 }
                 FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
                 startService(new Intent(this, AppKillService.class));
-                Intent main = new Intent(QRLogin.this, ActivityMain.class);
+                Intent main = new Intent(QRLogin.this, ActivityMain_.class);
                 startActivity(main);
                 overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                 finishAfterTransition();

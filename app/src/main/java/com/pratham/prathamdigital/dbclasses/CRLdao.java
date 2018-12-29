@@ -7,7 +7,6 @@ import android.arch.persistence.room.Query;
 
 import com.pratham.prathamdigital.models.Modal_Crl;
 
-import java.security.cert.CRL;
 import java.util.List;
 
 @Dao
@@ -21,21 +20,21 @@ public interface CRLdao {
     @Query("SELECT * FROM CRL WHERE UserName=:user AND Password=:pass")
     public Modal_Crl checkUserValidation(String user, String pass);
 
-/*    @Query("SELECT * FROM CRL")
+/*    @Query("SELECT * FROM KOLIBRI_CRL")
     public List<Modal_Crl> getAllCRLs();
 
-    @Query("SELECT count(*) FROM CRL")
+    @Query("SELECT count(*) FROM KOLIBRI_CRL")
     public int getCRLsCount();
 
-    @Query("SELECT RoleId FROM CRL where CRLId=:id")
+    @Query("SELECT RoleId FROM KOLIBRI_CRL where CRLId=:id")
     public String getCRLsRoleById(String id);
 
-    @Query("SELECT DISTINCT ProgramName FROM CRL")
+    @Query("SELECT DISTINCT ProgramName FROM KOLIBRI_CRL")
     public List<String> getDistinctCRLsdProgram();
 
-    @Query("SELECT DISTINCT  RoleName FROM CRL")
+    @Query("SELECT DISTINCT  RoleName FROM KOLIBRI_CRL")
     public List<String> getDistinctCRLsRoleId();
 
-    @Query("SELECT DISTINCT UserName,CRLId,FirstName FROM CRL WHERE RoleName=:roleName and ProgramName=:programName")
+    @Query("SELECT DISTINCT UserName,CRLId,FirstName FROM KOLIBRI_CRL WHERE RoleName=:roleName and ProgramName=:programName")
     public List<Modal_Crl> getDistinctCRLsUserName(String roleName, String programName);*/
 }

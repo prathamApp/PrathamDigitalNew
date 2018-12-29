@@ -33,11 +33,16 @@ import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
+
 import java.util.Iterator;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
 
+@EBean
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
         GoogleApiClient.OnConnectionFailedListener, Interface_copying {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
@@ -47,18 +52,16 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String appname;
 
-    public SplashPresenterImpl(Context context, SplashContract.splashview splashview) {
+    public SplashPresenterImpl(Context context) {
         this.context = context;
-        this.splashview = splashview;
-    }
-
-    public SplashPresenterImpl() {
+        splashview = (SplashContract.splashview) context;
     }
 
     public void getVersion() {
         new GetLatestVersion(context, SplashPresenterImpl.this).execute();
     }
 
+    @Background
     @Override
     public void checkVersion(String latestVersion) {
         String currentVersion = PD_Utility.getCurrentVersion(context);
@@ -107,6 +110,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     }
 
+    @Background
     @Override
     public void validateSignIn(Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -131,7 +135,8 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
-    private void firebaseAuthWithGoogle(AuthCredential credential) {
+    @Background
+    public void firebaseAuthWithGoogle(AuthCredential credential) {
         mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithCredential(credential)
                 .addOnCompleteListener((ActivitySplash) context, new OnCompleteListener<AuthResult>() {
@@ -147,6 +152,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 });
     }
 
+    @UiThread
     @Override
     public void checkStudentList() {
         if (!BaseActivity.studentDao.getAllStudents().isEmpty()) {
@@ -156,6 +162,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+    @Background
     @Override
     public void populateDefaultDB() {
         Modal_Status statusObj = new Modal_Status();
@@ -340,6 +347,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+    @Background
     @Override
     public void checkConnectivity() {
         if (PrathamApplication.isTablet) {
@@ -358,20 +366,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void checkIfContentinSDCard() {
-//        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
-//        if (sdPath.size() > 0) {
-//            File file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER + "/" +
-//                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-//            if (file.exists()) {
-//                File db_file = new File(file.getAbsolutePath(), PrathamDatabase.DB_NAME);
-//                if (db_file.exists()) {
         new CopyExistingDb(context, SplashPresenterImpl.this).execute();
-//                } else
-//                    checkConnectivity();
-//            } else
-//                checkConnectivity();
-//        } else
-//            checkConnectivity();
     }
 
     @Override

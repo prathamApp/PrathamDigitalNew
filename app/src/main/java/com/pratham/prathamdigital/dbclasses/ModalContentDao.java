@@ -21,11 +21,11 @@ public interface ModalContentDao {
     @Delete
     void deleteContent(Modal_ContentDetail contentDetail);
 
-    @Query("SELECT * FROM TableContent WHERE parentid ISNULL or parentid = 0 or parentid=''")
-    public List<Modal_ContentDetail> getParentsHeaders();
+    @Query("SELECT * FROM TableContent WHERE parentid ISNULL or parentid = 0 or parentid=''and content_language=:language")
+    public List<Modal_ContentDetail> getParentsHeaders(String language);
 
-    @Query("SELECT * FROM TableContent WHERE parentid=:id")
-    public List<Modal_ContentDetail> getChildsOfParent(String id);
+    @Query("SELECT * FROM TableContent WHERE parentid=:id and content_language=:language")
+    public List<Modal_ContentDetail> getChildsOfParent(String id, String language);
 
     @Query("SELECT * FROM TableContent WHERE nodeid=:id")
     public Modal_ContentDetail getContent(String id);

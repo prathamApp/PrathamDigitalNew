@@ -3,25 +3,23 @@ package com.pratham.prathamdigital.ui.download_list;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.number_progressbar.NumberProgressBar;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
-import com.pratham.prathamdigital.util.PD_Constant;
+import com.stolets.rxdiffutil.Swappable;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
+public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> implements Swappable<Modal_FileDownloading> {
     Context context;
     List<Modal_FileDownloading> downloadings;
 
@@ -39,14 +37,14 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull DownloadViewHolder holder, int i) {
-        if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-            holder.download_lottie_view.setAnimation("gaming_pad.json");
-        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-            holder.download_lottie_view.setAnimation("play_button.json");
-        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-            holder.download_lottie_view.setAnimation("book.json");
-        else
-            holder.download_lottie_view.setAnimation("gaming_pad.json");
+//        if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
+//            holder.download_lottie_view.setAnimation("gaming_pad.json");
+//        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
+//            holder.download_lottie_view.setAnimation("play_button.json");
+//        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
+//            holder.download_lottie_view.setAnimation("book.json");
+//        else
+//            holder.download_lottie_view.setAnimation("gaming_pad.json");
         holder.content_title.setText(downloadings.get(holder.getAdapterPosition()).getFilename());
         holder.number_progress.setProgress(downloadings.get(holder.getAdapterPosition()).getProgress());
     }
@@ -65,12 +63,21 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
     public int getItemCount() {
         return downloadings.size();
     }
+//
+//    public void updateList(final List<Modal_FileDownloading> newList) {
+//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DownloadDiffUtilCallback(newList, downloadings));
+//        downloadings.clear();
+//        this.downloadings.addAll(newList);
+//        diffResult.dispatchUpdatesTo(this);
+//    }
 
-    public void updateList(final List<Modal_FileDownloading> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DownloadDiffUtilCallback(newList, downloadings));
-        downloadings.clear();
-        this.downloadings.addAll(newList);
-        diffResult.dispatchUpdatesTo(this);
+    @Override
+    public void swapData(@NonNull List<Modal_FileDownloading> newData) {
+        this.downloadings = newData;
+    }
+
+    public List<Modal_FileDownloading> getModelList() {
+        return downloadings;
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {
@@ -81,9 +88,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         @Nullable
         @BindView(R.id.download_content_title)
         TextView content_title;
-        @Nullable
-        @BindView(R.id.download_lottie_view)
-        LottieAnimationView download_lottie_view;
+//        @Nullable
+//        @BindView(R.id.download_lottie_view)
+//        LottieAnimationView download_lottie_view;
 
         public DownloadViewHolder(View itemView) {
             super(itemView);

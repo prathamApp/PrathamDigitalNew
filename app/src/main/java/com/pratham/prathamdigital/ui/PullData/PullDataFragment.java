@@ -4,13 +4,9 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -21,45 +17,63 @@ import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by PEF on 19/11/2018.
  */
 
-
+@EFragment(R.layout.pull_data_fragment)
 public class PullDataFragment extends Fragment implements PullDataContract.PullDataView, VillageSelectListener {
-    @BindView(R.id.rg_programs)
+    private static final String TAG = PullDataFragment.class.getSimpleName();
+    @ViewById(R.id.rg_programs)
     RadioGroup radioGroupPrograms;
 
-    @BindView(R.id.stateSpinner)
+    @ViewById(R.id.stateSpinner)
     Spinner stateSpinner;
 
-    @BindView(R.id.blockSpinner)
+    @ViewById(R.id.blockSpinner)
     Spinner blockSpinner;
 
-    @BindView(R.id.save_button)
+    @ViewById(R.id.save_button)
     Button save_button;
 
+    @Bean(PullDataPresenterImp.class)
     PullDataContract.PullDataPresenter pullDataPresenter;
+
     ProgressDialog progressDialog;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.pull_data_fragment, container, false);
-    }
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        return inflater.inflate(R.layout.pull_data_fragment, container, false);
+//    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        pullDataPresenter = new PullDataPresenterImp(getActivity(), this);
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        ButterKnife.bind(this, view);
+//        pullDataPresenter = new PullDataPresenterImp(getActivity(), this);
+//        pullDataPresenter.loadSpinner();
+//        radioGroupPrograms.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(RadioGroup group, int checkedId) {
+//                pullDataPresenter.clearLists();
+//            }
+//        });
+//    }
+
+    @AfterViews
+    public void initialize() {
+        pullDataPresenter.setView(PullDataFragment.this);
         pullDataPresenter.loadSpinner();
         radioGroupPrograms.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
@@ -69,6 +83,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         });
     }
 
+    @UiThread
     @Override
     public void showStatesSpinner(String[] states) {
         ArrayAdapter arrayStateAdapter = new ArrayAdapter(getActivity(), android.R.layout.simple_spinner_item, states);
@@ -94,11 +109,12 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
+                Log.d(TAG, "onNothingSelected:");
             }
         });
     }
 
+    @UiThread
     @Override
     public void showProgressDialog(String msg) {
         if (progressDialog == null) {
@@ -109,8 +125,9 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         progressDialog.show();
     }
 
+    @UiThread
     @Override
-    public void shoConfermationDialog(int crlListCnt, int studentListcnt, int groupListCnt, int villageListCnt) {
+    public void showConfirmationDialog(int crlListCnt, int studentListcnt, int groupListCnt, int villageListCnt) {
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(getActivity(), android.R.style.Theme_Material_Light_Dialog);
         dialogBuilder.setCancelable(false);
         if (studentListcnt > 0) {
@@ -139,6 +156,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         }
     }
 
+    @UiThread
     @Override
     public void closeProgressDialog() {
         if (progressDialog != null) {
@@ -146,17 +164,20 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         }
     }
 
+    @UiThread
     @Override
     public void clearBlockSpinner() {
         blockSpinner.setSelection(0);
         blockSpinner.setEnabled(false);
     }
 
+    @UiThread
     @Override
     public void clearStateSpinner() {
         stateSpinner.setSelection(0);
     }
 
+    @UiThread
     @Override
     public void showBlocksSpinner(List blocks) {
         blockSpinner.setEnabled(true);
@@ -181,27 +202,33 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         });
     }
 
+    //
+    @UiThread
     @Override
     public void showVillageDialog(List villageList) {
         Dialog villageDialog = new SelectVillageDialog(getActivity(), this, villageList);
         villageDialog.show();
     }
 
+    @UiThread
     @Override
     public void disableSaveButton() {
         save_button.setEnabled(false);
     }
 
+    @UiThread
     @Override
     public void enableSaveButton() {
         save_button.setEnabled(true);
     }
 
+    @UiThread
     @Override
     public void showErrorToast() {
-        Toast.makeText(getActivity(), "Connect to raspberry ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Please check connection", Toast.LENGTH_SHORT).show();
     }
 
+    @UiThread
     @Override
     public void openLoginActivity() {
 /*
@@ -211,12 +238,13 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
         getActivity().getSupportFragmentManager().popBackStack();
     }
 
+    @UiThread
     @Override
     public void getSelectedItems(ArrayList<String> villageIDList) {
         pullDataPresenter.downloadStudentAndGroup(villageIDList);
     }
 
-    @OnClick(R.id.save_button)
+    @Click(R.id.save_button)
     public void saveData() {
         pullDataPresenter.onSaveClick();
     }

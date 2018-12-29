@@ -73,7 +73,7 @@
         </receiver>
 
         <activity
-            android:name=".ui.splash.ActivitySplash"
+            android:name=".ui.splash.ActivitySplash_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:resizeableActivity="false"
@@ -92,14 +92,14 @@
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.dashboard.ActivityMain"
+            android:name=".ui.dashboard.ActivityMain_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.attendance_activity.AttendanceActivity"
+            android:name=".ui.attendance_activity.AttendanceActivity_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
@@ -136,7 +136,7 @@
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.assign.Activity_AssignGroups"
+            android:name=".ui.assign.Activity_AssignGroups_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
@@ -146,6 +146,7 @@
             android:name=".CatchoTransparentActivity"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
+            android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
 
@@ -159,9 +160,9 @@
         <service
             android:name=".services.auto_sync.AutoSyncService"
             android:exported="false" />
-        <service
-            android:name=".services.BackgroundSoundService"
-            android:enabled="true" />
+        <!--<service-->
+        <!--android:name=".services.BackgroundSoundService"-->
+        <!--android:enabled="true" />-->
         <service
             android:name=".services.DownloadService"
             android:exported="false" />

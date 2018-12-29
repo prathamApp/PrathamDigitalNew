@@ -3,7 +3,9 @@ package com.pratham.prathamdigital.async;
 import android.os.AsyncTask;
 
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 public class GetDownloadedContent extends AsyncTask {
     String parentId;
@@ -16,10 +18,11 @@ public class GetDownloadedContent extends AsyncTask {
 
     @Override
     protected Object doInBackground(Object[] objects) {
+        String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty())
-            return BaseActivity.modalContentDao.getChildsOfParent(parentId);
+            return BaseActivity.modalContentDao.getChildsOfParent(parentId, lang);
         else
-            return BaseActivity.modalContentDao.getParentsHeaders();
+            return BaseActivity.modalContentDao.getParentsHeaders(lang);
     }
 
     @Override

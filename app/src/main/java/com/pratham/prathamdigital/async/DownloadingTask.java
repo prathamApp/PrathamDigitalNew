@@ -121,10 +121,6 @@ public class DownloadingTask extends AsyncTask<String, Long, Boolean> {
     @Override
     protected void onProgressUpdate(Long... values) {
         super.onProgressUpdate(values);
-            /*Intent intent = new Intent("download_progress");
-            intent.putExtra("percentage", values[0]);
-            intent.putExtra("position", values[1]);
-            LocalBroadcastManager.getInstance(DownloadService.this).sendBroadcast(intent);*/
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.DOWNLOAD_UPDATE);
         message.setDownloadId(downloadID);

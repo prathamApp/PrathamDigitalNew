@@ -11,6 +11,8 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.interfaces.ApiResult;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
@@ -21,7 +23,10 @@ import com.pratham.prathamdigital.models.RaspStudent;
 import com.pratham.prathamdigital.models.RaspVillage;
 import com.pratham.prathamdigital.models.Village;
 import com.pratham.prathamdigital.util.APIs;
+import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 import org.json.JSONArray;
 
 import java.lang.reflect.Type;
@@ -36,8 +41,8 @@ import static com.pratham.prathamdigital.util.APIs.SC;
 /**
  * Created by PEF on 20/11/2018.
  */
-
-public class PullDataPresenterImp implements PullDataContract.PullDataPresenter {
+@EBean
+public class PullDataPresenterImp implements PullDataContract.PullDataPresenter, ApiResult {
     Context context;
     PullDataContract.PullDataView pullDataView;
     String selectedBlock;
@@ -50,9 +55,13 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
     List<Modal_Groups> groupList = new ArrayList();
     List<String> villageIDList = new ArrayList();
 
-    public PullDataPresenterImp(Context context, PullDataContract.PullDataView pullDataView) {
+    public PullDataPresenterImp(Context context) {
         this.context = context;
-        this.pullDataView = pullDataView;
+    }
+
+    @Override
+    public void setView(PullDataFragment pullDataFragment) {
+        this.pullDataView = (PullDataContract.PullDataView) pullDataFragment;
     }
 
     @Override
@@ -61,17 +70,16 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         pullDataView.showStatesSpinner(states);
     }
 
+    //    @Background
     @Override
     public void proccessVillageData(String block) {
         ArrayList<Village> villageName = new ArrayList();
-
         for (RaspVillage raspVillage : vilageList) {
             for (Modal_Village village : raspVillage.getData()) {
                 if (block.equalsIgnoreCase(village.getBlock().trim()))
                     villageName.add(new Village(village.getVillageId(), village.getVillageName()));
             }
         }
-
         if (!villageName.isEmpty()) {
             pullDataView.showVillageDialog(villageName);
         }
@@ -79,43 +87,78 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void loadBloackSpinner(int pos, String selectedProgram) {
+        pullDataView.showProgressDialog("loading Blocks");
+        getUrlAndPull(pos, selectedProgram);
+    }
+
+    @Background
+    public void getUrlAndPull(int pos, String selectedProgram) {
         String[] statesCodes = context.getResources().getStringArray(R.array.india_states_shortcode);
         selectedBlock = statesCodes[pos];
         this.selectedProgram = selectedProgram;
-        pullDataView.showProgressDialog("loading Blocks");
         String url;
-        switch (selectedProgram) {
+//        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+        switch (this.selectedProgram) {
             case APIs.HL:
-                url = APIs.HLpullVillagesURL + selectedBlock;
+                url = APIs.HLpullVillagesKolibriURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                 downloadblock(url);
                 break;
-           /* case APIs.UP:
-                url = APIs.UPpullVillagesURL + selectedBlock;
-                downloadblock(url);
-                break;
-            case APIs.ECE:
-                url = APIs.ECEpullVillagesURL + selectedBlock;
-                downloadblock(url);
-                break;*/
             case RI:
-                url = APIs.RIpullVillagesURL + selectedBlock;
+                url = APIs.RIpullVillagesKolibriURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                 downloadblock(url);
                 break;
             case SC:
-                url = APIs.SCpullVillagesURL + selectedBlock;
+                url = APIs.SCpullVillagesKolibriURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                 downloadblock(url);
                 break;
             case PI:
-                url = APIs.PIpullVillagesURL + selectedBlock;
+                url = APIs.PIpullVillagesKolibriURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                 downloadblock(url);
                 break;
         }
+        /*
+         (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+            switch (this.selectedProgram) {
+                case APIs.HL:
+                    url = APIs.HLpullVillagesServerURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.SERVER_BLOCK, url);
+                    downloadblock(url);
+                    break;
+                case RI:
+                    url = APIs.RIpullVillagesServerURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.SERVER_BLOCK, url);
+                    downloadblock(url);
+                    break;
+                case SC:
+                    url = APIs.SCpullVillagesServerURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.SERVER_BLOCK, url);
+                    downloadblock(url);
+                    break;
+                case PI:
+                    url = APIs.PIpullVillagesServerURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.SERVER_BLOCK, url);
+                    downloadblock(url);
+                    break;
+            }*/
     }
 
-    private void downloadblock(String url) {
+    public void downloadblock(String url) {
         AndroidNetworking.get(url)
                 .addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build()
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -135,7 +178,6 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                                         blockList.add(village.getBlock());
                                     }
                                 }
-
                             }
                             LinkedHashSet hs = new LinkedHashSet(blockList);
                             blockList.clear();
@@ -155,56 +197,93 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 });
     }
 
-    private String getAuthHeader(String ID, String pass) {
+    public String getAuthHeader(String ID, String pass) {
         String encoded = Base64.encodeToString((ID + ":" + pass).getBytes(), Base64.NO_WRAP);
         String returnThis = "Basic " + encoded;
         return returnThis;
     }
 
+    //    @Background
     @Override
     public void downloadStudentAndGroup(ArrayList<String> villageIDList1) {
-        //download Student groups and CRL
+        //download Student groups and KOLIBRI_CRL
         // 1 download crl
         pullDataView.showProgressDialog("loading..");
+        getStudentUrlAndFetch(villageIDList1);
+    }
+
+    @Background
+    public void getStudentUrlAndFetch(ArrayList<String> villageIDList1) {
         villageIDList.clear();
         villageIDList.addAll(villageIDList1);
         studentList.clear();
         count = 0;
+//        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
         for (String id : villageIDList) {
             String url;
             switch (selectedProgram) {
                 case APIs.HL:
-                    url = APIs.HLpullStudentsURL + id;
+                    url = APIs.HLpullStudentsKolibriURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                     loadStudent(url);
                     break;
-              /*  case APIs.UP:
-                    url = APIs.UPpullStudentsURL + id;
-                    loadStudent(url);
-                    break;
-                case APIs.ECE:
-                    url = APIs.ECEpullStudentsURL + id;
-                    loadStudent(url);
-                    break;*/
                 case RI:
-                    url = APIs.RIpullStudentsURL + id;
+                    url = APIs.RIpullStudentsKolibriURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                     loadStudent(url);
                     break;
                 case SC:
-                    url = APIs.SCpullStudentsURL + id;
+                    url = APIs.SCpullStudentsKolibriURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                     loadStudent(url);
                     break;
                 case PI:
-                    url = APIs.PIpullStudentsURL + id;
+                    url = APIs.PIpullStudentsKolibriURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                     loadStudent(url);
                     break;
             }
-
         }
+        /*else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+            for (String id : villageIDList) {
+                String url;
+                switch (selectedProgram) {
+                    case APIs.HL:
+                        url = APIs.HLpullStudentsServerURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_STU, url);
+                        loadStudent(url);
+                        break;
+                    case RI:
+                        url = APIs.RIpullStudentsServerURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_STU, url);
+                        loadStudent(url);
+                        break;
+                    case SC:
+                        url = APIs.SCpullStudentsServerURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_STU, url);
+                        loadStudent(url);
+                        break;
+                    case PI:
+                        url = APIs.PIpullStudentsServerURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_STU, url);
+                        loadStudent(url);
+                        break;
+                }
+            }*/
     }
 
-    private void loadStudent(String url) {
+    public void loadStudent(String url) {
         AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham")).build().getAsJSONArray(new JSONArrayRequestListener() {
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build().getAsJSONArray(new JSONArrayRequestListener() {
             @Override
             public void onResponse(JSONArray response) {
                 count++;
@@ -232,43 +311,73 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         });
     }
 
-    private void loadGroups() {
+    public void loadGroups() {
         if (count >= villageIDList.size()) {
             groupCount = 0;
             groupList.clear();
             String urlgroup;
+//            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
             for (String id : villageIDList) {
                 switch (selectedProgram) {
                     case APIs.HL:
-                        urlgroup = APIs.HLpullGroupsURL + id;
+                        urlgroup = APIs.HLpullGroupsKolibriURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                         downloadGroups(urlgroup);
                         break;
-                   /* case APIs.UP:
-                        urlgroup = APIs.UPpullGroupsURL + id;
-                        downloadGroups(urlgroup);
-                        break;
-                    case APIs.ECE:
-                        urlgroup = APIs.ECEpullGroupsURL + id;
-                        downloadGroups(urlgroup);
-                        break;*/
                     case RI:
-                        urlgroup = APIs.RIpullGroupsURL + id;
+                        urlgroup = APIs.RIpullGroupsKolibriURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                         downloadGroups(urlgroup);
                         break;
                     case SC:
-                        urlgroup = APIs.SCpullGroupsURL + id;
+                        urlgroup = APIs.SCpullGroupsKolibriURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                         downloadGroups(urlgroup);
                         break;
                     case PI:
-                        urlgroup = APIs.PIpullGroupsURL + id;
+                        urlgroup = APIs.PIpullGroupsKolibriURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                         downloadGroups(urlgroup);
                         break;
                 }
             }
+            /*else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+                for (String id : villageIDList) {
+                    switch (selectedProgram) {
+                        case APIs.HL:
+                            urlgroup = APIs.HLpullGroupsServerURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.SERVER_GRP, urlgroup);
+                            downloadGroups(urlgroup);
+                            break;
+                        case RI:
+                            urlgroup = APIs.RIpullGroupsServerURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.SERVER_GRP, urlgroup);
+                            downloadGroups(urlgroup);
+                            break;
+                        case SC:
+                            urlgroup = APIs.SCpullGroupsServerURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.SERVER_GRP, urlgroup);
+                            downloadGroups(urlgroup);
+                            break;
+                        case PI:
+                            urlgroup = APIs.PIpullGroupsServerURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.SERVER_GRP, urlgroup);
+                            downloadGroups(urlgroup);
+                            break;
+                    }
+                }*/
         }
     }
 
-    private void downloadGroups(String url) {
+    public void downloadGroups(String url) {
         AndroidNetworking.get(url)
                 .addHeaders("Content-Type", "application/json")
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
@@ -301,42 +410,70 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 });
     }
 
-    private void loadCRL() {
+    public void loadCRL() {
         if (groupCount >= villageIDList.size()) {
             String crlURL;
             if (crlList != null) {
                 crlList.clear();
             }
+//            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
             switch (selectedProgram) {
                 case APIs.HL:
-                    crlURL = APIs.HLpullCrlsURL + selectedBlock;
+                    crlURL = APIs.HLpullCrlsKolibriURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                     downloadCRL(crlURL);
                     break;
-               /* case APIs.UP:
-                    crlURL = APIs.UPpullCrlsURL + selectedBlock;
-                    downloadCRL(crlURL);
-                    break;
-                case APIs.ECE:
-                    crlURL = APIs.ECEpullCrlsURL + selectedBlock;
-                    downloadCRL(crlURL);
-                    break;*/
                 case RI:
-                    crlURL = APIs.RIpullCrlsURL + selectedBlock;
+                    crlURL = APIs.RIpullCrlsKolibriURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                     downloadCRL(crlURL);
                     break;
                 case SC:
-                    crlURL = APIs.SCpullCrlsURL + selectedBlock;
+                    crlURL = APIs.SCpullCrlsKolibriURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                     downloadCRL(crlURL);
                     break;
                 case PI:
-                    crlURL = APIs.PIpullCrlsURL + selectedBlock;
+                    crlURL = APIs.PIpullCrlsKolibriURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                     downloadCRL(crlURL);
                     break;
             }
+            /*else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+                switch (selectedProgram) {
+                    case APIs.HL:
+                        crlURL = APIs.HLpullCrlsServerURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_CRL, crlURL);
+                        downloadCRL(crlURL);
+                        break;
+                    case RI:
+                        crlURL = APIs.RIpullCrlsServerURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_CRL, crlURL);
+                        downloadCRL(crlURL);
+                        break;
+                    case SC:
+                        crlURL = APIs.SCpullCrlsServerURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_CRL, crlURL);
+                        downloadCRL(crlURL);
+                        break;
+                    case PI:
+                        crlURL = APIs.PIpullCrlsServerURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.SERVER_CRL, crlURL);
+                        downloadCRL(crlURL);
+                        break;
+                }*/
         }
     }
 
-    private void downloadCRL(String url) {
+    public void downloadCRL(String url) {
         AndroidNetworking.get(url)
                 .addHeaders("Content-Type", "application/json")
                 .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
@@ -368,6 +505,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
                 });
     }
 
+    //    @Background
     @Override
     public void saveData() {
         BaseActivity.crLdao.insertAllCRL(crlList);
@@ -396,24 +534,16 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
         pullDataView.openLoginActivity();
     }
 
-    private void saveDownloadedVillages() {
-//        List<Modal_Village> allStudent = vilageList.get(0).getData();
+    public void saveDownloadedVillages() {
         for (RaspVillage vill : vilageList) {
             for (Modal_Village v : vill.getData()) {
                 if (villageIDList.contains(String.valueOf(v.getVillageId())))
                     BaseActivity.villageDao.insertVillage(v);
             }
         }
-//        for (Modal_Village village : allStudent) {
-//            for (String id : villageIDList) {
-//                if (id.equals(String.valueOf(village.getVillageId()))) {
-//                    BaseActivity.villageDao.insertVillage(village);
-//                    break;
-//                }
-//            }
-//        }
     }
 
+    //    @Background
     @Override
     public void clearLists() {
         if (crlList != null) {
@@ -438,8 +568,73 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter 
 
     @Override
     public void onSaveClick() {
-        pullDataView.shoConfermationDialog(crlList.size(), studentList.size(), groupList.size(), vilageList.size());
+        pullDataView.showConfirmationDialog(crlList.size(), studentList.size(), groupList.size(), vilageList.size());
     }
 
+    @Override
+    public void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList) {
+        Gson gson = new Gson();
+        if (header.equalsIgnoreCase(PD_Constant.KOLIBRI_CRL)) {
 
+        } else if (header.equalsIgnoreCase(PD_Constant.SERVER_CRL)) {
+
+        } else if (header.equalsIgnoreCase(PD_Constant.KOLIBRI_GRP)) {
+
+        } else if (header.equalsIgnoreCase(PD_Constant.SERVER_GRP)) {
+
+        } else if (header.equalsIgnoreCase(PD_Constant.KOLIBRI_STU)) {
+
+        } else if (header.equalsIgnoreCase(PD_Constant.SERVER_STU)) {
+
+        } else if (header.equalsIgnoreCase(PD_Constant.KOLIBRI_BLOCK)) {
+            List<String> blockList = new ArrayList<>();
+            Type listType = new TypeToken<List<RaspVillage>>() {
+            }.getType();
+            vilageList = gson.fromJson(response.toString(), listType);
+            if (vilageList != null) {
+                if (vilageList.isEmpty()) {
+                    blockList.add("NO BLOCKS");
+                } else {
+                    blockList.add("Select block");
+                    for (RaspVillage raspVillage : vilageList) {
+                        for (Modal_Village village : raspVillage.getData()) {
+                            blockList.add(village.getBlock());
+                        }
+                    }
+                }
+                LinkedHashSet hs = new LinkedHashSet(blockList);
+                blockList.clear();
+                blockList.addAll(hs);
+                pullDataView.showBlocksSpinner(blockList);
+            }
+            pullDataView.closeProgressDialog();
+        } else if (header.equalsIgnoreCase(PD_Constant.SERVER_BLOCK)) {
+            List<String> blockList = new ArrayList<>();
+            Type listType = new TypeToken<List<Modal_Village>>() {
+            }.getType();
+            vilageList = gson.fromJson(response.toString(), listType);
+            if (vilageList != null) {
+                if (vilageList.isEmpty()) {
+                    blockList.add("NO BLOCKS");
+                } else {
+                    blockList.add("Select block");
+                    for (RaspVillage raspVillage : vilageList) {
+                        for (Modal_Village village : raspVillage.getData()) {
+                            blockList.add(village.getBlock());
+                        }
+                    }
+                }
+                LinkedHashSet hs = new LinkedHashSet(blockList);
+                blockList.clear();
+                blockList.addAll(hs);
+                pullDataView.showBlocksSpinner(blockList);
+            }
+            pullDataView.closeProgressDialog();
+        }
+    }
+
+    @Override
+    public void recievedError(String header, ArrayList<Modal_ContentDetail> contentList) {
+
+    }
 }

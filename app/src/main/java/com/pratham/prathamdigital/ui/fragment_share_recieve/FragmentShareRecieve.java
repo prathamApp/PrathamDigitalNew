@@ -11,8 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -22,7 +20,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -49,14 +46,19 @@ import com.pratham.prathamdigital.socket.entity.Users;
 import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
 import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
-import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
+import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 import com.pratham.prathamdigital.util.WifiUtils;
 
-import org.greenrobot.eventbus.EventBus;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
@@ -67,44 +69,44 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import static com.pratham.prathamdigital.util.PD_Utility.getPhoneModel;
 
+@EFragment(R.layout.fragment_share)
 public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView,
         UDPMessageListener.OnNewMsgListener, CircularRevelLayout.CallBacks {
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
-    @BindView(R.id.root_share)
+    @ViewById(R.id.root_share)
     LinearLayout root_share;
-    @BindView(R.id.rl_share)
+    @ViewById(R.id.rl_share)
     RelativeLayout rl_share;
-    @BindView(R.id.rl_recieve)
+    @ViewById(R.id.rl_recieve)
     RelativeLayout rl_recieve;
-    @BindView(R.id.searchCircle)
+    @ViewById(R.id.searchCircle)
     RelativeLayout searchCircle;
-    @BindView(R.id.shareCircle)
+    @ViewById(R.id.shareCircle)
     RelativeLayout shareCircle;
-    @BindView(R.id.circleProgress)
+    @ViewById(R.id.circleProgress)
     CircularProgress circleProgress;
-    @BindView(R.id.status)
+    @ViewById(R.id.status)
     TextView status;
-    @BindView(R.id.searchView)
+    @ViewById(R.id.searchView)
     SearchView searchView;
-    @BindView(R.id.rl_share_block)
+    @ViewById(R.id.rl_share_block)
     RelativeLayout rl_share_block;
-    @BindView(R.id.rl_recieve_block)
+    @ViewById(R.id.rl_recieve_block)
     RelativeLayout rl_recieve_block;
-    @BindView(R.id.rv_files)
+    @ViewById(R.id.rv_files)
     RecyclerView rv_files;
-    @BindView(R.id.rv_files_receiving)
+    @ViewById(R.id.rv_files_receiving)
     RecyclerView rv_files_receiving;
-    @BindView(R.id.circular_share_reveal)
+    @ViewById(R.id.circular_share_reveal)
     CircularRevelLayout circular_share_reveal;
-    @BindView(R.id.share_title)
+    @ViewById(R.id.share_title)
     TextView share_title;
+
+    @Bean(SharePresenter.class)
+    ContractShare.sharePresenter sharePresenter;
 
     private List<String> mList = new ArrayList<>();
     private UDPMessageListener mUDPListener;
@@ -112,7 +114,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private Timer connectTimer;
     private String localIPaddress;
     private String serverIPaddres;
-    ContractShare.sharePresenter sharePresenter;
     FileListAdapter fileListAdapter;
     ReceivedFileListAdapter receivedFileListAdapter;
     HashMap<String, File_Model> filesSent = new HashMap<>();
@@ -120,7 +121,24 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private int revealX;
     private int revealY;
 
-    @Override
+    @AfterViews
+    public void initialize() {
+        sharePresenter.setView(FragmentShareRecieve.this);
+        circular_share_reveal.setListener(this);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_share_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_share_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_share_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
+    }
+    /*@Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -164,18 +182,12 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
-    }
+    }*/
 
-    @OnClick(R.id.rl_share)
+    @Click(R.id.rl_share)
     public void setRl_share() {
         share = true;
         if (isPermissionsGranted(getActivity(),
@@ -187,6 +199,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 rl_share.requestLayout();
                 rl_recieve.setVisibility(View.GONE);
+                rl_share.setClickable(false);
                 createHotspot();
             } else {
                 new LocationService(getActivity()).checkLocation();
@@ -197,7 +210,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     }
 
-    @OnClick(R.id.rl_recieve)
+    @Click(R.id.rl_recieve)
     public void setRl_recieve() {
         WifiUtils.closeWifiAp();
         if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();
@@ -211,6 +224,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 params.width = ViewGroup.LayoutParams.MATCH_PARENT;
                 rl_recieve.requestLayout();
                 rl_share.setVisibility(View.GONE);
+                rl_recieve.setClickable(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (Settings.System.canWrite(getActivity())) {
                         connectHotspotAndRecieve();
@@ -249,7 +263,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     };
 
-    private void createHotspot() {
+    @UiThread
+    public void createHotspot() {
         rl_share_block.setVisibility(View.GONE);
         startCreateAnim();
         mHandler.postDelayed(new Runnable() {
@@ -260,7 +275,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }, 2000);
     }
 
-    private void startCreateAnim() {
+    public void startCreateAnim() {
         searchCircle.setVisibility(View.GONE);
         shareCircle.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).
                 setDuration(1000).setInterpolator(new DecelerateInterpolator()).start();
@@ -422,16 +437,12 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         searchView.startSearchAnim(1000);
     }
 
+    @UiThread
     @Override
     public void onWifiConnected(String ssid) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                circleProgress.finishAnim();
-                connectTimer = new Timer();
-                Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
-            }
-        });
+        circleProgress.finishAnim();
+        connectTimer = new Timer();
+        Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
     }
 
     @Override
@@ -444,13 +455,9 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         filesSent.put(model.getDetail().getNodeid(), model);
         filesSentPosition.put(model.getDetail().getNodeid(), position);
         sharePresenter.sendFiles(model.getDetail());
-//        ChatEntity chatMsg = new ChatEntity();
-//        chatMsg.setContent(file.getAbsolutePath());
-//        chatMsg.setIsSend(true);
-//        chatMsg.setType(com.pratham.prathamdigital.socket.entity.Message.CONTENT_TYPE.TEXT);
-//        chatMsg.setTime(System.currentTimeMillis());
     }
 
+    @UiThread
     @Override
     public void showFilesList(ArrayList<File_Model> contents, String parentId) {
         filesSent.clear();
@@ -472,26 +479,22 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     }
 
+    @UiThread
     @Override
     public void showRecieving(ArrayList<Modal_ReceivingFilesThroughFTP> filesRecieving) {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                if (rv_files.getVisibility() == View.VISIBLE)
-                    rv_files.setVisibility(View.GONE);
-                if (rv_files_receiving.getVisibility() == View.GONE)
-                    rv_files_receiving.setVisibility(View.VISIBLE);
-                if (receivedFileListAdapter == null) {
-                    //initialize adapter
-                    receivedFileListAdapter = new ReceivedFileListAdapter(getActivity(), filesRecieving);
-                    rv_files_receiving.setHasFixedSize(true);
-                    rv_files_receiving.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
-                    rv_files_receiving.setAdapter(receivedFileListAdapter);
-                } else {
-                    receivedFileListAdapter.updateList(filesRecieving);
-                }
-            }
-        });
+        if (rv_files.getVisibility() == View.VISIBLE)
+            rv_files.setVisibility(View.GONE);
+        if (rv_files_receiving.getVisibility() == View.GONE)
+            rv_files_receiving.setVisibility(View.VISIBLE);
+        if (receivedFileListAdapter == null) {
+            //initialize adapter
+            receivedFileListAdapter = new ReceivedFileListAdapter(getActivity(), filesRecieving);
+            rv_files_receiving.setHasFixedSize(true);
+            rv_files_receiving.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
+            rv_files_receiving.setAdapter(receivedFileListAdapter);
+        } else {
+            receivedFileListAdapter.updateList(filesRecieving);
+        }
     }
 
     @Override
@@ -563,6 +566,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     }
 
+    @UiThread
     @Override
     public void disconnectFTP() {
         new AlertDialog.Builder(getActivity())
@@ -581,14 +585,10 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 .show();
     }
 
+    @UiThread
     @Override
     public void closeFTPJoin() {
-        getActivity().runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                onUnRevealed();
-            }
-        });
+        onUnRevealed();
     }
 
     @Override
@@ -596,13 +596,14 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     }
 
+    @UiThread
     @Override
     public void onUnRevealed() {
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, 0);
         bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(getActivity(), new FragmentContent(), R.id.main_frame,
-                bundle, FragmentContent.class.getSimpleName());
+        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
+                bundle, FragmentContent_.class.getSimpleName());
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();

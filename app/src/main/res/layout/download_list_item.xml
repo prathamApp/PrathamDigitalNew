@@ -9,20 +9,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.airbnb.lottie.LottieAnimationView
-            android:id="@+id/download_lottie_view"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:padding="@dimen/_3sdp"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true"
-            app:lottie_scale=".7" />
+        <!--<com.airbnb.lottie.LottieAnimationView-->
+        <!--android:id="@+id/download_lottie_view"-->
+        <!--android:layout_width="@dimen/_40sdp"-->
+        <!--android:layout_height="@dimen/_40sdp"-->
+        <!--android:padding="@dimen/_3sdp"-->
+        <!--app:lottie_autoPlay="true"-->
+        <!--app:lottie_loop="true"-->
+        <!--app:lottie_scale=".7" />-->
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/download_lottie_view">
-
+            android:layout_height="wrap_content">
+            <!--android:layout_toRightOf="@+id/download_lottie_view"-->
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/download_content_title"
                 android:layout_width="match_parent"

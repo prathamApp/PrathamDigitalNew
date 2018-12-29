@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.dashboard;
+package com.pratham.prathamdigital.ui.fragment_content;
 
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 

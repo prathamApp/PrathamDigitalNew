@@ -13,7 +13,7 @@ public interface PullDataContract {
 
         public void showProgressDialog(String msg);
 
-        public void shoConfermationDialog(int crlListCnt, int studentListcnt, int groupListCnt, int villageIDListCnt);
+        public void showConfirmationDialog(int crlListCnt, int studentListcnt, int groupListCnt, int villageIDListCnt);
 
         public void closeProgressDialog();
 
@@ -51,5 +51,6 @@ public interface PullDataContract {
 
         public void onSaveClick();
 
+        void setView(PullDataFragment pullDataFragment);
     }
 }

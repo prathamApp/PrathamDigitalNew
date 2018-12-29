@@ -6,7 +6,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -24,25 +23,25 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.squareup.picasso.Picasso;
+import com.stolets.rxdiffutil.Swappable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ContentAdapter extends RecyclerView.Adapter {
+public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Modal_ContentDetail> {
 
     public static final int FOLDER_TYPE = 1;
     public static final int FILE_TYPE = 2;
     public static final int HEADER_TYPE = 3;
 
-    ArrayList<Modal_ContentDetail> datalist;
+    List<Modal_ContentDetail> datalist;
     Context context;
     ContentContract.contentClick contentClick;
 
-    public ContentAdapter(Context context, ArrayList<Modal_ContentDetail> datalist, ContentContract.contentClick contentClick) {
+    public ContentAdapter(Context context, List<Modal_ContentDetail> datalist, ContentContract.contentClick contentClick) {
         this.context = context;
         this.datalist = datalist;
         this.contentClick = contentClick;
@@ -235,12 +234,12 @@ public class ContentAdapter extends RecyclerView.Adapter {
         return datalist.size();
     }
 
-    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, datalist));
-        datalist.clear();
-        this.datalist.addAll(newList);
-        diffResult.dispatchUpdatesTo(this);
-    }
+//    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
+//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, datalist));
+//        datalist.clear();
+//        this.datalist.addAll(newList);
+//        diffResult.dispatchUpdatesTo(this);
+//    }
 
     public void reveal(View view) {
         // previously invisible view
@@ -292,6 +291,15 @@ public class ContentAdapter extends RecyclerView.Adapter {
             e.printStackTrace();
             view.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void swapData(@NonNull List<Modal_ContentDetail> newData) {
+        this.datalist = newData;
+    }
+
+    public List<Modal_ContentDetail> getData() {
+        return datalist;
     }
 
     class EmptyHolder extends RecyclerView.ViewHolder {

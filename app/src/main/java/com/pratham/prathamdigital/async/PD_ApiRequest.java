@@ -8,18 +8,20 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
+import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.greenrobot.eventbus.EventBus;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -32,12 +34,12 @@ import java.util.concurrent.Executors;
 
 public class PD_ApiRequest {
     Context mContext;
-    ContentContract.contentPresenter contentPresenter;
+    ApiResult apiResult;
 //    OkHttpClient okHttpClient;
 
-    public PD_ApiRequest(Context context, ContentContract.contentPresenter contentPresenter) {
+    public PD_ApiRequest(Context context, ApiResult apiResult) {
         this.mContext = context;
-        this.contentPresenter = contentPresenter;
+        this.apiResult = apiResult;
 //        okHttpClient = new OkHttpClient().newBuilder()
 //                .connectTimeout(30, TimeUnit.SECONDS)
 //                .readTimeout(60, TimeUnit.SECONDS)
@@ -54,14 +56,14 @@ public class PD_ApiRequest {
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
-                            if (contentPresenter != null)
-                                contentPresenter.recievedContent(requestType, response, contentList);
+                            if (apiResult != null)
+                                apiResult.recievedContent(requestType, response, contentList);
                         }
 
                         @Override
                         public void onError(ANError anError) {
-                            if (contentPresenter != null)
-                                contentPresenter.recievedError(requestType, contentList);
+                            if (apiResult != null)
+                                apiResult.recievedError(requestType, contentList);
                             Log.d("Error::", anError.getErrorDetail());
                             Log.d("Error::", anError.getResponse().toString());
                         }
@@ -79,14 +81,14 @@ public class PD_ApiRequest {
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
-                            if (contentPresenter != null)
-                                contentPresenter.recievedContent(requestType, response, contentList);
+                            if (apiResult != null)
+                                apiResult.recievedContent(requestType, response, contentList);
                         }
 
                         @Override
                         public void onError(ANError anError) {
-                            if (contentPresenter != null)
-                                contentPresenter.recievedError(requestType, contentList);
+                            if (apiResult != null)
+                                apiResult.recievedError(requestType, contentList);
                             Log.d("Error:", anError.getErrorDetail());
                             Log.d("Error::", anError.getResponse().toString());
                         }
@@ -111,7 +113,7 @@ public class PD_ApiRequest {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-//                        contentPresenter.notifySuccess(requestType, "success");
+//                        apiResult.notifySuccess(requestType, "success");
                         BaseActivity.logDao.deleteLogs();
                         BackupDatabase.backup(mContext);
                         EventMessage msg = new EventMessage();
@@ -135,7 +137,7 @@ public class PD_ApiRequest {
     public void pushDataToInternet(final String requestType, String url, JSONObject data) {
         AndroidNetworking.post(url)
 //                .addHeaders("Content-Type", "application/json")
-                .addBodyParameter(data)
+                .addJSONObjectBody(data)
                 .setPriority(Priority.HIGH)
                 .build()
                 .getAsJSONObject(new JSONObjectRequestListener() {
@@ -169,13 +171,13 @@ public class PD_ApiRequest {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        contentPresenter.recievedContent(requestType, response, null);
+                        apiResult.recievedContent(requestType, response, null);
                     }
 
                     @Override
                     public void onError(ANError anError) {
-                        if (contentPresenter != null)
-//                            contentPresenter.notifyError(requestType/*, null*/);
+                        if (apiResult != null)
+//                            apiResult.notifyError(requestType/*, null*/);
                             Log.d("Error::", anError.getErrorDetail());
                         Log.d("Error::", anError.getMessage());
                         Log.d("Error::", anError.getResponse().toString());
@@ -205,6 +207,46 @@ public class PD_ApiRequest {
                     @Override
                     public void onError(ANError anError) {
                         Log.d("image::", "Not Downloaded");
+                    }
+                });
+    }
+
+    public void pullFromKolibri(String header, String url) {
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (apiResult != null)
+                            apiResult.recievedContent(header, response.toString(), null);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        if (apiResult != null)
+                            apiResult.recievedError(header, null);
+                    }
+                });
+    }
+
+    public void pullFromInternet(String header, String url) {
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+//                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .build()
+                .getAsJSONArray(new JSONArrayRequestListener() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        if (apiResult != null)
+                            apiResult.recievedContent(header, response.toString(), null);
+                    }
+
+                    @Override
+                    public void onError(ANError error) {
+                        if (apiResult != null)
+                            apiResult.recievedError(header, null);
                     }
                 });
     }

@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.ui.video_player;
 
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.widget.VideoView;
@@ -11,7 +10,6 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
-import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -38,16 +36,13 @@ public class Activity_VPlayer extends BaseActivity {
         ButterKnife.bind(this);
         myVideo = getIntent().getStringExtra("videoPath");
         resId = getIntent().getStringExtra("resId");
-        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
-            stopService(new Intent(this, BackgroundSoundService.class));
+//        PrathamApplication.getInstance().toggleBackgroundMusic(false);
         initializePlayer(myVideo);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
-            stopService(new Intent(this, BackgroundSoundService.class));
     }
 
     private void initializePlayer(String myVideo) {

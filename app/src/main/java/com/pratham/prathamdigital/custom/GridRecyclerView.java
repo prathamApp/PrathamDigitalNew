@@ -2,15 +2,16 @@ package com.pratham.prathamdigital.custom;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.GridLayoutAnimationController;
 
+import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentGridLayoutManager;
+
 public class GridRecyclerView extends RecyclerView {
-    private GridLayoutManager manager;
+    private WrapContentGridLayoutManager manager;
     private int columnWidth = -1;
 
     /**
@@ -46,7 +47,7 @@ public class GridRecyclerView extends RecyclerView {
             columnWidth = array.getDimensionPixelSize(0, -1);
             array.recycle();
         }
-        manager = new GridLayoutManager(getContext(), 1);
+        manager = new WrapContentGridLayoutManager(getContext(), 1);
         setLayoutManager(manager);
     }
 
@@ -63,7 +64,7 @@ public class GridRecyclerView extends RecyclerView {
     protected void attachLayoutAnimationParameters(View child, ViewGroup.LayoutParams params,
                                                    int index, int count) {
         final RecyclerView.LayoutManager layoutManager = getLayoutManager();
-        if (getAdapter() != null && layoutManager instanceof GridLayoutManager) {
+        if (getAdapter() != null && layoutManager instanceof WrapContentGridLayoutManager) {
 
             GridLayoutAnimationController.AnimationParameters animationParams =
                     (GridLayoutAnimationController.AnimationParameters) params.layoutAnimationParameters;
@@ -82,7 +83,7 @@ public class GridRecyclerView extends RecyclerView {
             animationParams.index = index;
 
             // Calculate the number of columns and rows in the grid
-            final int columns = ((GridLayoutManager) layoutManager).getSpanCount();
+            final int columns = ((WrapContentGridLayoutManager) layoutManager).getSpanCount();
             animationParams.columnsCount = columns;
             animationParams.rowsCount = count / columns;
 
@@ -96,4 +97,6 @@ public class GridRecyclerView extends RecyclerView {
             super.attachLayoutAnimationParameters(child, params, index, count);
         }
     }
+
+
 }

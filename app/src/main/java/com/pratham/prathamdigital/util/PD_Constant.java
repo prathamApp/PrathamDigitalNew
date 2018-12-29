@@ -79,6 +79,16 @@ public class PD_Constant {
     public static final String FTP_CLIENT_CONNECTED = "ftp_client_connected";
     public static final String APK_SHARE_PROGRESS = "apk_share_progress";
     public static final String APK = "apk";
+    public static final String FILE_DOWNLOAD_STARTED = "file_download_started";
+    public static final String BLOCK = "block";
+    public static final String KOLIBRI_CRL = "kolibri_crl";
+    public static final String SERVER_CRL = "server_crl";
+    public static final String KOLIBRI_GRP = "kolibri_grp";
+    public static final String SERVER_GRP = "server_grp";
+    public static final String KOLIBRI_STU = "kolibri_stu";
+    public static final String SERVER_STU = "server_stu";
+    public static final String KOLIBRI_BLOCK = "kolibri_block";
+    public static final String SERVER_BLOCK = "server_block";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

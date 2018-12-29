@@ -2,15 +2,17 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.view.View;
 
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public interface ContentContract {
     interface contentView {
         void showNoConnectivity();
 
-        void displayContents(ArrayList<Modal_ContentDetail> content);
+        void displayContents(List<Modal_ContentDetail> content);
 
         void displayHeader(Modal_ContentDetail contentDetail);
 
@@ -28,9 +30,7 @@ public interface ContentContract {
     }
 
     interface contentPresenter {
-        void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList);
-
-        void recievedError(String header, ArrayList<Modal_ContentDetail> contentList);
+        void setView(FragmentContent context);
 
         void downloadContent(Modal_ContentDetail contentDetail);
 
@@ -47,9 +47,19 @@ public interface ContentContract {
         void ondownloadError(String f_name);
 
         void checkConnectionForRaspberry();
-    }
 
-    ;
+        void showPreviousContent();
+
+        void getContent(Modal_ContentDetail contentDetail);
+
+        void getLevels();
+
+        void eventFileDownloadStarted(EventMessage message);
+
+        void eventUpdateFileProgress(EventMessage message);
+
+        void eventOnDownloadCompleted(EventMessage message);
+    }
 
     interface contentClick {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
@@ -60,8 +70,8 @@ public interface ContentContract {
     }
 
     interface mainView {
-        void showNotificationBadge(int downloadNumber);
-
-        void hideNotificationBadge(int number);
+//        void showNotificationBadge(int downloadNumber);
+//
+//        void hideNotificationBadge(int number);
     }
 }

@@ -4,7 +4,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -20,39 +20,40 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
-import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.richpath.RichPath;
 import com.richpath.RichPathView;
 import com.richpathanimator.RichPathAnimator;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
+@EActivity(R.layout.splash_activity)
 public class ActivitySplash extends BaseActivity implements SplashContract.splashview {
 
     private static final int GOOGLE_SIGN_IN = 1;
     private static final String TAG = ActivitySplash.class.getSimpleName();
-    @BindView(R.id.img_splash_light)
+    @ViewById(R.id.img_splash_light)
     ImageView img_splash_light;
     //    @BindView(R.id.iv_pradigi)
 //    ImageView iv_pradigi;
-    @BindView(R.id.avatar_view)
+    @ViewById(R.id.avatar_view)
     LottieAnimationView pingpong_view;
-    @BindView(R.id.rich)
+    @ViewById(R.id.rich)
     RichPathView rich;
 
+    @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
     private Context mContext;
     GoogleApiClient mGoogleApiClient;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.splash_activity);
-        ButterKnife.bind(this);
+    @AfterViews
+    public void initializeViews() {
         mContext = this;
-        splashPresenter = new SplashPresenterImpl(this, this);
         startLightsAnimation();
         splashPresenter.populateDefaultDB();
         PrathamSmartSync.pushTabletJsons(false);
@@ -70,7 +71,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         // Populate initial values
     }
 
-    private void startLightsAnimation() {
+    @UiThread
+    public void startLightsAnimation() {
         ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(img_splash_light, "rotation", 0f, 360f);
         objectAnimator.setInterpolator(new LinearInterpolator());
         objectAnimator.setDuration(7600);
@@ -78,9 +80,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         img_splash_light.setLayerType(View.LAYER_TYPE_NONE, null);
         objectAnimator.start();
         rich.setVisibility(View.VISIBLE);
-//        Animate.with(Techniques.ZoomIn)
-//                .duration(700)
-//                .playOn(iv_pradigi);
         final RichPath[] allPaths = rich.findAllRichPaths();
         RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
         pingpong_view.setVisibility(View.VISIBLE);
@@ -88,12 +87,11 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             @Override
             public void run() {
                 splashPresenter.checkIfContentinSDCard();
-//                splashPresenter.checkConnectivity();
             }
         }, 2000);
     }
 
-
+    @UiThread
     @Override
     public void showAppUpdateDialog() {
         new BlurPopupWindow.Builder(mContext)
@@ -101,7 +99,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                 .bindClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.pratham.prathamdigital"));
+                        startActivity(intent);
                     }
                 }, R.id.btn_update)
                 .setGravity(Gravity.CENTER)
@@ -122,27 +121,30 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //        }
     }
 
+    @UiThread
     @Override
     public void redirectToDashboard() {
-        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity.class);
+        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity_.class);
         intent.putExtra(PD_Constant.STUDENT_ADDED, true);
         startActivity(intent);
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         finishAfterTransition();
     }
 
+    @UiThread
     @Override
     public void redirectToAvatar() {
-        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity.class);
+        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity_.class);
         intent.putExtra(PD_Constant.STUDENT_ADDED, false);
         startActivity(intent);
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         finishAfterTransition();
     }
 
+    @UiThread
     @Override
     public void redirectToAttendance() {
-        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity.class);
+        Intent intent = new Intent(ActivitySplash.this, AttendanceActivity_.class);
         startActivity(intent);
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         finishAfterTransition();

@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.ui.web_view;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.webkit.WebViewClient;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.services.BackgroundSoundService;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
@@ -64,8 +62,7 @@ public class Activity_WebView extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
-            stopService(new Intent(this, BackgroundSoundService.class));
+//        PrathamApplication.getInstance().toggleBackgroundMusic(false);
     }
 
     @Override

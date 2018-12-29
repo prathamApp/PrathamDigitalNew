@@ -1,20 +1,14 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -27,11 +21,10 @@ import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.ui.dashboard.LevelContract;
-import com.pratham.prathamdigital.ui.dashboard.RV_LevelAdapter;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
@@ -39,60 +32,63 @@ import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
+import com.stolets.rxdiffutil.RxDiffUtil;
+import com.stolets.rxdiffutil.diffrequest.DiffRequestManager;
 
-import org.greenrobot.eventbus.EventBus;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
+@EFragment(R.layout.fragment_content)
 public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView,
         ContentContract.contentClick, CircularRevelLayout.CallBacks, LevelContract {
 
     private static final String TAG = FragmentContent.class.getSimpleName();
-    @BindView(R.id.circular_content_reveal)
+    @ViewById(R.id.circular_content_reveal)
     CircularRevelLayout circular_content_reveal;
-    //    @BindView(R.id.lottie_content_bkgd)
-//    LottieAnimationView lottie_content_bkgd;
-    @BindView(R.id.rv_content)
+    @ViewById(R.id.rv_content)
     RecyclerView rv_content;
-    //    @BindView(R.id.content_back)
-//    ImageView content_back;
-    @BindView(R.id.rv_level)
+    @ViewById(R.id.rv_level)
     public RecyclerView rv_level;
-    @BindView(R.id.txt_wifi_status)
+    @ViewById(R.id.txt_wifi_status)
     TextView txt_wifi_status;
-    @BindView(R.id.rl_network_error)
+    @ViewById(R.id.rl_network_error)
     RelativeLayout rl_network_error;
-    @BindView(R.id.iv_wifi_status)
+    @ViewById(R.id.iv_wifi_status)
     ImageView iv_wifi_status;
 
-    ContentPresenterImpl contentPresenter;
+    //    @EventBusGreenRobot
+//    EventBus eventBus;
+    @Bean(ContentPresenterImpl.class)
+    ContentContract.contentPresenter contentPresenter;
+
+    private DiffRequestManager<Modal_ContentDetail, ContentAdapter> mContentDiffRequestManager;
+    private DiffRequestManager<Modal_ContentDetail, RV_LevelAdapter> mLevelDiffRequestManager;
     ContentAdapter contentAdapter;
     private RV_LevelAdapter levelAdapter;
-    ContentContract.mainView mainView;
+    //    ContentContract.mainView mainView;
     Map<String, Integer> filesDownloading = new HashMap<>();
     private int revealX;
     private int revealY;
     BlurPopupWindow download_builder;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_content, container, false);
-        ButterKnife.bind(this, rootView);
+    @AfterViews
+    public void initialize() {
+//        toggleEventBus(true);
+        contentPresenter.setView(FragmentContent.this);
         circular_content_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -106,64 +102,58 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 }
             });
         }
-        return rootView;
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mainView = (ContentContract.mainView) getActivity();
-        } catch (Exception e) {
-            e.printStackTrace();
+//        mainView = (ContentContract.mainView) getActivity();
+        if (levelAdapter == null) {
+            PD_Utility.showDialog(getActivity());
+            contentPresenter.getContent(null);
         }
     }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        contentPresenter = new ContentPresenterImpl(getActivity(), this);
-    }
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
 
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }
-
-    @Subscribe
-    public void onMainBackPressed(EventMessage pressed) {
-        if (pressed != null) {
-            if (pressed.getMessage().equalsIgnoreCase(PD_Constant.CONTENT_BACK)) {
-                setContent_back();
-            }
-        }
-    }
-
-    @Subscribe
-    public void decrease(EventMessage message) {
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void onMainBackPressed(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
-                if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
-                    contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
-                mainView.hideNotificationBadge(message.getDownlaodContentSize());
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CONTENT_BACK)) {
+                setContent_back();
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
+                onDownloadComplete(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
+                updateConnectionStatus(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
+                contentPresenter.eventFileDownloadStarted(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_UPDATE)) {
+                contentPresenter.eventUpdateFileProgress(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
+                contentPresenter.eventOnDownloadCompleted(message);
             }
         }
     }
 
-    //    @OnClick(R.id.content_back)
+    @UiThread
+    public void onDownloadComplete(EventMessage message) {
+        if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
+            contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
+    }
+
+    @UiThread
+    public void updateConnectionStatus(EventMessage message) {
+        txt_wifi_status.setText(message.getConnection_name());
+        iv_wifi_status.setImageDrawable(message.getConnection_resource());
+        contentPresenter.checkConnectionForRaspberry();
+    }
+
+    @UiThread
     public void setContent_back() {
         filesDownloading.clear();
         PrathamApplication.bubble_mp.start();
@@ -171,15 +161,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         contentPresenter.showPreviousContent();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (levelAdapter == null) {
-            PD_Utility.showDialog(getActivity());
-            contentPresenter.getContent(null);
-        }
-    }
-
+    @UiThread
     @Override
     public void showNoConnectivity() {
         PD_Utility.dismissDialog();
@@ -187,14 +169,15 @@ public class FragmentContent extends FragmentManagePermission implements Content
         rl_network_error.setVisibility(View.VISIBLE);
     }
 
-    @OnClick(R.id.lottie_content_bkgd)
+    @Click(R.id.lottie_content_bkgd)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
         onResume();
     }
 
+    @UiThread
     @Override
-    public void displayContents(ArrayList<Modal_ContentDetail> content) {
+    public void displayContents(List<Modal_ContentDetail> content) {
         filesDownloading.clear();
         rl_network_error.setVisibility(View.GONE);
         PD_Utility.dismissDialog();
@@ -223,28 +206,46 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 });
                 rv_content.setAdapter(contentAdapter);
                 rv_content.scheduleLayoutAnimation();
+                mContentDiffRequestManager = RxDiffUtil
+                        .bindTo(getActivity())
+                        .with(contentAdapter, "CONTENT_ADAPTER");
             } else {
-                contentAdapter.updateList(content);
-                rv_content.scheduleLayoutAnimation();
+//                contentAdapter.updateList(content);
+//                rv_content.scheduleLayoutAnimation();
+                mContentDiffRequestManager
+                        .newDiffRequestWith(new ContentDiffUtilCallback(contentAdapter.getData(), content))
+                        .updateAdapterWithNewData(content)
+                        .detectMoves(true)
+                        .calculate();
                 rv_content.smoothScrollToPosition(0);
             }
         }
         contentPresenter.getLevels();
     }
 
+    @UiThread
     public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
         if (levelContents != null) {
             if (levelAdapter == null) {
                 levelAdapter = new RV_LevelAdapter(getActivity(), levelContents, FragmentContent.this);
                 rv_level.setHasFixedSize(true);
-                rv_level.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rv_level.setAdapter(levelAdapter);
+                mLevelDiffRequestManager = RxDiffUtil
+                        .bindTo(getActivity())
+                        .with(levelAdapter, "LEVEL_ADAPTER");
             } else {
-                levelAdapter.updateList(levelContents);
+                mLevelDiffRequestManager
+                        .newDiffRequestWith(new ContentDiffUtilCallback(levelAdapter.getData(), levelContents))
+                        .updateAdapterWithNewData(levelContents)
+                        .detectMoves(true)
+                        .calculate();
+//                levelAdapter.updateList(levelContents);
             }
         }
     }
 
+    @UiThread
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
         Log.d(TAG, "onLevelClicked:");
@@ -253,11 +254,13 @@ public class FragmentContent extends FragmentManagePermission implements Content
         contentPresenter.getContent(detail);
     }
 
+    @UiThread
     @Override
     public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
         showLevels(levelContents);
     }
 
+    @UiThread
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
@@ -270,6 +273,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 //        content_title.setText(contentDetail.getNodetitle());
     }
 
+    @UiThread
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view) {
         if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
@@ -305,10 +309,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
     }
 
+    @UiThread
     @Override
     public void hideViews() {
     }
 
+    @UiThread
     @Override
     public void exitApp() {
         new AlertDialog.Builder(getActivity())
@@ -325,24 +331,28 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 .show();
     }
 
+    @UiThread
     @Override
     public void increaseNotification(int number) {
 //        ((ActivityMain) getActivity()).showNotificationBadge(number);
-        mainView.showNotificationBadge(number);
+//        mainView.showNotificationBadge(number);
     }
 
+    @UiThread
     @Override
     public void decreaseNotification(int number, Modal_ContentDetail contentDetail, ArrayList<String> selectedNodeIds) {
 //        ((ActivityMain) getActivity()).hideNotificationBadge(number);
 //        if (selectedNodeIds.contains(contentDetail.getNodeid())) {
     }
 
+    @UiThread
     @Override
     public void onDownloadError(String file_name, ArrayList<String> selectedNodeIds) {
         Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
 //        contentAdapter.updateList(modal_contents);
     }
 
+    @UiThread
     @Override
     public void openContent(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
@@ -389,7 +399,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
     }
 
-    private void openPdf(Modal_ContentDetail contentDetail) {
+    @UiThread
+    public void openPdf(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_PdfViewer.class);
         String f_path;
         if (contentDetail.isOnSDCard())
@@ -403,7 +414,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
     }
 
-    private void openVideo(Modal_ContentDetail contentDetail) {
+    @UiThread
+    public void openVideo(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_VPlayer.class);
         String f_path;
         if (contentDetail.isOnSDCard())
@@ -417,7 +429,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         getActivity().overridePendingTransition(R.anim.pop_in, R.anim.nothing);
     }
 
-    private void openGame(Modal_ContentDetail contentDetail) {
+    @UiThread
+    public void openGame(Modal_ContentDetail contentDetail) {
         Intent intent = new Intent(getActivity(), Activity_WebView.class);
         String f_path;
         if (contentDetail.isOnSDCard())
@@ -438,16 +451,5 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onUnRevealed() {
 
-    }
-
-    @Subscribe
-    public void setConnectionStatus(EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
-                txt_wifi_status.setText(message.getConnection_name());
-                iv_wifi_status.setImageDrawable(message.getConnection_resource());
-                contentPresenter.checkConnectionForRaspberry();
-            }
-        }
     }
 }

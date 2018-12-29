@@ -2,49 +2,52 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
-import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups;
+import com.pratham.prathamdigital.ui.PullData.PullDataFragment_;
+import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 /**
  * Created by PEF on 19/11/2018.
  */
-
+@EFragment(R.layout.admin_panel_login)
 public class AdminPanelFragment extends Fragment implements AdminPanelContract.AdminPanelView {
-    AdminPanelContract.AdminPanelPresenter adminPanelPresenter;
-    @BindView(R.id.userName)
+    @ViewById(R.id.userName)
     android.support.design.widget.TextInputEditText userNameET;
-
-    @BindView(R.id.password)
+    @ViewById(R.id.password)
     android.support.design.widget.TextInputEditText passwordET;
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    @Bean(AdminPanelPresenter.class)
+    AdminPanelContract.AdminPanelPresenter adminPanelPresenter;
+
+//    @Override
+//    public void onAttach(Context context) {
+//        super.onAttach(context);
+//    }
+
+    @AfterViews
+    public void setViews() {
+        adminPanelPresenter.setView(AdminPanelFragment.this);
     }
 
     @Override
@@ -54,66 +57,76 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.admin_panel_login, container, false);
-    }
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        return inflater.inflate(R.layout.admin_panel_login, container, false);
+//    }
+//
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        ButterKnife.bind(this, view);
+//        adminPanelPresenter = new AdminPanelPresenter(getActivity(), this);
+//    }
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-        adminPanelPresenter = new AdminPanelPresenter(getActivity(), this);
-    }
-
-    @OnClick(R.id.btn_login)
+    @Click(R.id.btn_login)
     public void loginCheck() {
         adminPanelPresenter.checkLogin(getUserName(), getPassword());
         userNameET.getText().clear();
         passwordET.getText().clear();
     }
 
-
-    @OnClick(R.id.btn_clearData)
+    @Click(R.id.btn_clearData)
     public void clearData() {
-        adminPanelPresenter.clearData();
+        AlertDialog clearDataDialog = new AlertDialog.Builder(getActivity())
+                .setTitle("Clear Data")
+                .setMessage("Are you sure you want to clear everything ?")
+                .setIcon(R.drawable.ic_warning)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        adminPanelPresenter.clearData();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        clearDataDialog.show();
+        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
     }
 
-    @OnClick(R.id.btn_push_data)
+    @Click(R.id.btn_push_data)
     public void pushData() {
         adminPanelPresenter.pushData();
     }
 
-    @Override
     public String getUserName() {
         String userName = userNameET.getText().toString();
         return userName.trim();
     }
 
-    @Override
     public String getPassword() {
         String password = passwordET.getText().toString();
         return password.trim();
     }
 
+    @UiThread
     @Override
     public void openPullDataFragment() {
-        PD_Utility.showFragment(getActivity(), new PullDataFragment(), R.id.frame_attendance,
+        PD_Utility.showFragment(getActivity(), new PullDataFragment_(), R.id.frame_attendance,
                 null, PullDataFragment.class.getSimpleName());
     }
 
+    @UiThread
     @Override
     public void onLoginFail() {
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
@@ -130,11 +143,11 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         alertDialog.show();
     }
 
+    @UiThread
     @Override
     public void onLoginSuccess() {
-        Intent intent = new Intent(getActivity(), Activity_AssignGroups.class);
+        Intent intent = new Intent(getActivity(), Activity_AssignGroups_.class);
         startActivityForResult(intent, 1);
-//        getActivity().startActivity(intent);
     }
 
     @Override
@@ -147,12 +160,13 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         }
     }
 
+    @UiThread
     @Override
     public void onDataClearToast() {
         Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe
+    @Subscribe/*(threadMode = ThreadMode.MAIN)*/
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {

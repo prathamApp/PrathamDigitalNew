@@ -15,7 +15,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
@@ -136,7 +136,7 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(this, ActivityMain.class);
+        Intent intent = new Intent(this, AttendanceActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);

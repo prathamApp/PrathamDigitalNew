@@ -1,14 +1,10 @@
 package com.pratham.prathamdigital.ui.fragment_select_group;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 
 import com.pratham.prathamdigital.BaseActivity;
@@ -18,19 +14,24 @@ import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
+import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
+@EFragment(R.layout.fragment_select_group)
 public class FragmentSelectGroup extends Fragment implements ContractGroup, CircularRevelLayout.CallBacks {
 
-    @BindView(R.id.rv_group)
+    @ViewById(R.id.rv_group)
     RecyclerView rv_group;
-    @BindView(R.id.circular_group_reveal)
+    @ViewById(R.id.circular_group_reveal)
     CircularRevelLayout circular_group_reveal;
 
     GroupAdapter groupAdapter;
@@ -38,7 +39,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     private int revealX;
     private int revealY;
 
-    @Override
+   /* @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
     }
@@ -83,6 +84,45 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         } else {
             get8to14Groups(present_groups);
         }
+    }*/
+
+    @AfterViews
+    public void initialize() {
+        circular_group_reveal.setListener(this);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_group_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_group_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_group_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
+        initiaiteParametersInGroup();
+    }
+
+    @Background
+    public void initiaiteParametersInGroup() {
+        ArrayList<String> present_groups = new ArrayList<>();
+        String groupId1 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID1);
+        if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
+        String groupId2 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID2);
+        if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
+        String groupId3 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID3);
+        if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
+        String groupId4 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID4);
+        if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
+        String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
+        if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
+        if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
+            get3to6Groups(present_groups);
+        } else {
+            get8to14Groups(present_groups);
+        }
+        setGroups();
     }
 
     private void get3to6Groups(ArrayList<String> allGroups) {
@@ -114,19 +154,21 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        setGroups(groups);
-    }
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//        setGroups(groups);
+//    }
 
-    public void setGroups(ArrayList<Modal_Groups> groups) {
+    @UiThread
+    public void setGroups(/*ArrayList<Modal_Groups> groups*/) {
         groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
         rv_group.setHasFixedSize(true);
         rv_group.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rv_group.setAdapter(groupAdapter);
     }
 
+    @UiThread
     public void setNext(View v, Modal_Groups modal_groups) {
         PrathamApplication.bubble_mp.start();
         ArrayList<Modal_Student> students = new ArrayList<>();
@@ -139,7 +181,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance(), R.id.frame_attendance,
+        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
                 bundle, FragmentChildAttendance.class.getSimpleName());
     }
 

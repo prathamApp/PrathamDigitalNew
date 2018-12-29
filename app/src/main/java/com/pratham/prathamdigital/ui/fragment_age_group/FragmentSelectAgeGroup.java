@@ -7,14 +7,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -22,13 +18,16 @@ import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
+import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment_;
 import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup;
+import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
 
+@EFragment(R.layout.fragment_age_group)
 public class FragmentSelectAgeGroup extends Fragment {
 
   /*  @BindView(R.id.admin_panel)
@@ -36,25 +35,25 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//    }
+//
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        View rootView = inflater.inflate(, container, false);
+//        return rootView;
+//    }
+//
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        ButterKnife.bind(this, view);
+//    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_age_group, container, false);
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-    }
-
-    @OnClick(R.id.scan_qr)
+    @Click(R.id.scan_qr)
     public void setScanQR() {
         checkPermission();
     }
@@ -114,7 +113,7 @@ public class FragmentSelectAgeGroup extends Fragment {
         }
     }
 
-    @OnClick(R.id.iv_age_3_to_6)
+    @Click(R.id.iv_age_3_to_6)
     public void open3to6Groups(View view) {
         PrathamApplication.bubble_mp.start();
         int[] outLocation = new int[2];
@@ -124,11 +123,11 @@ public class FragmentSelectAgeGroup extends Fragment {
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, true);
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
+        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
-    @OnClick(R.id.iv_age_8_to_14)
+    @Click(R.id.iv_age_8_to_14)
     public void open8to14Groups(View view) {
         PrathamApplication.bubble_mp.start();
         int[] outLocation = new int[2];
@@ -138,11 +137,11 @@ public class FragmentSelectAgeGroup extends Fragment {
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup(), R.id.frame_attendance,
+        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
-    @OnClick(R.id.admin_panel)
+    @Click(R.id.admin_panel)
     public void openAdminPanel() {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
@@ -157,8 +156,6 @@ public class FragmentSelectAgeGroup extends Fragment {
                 }
             });
             connectDialog.show();
-//            connectDialog.setTargetFragment(FragmentSelectAgeGroup.this, 3);
-//            connectDialog.show(getActivity().getSupportFragmentManager(), ConnectDialog.class.getSimpleName());
         } else {
             onActivityResult(3, Activity.RESULT_OK, null);
         }
@@ -169,7 +166,7 @@ public class FragmentSelectAgeGroup extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
-                PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
+                PD_Utility.showFragment(getActivity(), new AdminPanelFragment_(), R.id.frame_attendance,
                         null, AdminPanelFragment.class.getSimpleName());
             }
         }

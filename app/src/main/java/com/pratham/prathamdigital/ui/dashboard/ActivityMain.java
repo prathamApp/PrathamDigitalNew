@@ -7,7 +7,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.card.MaterialCardView;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
@@ -35,78 +34,104 @@ import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
-import com.pratham.prathamdigital.ui.fragment_content.FragmentContent;
+import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
+import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
+import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
+@EActivity(R.layout.main_activity)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
-    @BindView(R.id.main_root)
+    @ViewById(R.id.main_root)
     CoordinatorLayout main_root;
-    @BindView(R.id.download_notification)
+    @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
-    @BindView(R.id.download_badge)
+    @ViewById(R.id.download_badge)
     RelativeLayout download_badge;
-    @BindView(R.id.top_scaling)
+    @ViewById(R.id.top_scaling)
     ScalingLayout top_scaling;
-    @BindView(R.id.outer_area)
+    @ViewById(R.id.outer_area)
     View outer_area;
-    @BindView(R.id.tab_card)
+    @ViewById(R.id.tab_card)
     MaterialCardView tab_card;
-    @BindView(R.id.sliding_strip)
+    @ViewById(R.id.sliding_strip)
     View sliding_strip;
-    @BindView(R.id.sheet_tab_holder)
+    @ViewById(R.id.sheet_tab_holder)
     RelativeLayout sheet_tab_holder;
-    @BindView(R.id.pradigi_icon)
+    @ViewById(R.id.pradigi_icon)
     ImageView pradigi_icon;
-    @BindView(R.id.sheet_connect)
+    @ViewById(R.id.sheet_connect)
     ImageView sheet_connect;
-    @BindView(R.id.sheet_home)
+    @ViewById(R.id.sheet_home)
     ImageView sheet_home;
-    @BindView(R.id.sheet_language)
+    @ViewById(R.id.sheet_language)
     ImageView sheet_language;
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main_activity);
-        ButterKnife.bind(this);
+    DownloadListFragment_ downloadListFragment_;
+
+    @AfterViews
+    public void initialize() {
+//        toggleEventBus(true);
         top_scaling.setListener(listener);
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, 0);
         bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(this, new FragmentContent(), R.id.main_frame,
-                bundle, FragmentContent.class.getSimpleName());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
+        PD_Utility.showFragment(this, new FragmentContent_(), R.id.main_frame,
+                bundle, FragmentContent_.class.getSimpleName());
         showIntro();
     }
+//
+//    @Override
+//    public void onStart() {
+//        super.onStart();
+//        EventBus.getDefault().register(this);
+//    }
+//
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        EventBus.getDefault().unregister(this);
+//    }
 
-    @OnClick(R.id.download_badge)
+    @Click(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();
-        DownloadListFragment fragment = new DownloadListFragment();
-        fragment.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
+        downloadListFragment_ = new DownloadListFragment_();
+        downloadListFragment_.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
     }
 
-    @Override
-    public void showNotificationBadge(int downloadNumber) {
-        if (downloadNumber == 1) {
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void showNotificationBadge(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_STARTED)) {
+                increaseNotificationCount(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
+                decreaseNotificationCount(message);
+            }
+        }
+    }
+
+    @UiThread
+    public void increaseNotificationCount(EventMessage message) {
+        download_notification.setNumber(message.getDownlaodContentSize());
+        if (message.getDownlaodContentSize() == 1) {
             ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
                     Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             animation.setFillAfter(true);
@@ -115,12 +140,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             download_badge.setVisibility(View.VISIBLE);
             animation.start();
         }
-        download_notification.setNumber(downloadNumber);
     }
 
-    @Override
-    public void hideNotificationBadge(int number) {
-        if (number == 0) {
+    @UiThread
+    public void decreaseNotificationCount(EventMessage message) {
+        download_notification.setNumber(message.getDownlaodContentSize());
+        if (message.getDownlaodContentSize() == 0) {
             ScaleAnimation animation = new ScaleAnimation(1f, 0f, 1f, 0f,
                     Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
             animation.setDuration(300);
@@ -128,11 +153,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             download_badge.setAnimation(animation);
             animation.start();
             download_badge.setVisibility(View.GONE);
+            if (downloadListFragment_ != null)
+                downloadListFragment_.dismiss();
         }
-        download_notification.setNumber(number);
     }
 
-    @OnClick(R.id.pradigi_icon)
+    @Click(R.id.pradigi_icon)
     public void setPullDown() {
         if (!FsService.isRunning()) {
             setTop_scaling();
@@ -143,7 +169,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    @OnClick(R.id.pradigi_exit)
+    @Click(R.id.pradigi_exit)
     public void ExitApp() {
         if (!FsService.isRunning()) {
             new AlertDialog.Builder(ActivityMain.this)
@@ -165,7 +191,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    @OnClick(R.id.sheet_language)
+    @Click(R.id.sheet_language)
     public void setSheetLanguage(View view) {
         animate(view);
         PrathamApplication.bubble_mp.start();
@@ -175,11 +201,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(ActivityMain.this, new FragmentLanguage(), R.id.main_frame,
+        PD_Utility.showFragment(ActivityMain.this, new FragmentLanguage_(), R.id.main_frame,
                 bundle, FragmentLanguage.class.getSimpleName());
     }
 
-    @OnClick(R.id.sheet_home)
+    @Click(R.id.sheet_home)
     public void setSheetHome(View view) {
         animate(view);
         PrathamApplication.bubble_mp.start();
@@ -189,11 +215,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
-                bundle, FragmentContent.class.getSimpleName());
+        PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
+                bundle, FragmentContent_.class.getSimpleName());
     }
 
-    @OnClick(R.id.sheet_share)
+    @Click(R.id.sheet_share)
     public void setSheetShare(View view) {
         animate(view);
         PrathamApplication.bubble_mp.start();
@@ -203,11 +229,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve(), R.id.main_frame,
+        PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve_(), R.id.main_frame,
                 bundle, FragmentShareRecieve.class.getSimpleName());
     }
 
-    @OnClick(R.id.sheet_apk_share)
+    @Click(R.id.sheet_apk_share)
     public void shareAPK(View view) {
         animate(view);
         PrathamApplication.bubble_mp.start();
@@ -226,7 +252,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    @OnClick(R.id.sheet_connect)
+    @Click(R.id.sheet_connect)
     public void setSheetConnect(View view) {
         animate(view);
         PrathamApplication.bubble_mp.start();
@@ -239,8 +265,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 Bundle bundle = new Bundle();
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
-                PD_Utility.showFragment(ActivityMain.this, new FragmentContent(), R.id.main_frame,
-                        bundle, FragmentContent.class.getSimpleName());
+                PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
+                        bundle, FragmentContent_.class.getSimpleName());
             }
         });
         connectDialog.show();
@@ -251,15 +277,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     public void onBackPressed() {
         Fragment fragment = getSupportFragmentManager().findFragmentById(R.id.main_frame);
-        if (fragment instanceof FragmentContent) {
+        if (fragment instanceof FragmentContent_) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.CONTENT_BACK);
             EventBus.getDefault().post(message);
-        } else if (fragment instanceof FragmentLanguage) {
+        } else if (fragment instanceof FragmentLanguage_) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.LANGUAGE_BACK);
             EventBus.getDefault().post(message);
-        } else if (fragment instanceof FragmentShareRecieve) {
+        } else if (fragment instanceof FragmentShareRecieve_) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.SHARE_BACK);
             EventBus.getDefault().post(message);
@@ -316,7 +342,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             if (progress > 0) {
 //                pull_down_menu.setVisibility(View.INVISIBLE);
             }
-
             if (progress < 1) {
                 outer_area.setVisibility(View.GONE);
                 tab_card.setVisibility(View.INVISIBLE);
@@ -324,7 +349,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     };
 
-    //    @OnClick(R.id.top_scaling)
     public void setTop_scaling() {
         if (top_scaling.getState() == State.COLLAPSED)
             top_scaling.expand();
@@ -347,26 +371,24 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 //        animator.start();
         sliding_strip.animate()
                 .x(v.getX())
-//                        .y(v.getY())
                 .setDuration(500)
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
                         sliding_strip.setX(v.getX());
-//                                sliding_strip.setY(v.getY());
                         setTop_scaling();
                     }
                 }).start();
     }
 
-    @OnClick(R.id.outer_area)
+    @Click(R.id.outer_area)
     public void onRootTouch(View v) {
         if (top_scaling.getState() == State.EXPANDED)
             top_scaling.collapse();
     }
 
     private void showIntro() {
-        SpotlightView spotlightView = new SpotlightView.Builder(ActivityMain.this)
+        new SpotlightView.Builder(ActivityMain.this)
                 .introAnimationDuration(400)
                 .enableRevealAnimation(true)
                 .performClick(true)

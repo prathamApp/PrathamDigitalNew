@@ -2,15 +2,11 @@ package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.RelativeLayout;
@@ -25,29 +21,33 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
-import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.Touch;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTouch;
-
+@EFragment(R.layout.fragment_child_attendance)
 public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView,
         CircularRevelLayout.CallBacks {
 
     private static final String TAG = FragmentChildAttendance.class.getSimpleName();
-    @BindView(R.id.chid_attendance_reveal)
+    @ViewById(R.id.chid_attendance_reveal)
     CircularRevelLayout chid_attendance_reveal;
-    @BindView(R.id.rv_child)
+    @ViewById(R.id.rv_child)
     RecyclerView rv_child;
-    @BindView(R.id.btn_attendance_next)
+    @ViewById(R.id.btn_attendance_next)
     Button btn_attendance_next;
-    @BindView(R.id.add_child)
+    @ViewById(R.id.add_child)
     RelativeLayout add_child;
 
     ChildAdapter childAdapter;
@@ -57,16 +57,22 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     private int revealY;
     private String groupID = "";
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_child_attendance, container, false);
-        ButterKnife.bind(this, rootView);
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        View rootView = inflater.inflate(R.layout.fragment_child_attendance, container, false);
+//
+//        return null;
+//    }
+
+    //    @Override
+    @AfterViews
+    public void initialize() {
         chid_attendance_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -80,17 +86,6 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                 }
             });
         }
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         students = new ArrayList<>();
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
         avatars = new ArrayList<>();
@@ -110,6 +105,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         setChilds(students);
     }
 
+    @UiThread
     public void setChilds(ArrayList<Modal_Student> childs) {
         childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentChildAttendance.this);
         rv_child.setHasFixedSize(true);
@@ -141,21 +137,21 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         presentActivity(v);
     }
 
-    @OnTouch(R.id.btn_attendance_next)
+    @Touch(R.id.btn_attendance_next)
     public boolean setNextAvatar(View view, MotionEvent event) {
         revealX = (int) event.getRawX();
         revealY = (int) event.getY();
         return getActivity().onTouchEvent(event);
     }
 
-    @OnTouch(R.id.rv_child)
+    @Touch(R.id.rv_child)
     public boolean getRecyclerTouch(View view, MotionEvent event) {
         revealX = (int) event.getRawX();
         revealY = (int) event.getY();
         return getActivity().onTouchEvent(event);
     }
 
-    @OnClick(R.id.btn_attendance_next)
+    @Click(R.id.btn_attendance_next)
     public void setNext(View v) {
         ArrayList<Modal_Student> checkedStds = new ArrayList<>();
         for (int i = 0; i < students.size(); i++) {
@@ -172,6 +168,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         }
     }
 
+    @Background
     public void markAttendance(ArrayList<Modal_Student> stud) {
         FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
         ArrayList<Attendance> attendances = new ArrayList<>();
@@ -193,16 +190,17 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         BaseActivity.sessionDao.insert(s);
     }
 
+    @UiThread
     public void presentActivity(View view) {
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         getActivity().startService(new Intent(getActivity(), AppKillService.class));
-        Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
+        Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
     }
 
-    @OnClick(R.id.add_child)
+    @Click(R.id.add_child)
     public void setAdd_child(View view) {
         int[] outLocation = new int[2];
         view.getLocationOnScreen(outLocation);
@@ -210,13 +208,13 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar(), R.id.frame_attendance,
-                bundle, Fragment_SelectAvatar.class.getSimpleName());
+        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
+                bundle, Fragment_SelectAvatar_.class.getSimpleName());
     }
 
     @Override
     public void onRevealed() {
-
+//        initialize();
     }
 
     @Override
@@ -225,13 +223,4 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 //        if (fragment != null)
 //            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
-
-//    @Subscribe
-//    public void onbackPressed(EventMessage message) {
-//        if (message != null) {
-//            if (message.getMessage().equalsIgnoreCase(TAG)) {
-//                chid_attendance_reveal.unReveal();
-//            }
-//        }
-//    }
 }

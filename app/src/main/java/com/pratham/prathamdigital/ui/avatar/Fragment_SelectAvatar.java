@@ -2,15 +2,9 @@ package com.pratham.prathamdigital.ui.avatar;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -28,37 +22,40 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.OnTouch;
-
 import static com.pratham.prathamdigital.BaseActivity.studentDao;
 
+@EFragment(R.layout.select_avatar)
 public class Fragment_SelectAvatar extends Fragment implements AvatarContract.avatarView, CircularRevelLayout.CallBacks {
 
     private static final String TAG = Fragment_SelectAvatar.class.getSimpleName();
-    @BindView(R.id.avatar_circular_reveal)
+    @ViewById(R.id.avatar_circular_reveal)
     CircularRevelLayout avatar_circular_reveal;
-    @BindView(R.id.et_child_name)
+    @ViewById(R.id.et_child_name)
     EditText et_child_name;
-    @BindView(R.id.avatar_rv)
+    @ViewById(R.id.avatar_rv)
     DiscreteScrollView avatar_rv;
-    @BindView(R.id.btn_avatar_next)
+    @ViewById(R.id.btn_avatar_next)
     Button btn_avatar_next;
-    @BindView(R.id.spinner_class)
+    @ViewById(R.id.spinner_class)
     Spinner spinner_class;
-    @BindView(R.id.spinner_age)
+    @ViewById(R.id.spinner_age)
     Spinner spinner_age;
 
     ArrayList<String> avatarList = new ArrayList<>();
@@ -67,11 +64,40 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     int revealX;
     int revealY;
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.select_avatar, container, false);
-        ButterKnife.bind(this, rootView);
+//    @Nullable
+//    @Override
+//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+//        View rootView = inflater.inflate(R.layout.select_avatar, container, false);
+//        ButterKnife.bind(this, rootView);
+//        avatar_circular_reveal.setListener(this);
+//        if (getArguments() != null) {
+//            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+//            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+//            avatar_circular_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+//                @Override
+//                public boolean onPreDraw() {
+//                    avatar_circular_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+//                    avatar_circular_reveal.revealFrom(revealX, revealY, 0);
+//                    return true;
+//                }
+//            });
+//        }
+//        return rootView;
+//    }
+
+//    @Override
+//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+//        super.onViewCreated(view, savedInstanceState);
+//        context = getActivity();
+//    }
+
+//    @Override
+//    public void onResume() {
+//        super.onResume();
+//    }
+
+    @AfterViews
+    public void initialize() {
         avatar_circular_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -85,61 +111,31 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                 }
             });
         }
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        context = getActivity();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
         initializeAvatars();
+    }
+
+    @Background
+    public void initializeAvatars() {
+        String[] avatars = getResources().getStringArray(R.array.avatars);
+        avatarList.addAll(Arrays.asList(avatars));
         initializeAdapter();
     }
 
-    private void initializeAvatars() {
-        String[] avatars = getResources().getStringArray(R.array.avatars);
-        avatarList.addAll(Arrays.asList(avatars));
-    }
-
-    private void initializeAdapter() {
+    @UiThread
+    public void initializeAdapter() {
         ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(), R.array.student_class, R.layout.simple_spinner_item);
         spinner_class.setAdapter(adapter);
         ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
         spinner_age.setAdapter(adapter2);
-//        spinner_age.setOnItemSelectedListener(spinner _age_listener);
         avatar_rv.setOrientation(DSVOrientation.VERTICAL);
         avatar_rv.addOnItemChangedListener(onItemChangedListener);
         avatar_rv.setAdapter(new AvatarAdapter(context, avatarList));
         avatar_rv.setItemTransitionTimeMillis(150);
-//        avatar_rv.setSlideOnFling(true);
-//        avatar_rv.setSlideOnFlingThreshold(1800);
         avatar_rv.setItemTransformer(new ScaleTransformer.Builder()
                 .setMinScale(0.9f)
                 .setMaxScale(1.05f)
                 .build());
-//        avatar_rv.smoothScrollToPosition(0);
     }
-
-//    AdapterView.OnItemSelectedListener spinner_age_listener = new AdapterView.OnItemSelectedListener() {
-//        @Override
-//        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//            ArrayList<String> classes = new ArrayList<String>(Arrays.asList(getActivity().getResources().getStringArray(R.array.student_class)));
-//            ArrayList<String> tempClass = new ArrayList<>();
-//            for (String cl : classes) {
-//
-//            }
-//        }
-//
-//        @Override
-//        public void onNothingSelected(AdapterView<?> parent) {
-//
-//        }
-//    };
 
     DiscreteScrollView.OnItemChangedListener onItemChangedListener = new DiscreteScrollView.OnItemChangedListener() {
         @Override
@@ -150,43 +146,49 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         }
     };
 
-    @OnTouch(R.id.btn_avatar_next)
-    public boolean setNextAvatar(View view, MotionEvent event) {
-        revealX = (int) event.getRawX();
-        revealY = (int) event.getY();
-        return getActivity().onTouchEvent(event);
-    }
+//    @Touch(R.id.btn_avatar_next)
+//    public boolean setNextAvatar(View view, MotionEvent event) {
+//        revealX = (int) event.getRawX();
+//        revealY = (int) event.getY();
+//        return getActivity().onTouchEvent(event);
+//    }
 
-    @OnClick(R.id.btn_avatar_next)
+    @Click(R.id.btn_avatar_next)
     public void setNext() {
         PrathamApplication.bubble_mp.start();
         if (!et_child_name.getText().toString().isEmpty()) {
-            FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
-            Modal_Student modal_student = new Modal_Student();
-            modal_student.setStudentId(PD_Utility.getUUID().toString());
-            modal_student.setFullName(et_child_name.getText().toString());
-            modal_student.setGroupId("SmartPhone");
-            modal_student.setGroupName("SmartPhone");
-            modal_student.setGroupName("SmartPhone");
-            modal_student.setFirstName(et_child_name.getText().toString());
-            modal_student.setMiddleName(et_child_name.getText().toString());
-            modal_student.setLastName(et_child_name.getText().toString());
-            modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
-            modal_student.setAge(spinner_age.getSelectedItem().toString());
-            modal_student.setGender("M");
-            modal_student.setSentFlag(0);
-            modal_student.setAvatarName(avatar_selected);
-            studentDao.insertStudent(modal_student);
-            markAttendance(modal_student);
-            presentActivity();
+            insertStudentAndMarkAttendance();
         } else
             Toast.makeText(getActivity(), "Please enter the name", Toast.LENGTH_SHORT).show();
     }
 
+    @Background
+    public void insertStudentAndMarkAttendance() {
+        FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
+        Modal_Student modal_student = new Modal_Student();
+        modal_student.setStudentId(PD_Utility.getUUID().toString());
+        modal_student.setFullName(et_child_name.getText().toString());
+        modal_student.setGroupId("SmartPhone");
+        modal_student.setGroupName("SmartPhone");
+        modal_student.setGroupName("SmartPhone");
+        modal_student.setFirstName(et_child_name.getText().toString());
+        modal_student.setMiddleName(et_child_name.getText().toString());
+        modal_student.setLastName(et_child_name.getText().toString());
+        modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
+        modal_student.setAge(spinner_age.getSelectedItem().toString());
+        modal_student.setGender("M");
+        modal_student.setSentFlag(0);
+        modal_student.setAvatarName(avatar_selected);
+        studentDao.insertStudent(modal_student);
+        markAttendance(modal_student);
+        presentActivity();
+    }
+
+    @UiThread
     public void presentActivity() {
         getActivity().startService(new Intent(getActivity(), AppKillService.class));
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
-        Intent mActivityIntent = new Intent(getActivity(), ActivityMain.class);
+        Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
@@ -211,7 +213,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         BaseActivity.sessionDao.insert(s);
     }
 
-
     @Override
     public void openDashboard() {
     }
@@ -224,17 +225,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     @Override
     public void onUnRevealed() {
-//        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
-//        if (fragment != null)
-//            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
-//    @Subscribe
-//    public void onbackPressed(EventMessage message) {
-//        if (message != null) {
-//            if (message.getMessage().equalsIgnoreCase(TAG)) {
-//                avatar_circular_reveal.unReveal();
-//            }
-//        }
-//    }
 }

@@ -6,18 +6,22 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 public interface AdminPanelContract {
     interface AdminPanelView {
-          public String  getUserName();
-          public String  getPassword();
-          public void openPullDataFragment();
-          public void onLoginFail();
-          public void onLoginSuccess();
-          public void onDataClearToast();
+        void openPullDataFragment();
 
+        void onLoginFail();
+
+        void onLoginSuccess();
+
+        void onDataClearToast();
     }
 
     interface AdminPanelPresenter {
-        public void checkLogin(String userName,String password);
-        public void clearData();
-        public void pushData();
+        void checkLogin(String userName, String password);
+
+        void clearData();
+
+        void pushData();
+
+        void setView(AdminPanelFragment adminPanelFragment);
     }
 }

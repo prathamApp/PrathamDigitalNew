@@ -1,56 +1,43 @@
 package com.pratham.prathamdigital.ui.download_list;
 
-import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;
+import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.stolets.rxdiffutil.RxDiffUtil;
+import com.stolets.rxdiffutil.diffrequest.DiffRequestManager;
 
+import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
+@EFragment(R.layout.download_list_fragment)
 public class DownloadListFragment extends SuperBottomSheetFragment {
     private static final String TAG = DownloadListFragment.class.getSimpleName();
-    @BindView(R.id.rv_download)
+    @ViewById(R.id.rv_download)
     RecyclerView rv_download;
 
     DownloadListAdapter adapter;
+    private DiffRequestManager<Modal_FileDownloading, DownloadListAdapter> mDiffRequestManager;
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View rootView = inflater.inflate(R.layout.download_list_fragment, container, false);
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(this, view);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    private void initializeAdapter(List<Modal_FileDownloading> downloadings) {
+    @UiThread
+    public void initializeAdapter(List<Modal_FileDownloading> downloadings) {
         adapter = new DownloadListAdapter(getActivity(), downloadings);
-        LinearLayoutManager manager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        LinearLayoutManager manager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
+        rv_download.setHasFixedSize(true);
         rv_download.setLayoutManager(manager);
         rv_download.setAdapter(adapter);
+        mDiffRequestManager = RxDiffUtil
+                .bindTo(getActivity())
+                .with(adapter);
     }
 
     @Override
@@ -65,14 +52,21 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
         EventBus.getDefault().unregister(this);
     }
 
-    @Subscribe
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onEvent(final List<Modal_FileDownloading> downloadings) {
-        if (downloadings != null && downloadings.size() > 0) {
+        if (downloadings != null) {
             if (adapter != null) {
-                adapter.updateList(downloadings);
+                mDiffRequestManager
+                        .newDiffRequestWith(new DownloadDiffUtilCallback(adapter.getModelList(), downloadings))
+                        .updateAdapterWithNewData(downloadings)
+                        .detectMoves(true)
+                        .calculate();
+//                adapter.updateList(downloadings);
             } else {
                 initializeAdapter(downloadings);
             }
         }
     }
+
+
 }

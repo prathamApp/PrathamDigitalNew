@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.attendance_activity;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 
@@ -10,25 +9,33 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Student;
-import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
-import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
+import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup_;
+import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+
 import java.util.ArrayList;
 
-import butterknife.ButterKnife;
-
+@EActivity(R.layout.activity_attendance)
 public class AttendanceActivity extends BaseActivity {
 
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_attendance);
-        ButterKnife.bind(this);
+//    @Override
+//    protected void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+////        setContentView(R.layout.activity_attendance);
+////        ButterKnife.bind(this);
+//
+//    }
+
+    @AfterViews
+    public void initialize() {
         if (PrathamApplication.isTablet) {
-            PD_Utility.showFragment(this, new FragmentSelectAgeGroup(), R.id.frame_attendance,
+            PD_Utility.showFragment(this, new FragmentSelectAgeGroup_(), R.id.frame_attendance,
                     null, FragmentSelectAgeGroup.class.getSimpleName());
         } else {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
@@ -37,14 +44,14 @@ public class AttendanceActivity extends BaseActivity {
                 bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
-                PD_Utility.showFragment(this, new FragmentChildAttendance(), R.id.frame_attendance,
-                        bundle, FragmentChildAttendance.class.getSimpleName());
+                PD_Utility.showFragment(this, new FragmentChildAttendance_(), R.id.frame_attendance,
+                        bundle, FragmentChildAttendance_.class.getSimpleName());
             } else {
                 Bundle bundle = new Bundle();
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
-                PD_Utility.showFragment(this, new Fragment_SelectAvatar(), R.id.frame_attendance,
-                        bundle, Fragment_SelectAvatar.class.getSimpleName());
+                PD_Utility.showFragment(this, new Fragment_SelectAvatar_(), R.id.frame_attendance,
+                        bundle, Fragment_SelectAvatar_.class.getSimpleName());
             }
         }
     }
@@ -52,7 +59,7 @@ public class AttendanceActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_attendance);
-        if (/*f instanceof FragmentSelectAgeGroup || */getSupportFragmentManager().getBackStackEntryCount() == 1) {
+        if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             new AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setTitle("PraDigi")
@@ -65,22 +72,8 @@ public class AttendanceActivity extends BaseActivity {
                     })
                     .setNegativeButton("No", null)
                     .show();
-//        else if (f instanceof FragmentSelectGroup) {
-//            msg.setMessage(FragmentSelectGroup.class.getSimpleName());
-//            EventBus.getDefault().post(msg);
-//        } else if (f instanceof FragmentChildAttendance) {
-//            msg.setMessage(FragmentChildAttendance.class.getSimpleName());
-//            EventBus.getDefault().post(msg);
-//        } else if (f instanceof Fragment_SelectAvatar) {
-//            msg.setMessage(Fragment_SelectAvatar.class.getSimpleName());
-//            EventBus.getDefault().post(msg);
         } else {
             getSupportFragmentManager().popBackStack();
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 }

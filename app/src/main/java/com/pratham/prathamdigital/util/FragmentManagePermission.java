@@ -6,12 +6,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 
 import com.pratham.prathamdigital.interfaces.PermissionResult;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -36,8 +36,20 @@ public class FragmentManagePermission extends Fragment {
         setRetainInstance(false);
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
     /**
-     * @param context current Context
+     * @param context    current Context
      * @param permission String permission to ask
      * @return boolean true/false
      */
@@ -46,7 +58,7 @@ public class FragmentManagePermission extends Fragment {
     }
 
     /**
-     * @param context current Context
+     * @param context     current Context
      * @param permissions String[] permission to ask
      * @return boolean true/false
      */
@@ -122,7 +134,7 @@ public class FragmentManagePermission extends Fragment {
     }
 
     /**
-     * @param permission String permission ask
+     * @param permission       String permission ask
      * @param permissionResult callback PermissionResult
      */
     public void askCompactPermission(String permission, PermissionResult permissionResult) {
@@ -132,7 +144,7 @@ public class FragmentManagePermission extends Fragment {
     }
 
     /**
-     * @param permissions String[] permissions to ask
+     * @param permissions      String[] permissions to ask
      * @param permissionResult callback PermissionResult
      */
     public void askCompactPermissions(String permissions[], PermissionResult permissionResult) {

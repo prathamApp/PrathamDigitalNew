@@ -1,33 +1,40 @@
 package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.graphics.Color;
 
 import com.pratham.prathamdigital.BaseActivity;
-import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 
 /**
  * Created by PEF on 19/11/2018.
  */
-
+@EBean
 public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresenter {
     AdminPanelContract.AdminPanelView adminPanelView;
     Context context;
 
-    public AdminPanelPresenter(Context context, AdminPanelContract.AdminPanelView adminPanelView) {
-        this.adminPanelView = adminPanelView;
+    public AdminPanelPresenter(Context context) {
         this.context = context;
     }
 
     @Override
-    public void checkLogin(String userName, String password) {
-        // if user name and password are admin then navigate to Download activity otherWise admin activity
+    public void setView(AdminPanelFragment adminPanelFragment) {
+        this.adminPanelView = (AdminPanelContract.AdminPanelView) adminPanelFragment;
+    }
 
-        if (userName.equals("admin") && password.equals("admin")) {
+    @Override
+    public void checkLogin(String userName, String password) {
+        checkLogin_(userName, password);
+    }
+
+    @Background
+    public void checkLogin_(String userName, String password) {
+        // if user name and password are admin then navigate to Download activity otherWise admin activity
+        if (userName.equals("pratham") && password.equals("pratham")) {
             adminPanelView.openPullDataFragment();
         } else {
             // assign push logic
@@ -41,34 +48,14 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
         }
     }
 
+    //    @Background
     @Override
     public void clearData() {
-        AlertDialog clearDataDialog = new AlertDialog.Builder(context)
-                //set message, title, and icon
-                .setTitle("Clear Data")
-                .setMessage("Are you sure you want to clear everything ?")
-                .setIcon(R.drawable.ic_warning)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        //your deleting code
-                        BaseActivity.villageDao.deleteAllVillages();
-                        BaseActivity.groupDao.deleteAllGroups();
-                        BaseActivity.studentDao.deleteAllStudents();
-                        BaseActivity.crLdao.deleteAllCRLs();
-                        adminPanelView.onDataClearToast();
-                        dialog.dismiss();
-                    }
-
-                })
-
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        clearDataDialog.show();
-        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+        BaseActivity.villageDao.deleteAllVillages();
+        BaseActivity.groupDao.deleteAllGroups();
+        BaseActivity.studentDao.deleteAllStudents();
+        BaseActivity.crLdao.deleteAllCRLs();
+        adminPanelView.onDataClearToast();
     }
 
     @Override
