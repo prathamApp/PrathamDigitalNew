@@ -89,6 +89,11 @@ public class PD_Constant {
     public static final String SERVER_STU = "server_stu";
     public static final String KOLIBRI_BLOCK = "kolibri_block";
     public static final String SERVER_BLOCK = "server_block";
+    public static final String DOWNLOAD_FAILED = "download_failed";
+    public static final String FILE_DOWNLOAD_ERROR = "FILE_DOWNLOAD_ERROR";
+    public static final String BROADCAST_DOWNLOADINGS = "broadcast_downloadings";
+    public static final String SDCARD_URI = "sdcard_uri";
+    public static final String SDCARD_PATH = "sdcard_path";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

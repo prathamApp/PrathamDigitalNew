@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/_50sdp"
     android:layout_gravity="bottom"
-    android:background="@android:color/transparent"
+    android:background="#D7AD49"
     android:orientation="horizontal">
 
     <com.pratham.prathamdigital.custom.media_controller.PausePlayButton
@@ -21,11 +21,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/_3sdp"
+        android:layout_marginRight="@dimen/_3sdp"
         android:elevation="@dimen/_15sdp"
         android:progressDrawable="@drawable/video_seekbar_style"
         android:splitTrack="false"
         android:thumb="@drawable/video_custom_thumb"
-        tools:progress="50" />
+        tools:progress="80" />
     <!--<LinearLayout-->
     <!--android:layout_width="match_parent"-->
     <!--android:layout_height="wrap_content"-->

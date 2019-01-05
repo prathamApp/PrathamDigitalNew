@@ -12,7 +12,7 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.services.TTSService;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
+import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
 import com.pratham.prathamdigital.util.Audio;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -261,7 +261,7 @@ public class JSInterface {
     public void showVideo(String filename, String resId) {
         try {
             String vidPath = gamePath + filename;
-            Intent intent = new Intent(mContext, Activity_VPlayer.class);
+            Intent intent = new Intent(mContext, Activity_VPlayer_.class);
             intent.putExtra("videoPath", vidPath);
             intent.putExtra("resId", resId);
             MediaFlag = true;

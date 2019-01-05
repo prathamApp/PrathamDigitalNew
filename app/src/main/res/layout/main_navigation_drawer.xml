@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.NavigationView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_view"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_gravity="start"
+    android:background="@drawable/navigation_bkgd"
+    android:fitsSystemWindows="true"
+    app:elevation="@dimen/_20sdp"
+    app:headerLayout="@null"
+    app:menu="@null">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.design.card.MaterialCardView
+            android:id="@+id/card_avatar"
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_100sdp"
+            android:layout_marginLeft="-25dp"
+            android:layout_marginTop="-25dp"
+            app:cardCornerRadius="@dimen/_60sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_avatar"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="@dimen/_80sdp"
+                android:layout_gravity="end|bottom"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true" />
+        </android.support.design.card.MaterialCardView>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_stu_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_25sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_toRightOf="@+id/card_avatar"
+            android:maxLines="2"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sdp" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_exit"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/green"
+            android:gravity="center"
+            android:text="Exit"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_18sdp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_navigation"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/txt_exit"
+            android:layout_below="@+id/card_avatar"
+            android:layout_marginTop="7dp" />
+    </RelativeLayout>
+</android.support.design.widget.NavigationView>

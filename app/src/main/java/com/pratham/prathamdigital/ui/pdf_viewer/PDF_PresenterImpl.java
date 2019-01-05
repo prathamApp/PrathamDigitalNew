@@ -6,19 +6,29 @@ import android.graphics.pdf.PdfRenderer;
 import android.net.Uri;
 import android.os.ParcelFileDescriptor;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class PDF_PresenterImpl {
+@EBean
+public class PDF_PresenterImpl implements PDFContract.pdfPresenter {
     private Context context;
     private PDFContract.pdf_View pdf_view;
 
-    public PDF_PresenterImpl(Context context, PDFContract.pdf_View pdf_view) {
+    public PDF_PresenterImpl(Context context) {
         this.context = context;
-        this.pdf_view = pdf_view;
     }
 
+    @Override
+    public void setView(Activity_PdfViewer activity_pdfViewer) {
+        pdf_view = (PDFContract.pdf_View) activity_pdfViewer;
+    }
+
+    @Background
+    @Override
     public void generateImageFromPdf(String resPath) {
         ArrayList<Bitmap> pdf = new ArrayList<>();
         try {
@@ -45,8 +55,6 @@ public class PDF_PresenterImpl {
     private ParcelFileDescriptor getSeekableFileDescriptor(String resPath) {
         ParcelFileDescriptor fd = null;
         try {
-//            fd = ParcelFileDescriptor.open(new File(resPath),
-//                    ParcelFileDescriptor.MODE_READ_ONLY);
             fd = context.getContentResolver().openFileDescriptor(Uri.fromFile(new File(resPath)), "r");
         } catch (Exception e) {
             e.printStackTrace();

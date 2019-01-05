@@ -10,5 +10,8 @@ public interface PDFContract {
     }
 
     interface pdfPresenter {
+        void setView(Activity_PdfViewer activity_pdfViewer);
+
+        void generateImageFromPdf(String pdfPath);
     }
 }

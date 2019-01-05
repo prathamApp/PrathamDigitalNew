@@ -1,34 +1,41 @@
 package com.pratham.prathamdigital.ui.video_player;
 
 import android.media.MediaPlayer;
-import android.os.Bundle;
+import android.view.Gravity;
+import android.view.View;
 import android.widget.VideoView;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Click;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.UiThread;
+import org.androidannotations.annotations.ViewById;
 
+@EActivity(R.layout.activity_generic_vplayer)
 public class Activity_VPlayer extends BaseActivity {
 
-    @BindView(R.id.videoView)
+    @ViewById(R.id.videoView)
     VideoView videoView;
-    @BindView(R.id.player_control_view)
+    @ViewById(R.id.player_control_view)
     PlayerControlView player_control_view;
 
     private String myVideo;
     private String startTime = "no_resource";
     private String resId;
     private long videoDuration = 0;
+    BlurPopupWindow nextDialog;
 
+/*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,11 +46,18 @@ public class Activity_VPlayer extends BaseActivity {
 //        PrathamApplication.getInstance().toggleBackgroundMusic(false);
         initializePlayer(myVideo);
     }
+*/
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    @AfterViews
+    public void initialize() {
+        myVideo = getIntent().getStringExtra("videoPath");
+        resId = getIntent().getStringExtra("resId");
+        initializePlayer(myVideo);
     }
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//    }
 
     private void initializePlayer(String myVideo) {
         videoView.setVideoPath(myVideo);
@@ -57,9 +71,36 @@ public class Activity_VPlayer extends BaseActivity {
                 videoDuration = videoView.getDuration();
             }
         });
+        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                addScoreToDB();
+                showNextVideoDialog();
+            }
+        });
     }
 
-    @OnClick(R.id.close_video)
+    @UiThread
+    public void showNextVideoDialog() {
+        nextDialog = new BlurPopupWindow.Builder(Activity_VPlayer.this)
+                .setContentView(R.layout.dialog_next_content)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        nextDialog.dismiss();
+                        finish();
+                    }
+                }, R.id.txt_close)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build();
+        nextDialog.show();
+    }
+
+    @Click(R.id.close_video)
     public void setClose_video() {
         onBackPressed();
     }

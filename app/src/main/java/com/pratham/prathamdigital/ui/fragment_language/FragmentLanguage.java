@@ -43,42 +43,6 @@ public class FragmentLanguage extends FragmentManagePermission implements Contra
     private int revealX;
     private int revealY;
 
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_language, container, false);
-        ButterKnife.bind(this, rootView);
-        circular_language_reveal.setListener(this);
-        if (getArguments() != null) {
-            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-            circular_language_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_language_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_language_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
-        }
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }*/
-
     @AfterViews
     public void initialize() {
         circular_language_reveal.setListener(this);

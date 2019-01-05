@@ -35,7 +35,7 @@
 
     <style name="MyDialog2" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@null</item>
-        <!--<item_menu name="android:buttonStyle">@style/CustomButton</item_menu>-->
+        <!--<item_nav_menu name="android:buttonStyle">@style/CustomButton</item_nav_menu>-->
     </style>
 
     <style name="AppTheme.Dialog" parent="AppTheme.NoActionBar">

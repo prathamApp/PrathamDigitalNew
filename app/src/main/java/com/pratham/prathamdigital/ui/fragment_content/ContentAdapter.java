@@ -207,8 +207,8 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
                     break;
                 case FILE_TYPE:
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
+                    unreveal(fileViewHolder.rl_reveal);
                     if (contentDetail.isDownloaded()) {
-                        unreveal(fileViewHolder.rl_reveal);
                         fileViewHolder.rl_download.setVisibility(View.GONE);
                         fileViewHolder.rl_download.setOnClickListener(null);
                         fileViewHolder.rl_play_content.setVisibility(View.VISIBLE);
@@ -224,6 +224,23 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
                                 contentClick.openContent(holder.getAdapterPosition(), contentDetail);
                             }
                         });
+                    } else {
+                        fileViewHolder.rl_play_content.setVisibility(View.GONE);
+                        fileViewHolder.rl_reveal.setVisibility(View.INVISIBLE);
+                        fileViewHolder.rl_download.setVisibility(View.VISIBLE);
+                        Drawable background = fileViewHolder.rl_download.getBackground();
+                        if (background instanceof GradientDrawable) {
+                            int color = PD_Utility.getRandomColorGradient();
+                            ((GradientDrawable) background).setColor(color);
+                            fileViewHolder.rl_reveal.setBackgroundColor(color);
+                        }
+                        fileViewHolder.rl_download.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                contentClick.onDownloadClicked(holder.getAdapterPosition(), contentDetail, fileViewHolder.rl_reveal);
+                            }
+                        });
+                        fileViewHolder.itemView.setOnClickListener(null);
                     }
             }
         }

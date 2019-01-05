@@ -68,10 +68,12 @@ public class BaseActivity extends ActivityManagePermission {
         super.onCreate(savedInstanceState);
         FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
+        //todo enable this
 //        Catcho.Builder(this)
 //                .activity(CatchoTransparentActivity.class)
-////                .recipients("your-email@domain.com")
+//                .recipients("your-email@domain.com")
 //                .build();
+
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
         ttsService.setSpeechRate(0.7f);

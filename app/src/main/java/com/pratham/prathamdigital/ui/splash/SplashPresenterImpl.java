@@ -37,6 +37,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
+import java.io.File;
 import java.util.Iterator;
 import java.util.List;
 
@@ -383,5 +384,35 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     public void successCopyingExisting(String absolutePath) {
         PrathamApplication.getInstance().setExistingSDContentPath(absolutePath);
         checkStudentList();
+    }
+
+    @Background
+    @Override
+    public void clearPreviousBuildData() {
+        PackageManager m = context.getPackageManager();
+        String s = context.getPackageName();
+        try {
+            PackageInfo p = m.getPackageInfo(s, 0);
+            s = p.applicationInfo.dataDir;
+            File file = new File(s);
+            for (File f : file.listFiles()) {
+                if (f.getName().contains("app_Pratham"))
+                    deleteRecursive(f);
+            }
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.w("yourtag", "Error Package name not found ", e);
+        }
+    }
+
+    void deleteRecursive(File fileOrDirectory) {
+        try {
+            if (fileOrDirectory.isDirectory())
+                for (File child : fileOrDirectory.listFiles())
+                    deleteRecursive(child);
+
+            fileOrDirectory.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

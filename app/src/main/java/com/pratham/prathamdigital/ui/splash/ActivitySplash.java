@@ -54,6 +54,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @AfterViews
     public void initializeViews() {
         mContext = this;
+        splashPresenter.clearPreviousBuildData();
         startLightsAnimation();
         splashPresenter.populateDefaultDB();
         PrathamSmartSync.pushTabletJsons(false);

@@ -1598,7 +1598,7 @@ public class PD_Utility {
                 if (!file.exists())
                     file.createNewFile();
                 file.delete();
-                PD_Constant.STORING_IN = "SD-Card";
+                PD_Constant.STORING_IN = "Internal Storage";
                 return intDir[1].getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();

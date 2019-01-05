@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,8 +26,8 @@ import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinear
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
+import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer_;
+import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
 import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -56,6 +57,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         ContentContract.contentClick, CircularRevelLayout.CallBacks, LevelContract {
 
     private static final String TAG = FragmentContent.class.getSimpleName();
+    private static final int SDCARD_LOCATION_CHOOSER = 99;
     @ViewById(R.id.circular_content_reveal)
     CircularRevelLayout circular_content_reveal;
     @ViewById(R.id.rv_content)
@@ -136,6 +138,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 contentPresenter.eventUpdateFileProgress(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
                 contentPresenter.eventOnDownloadCompleted(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
+                contentPresenter.eventOnDownloadFailed(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
+                onDownloadError(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BROADCAST_DOWNLOADINGS)) {
+                contentPresenter.broadcast_downloadings();
             }
         }
     }
@@ -240,7 +248,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
                         .updateAdapterWithNewData(levelContents)
                         .detectMoves(true)
                         .calculate();
-//                levelAdapter.updateList(levelContents);
             }
         }
     }
@@ -295,17 +302,62 @@ public class FragmentContent extends FragmentManagePermission implements Content
                     .bindClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
+/*                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    showSdCardDialog();
+                                }
+                            }, 1500);*/
                             download_builder.dismiss();
                         }
                     }, R.id.btn_change)
                     .setGravity(Gravity.CENTER)
                     .setScaleRatio(0.2f)
-                    .setBlurRadius(10)
+                    .setBlurRadius(8)
                     .setTintColor(0x30000000)
                     .build();
             TextView tv = (TextView) download_builder.findViewById(R.id.txt_download_alert);
             tv.setText(getString(R.string.content_download_alert) + " " + PD_Constant.STORING_IN);
             download_builder.show();
+        }
+    }
+
+    @UiThread
+    public void showSdCardDialog() {
+        new BlurPopupWindow.Builder(getContext())
+                .setContentView(R.layout.dialog_alert_sd_card)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
+                            }
+                        }, 1500);
+                        download_builder.dismiss();
+                    }
+                }, R.id.txt_choose_sd_card)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(true)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build()
+                .show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SDCARD_LOCATION_CHOOSER) {
+            if (data != null && data.getData() != null) {
+                contentPresenter.parseSD_UriandPath(data);
+            }
         }
     }
 
@@ -347,9 +399,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @UiThread
     @Override
-    public void onDownloadError(String file_name, ArrayList<String> selectedNodeIds) {
-        Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
-//        contentAdapter.updateList(modal_contents);
+    public void onDownloadError(EventMessage message) {
+//        Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
+        if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
+            contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
     }
 
     @UiThread
@@ -401,7 +454,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @UiThread
     public void openPdf(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_PdfViewer.class);
+        Intent intent = new Intent(getActivity(), Activity_PdfViewer_.class);
         String f_path;
         if (contentDetail.isOnSDCard())
             f_path = PrathamApplication.contentSDPath + "/PrathamPdf/" + contentDetail.getResourcepath();
@@ -416,7 +469,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @UiThread
     public void openVideo(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_VPlayer.class);
+        Intent intent = new Intent(getActivity(), Activity_VPlayer_.class);
         String f_path;
         if (contentDetail.isOnSDCard())
             f_path = PrathamApplication.contentSDPath + "/PrathamVideo/" + contentDetail.getResourcepath();

@@ -103,7 +103,6 @@
         <item>Age 18</item>
     </string-array>
 
-
     <string-array name="india_states">
         <item>SELECT STATE</item>
         <item>Andhra Pradesh(AP)</item>
@@ -181,6 +180,14 @@
         <item>DL</item>
         <item>LD</item>
         <item>PY</item>
+    </string-array>
+    <string-array name="navigation_menu">
+        <item>Home</item>
+        <item>Language</item>
+        <item>Connect Wifi</item>
+        <item>Share OR Recieve</item>
+        <item>Rate Us</item>
+        <item>Share App</item>
     </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>

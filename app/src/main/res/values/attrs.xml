@@ -229,4 +229,11 @@
         <attr name="c_progressDesc" format="string" />
         <attr name="c_isShowDesc" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="advDrawerLayout">
+        <attr name="adl_customBehavior" format="boolean" />
+        <attr name="adl_viewScale" format="float" />
+        <attr name="adl_viewScrimColor" format="color" />
+        <attr name="adl_viewElevation" format="dimension" />
+        <attr name="adl_drawerElevation" format="dimension" />
+    </declare-styleable>
 </resources>

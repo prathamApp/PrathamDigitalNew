@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Build;
+import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -111,19 +112,19 @@ public abstract class FileUtil {
     public static FileOutputStream getOutputStream(final File target, Context context) throws FileNotFoundException {
         FileOutputStream outStream = null;
         // First try the normal way
-//        if (isWritable(target)) {
-        // standard way
-        outStream = new FileOutputStream(target);
-//        } else {
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//                // Storage Access Framework
-//                DocumentFile targetDocument = getDocumentFile(target, false, context);
-//                outStream =  new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
-//            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
-//                // Workaround for Kitkat ext SD card
-//                return MediaStoreHack.getOutputStream(context, target.getPath());
-//            }
-//        }
+        if (isWritable(target)) {
+            // standard way
+            outStream = new FileOutputStream(target);
+        } else {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                // Storage Access Framework
+                DocumentFile targetDocument = getDocumentFile(target, false, context);
+                outStream = new ParcelFileDescriptor.AutoCloseOutputStream(context.getContentResolver().openFileDescriptor(targetDocument.getUri(), "rw"));
+            } else if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+                // Workaround for Kitkat ext SD card
+                return MediaStoreHack.getOutputStream(context, target.getPath());
+            }
+        }
         return outStream;
     }
 

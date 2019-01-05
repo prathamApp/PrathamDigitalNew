@@ -106,13 +106,13 @@
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.pdf_viewer.Activity_PdfViewer"
+            android:name=".ui.pdf_viewer.Activity_PdfViewer_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.video_player.Activity_VPlayer"
+            android:name=".ui.video_player.Activity_VPlayer_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
@@ -163,10 +163,6 @@
         <!--<service-->
         <!--android:name=".services.BackgroundSoundService"-->
         <!--android:enabled="true" />-->
-        <service
-            android:name=".services.DownloadService"
-            android:exported="false" />
-
         <receiver
             android:name=".services.auto_sync.AutoSyncNetworkReceiver"
             android:enabled="false"

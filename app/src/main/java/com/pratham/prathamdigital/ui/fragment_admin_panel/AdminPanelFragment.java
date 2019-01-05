@@ -26,6 +26,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -166,7 +167,7 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
     }
 
-    @Subscribe/*(threadMode = ThreadMode.MAIN)*/
+    @Subscribe(threadMode = ThreadMode.MAIN)
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {

@@ -20,41 +20,38 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 
 package com.pratham.prathamdigital.ftpSettings;
 
-import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.server.FtpUser;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class FsSettings {
 
     private final static String TAG = FsSettings.class.getSimpleName();
 
     public static List<FtpUser> getUsers() {
-        final SharedPreferences sp = getSharedPreferences();
-        if (sp.contains("users")) {
+//        final SharedPreferences sp = getSharedPreferences();
+        if (FastSave.getInstance().isKeyExists("users")/*.contains("users")*/) {
             Gson gson = new Gson();
             Type listType = new TypeToken<List<FtpUser>>() {
             }.getType();
-            return gson.fromJson(sp.getString("users", null), listType);
-        } else if (sp.contains("username")) {
+            return gson.fromJson(FastSave.getInstance().getString("users", null), listType);
+        } else if (FastSave.getInstance().isKeyExists("username")/*.contains("username")*/) {
             // on ftp server version < 2.19 we had username/password preference
-            String username = sp.getString("username", "ftp");
-            String password = sp.getString("password", "ftp");
-            String chroot = sp.getString("chrootDir", "");
+            String username = FastSave.getInstance().getString("username", "ftp");
+            String password = FastSave.getInstance().getString("password", "ftp");
+            String chroot = FastSave.getInstance().getString("chrootDir", "");
             return new ArrayList<>(Arrays.asList(new FtpUser(username, password, chroot)));
         } else {
             FtpUser defaultUser = new FtpUser("ftp", "ftp", "\\");
@@ -75,16 +72,17 @@ public class FsSettings {
         if (getUser(user.getUsername()) != null) {
             throw new IllegalArgumentException("User already exists");
         }
-        SharedPreferences sp = getSharedPreferences();
+//        SharedPreferences sp = getSharedPreferences();
         Gson gson = new Gson();
         List<FtpUser> userList = getUsers();
         userList.add(user);
-        sp.edit().putString("users", gson.toJson(userList)).apply();
+        FastSave.getInstance().saveString("users", gson.toJson(userList));
+//        sp.edit().putString("users", gson.toJson(userList)).apply();
     }
 
     public static void removeUser(String username) {
         // on java 8 (and android support) we can use getUsers().removeIf(...)
-        SharedPreferences sp = getSharedPreferences();
+//        SharedPreferences sp = getSharedPreferences();
         Gson gson = new Gson();
         List<FtpUser> users = getUsers();
         List<FtpUser> found = new ArrayList<FtpUser>();
@@ -94,7 +92,8 @@ public class FsSettings {
             }
         }
         users.removeAll(found);
-        sp.edit().putString("users", gson.toJson(users)).apply();
+        FastSave.getInstance().saveString("users", gson.toJson(users));
+//        sp.edit().putString("users", gson.toJson(users)).apply();
     }
 
     public static void modifyUser(String username, FtpUser newUser) {
@@ -103,7 +102,7 @@ public class FsSettings {
     }
 
     public static boolean allowAnoymous() {
-        final SharedPreferences sp = getSharedPreferences();
+//        final SharedPreferences sp = getSharedPreferences();
         return /*sp.getBoolean("allow_anonymous", false)*/true;
     }
 
@@ -134,25 +133,25 @@ public class FsSettings {
     }
 
     public static boolean shouldTakeFullWakeLock() {
-        final SharedPreferences sp = getSharedPreferences();
+//        final SharedPreferences sp = getSharedPreferences();
         return /*sp.getBoolean("stayAwake", false)*/true;
     }
 
-    public static Set<String> getAutoConnectList() {
-        SharedPreferences sp = getSharedPreferences();
-        return sp.getStringSet("autoconnect_preference", new TreeSet<>());
-    }
+//    public static Set<String> getAutoConnectList() {
+//        SharedPreferences sp = getSharedPreferences();
+//        return sp.getStringSet("autoconnect_preference", new TreeSet<>());
+//    }
 
-    public static void removeFromAutoConnectList(final String ssid) {
-        Set<String> autoConnectList = getAutoConnectList();
-        autoConnectList.remove(ssid);
-        SharedPreferences.Editor editor = getSharedPreferences().edit();
-        editor.remove("autoconnect_preference").apply(); // work around bug in android
-        editor.putStringSet("autoconnect_preference", autoConnectList).apply();
-    }
+//    public static void removeFromAutoConnectList(final String ssid) {
+//        Set<String> autoConnectList = getAutoConnectList();
+//        autoConnectList.remove(ssid);
+//        SharedPreferences.Editor editor = getSharedPreferences().edit();
+//        editor.remove("autoconnect_preference").apply(); // work around bug in android
+//        editor.putStringSet("autoconnect_preference", autoConnectList).apply();
+//    }
 
     public static int getTheme() {
-        SharedPreferences sp = getSharedPreferences();
+//        SharedPreferences sp = getSharedPreferences();
 
 //        switch (sp.getString("theme", "0")) {
 //            case "0":
@@ -167,17 +166,17 @@ public class FsSettings {
     }
 
     public static boolean showNotificationIcon() {
-        SharedPreferences sp = getSharedPreferences();
-        return sp.getBoolean("show_notification_icon_preference", true);
+//        SharedPreferences sp = getSharedPreferences();
+        return /*sp.getBoolean("show_notification_icon_preference", true)*/true;
     }
 
     /**
      * @return the SharedPreferences for this application
      */
-    private static SharedPreferences getSharedPreferences() {
-        final Context context = PrathamApplication.getInstance();
-        return PreferenceManager.getDefaultSharedPreferences(context);
-    }
+//    private static SharedPreferences getSharedPreferences() {
+//        final Context context = PrathamApplication.getInstance();
+//        return PreferenceManager.getDefaultSharedPreferences(context);
+//    }
 
     // cleaning up after his
     protected static int inputBufferSize = 256;
@@ -227,13 +226,13 @@ public class FsSettings {
     }
 
     public static String getExternalStorageUri() {
-        final SharedPreferences sp = getSharedPreferences();
-        return sp.getString("externalStorageUri", null);
+//        final SharedPreferences sp = getSharedPreferences();
+        return /*sp.getString("externalStorageUri", null)*/FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null);
     }
 
     public static void setExternalStorageUri(String externalStorageUri) {
-        final SharedPreferences sp = getSharedPreferences();
-        sp.edit().putString("externalStorageUri", externalStorageUri).apply();
+//        final SharedPreferences sp = getSharedPreferences();
+//        sp.edit().putString("externalStorageUri", externalStorageUri).apply();
     }
 
 }

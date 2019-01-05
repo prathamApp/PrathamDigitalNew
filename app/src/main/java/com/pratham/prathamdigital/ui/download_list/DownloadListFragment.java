@@ -61,7 +61,6 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
                         .updateAdapterWithNewData(downloadings)
                         .detectMoves(true)
                         .calculate();
-//                adapter.updateList(downloadings);
             } else {
                 initializeAdapter(downloadings);
             }

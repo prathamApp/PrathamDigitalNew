@@ -27,5 +27,7 @@ public interface SplashContract {
         void validateSignIn(Intent data);
 
         void checkVersion(String latestVersion);
+
+        void clearPreviousBuildData();
     }
 }

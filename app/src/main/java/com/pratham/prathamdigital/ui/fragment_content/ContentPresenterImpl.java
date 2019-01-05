@@ -1,6 +1,9 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -19,6 +22,7 @@ import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
+import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -35,8 +39,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 @EBean
 public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents, ApiResult {
@@ -162,10 +164,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 String fileName = contentDetail.getNodekeywords().substring(
                         contentDetail.getNodekeywords().lastIndexOf('/') + 1);
                 String foldername = contentDetail.getResourcetype();
-//                new ZipDownloader(context, ContentPresenterImpl.this, null
-//                        , url, foldername, fileName, pradigiPath, contentDetail);
-                zipDownloader.initialize(context, ContentPresenterImpl.this, null
-                        , url, foldername, fileName, pradigiPath, contentDetail);
+                zipDownloader.initialize(ContentPresenterImpl.this
+                        , url, foldername, fileName, contentDetail, levelContents);
             } else {
                 new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
                         PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
@@ -270,8 +270,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 new ZipDownloader(context, ContentPresenterImpl.this, null, download_content.getDownloadurl(),
                         download_content.getFoldername(), fileName, pradigiPath, contentDetail);
 */
-                zipDownloader.initialize(context, ContentPresenterImpl.this, null, download_content.getDownloadurl(),
-                        download_content.getFoldername(), fileName, pradigiPath, contentDetail);
+                zipDownloader.initialize(ContentPresenterImpl.this, download_content.getDownloadurl(),
+                        download_content.getFoldername(), fileName, contentDetail, levelContents);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -336,7 +336,35 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     @Override
-    public void fileDownloadStarted(int downloadId, String filename, Modal_ContentDetail contentDetail) {
+    public void fileDownloadStarted(String downloadID, Modal_FileDownloading modal_fileDownloading) {
+        filesDownloading.put(downloadID, modal_fileDownloading);
+        postDownloadStartMessage();
+    }
+
+    @Override
+    public void updateFileProgress(String downloadID, Modal_FileDownloading mfd) {
+        filesDownloading.put(downloadID, mfd);
+        postProgressMessage();
+    }
+
+    @Override
+    public void onDownloadCompleted(String downloadID, Modal_ContentDetail content) {
+        filesDownloading.remove(downloadID);
+        postAllDownloadsCompletedMessage();
+        postSingleFileDownloadCompleteMessage(content);
+    }
+
+    @Override
+    public void ondownloadError(String downloadId) {
+        Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
+        postSingleFileDownloadErrorMessage(content);
+        filesDownloading.remove(downloadId);
+        EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+    }
+
+    @Override
+    public void broadcast_downloadings() {
+        postProgressMessage();
     }
 
     @Override
@@ -453,17 +481,31 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @UiThread
     public void postAllDownloadsCompletedMessage() {
-        if (filesDownloading.size() == 0) {
-            EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+//        if (filesDownloading.size() == 0) {
+        EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+//        }
+    }
+
+    @Background
+    @Override
+    public void eventOnDownloadFailed(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
+                Modal_ContentDetail content = filesDownloading.get(message.getDownloadId()).getContentDetail();
+                postSingleFileDownloadErrorMessage(content);
+                filesDownloading.remove(message.getDownloadId());
+                EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+            }
         }
     }
 
-    @Override
-    public void updateFileProgress(int downloadId, String filename, int progress) {
-    }
-
-    @Override
-    public void onDownloadCompleted(final int downloadId) {
+    @UiThread
+    public void postSingleFileDownloadErrorMessage(Modal_ContentDetail content) {
+        EventMessage msg = new EventMessage();
+        msg.setMessage(PD_Constant.FILE_DOWNLOAD_ERROR);
+        msg.setDownlaodContentSize(filesDownloading.size());
+        msg.setContentDetail(content);
+        EventBus.getDefault().post(msg);
     }
 
     @Override
@@ -474,11 +516,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void ondownloadCancelled(int downloadId) {
 
-    }
-
-    @Override
-    public void ondownloadError(String f_name) {
-        contentView.onDownloadError(f_name, null);
     }
 
     @Background
@@ -512,5 +549,31 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void downloadedContents(Object o, String parentId) {
         checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
+    }
+
+    @Background
+    @Override
+    public void parseSD_UriandPath(Intent data) {
+        Uri treeUri = data.getData();
+        final int takeFlags = data.getFlags()
+                & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+        PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+        //check if folder exist on sdcard
+        DocumentFile documentFile = DocumentFile.fromTreeUri(PrathamApplication.getInstance(), treeUri);
+        if (documentFile.findFile(PD_Constant.PRADIGI_FOLDER) != null)
+            documentFile = documentFile.findFile(PD_Constant.PRADIGI_FOLDER);
+        else
+            documentFile = documentFile.createDirectory(PD_Constant.PRADIGI_FOLDER);
+        //check for language folder
+        if (documentFile.findFile(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)) != null)
+            documentFile = documentFile.findFile(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        else
+            documentFile = documentFile.createDirectory(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+
+        String path = FileUtils.getPath(PrathamApplication.getInstance(), documentFile.getUri());
+        FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
+        FastSave.getInstance().saveString(PD_Constant.SDCARD_PATH, path);
+        PrathamApplication.getInstance().setExistingSDContentPath(path);
     }
 }

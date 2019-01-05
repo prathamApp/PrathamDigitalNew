@@ -8,7 +8,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.card.MaterialCardView;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.view.ViewPropertyAnimatorListener;
@@ -18,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -59,8 +59,6 @@ import java.io.File;
 public class ActivityMain extends BaseActivity implements ContentContract.mainView {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
-    @ViewById(R.id.main_root)
-    CoordinatorLayout main_root;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -88,7 +86,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @AfterViews
     public void initialize() {
-//        toggleEventBus(true);
         top_scaling.setListener(listener);
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, 0);
@@ -97,24 +94,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 bundle, FragmentContent_.class.getSimpleName());
         showIntro();
     }
-//
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
 
     @Click(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();
         downloadListFragment_ = new DownloadListFragment_();
         downloadListFragment_.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.BROADCAST_DOWNLOADINGS);
+        EventBus.getDefault().post(message);
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -123,6 +111,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_STARTED)) {
                 increaseNotificationCount(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
+                decreaseNotificationCount(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
                 decreaseNotificationCount(message);
             }
         }
@@ -161,7 +151,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Click(R.id.pradigi_icon)
     public void setPullDown() {
         if (!FsService.isRunning()) {
-            setTop_scaling();
+            if (download_badge.getVisibility() == View.GONE)
+                setTop_scaling();
+            else
+                Toast.makeText(ActivityMain.this, "Let the downloads complete", Toast.LENGTH_SHORT).show();
         } else {
             EventMessage msg = new EventMessage();
             msg.setMessage(PD_Constant.CLOSE_FTP_SERVER);

@@ -23,6 +23,10 @@ public class BackupDatabase {
                 File currentDB = mContext.getDatabasePath(DB_NAME);
                 File parentPath = currentDB.getParentFile();
                 for (File f : parentPath.listFiles()) {
+                    if (f.getName().contains("PrathamDB")) {
+                        f.delete();
+                        break;
+                    }
                     File temp = new File(sd, f.getName());
                     if (!temp.exists()) temp.createNewFile();
                     FileChannel src = new FileInputStream(f).getChannel();

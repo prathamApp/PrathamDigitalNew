@@ -20,6 +20,7 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
@@ -31,10 +32,12 @@ import android.widget.Toast;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.SearchView;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -47,6 +50,7 @@ import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
 import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
+import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -76,6 +80,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         UDPMessageListener.OnNewMsgListener, CircularRevelLayout.CallBacks {
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
+    private static final int SDCARD_LOCATION_CHOOSER = 100;
     @ViewById(R.id.root_share)
     LinearLayout root_share;
     @ViewById(R.id.rl_share)
@@ -120,6 +125,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     HashMap<String, Integer> filesSentPosition = new HashMap<>();
     private int revealX;
     private int revealY;
+    BlurPopupWindow sd_builder;
 
     @AfterViews
     public void initialize() {
@@ -138,54 +144,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             });
         }
     }
-    /*@Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_share, container, false);
-        ButterKnife.bind(this, rootView);
-        circular_share_reveal.setListener(this);
-        if (getArguments() != null) {
-            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-            circular_share_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_share_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_share_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
-        }
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        sharePresenter = new SharePresenter(getActivity(), this);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
-    }*/
 
     @Click(R.id.rl_share)
     public void setRl_share() {
@@ -193,20 +151,76 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         if (isPermissionsGranted(getActivity(),
                 new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
             if (new LocationService(getActivity()).checkLocationEnabled()) {
-                TransitionManager.beginDelayedTransition(root_share);
-                ViewGroup.LayoutParams params = rl_share.getLayoutParams();
-                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                rl_share.requestLayout();
-                rl_recieve.setVisibility(View.GONE);
-                rl_share.setClickable(false);
-                createHotspot();
-            } else {
+                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                if (sdPath.size() > 0) {
+                    if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                        showSdCardDialog();
+                    else
+                        animateHotspotCreation();
+                } else
+                    animateHotspotCreation();
+            } else
                 new LocationService(getActivity()).checkLocation();
-            }
-        } else {
+        } else
             askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
                     PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
+    }
+
+    @UiThread
+    public void animateHotspotCreation() {
+        TransitionManager.beginDelayedTransition(root_share);
+        ViewGroup.LayoutParams params = rl_share.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        rl_share.requestLayout();
+        rl_recieve.setVisibility(View.GONE);
+        rl_share.setClickable(false);
+        createHotspot();
+    }
+
+    @UiThread
+    public void showSdCardDialog() {
+        sd_builder = new BlurPopupWindow.Builder(getContext())
+                .setContentView(R.layout.dialog_alert_sd_card)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
+                            }
+                        }, 1500);
+                        sd_builder.dismiss();
+                    }
+                }, R.id.txt_choose_sd_card)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(true)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build();
+        sd_builder.show();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SDCARD_LOCATION_CHOOSER) {
+            if (data != null && data.getData() != null) {
+                Uri treeUri = data.getData();
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+                FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
+                //create Hotspot
+                animateHotspotCreation();
+            }
         }
     }
 
@@ -563,7 +577,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         if (recievedFile != null) {
             sharePresenter.showFilesRecieving(recievedFile);
         }
-
     }
 
     @UiThread

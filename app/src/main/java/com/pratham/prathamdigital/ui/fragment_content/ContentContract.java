@@ -1,9 +1,11 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
+import android.content.Intent;
 import android.view.View;
 
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_FileDownloading;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +28,7 @@ public interface ContentContract {
 
         void displayLevel(ArrayList<Modal_ContentDetail> levelContents);
 
-        void onDownloadError(String file_name, ArrayList<String> selectedNodeIds);
+        void onDownloadError(EventMessage message);
     }
 
     interface contentPresenter {
@@ -34,17 +36,11 @@ public interface ContentContract {
 
         void downloadContent(Modal_ContentDetail contentDetail);
 
-        void fileDownloadStarted(int downloadId, String filename, Modal_ContentDetail contentDetail);
-
-        void updateFileProgress(int downloadId, String filename, int progress);
-
-        void onDownloadCompleted(int downloadId);
-
         void onDownloadPaused(int downloadId);
 
         void ondownloadCancelled(int downloadId);
 
-        void ondownloadError(String f_name);
+        void ondownloadError(String downloadId);
 
         void checkConnectionForRaspberry();
 
@@ -59,6 +55,18 @@ public interface ContentContract {
         void eventUpdateFileProgress(EventMessage message);
 
         void eventOnDownloadCompleted(EventMessage message);
+
+        void eventOnDownloadFailed(EventMessage message);
+
+        void fileDownloadStarted(String downloadID, Modal_FileDownloading modal_fileDownloading);
+
+        void updateFileProgress(String downloadID, Modal_FileDownloading mfd);
+
+        void onDownloadCompleted(String downloadID, Modal_ContentDetail content);
+
+        void broadcast_downloadings();
+
+        void parseSD_UriandPath(Intent data);
     }
 
     interface contentClick {
