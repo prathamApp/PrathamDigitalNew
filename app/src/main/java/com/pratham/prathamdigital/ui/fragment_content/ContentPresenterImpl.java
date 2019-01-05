@@ -85,6 +85,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
+    @Override
+    public void getContent() {
+        if (levelContents != null && levelContents.size() > 0) {
+            new GetDownloadedContent(ContentPresenterImpl.this,
+                    levelContents.get(levelContents.size() - 1).getNodeid()).execute();
+        } else {
+            contentView.dismissDialog();
+        }
+    }
+
     @Background
     @Override
     public void checkConnectionForRaspberry() {

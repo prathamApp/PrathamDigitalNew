@@ -104,24 +104,23 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 }
             });
         }
-//        mainView = (ContentContract.mainView) getActivity();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        PD_Utility.showDialog(getActivity());
         if (levelAdapter == null) {
-            PD_Utility.showDialog(getActivity());
             contentPresenter.getContent(null);
+        } else {
+            contentPresenter.getContent();
         }
     }
 
-//    @Override
-//    public void onStart() {
-//        super.onStart();
-//        EventBus.getDefault().register(this);
-//    }
-//
-//    @Override
-//    public void onStop() {
-//        super.onStop();
-//        EventBus.getDefault().unregister(this);
-//    }
+    @Override
+    public void dismissDialog() {
+        PD_Utility.dismissDialog();
+    }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onMainBackPressed(EventMessage message) {
@@ -177,7 +176,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         rl_network_error.setVisibility(View.VISIBLE);
     }
 
-    @Click(R.id.lottie_content_bkgd)
+    @Click(R.id.btn_retry)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
         onResume();

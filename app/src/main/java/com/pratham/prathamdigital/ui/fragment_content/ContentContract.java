@@ -29,6 +29,8 @@ public interface ContentContract {
         void displayLevel(ArrayList<Modal_ContentDetail> levelContents);
 
         void onDownloadError(EventMessage message);
+
+        void dismissDialog();
     }
 
     interface contentPresenter {
@@ -67,6 +69,8 @@ public interface ContentContract {
         void broadcast_downloadings();
 
         void parseSD_UriandPath(Intent data);
+
+        void getContent();
     }
 
     interface contentClick {

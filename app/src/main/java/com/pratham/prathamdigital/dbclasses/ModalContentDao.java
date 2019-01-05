@@ -21,7 +21,8 @@ public interface ModalContentDao {
     @Delete
     void deleteContent(Modal_ContentDetail contentDetail);
 
-    @Query("SELECT * FROM TableContent WHERE parentid ISNULL or parentid = 0 or parentid=''and content_language=:language")
+    @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     public List<Modal_ContentDetail> getParentsHeaders(String language);
 
     @Query("SELECT * FROM TableContent WHERE parentid=:id and content_language=:language")
