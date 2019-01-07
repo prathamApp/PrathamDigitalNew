@@ -1921,4 +1921,43 @@ public class PD_Utility {
         }
         return length;
     }
+
+    public static String getMonthname() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat month_date = new SimpleDateFormat("MMMM");
+        String month_name = month_date.format(cal.getTime());
+        return month_name;
+    }
+
+    public static Drawable getDrawableAccordingToMonth(Context context) {
+        String month_name = getMonthname();
+        switch (month_name.toLowerCase()) {
+            case "january":
+                return context.getResources().getDrawable(R.drawable.january);
+            case "february":
+                return context.getResources().getDrawable(R.drawable.february);
+            case "march":
+                return context.getResources().getDrawable(R.drawable.march);
+            case "april":
+                return context.getResources().getDrawable(R.drawable.april);
+            case "may":
+                return context.getResources().getDrawable(R.drawable.may);
+            case "june":
+                return context.getResources().getDrawable(R.drawable.june);
+            case "july":
+                return context.getResources().getDrawable(R.drawable.july);
+            case "august":
+                return context.getResources().getDrawable(R.drawable.august);
+            case "september":
+                return context.getResources().getDrawable(R.drawable.september);
+            case "october":
+                return context.getResources().getDrawable(R.drawable.october);
+            case "november":
+                return context.getResources().getDrawable(R.drawable.november);
+            case "december":
+                return context.getResources().getDrawable(R.drawable.december);
+            default:
+                return null;
+        }
+    }
 }

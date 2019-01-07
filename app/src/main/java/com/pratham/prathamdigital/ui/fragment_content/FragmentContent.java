@@ -58,6 +58,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     private static final String TAG = FragmentContent.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 99;
+    @ViewById(R.id.frag_content_bkgd)
+    RelativeLayout frag_content_bkgd;
     @ViewById(R.id.circular_content_reveal)
     CircularRevelLayout circular_content_reveal;
     @ViewById(R.id.rv_content)
@@ -86,10 +88,9 @@ public class FragmentContent extends FragmentManagePermission implements Content
     private int revealY;
     BlurPopupWindow download_builder;
 
-
     @AfterViews
     public void initialize() {
-//        toggleEventBus(true);
+        frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
         contentPresenter.setView(FragmentContent.this);
         circular_content_reveal.setListener(this);
         if (getArguments() != null) {
@@ -227,26 +228,26 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 rv_content.smoothScrollToPosition(0);
             }
         }
-        contentPresenter.getLevels();
     }
 
     @UiThread
-    public void showLevels(final ArrayList<Modal_ContentDetail> levelContents) {
+    public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
         if (levelContents != null) {
             if (levelAdapter == null) {
                 levelAdapter = new RV_LevelAdapter(getActivity(), levelContents, FragmentContent.this);
                 rv_level.setHasFixedSize(true);
                 rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rv_level.setAdapter(levelAdapter);
-                mLevelDiffRequestManager = RxDiffUtil
-                        .bindTo(getActivity())
-                        .with(levelAdapter, "LEVEL_ADAPTER");
+//                mLevelDiffRequestManager = RxDiffUtil
+//                        .bindTo(getActivity())
+//                        .with(levelAdapter, "LEVEL_ADAPTER");
             } else {
-                mLevelDiffRequestManager
-                        .newDiffRequestWith(new ContentDiffUtilCallback(levelAdapter.getData(), levelContents))
-                        .updateAdapterWithNewData(levelContents)
-                        .detectMoves(true)
-                        .calculate();
+//                mLevelDiffRequestManager
+//                        .newDiffRequestWith(new ContentDiffUtilCallback(levelAdapter.getData(), levelContents))
+//                        .updateAdapterWithNewData(levelContents)
+//                        .detectMoves(true)
+//                        .calculate();
+                levelAdapter.updateList(levelContents);
             }
         }
     }
@@ -254,7 +255,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @UiThread
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
-        Log.d(TAG, "onLevelClicked:");
         PrathamApplication.bubble_mp.start();
         PD_Utility.showDialog(getActivity());
         contentPresenter.getContent(detail);
@@ -263,7 +263,9 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @UiThread
     @Override
     public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
-        showLevels(levelContents);
+        ArrayList<Modal_ContentDetail> temp_levels = new ArrayList<>();
+        temp_levels.addAll(levelContents);
+        showLevels(temp_levels);
     }
 
     @UiThread

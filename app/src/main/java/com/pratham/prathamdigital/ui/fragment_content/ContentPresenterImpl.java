@@ -68,19 +68,19 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
         } else {
             if (levelContents == null) levelContents = new ArrayList<>();
-            if (levelContents.isEmpty()) contentView.hideViews();
             boolean found = false;
             for (int i = 0; i < levelContents.size(); i++) {
                 if (levelContents.get(i).getNodeid().equalsIgnoreCase(contentDetail.getNodeid())) {
+                    //to prevent crash if clicked on last item i.e indexOutOfBoundException during sublist
                     if ((i + 1) == levelContents.size()) found = true;
                     else {
-                        levelContents.subList(i + 1, levelContents.size()).clear();
                         found = true;
+                        levelContents.subList(i + 1, levelContents.size()).clear();
                     }
-                    break;
                 }
             }
             if (!found) levelContents.add(contentDetail);
+            contentView.displayLevel(levelContents);
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
         }
     }
@@ -536,11 +536,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 //            new GetDownloadedContent(null).execute();
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
-            contentView.displayHeader(contentDetail);
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
-            if (levelContents.isEmpty())
-                contentView.exitApp();
+            contentView.displayLevel(levelContents);
         }
     }
 
