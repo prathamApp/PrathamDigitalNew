@@ -35,6 +35,8 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
 
+import net.alhazmy13.catcho.library.Catcho;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -69,10 +71,10 @@ public class BaseActivity extends ActivityManagePermission {
         FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
         //todo enable this
-//        Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
+        Catcho.Builder(this)
+                .activity(CatchoTransparentActivity.class)
 //                .recipients("your-email@domain.com")
-//                .build();
+                .build();
 
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);

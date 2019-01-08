@@ -3,7 +3,9 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
+import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -230,6 +232,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
     }
 
+    Pair<List<Modal_ContentDetail>, DiffUtil.DiffResult> initialPair;
+
     @UiThread
     public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
         if (levelContents != null) {
@@ -238,15 +242,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 rv_level.setHasFixedSize(true);
                 rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rv_level.setAdapter(levelAdapter);
-//                mLevelDiffRequestManager = RxDiffUtil
-//                        .bindTo(getActivity())
-//                        .with(levelAdapter, "LEVEL_ADAPTER");
+                initialPair = Pair.create(levelContents, null);
             } else {
-//                mLevelDiffRequestManager
-//                        .newDiffRequestWith(new ContentDiffUtilCallback(levelAdapter.getData(), levelContents))
-//                        .updateAdapterWithNewData(levelContents)
-//                        .detectMoves(true)
-//                        .calculate();
                 levelAdapter.updateList(levelContents);
             }
         }

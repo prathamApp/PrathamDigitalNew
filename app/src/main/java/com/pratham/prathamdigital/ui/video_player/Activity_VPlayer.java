@@ -16,6 +16,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
@@ -74,8 +75,9 @@ public class Activity_VPlayer extends BaseActivity {
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-                addScoreToDB();
-                showNextVideoDialog();
+//                addScoreToDB();
+//                showNextVideoDialog();
+                onBackPressed();
             }
         });
     }
@@ -108,6 +110,7 @@ public class Activity_VPlayer extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        addScoreToDB();
         Runtime rs = Runtime.getRuntime();
         rs.freeMemory();
         rs.gc();
@@ -118,10 +121,10 @@ public class Activity_VPlayer extends BaseActivity {
 
     @Override
     protected void onDestroy() {
-        addScoreToDB();
         super.onDestroy();
     }
 
+    @Background
     public void addScoreToDB() {
         String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();

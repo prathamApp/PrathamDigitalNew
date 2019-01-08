@@ -99,5 +99,6 @@ dependencies {
     annotationProcessor "org.androidannotations:androidannotations:4.5.2"
     implementation "org.androidannotations:androidannotations-api:4.5.2"
     implementation 'io.github.storix:rxdiffutil:0.3.2'
+    implementation 'com.github.vivchar:RendererRecyclerViewAdapter:2.6.0'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -96,29 +96,5 @@ public class Activity_WebView extends BaseActivity {
         rs.freeMemory();
         finish();
     }
-
-    /*public static class AppKillService extends Service {
-        Activity_WebView activity_webView;
-
-        @Override
-        public void onCreate() {
-            super.onCreate();
-            Log.v("Ketan:", "WebView Service Started");
-            activity_webView = new Activity_WebView();
-        }
-
-        @Nullable
-        @Override
-        public IBinder onBind(Intent intent) {
-            return null;
-        }
-
-        @Override
-        public void onTaskRemoved(Intent rootIntent) {
-            Log.v("Ketan:", "WebView Service task removed");
-//            super.onTaskRemoved(rootIntent);
-            stopSelf();
-        }
-    }*/
 }
 

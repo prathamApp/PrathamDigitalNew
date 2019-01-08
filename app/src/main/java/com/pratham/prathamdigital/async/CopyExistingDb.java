@@ -182,9 +182,13 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     stu.setStud_Class(stu_cursor.getString(stu_cursor.getColumnIndex("Stud_Class")));
                                     stu.setAge(stu_cursor.getString(stu_cursor.getColumnIndex("Age")));
                                     stu.setGender(stu_cursor.getString(stu_cursor.getColumnIndex("Gender")));
-                                    stu.setFullName(stu.getFirstName() + " " + stu.getMiddleName() + " " + stu.getLastName());
+                                    if (stu.getFirstName() == null || stu.getFirstName().isEmpty())
+                                        stu.setFullName(stu_cursor.getString(stu_cursor.getColumnIndex("FullName")));
+                                    else
+                                        stu.setFullName(stu.getFirstName() + " " + stu.getMiddleName() + " " + stu.getLastName());
                                     stu.setSentFlag(1);
                                     //                    stu.setGroupName();
+                                    students.add(stu);
                                     stu_cursor.moveToNext();
                                 }
                             }

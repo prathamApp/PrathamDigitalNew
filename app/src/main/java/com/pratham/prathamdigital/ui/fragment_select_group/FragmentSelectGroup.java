@@ -39,53 +39,6 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     private int revealX;
     private int revealY;
 
-   /* @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_select_group, container, false);
-        ButterKnife.bind(this, rootView);
-        circular_group_reveal.setListener(this);
-        if (getArguments() != null) {
-            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-            circular_group_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_group_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_group_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
-        }
-        return rootView;
-    }
-
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        ArrayList<String> present_groups = new ArrayList<>();
-        String groupId1 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID1);
-        if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
-        String groupId2 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID2);
-        if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
-        String groupId3 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID3);
-        if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
-        String groupId4 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID4);
-        if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
-        String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
-        if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
-        if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
-            get3to6Groups(present_groups);
-        } else {
-            get8to14Groups(present_groups);
-        }
-    }*/
-
     @AfterViews
     public void initialize() {
         circular_group_reveal.setListener(this);
@@ -154,12 +107,6 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
     }
 
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//        setGroups(groups);
-//    }
-
     @UiThread
     public void setGroups(/*ArrayList<Modal_Groups> groups*/) {
         groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
@@ -198,22 +145,5 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
 
     @Override
     public void onUnRevealed() {
-//        Bundle bundle = new Bundle();
-//        bundle.putInt(PD_Constant.REVEALX, 0);
-//        bundle.putInt(PD_Constant.REVEALY, 0);
-//        PD_Utility.showFragment(getActivity(), new FragmentContent(), R.id.main_frame,
-//                bundle, FragmentContent.class.getSimpleName());
-//        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(FragmentSelectGroup.class.getSimpleName());
-//        if (fragment != null)
-//            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
-
-//    @Subscribe
-//    public void onbackPressed(EventMessage message) {
-//        if (message != null) {
-//            if (message.getMessage().equalsIgnoreCase(FragmentSelectGroup.class.getSimpleName())) {
-//                circular_group_reveal.unReveal();
-//            }
-//        }
-//    }
 }

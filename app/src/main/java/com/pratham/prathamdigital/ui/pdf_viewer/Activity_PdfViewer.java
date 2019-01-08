@@ -19,6 +19,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
@@ -61,13 +62,14 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
 
     @Override
     protected void onDestroy() {
-        if (!backpressedFlag) {
-            addScoreToDB();
-        }
+//        if (!backpressedFlag) {
+//            addScoreToDB();
+//        }
         Log.d("pdf_activity", "Destroyed");
         super.onDestroy();
     }
 
+    @Background
     public void addScoreToDB() {
         Modal_Score modalScore = new Modal_Score();
         modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
@@ -113,13 +115,13 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
             public void onPageSelected(int i) {
                 Log.d("onPageSelected:::", "" + i);
                 if (i == (bitmaps.size() - 1)) {
-                    addScoreToDB();
+//                    addScoreToDB();
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            showNextDialog();
+                            onBackPressed();
                         }
-                    }, 2000);
+                    }, 1200);
                 }
             }
 
