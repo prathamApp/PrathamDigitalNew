@@ -9,26 +9,30 @@ public class APIs {
     public static final String Group = "Groups";
     public static final String Student = "Student";
 
-  /*  public static final String HL = "Hybrid Learning";
-    public static final String HLpullVillagesKolibriURL = "http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
-    public static final String HLpullGroupsKolibriURL = "http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
-    public static final String HLpullStudentsKolibriURL = "http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
-    public static final String HLpullCrlsKolibriURL = "http://www.swap.prathamcms.org/api/UserList?programId=1&statecode=";
+    /*  public static final String HL = "Hybrid Learning";
+      public static final String HLpullVillagesKolibriURL = "http://www.hlearning.openiscool.org/api/village/get?programId=1&state=";
+      public static final String HLpullGroupsKolibriURL = "http://www.devtab.openiscool.org/api/Group?programid=1&villageId=";
+      public static final String HLpullStudentsKolibriURL = "http://www.devtab.openiscool.org/api/student?programid=1&villageId=";
+      public static final String HLpullCrlsKolibriURL = "http://www.swap.prathamcms.org/api/UserList?programId=1&statecode=";
 
 
-    public static final String ECE = "ECE";
-    public static final String ECEpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=8&state=";
-    public static final String ECEpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=8&villageId=";
-    public static final String ECEpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=8&villageId=";
-    public static final String ECEpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=8&statecode=";
+      public static final String ECE = "ECE";
+      public static final String ECEpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=8&state=";
+      public static final String ECEpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=8&villageId=";
+      public static final String ECEpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=8&villageId=";
+      public static final String ECEpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=8&statecode=";
 
+  */
     public static final String UP = "Urban programme";
-    public static final String UPpullVillagesURL = "http://www.hlearning.openiscool.org/api/village/get?programId=6&state=";
-    public static final String UPpullGroupsURL = "http://www.devtab.openiscool.org/api/Group?programid=6&villageId=";
-    public static final String UPpullStudentsURL = "http://www.devtab.openiscool.org/api/student?programid=6&villageId=";
-    public static final String UPpullCrlsURL = "http://www.swap.prathamcms.org/api/UserList?programId=6&statecode=";
+    public static final String UPpullVillagesKolibriURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:6,state:";
+    public static final String UPpullVillagesServerURL = "http://www.hlearning.openiscool.org/api/village/get?programId=6&state=";
+    public static final String UPpullGroupsKolibriURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=group&filter_name=programid:6,villageid:";
+    public static final String UPpullGroupsServerURL = "http://www.devtab.openiscool.org/api/Group?programid=6&villageId=";
+    public static final String UPpullStudentsKolibriURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=student&filter_name=programid:6,villageid:";
+    public static final String UPpullStudentsServerURL = "http://www.devtab.openiscool.org/api/student?programid=6&villageId=";
+    public static final String UPpullCrlsKolibriURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=Crl&filter_name=programid:6,state:";
+    public static final String UPpullCrlsServerURL = "http://www.swap.prathamcms.org/api/UserList?programId=6&statecode=";
 
-*/
 
     public static final String HL = "Hybrid Learning";
     public static final String HLpullVillagesKolibriURL = "http://192.168.4.1:8080/pratham/datastore/?table_name=village&filter_name=programid:1,state:";

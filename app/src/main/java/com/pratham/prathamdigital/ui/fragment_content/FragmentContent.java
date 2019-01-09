@@ -3,9 +3,7 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
-import android.support.v4.util.Pair;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -35,8 +33,6 @@ import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
-import com.stolets.rxdiffutil.RxDiffUtil;
-import com.stolets.rxdiffutil.diffrequest.DiffRequestManager;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -80,8 +76,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Bean(ContentPresenterImpl.class)
     ContentContract.contentPresenter contentPresenter;
 
-    private DiffRequestManager<Modal_ContentDetail, ContentAdapter> mContentDiffRequestManager;
-    private DiffRequestManager<Modal_ContentDetail, RV_LevelAdapter> mLevelDiffRequestManager;
+    //    private DiffRequestManager<Modal_ContentDetail, ContentAdapter> mContentDiffRequestManager;
+//    private DiffRequestManager<Modal_ContentDetail, RV_LevelAdapter> mLevelDiffRequestManager;
     ContentAdapter contentAdapter;
     private RV_LevelAdapter levelAdapter;
     //    ContentContract.mainView mainView;
@@ -216,23 +212,26 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 });
                 rv_content.setAdapter(contentAdapter);
                 rv_content.scheduleLayoutAnimation();
-                mContentDiffRequestManager = RxDiffUtil
-                        .bindTo(getActivity())
-                        .with(contentAdapter, "CONTENT_ADAPTER");
+//                mContentDiffRequestManager = RxDiffUtil
+//                        .bindTo(getActivity())
+//                        .with(contentAdapter, "CONTENT_ADAPTER");
             } else {
-//                contentAdapter.updateList(content);
+                contentAdapter.updateList((ArrayList<Modal_ContentDetail>) content);
 //                rv_content.scheduleLayoutAnimation();
-                mContentDiffRequestManager
-                        .newDiffRequestWith(new ContentDiffUtilCallback(contentAdapter.getData(), content))
-                        .updateAdapterWithNewData(content)
-                        .detectMoves(true)
-                        .calculate();
-                rv_content.smoothScrollToPosition(0);
+//                mContentDiffRequestManager
+//                        .newDiffRequestWith(new ContentDiffUtilCallback(contentAdapter.getData(), content))
+//                        .updateAdapterWithNewData(content)
+//                        .detectMoves(true)
+//                        .calculate();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        rv_content.smoothScrollToPosition(0);
+                    }
+                }, 1000);
             }
         }
     }
-
-    Pair<List<Modal_ContentDetail>, DiffUtil.DiffResult> initialPair;
 
     @UiThread
     public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
@@ -242,9 +241,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 rv_level.setHasFixedSize(true);
                 rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rv_level.setAdapter(levelAdapter);
-                initialPair = Pair.create(levelContents, null);
+                levelAdapter.submitList(levelContents);
             } else {
-                levelAdapter.updateList(levelContents);
+//                levelAdapter.updateList(levelContents);
+                levelAdapter.submitList(levelContents);
             }
         }
     }
@@ -280,7 +280,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @UiThread
     @Override
-    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view) {
+    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View
+            reveal_view) {
         if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
             contentAdapter.reveal(reveal_view);
             PrathamApplication.bubble_mp.start();
@@ -390,7 +391,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @UiThread
     @Override
-    public void decreaseNotification(int number, Modal_ContentDetail contentDetail, ArrayList<String> selectedNodeIds) {
+    public void decreaseNotification(int number, Modal_ContentDetail
+            contentDetail, ArrayList<String> selectedNodeIds) {
 //        ((ActivityMain) getActivity()).hideNotificationBadge(number);
 //        if (selectedNodeIds.contains(contentDetail.getNodeid())) {
     }

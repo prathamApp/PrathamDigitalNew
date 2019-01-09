@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,10 +12,10 @@ import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.stolets.rxdiffutil.Swappable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,15 +24,36 @@ import butterknife.ButterKnife;
  * Created by HP on 01-08-2017.
  */
 
-public class RV_LevelAdapter extends RecyclerView.Adapter implements Swappable<Modal_ContentDetail> {
+public class RV_LevelAdapter extends RecyclerView.Adapter {
 
     public static final int LAST_ITEM = 1;
     public static final int NORMAL_ITEM = 2;
     private Context context;
     private List<Modal_ContentDetail> levels;
     private LevelContract levelContract;
+    //*****************************
+    private AsyncListDiffer<Modal_ContentDetail> mDiffer;
+    private DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+            return Objects.equals(detail.getNodeid(), t1.getNodeid());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+            int result = detail.compareTo(t1);
+            if (result == 0) return true;
+            return false;
+        }
+    };
+
+    public void submitList(List<Modal_ContentDetail> data) {
+        mDiffer.submitList(data);
+    }
+//*****************************
 
     public RV_LevelAdapter(Context context, ArrayList<Modal_ContentDetail> levels, LevelContract levelContract) {
+        mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
         this.context = context;
         this.levels = new ArrayList<>();
         this.levels.addAll(levels);
@@ -40,7 +62,10 @@ public class RV_LevelAdapter extends RecyclerView.Adapter implements Swappable<M
 
     @Override
     public int getItemViewType(int position) {
-        if (position == (levels.size() - 1))
+//        if (position == (levels.size() - 1))
+//            return LAST_ITEM;
+//        else return NORMAL_ITEM;
+        if (position == (mDiffer.getCurrentList().size() - 1))
             return LAST_ITEM;
         else return NORMAL_ITEM;
     }
@@ -64,21 +89,22 @@ public class RV_LevelAdapter extends RecyclerView.Adapter implements Swappable<M
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
+//        Modal_ContentDetail detail = levels.get(viewHolder.getAdapterPosition());
+        Modal_ContentDetail detail = mDiffer.getCurrentList().get(viewHolder.getAdapterPosition());
         switch (viewHolder.getItemViewType()) {
             case NORMAL_ITEM:
                 NormalItemViewHolder holder = (NormalItemViewHolder) viewHolder;
-                holder.l_name.setText(levels.get(viewHolder.getAdapterPosition()).getNodetitle());
+                holder.l_name.setText(detail.getNodetitle());
                 break;
             case LAST_ITEM:
                 LastItemViewHolder last = (LastItemViewHolder) viewHolder;
-                Modal_ContentDetail mcd = levels.get(viewHolder.getAdapterPosition());
-                last.last_level_name.setText(levels.get(viewHolder.getAdapterPosition()).getNodetitle());
+                last.last_level_name.setText(detail.getNodetitle());
                 break;
         }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                levelContract.levelClicked(levels.get(viewHolder.getAdapterPosition()));
+                levelContract.levelClicked(detail);
             }
         });
     }
@@ -115,18 +141,13 @@ public class RV_LevelAdapter extends RecyclerView.Adapter implements Swappable<M
         diffResult.dispatchUpdatesTo(this);
     }
 
-    @Override
-    public void swapData(@NonNull List<Modal_ContentDetail> newData) {
-        this.levels = newData;
+    public List<Modal_ContentDetail> getData() {
+        return levels;
     }
 
     @Override
     public int getItemCount() {
-        return levels.size();
-    }
-
-    public List<Modal_ContentDetail> getData() {
-        return levels;
+        return mDiffer.getCurrentList().size();
     }
 
     public class NormalItemViewHolder extends RecyclerView.ViewHolder {

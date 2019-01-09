@@ -37,6 +37,7 @@ import java.util.List;
 import static com.pratham.prathamdigital.util.APIs.PI;
 import static com.pratham.prathamdigital.util.APIs.RI;
 import static com.pratham.prathamdigital.util.APIs.SC;
+import static com.pratham.prathamdigital.util.APIs.UP;
 
 /**
  * Created by PEF on 20/11/2018.
@@ -119,6 +120,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 break;
             case PI:
                 url = APIs.PIpullVillagesKolibriURL + selectedBlock;
+//                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
+                downloadblock(url);
+                break;
+            case UP:
+                url = APIs.UPpullVillagesKolibriURL + selectedBlock;
 //                    new PD_ApiRequest(context, PullDataPresenterImp.this)
 //                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                 downloadblock(url);
@@ -246,6 +253,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
 //                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                     loadStudent(url);
                     break;
+                case UP:
+                    url = APIs.UPpullStudentsKolibriURL + id;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
+                    loadStudent(url);
+                    break;
             }
         }
         /*else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
@@ -339,6 +352,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                         break;
                     case PI:
                         urlgroup = APIs.PIpullGroupsKolibriURL + id;
+//                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
+                        downloadGroups(urlgroup);
+                        break;
+                    case UP:
+                        urlgroup = APIs.UPpullGroupsKolibriURL + id;
 //                            new PD_ApiRequest(context, PullDataPresenterImp.this)
 //                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                         downloadGroups(urlgroup);
@@ -442,6 +461,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
 //                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                     downloadCRL(crlURL);
                     break;
+                case UP:
+                    crlURL = APIs.UPpullCrlsKolibriURL + selectedBlock;
+//                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+//                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
+                    downloadCRL(crlURL);
+                    break;
             }
             /*else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
                 switch (selectedProgram) {
@@ -525,6 +550,9 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 break;
             case PI:
                 BaseActivity.statusDao.updateValue("programId", "4");
+                break;
+            case UP:
+                BaseActivity.statusDao.updateValue("programId", "6");
                 break;
             default:
                 BaseActivity.statusDao.updateValue("programId", "1");

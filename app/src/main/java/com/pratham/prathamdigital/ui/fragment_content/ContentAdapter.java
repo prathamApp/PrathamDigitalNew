@@ -4,8 +4,10 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +28,7 @@ import com.squareup.picasso.Picasso;
 import com.stolets.rxdiffutil.Swappable;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -251,12 +254,9 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
         return datalist.size();
     }
 
-//    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, datalist));
-//        datalist.clear();
-//        this.datalist.addAll(newList);
-//        diffResult.dispatchUpdatesTo(this);
-//    }
+    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
+        new CalculateDiff().execute(newList);
+    }
 
     public void reveal(View view) {
         // previously invisible view
@@ -365,6 +365,24 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
         public FileViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+    }
+
+    class CalculateDiff extends AsyncTask {
+        @Override
+        protected Object doInBackground(Object[] objects) {
+            ArrayList<Modal_ContentDetail> newList = (ArrayList<Modal_ContentDetail>) objects[0];
+            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, datalist));
+            datalist.clear();
+            datalist.addAll(newList);
+            return diffResult;
+        }
+
+        @Override
+        protected void onPostExecute(Object o) {
+            super.onPostExecute(o);
+            DiffUtil.DiffResult result = (DiffUtil.DiffResult) o;
+            result.dispatchUpdatesTo(ContentAdapter.this);
         }
     }
 }
