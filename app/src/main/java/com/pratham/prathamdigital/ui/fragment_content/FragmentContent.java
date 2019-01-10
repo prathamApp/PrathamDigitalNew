@@ -40,6 +40,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -114,6 +115,19 @@ public class FragmentContent extends FragmentManagePermission implements Content
         } else {
             contentPresenter.getContent();
         }
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
@@ -191,7 +205,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
             rv_content.setVisibility(View.VISIBLE);
         if (!content.isEmpty()) {
             if (contentAdapter == null) {
-                contentAdapter = new ContentAdapter(getActivity(), content, FragmentContent.this);
+                contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
                 rv_content.setHasFixedSize(true);
                 rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
                 GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
@@ -212,23 +226,10 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 });
                 rv_content.setAdapter(contentAdapter);
                 rv_content.scheduleLayoutAnimation();
-//                mContentDiffRequestManager = RxDiffUtil
-//                        .bindTo(getActivity())
-//                        .with(contentAdapter, "CONTENT_ADAPTER");
+                contentAdapter.submitList(content);
             } else {
-                contentAdapter.updateList((ArrayList<Modal_ContentDetail>) content);
-//                rv_content.scheduleLayoutAnimation();
-//                mContentDiffRequestManager
-//                        .newDiffRequestWith(new ContentDiffUtilCallback(contentAdapter.getData(), content))
-//                        .updateAdapterWithNewData(content)
-//                        .detectMoves(true)
-//                        .calculate();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        rv_content.smoothScrollToPosition(0);
-                    }
-                }, 1000);
+                contentAdapter.submitList(content);
+                rv_content.smoothScrollToPosition(0);
             }
         }
     }
@@ -237,13 +238,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
         if (levelContents != null) {
             if (levelAdapter == null) {
-                levelAdapter = new RV_LevelAdapter(getActivity(), levelContents, FragmentContent.this);
+                levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
                 rv_level.setHasFixedSize(true);
                 rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                 rv_level.setAdapter(levelAdapter);
                 levelAdapter.submitList(levelContents);
             } else {
-//                levelAdapter.updateList(levelContents);
                 levelAdapter.submitList(levelContents);
             }
         }
@@ -275,7 +275,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
 
     @Override
     public void displayHeader(Modal_ContentDetail contentDetail) {
-//        content_title.setText(contentDetail.getNodetitle());
     }
 
     @UiThread

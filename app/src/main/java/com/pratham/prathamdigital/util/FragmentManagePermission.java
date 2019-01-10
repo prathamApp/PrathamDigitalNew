@@ -11,8 +11,6 @@ import android.support.v4.content.ContextCompat;
 
 import com.pratham.prathamdigital.interfaces.PermissionResult;
 
-import org.greenrobot.eventbus.EventBus;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,18 +32,6 @@ public class FragmentManagePermission extends Fragment {
     public void onCreate(Bundle arg0) {
         super.onCreate(arg0);
         setRetainInstance(false);
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        EventBus.getDefault().unregister(this);
-        super.onStop();
     }
 
     /**

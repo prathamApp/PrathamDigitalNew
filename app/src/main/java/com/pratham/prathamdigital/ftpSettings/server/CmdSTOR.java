@@ -37,7 +37,6 @@ public class CmdSTOR extends CmdAbstractStore implements Runnable {
         }
     }
 
-    //    STOR /PrathamGame/Curious_Cases_HTML5_Zip/images/B_4.png
     @Override
     public void run() {
         doStorOrAppe(getParameter(input), false);

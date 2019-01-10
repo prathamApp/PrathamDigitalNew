@@ -118,7 +118,7 @@ public class FsSettings {
             // if this happens, we are screwed
             // we give it the application directory
             // but this will probably not be what the user wants
-            return PrathamApplication.getInstance().getFilesDir();
+            return new File(PrathamApplication.pradigiPath);
         }
         return chrootDir;
     }

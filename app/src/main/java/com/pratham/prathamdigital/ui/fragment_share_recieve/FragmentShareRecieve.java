@@ -63,6 +63,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
@@ -143,6 +144,18 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 }
             });
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Click(R.id.rl_share)
@@ -482,13 +495,14 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             rv_files_receiving.setVisibility(View.GONE);
         if (fileListAdapter == null) {
             //initialize adapter
-            fileListAdapter = new FileListAdapter(getActivity(), contents, FragmentShareRecieve.this);
+            fileListAdapter = new FileListAdapter(getActivity(), FragmentShareRecieve.this);
             rv_files.setHasFixedSize(true);
             rv_files.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
             rv_files.setAdapter(fileListAdapter);
             rv_files.scheduleLayoutAnimation();
+            fileListAdapter.submitList(contents);
         } else {
-            fileListAdapter.updateList(contents);
+            fileListAdapter.submitList(contents);
             rv_files.smoothScrollToPosition(0);
         }
     }
@@ -502,12 +516,13 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             rv_files_receiving.setVisibility(View.VISIBLE);
         if (receivedFileListAdapter == null) {
             //initialize adapter
-            receivedFileListAdapter = new ReceivedFileListAdapter(getActivity(), filesRecieving);
+            receivedFileListAdapter = new ReceivedFileListAdapter(getActivity());
             rv_files_receiving.setHasFixedSize(true);
             rv_files_receiving.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             rv_files_receiving.setAdapter(receivedFileListAdapter);
+            receivedFileListAdapter.submitList(filesRecieving);
         } else {
-            receivedFileListAdapter.updateList(filesRecieving);
+            receivedFileListAdapter.submitList(filesRecieving);
         }
     }
 

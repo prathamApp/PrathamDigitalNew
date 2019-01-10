@@ -13,7 +13,6 @@ import android.widget.TextView;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,10 +27,8 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
 
     public static final int LAST_ITEM = 1;
     public static final int NORMAL_ITEM = 2;
-    private Context context;
-    private List<Modal_ContentDetail> levels;
+    private final Context context;
     private LevelContract levelContract;
-    //*****************************
     private AsyncListDiffer<Modal_ContentDetail> mDiffer;
     private DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
         @Override
@@ -50,21 +47,15 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
     public void submitList(List<Modal_ContentDetail> data) {
         mDiffer.submitList(data);
     }
-//*****************************
 
-    public RV_LevelAdapter(Context context, ArrayList<Modal_ContentDetail> levels, LevelContract levelContract) {
+    public RV_LevelAdapter(Context context, LevelContract levelContract) {
         mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
         this.context = context;
-        this.levels = new ArrayList<>();
-        this.levels.addAll(levels);
         this.levelContract = levelContract;
     }
 
     @Override
     public int getItemViewType(int position) {
-//        if (position == (levels.size() - 1))
-//            return LAST_ITEM;
-//        else return NORMAL_ITEM;
         if (position == (mDiffer.getCurrentList().size() - 1))
             return LAST_ITEM;
         else return NORMAL_ITEM;
@@ -132,17 +123,6 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
                 }
             });
         }
-    }
-
-    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
-        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, levels));
-        levels.clear();
-        this.levels.addAll(newList);
-        diffResult.dispatchUpdatesTo(this);
-    }
-
-    public List<Modal_ContentDetail> getData() {
-        return levels;
     }
 
     @Override

@@ -4,9 +4,9 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,36 +25,52 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.squareup.picasso.Picasso;
-import com.stolets.rxdiffutil.Swappable;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Modal_ContentDetail> {
+public class ContentAdapter extends RecyclerView.Adapter {
 
     public static final int FOLDER_TYPE = 1;
     public static final int FILE_TYPE = 2;
     public static final int HEADER_TYPE = 3;
-
-    List<Modal_ContentDetail> datalist;
     Context context;
-    ContentContract.contentClick contentClick;
+    ContentContract.contentClick contentInterface;
+    private AsyncListDiffer<Modal_ContentDetail> mDiffer;
 
-    public ContentAdapter(Context context, List<Modal_ContentDetail> datalist, ContentContract.contentClick contentClick) {
+    public ContentAdapter(Context context, ContentContract.contentClick contentClick) {
+        mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
         this.context = context;
-        this.datalist = datalist;
-        this.contentClick = contentClick;
+        this.contentInterface = contentClick;
+    }
+
+    private DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+            return Objects.equals(detail.getNodeid(), t1.getNodeid());
+        }
+
+        @Override
+        public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+            int result = detail.compareTo(t1);
+            if (result == 0) return true;
+            return false;
+        }
+    };
+
+    public void submitList(List<Modal_ContentDetail> data) {
+        mDiffer.submitList(data);
     }
 
     @Override
     public int getItemViewType(int position) {
         if (position == 0)
             return HEADER_TYPE;
-        else if (datalist.get(position).getContentType().equalsIgnoreCase("folder"))
+        else if (mDiffer.getCurrentList().get(position).getContentType().equalsIgnoreCase("folder"))
             return FOLDER_TYPE;
         else
             return FILE_TYPE;
@@ -72,101 +88,27 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
             case FOLDER_TYPE:
                 LayoutInflater folder = LayoutInflater.from(parent.getContext());
                 v = folder.inflate(R.layout.item_content_folder, parent, false);
-                return new FolderViewHolder(v);
+                return new FolderViewHolder(v, contentInterface);
             case FILE_TYPE:
                 LayoutInflater file = LayoutInflater.from(parent.getContext());
                 v = file.inflate(R.layout.item_content_file, parent, false);
-                return new FileViewHolder(v);
+                return new FileViewHolder(v, contentInterface);
         }
         return null;
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
-        Modal_ContentDetail contentDetail = datalist.get(holder.getAdapterPosition());
+        Modal_ContentDetail contentDetail = mDiffer.getCurrentList().get(holder.getAdapterPosition());
         if (contentDetail != null) {
             switch (holder.getItemViewType()) {
                 case FOLDER_TYPE:
-                    //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-                    if (contentDetail.isDownloaded())
-                        if (contentDetail.isOnSDCard())
-                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(folderViewHolder.folder_content_image);
-                        else
-                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(folderViewHolder.folder_content_image);
-                    else
-                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
-                    folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
-                    folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
-                    if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
-                        folderViewHolder.folder_content_desc.setText("No description");
-                    else
-                        folderViewHolder.folder_content_desc.setText(contentDetail.getNodedesc());
-                    folderViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            contentClick.onfolderClicked(holder.getAdapterPosition(), contentDetail);
-                        }
-                    });
+                    folderViewHolder.setFolderItem(contentDetail, holder.getAdapterPosition());
                     break;
                 case FILE_TYPE:
-                    //file type
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
-                    if (contentDetail.isDownloaded())
-                        if (contentDetail.isOnSDCard())
-                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(fileViewHolder.file_content_image);
-                        else
-                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(fileViewHolder.file_content_image);
-                    else
-                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(fileViewHolder.file_content_image);
-                    if (fileViewHolder.rl_reveal.getVisibility() == View.VISIBLE)
-                        unreveal(fileViewHolder.rl_reveal);
-                    if (contentDetail.isDownloaded()) {
-                        fileViewHolder.rl_download.setVisibility(View.GONE);
-                        fileViewHolder.rl_download.setOnClickListener(null);
-                        fileViewHolder.rl_play_content.setVisibility(View.VISIBLE);
-                        if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-                            fileViewHolder.file_item_lottieview.setAnimation("gaming_pad.json");
-                        else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-                            fileViewHolder.file_item_lottieview.setAnimation("play_button.json");
-                        else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-                            fileViewHolder.file_item_lottieview.setAnimation("book.json");
-                        fileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                contentClick.openContent(holder.getAdapterPosition(), contentDetail);
-                            }
-                        });
-                    } else {
-                        fileViewHolder.rl_play_content.setVisibility(View.GONE);
-                        fileViewHolder.rl_reveal.setVisibility(View.INVISIBLE);
-                        fileViewHolder.rl_download.setVisibility(View.VISIBLE);
-                        Drawable background = fileViewHolder.rl_download.getBackground();
-                        if (background instanceof GradientDrawable) {
-                            int color = PD_Utility.getRandomColorGradient();
-                            ((GradientDrawable) background).setColor(color);
-                            fileViewHolder.rl_reveal.setBackgroundColor(color);
-                        }
-                        fileViewHolder.rl_download.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                contentClick.onDownloadClicked(holder.getAdapterPosition(), contentDetail, fileViewHolder.rl_reveal);
-                            }
-                        });
-                        fileViewHolder.itemView.setOnClickListener(null);
-                    }
+                    fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
                     break;
             }
         }
@@ -182,80 +124,20 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
                 case FOLDER_TYPE:
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
-                    if (contentDetail.isDownloaded())
-                        if (contentDetail.isOnSDCard())
-                            Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(folderViewHolder.folder_content_image);
-                        else
-                            Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()))
-                                    .resize(130, 130)
-                                    .placeholder(R.drawable.ic_app_logo_)
-                                    .into(folderViewHolder.folder_content_image);
-                    else
-                        Picasso.get().load(contentDetail.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folderViewHolder.folder_content_image);
-                    folderViewHolder.content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
-                    folderViewHolder.folder_title.setText(contentDetail.getNodetitle());
-                    if (contentDetail.getNodedesc() == null || contentDetail.getNodedesc().isEmpty())
-                        folderViewHolder.folder_content_desc.setText("No description");
-                    else
-                        folderViewHolder.folder_content_desc.setText(contentDetail.getNodedesc());
-                    folderViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            contentClick.onfolderClicked(holder.getAdapterPosition(), contentDetail);
-                        }
-                    });
+                    folderViewHolder.setFolderItem(contentDetail, holder.getAdapterPosition());
                     break;
                 case FILE_TYPE:
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
                     unreveal(fileViewHolder.rl_reveal);
-                    if (contentDetail.isDownloaded()) {
-                        fileViewHolder.rl_download.setVisibility(View.GONE);
-                        fileViewHolder.rl_download.setOnClickListener(null);
-                        fileViewHolder.rl_play_content.setVisibility(View.VISIBLE);
-                        if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-                            fileViewHolder.file_item_lottieview.setAnimation("gaming_pad.json");
-                        else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-                            fileViewHolder.file_item_lottieview.setAnimation("play_button.json");
-                        else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-                            fileViewHolder.file_item_lottieview.setAnimation("book.json");
-                        fileViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                contentClick.openContent(holder.getAdapterPosition(), contentDetail);
-                            }
-                        });
-                    } else {
-                        fileViewHolder.rl_play_content.setVisibility(View.GONE);
-                        fileViewHolder.rl_reveal.setVisibility(View.INVISIBLE);
-                        fileViewHolder.rl_download.setVisibility(View.VISIBLE);
-                        Drawable background = fileViewHolder.rl_download.getBackground();
-                        if (background instanceof GradientDrawable) {
-                            int color = PD_Utility.getRandomColorGradient();
-                            ((GradientDrawable) background).setColor(color);
-                            fileViewHolder.rl_reveal.setBackgroundColor(color);
-                        }
-                        fileViewHolder.rl_download.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                contentClick.onDownloadClicked(holder.getAdapterPosition(), contentDetail, fileViewHolder.rl_reveal);
-                            }
-                        });
-                        fileViewHolder.itemView.setOnClickListener(null);
-                    }
+                    fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
+                    break;
             }
         }
     }
 
     @Override
     public int getItemCount() {
-        return datalist.size();
-    }
-
-    public void updateList(final ArrayList<Modal_ContentDetail> newList) {
-        new CalculateDiff().execute(newList);
+        return mDiffer.getCurrentList().size();
     }
 
     public void reveal(View view) {
@@ -310,15 +192,6 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
         }
     }
 
-    @Override
-    public void swapData(@NonNull List<Modal_ContentDetail> newData) {
-        this.datalist = newData;
-    }
-
-    public List<Modal_ContentDetail> getData() {
-        return datalist;
-    }
-
     class EmptyHolder extends RecyclerView.ViewHolder {
         public EmptyHolder(@NonNull View itemView) {
             super(itemView);
@@ -339,9 +212,42 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
         @BindView(R.id.content_card)
         RelativeLayout content_card;
 
-        public FolderViewHolder(View itemView) {
+        Modal_ContentDetail contentItem;
+        ContentContract.contentClick contentClick;
+
+        public FolderViewHolder(View itemView, final ContentContract.contentClick contentClick) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+            this.contentClick = contentClick;
+        }
+
+        public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
+            this.contentItem = contentItem;
+            if (contentItem.isDownloaded())
+                if (contentItem.isOnSDCard())
+                    Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                            .resize(130, 130)
+                            .placeholder(R.drawable.ic_app_logo_)
+                            .into(folder_content_image);
+                else
+                    Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                            .resize(130, 130)
+                            .placeholder(R.drawable.ic_app_logo_)
+                            .into(folder_content_image);
+            else
+                Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folder_content_image);
+            content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
+            folder_title.setText(contentItem.getNodetitle());
+            if (contentItem.getNodedesc() == null || contentItem.getNodedesc().isEmpty())
+                folder_content_desc.setText("No description");
+            else
+                folder_content_desc.setText(contentItem.getNodedesc());
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    contentClick.onfolderClicked(pos, contentItem);
+                }
+            });
         }
     }
 
@@ -361,28 +267,66 @@ public class ContentAdapter extends RecyclerView.Adapter implements Swappable<Mo
         @Nullable
         @BindView(R.id.rl_play_content)
         RelativeLayout rl_play_content;
+        Modal_ContentDetail contentItem;
+        ContentContract.contentClick contentClick;
 
-        public FileViewHolder(View view) {
+        public FileViewHolder(View view, final ContentContract.contentClick contentClick) {
             super(view);
             ButterKnife.bind(this, view);
-        }
-    }
-
-    class CalculateDiff extends AsyncTask {
-        @Override
-        protected Object doInBackground(Object[] objects) {
-            ArrayList<Modal_ContentDetail> newList = (ArrayList<Modal_ContentDetail>) objects[0];
-            DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new ContentDiffUtilCallback(newList, datalist));
-            datalist.clear();
-            datalist.addAll(newList);
-            return diffResult;
+            this.contentClick = contentClick;
         }
 
-        @Override
-        protected void onPostExecute(Object o) {
-            super.onPostExecute(o);
-            DiffUtil.DiffResult result = (DiffUtil.DiffResult) o;
-            result.dispatchUpdatesTo(ContentAdapter.this);
+        public void setContentItem(Modal_ContentDetail contentItem, int pos) {
+            this.contentItem = contentItem;
+            if (contentItem.isDownloaded())
+                if (contentItem.isOnSDCard())
+                    Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                            .resize(130, 130)
+                            .placeholder(R.drawable.ic_app_logo_)
+                            .into(file_content_image);
+                else
+                    Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                            .resize(130, 130)
+                            .placeholder(R.drawable.ic_app_logo_)
+                            .into(file_content_image);
+            else
+                Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(file_content_image);
+            if (rl_reveal.getVisibility() == View.VISIBLE)
+                unreveal(rl_reveal);
+            if (contentItem.isDownloaded()) {
+                rl_download.setVisibility(View.GONE);
+                rl_download.setOnClickListener(null);
+                rl_play_content.setVisibility(View.VISIBLE);
+                if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
+                    file_item_lottieview.setAnimation("gaming_pad.json");
+                else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
+                    file_item_lottieview.setAnimation("play_button.json");
+                else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
+                    file_item_lottieview.setAnimation("book.json");
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        contentClick.openContent(pos, contentItem);
+                    }
+                });
+            } else {
+                rl_play_content.setVisibility(View.GONE);
+                rl_reveal.setVisibility(View.INVISIBLE);
+                rl_download.setVisibility(View.VISIBLE);
+                Drawable background = rl_download.getBackground();
+                if (background instanceof GradientDrawable) {
+                    int color = PD_Utility.getRandomColorGradient();
+                    ((GradientDrawable) background).setColor(color);
+                    rl_reveal.setBackgroundColor(color);
+                }
+                rl_download.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        contentClick.onDownloadClicked(pos, contentItem, rl_reveal);
+                    }
+                });
+                itemView.setOnClickListener(null);
+            }
         }
     }
 }
