@@ -42,5 +42,7 @@ public interface ContractShare {
         void showFilesRecieving(File filePath);
 
         void setView(FragmentShareRecieve fragmentShareRecieve);
+
+        void startTimer();
     }
 }

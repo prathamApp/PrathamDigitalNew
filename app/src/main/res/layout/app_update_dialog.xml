@@ -1,44 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/_300sdp"
-    android:layout_height="@dimen/_300sdp"
+    android:layout_width="@dimen/_230sdp"
+    android:layout_height="@dimen/_260sdp"
     android:layout_gravity="center"
+    android:background="@android:color/transparent"
     android:gravity="center_horizontal"
-    android:orientation="vertical"
-    app:sc_shadowColor="#40444444">
+    android:orientation="vertical">
 
-
-    <com.airbnb.lottie.LottieAnimationView
-        android:layout_width="@dimen/_150sdp"
-        android:layout_height="@dimen/_150sdp"
-        app:lottie_autoPlay="true"
-        app:lottie_fileName="update.json"
-        app:lottie_loop="true" />
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        app:srcCompat="@drawable/update_dialog_header" />
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_100sdp"
         android:gravity="center"
-        android:text="Update App"
+        android:text="Dear User"
         android:textColor="@android:color/black"
-        android:textSize="@dimen/_14sdp"
+        android:textSize="@dimen/_16sdp"
         android:textStyle="bold" />
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_5sdp"
-        android:gravity="center_horizontal"
+        android:layout_alignParentBottom="true"
+        android:layout_marginLeft="@dimen/_15sdp"
+        android:layout_marginRight="@dimen/_15sdp"
+        android:layout_marginBottom="@dimen/_55sdp"
+        android:gravity="center_vertical"
         android:text="@string/new_version_available"
         android:textColor="@color/charcoal"
         android:textSize="@dimen/_12sdp" />
 
-    <Button
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
         android:id="@+id/btn_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_15sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_5sdp"
         android:background="@drawable/update_button_round_bg"
         android:elevation="@dimen/_8sdp"
         android:gravity="center"
@@ -46,4 +53,4 @@
         android:minHeight="@dimen/_35sdp"
         android:text="Update"
         android:textColor="@android:color/white" />
-</com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer>
+</RelativeLayout>

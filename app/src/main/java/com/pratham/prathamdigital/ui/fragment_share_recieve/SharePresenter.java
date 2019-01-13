@@ -52,6 +52,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     FTPClient ftpClient;
     ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
     HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
+    Timer ftpTimer = new Timer();
 
     public SharePresenter(Context context) {
         this.context = context;
@@ -193,10 +194,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         }
     }
 
+    @Override
+    public void startTimer() {
+        if (ftpClient != null) {
+            ftpTimer = new Timer();
+            startConnectionDisconnectlistener(ftpClient);
+        } else {
+            shareView.closeFTPJoin();
+        }
+    }
+
     @Background
     public void startConnectionDisconnectlistener(FTPClient client) {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        ftpTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -205,17 +215,17 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 } catch (Exception e) {
                     e.printStackTrace();
                     shareView.closeFTPJoin();
-                    timer.cancel();
+                    ftpTimer.cancel();
                 }
             }
         }, new Date(System.currentTimeMillis() + 2000), 2000);
-
     }
 
     @Background
     @Override
     public void sendFiles(Modal_ContentDetail detail) {
         if (ftpClient != null) {
+            ftpTimer.cancel();
             String dirPath = "";
             String imgDirPath = "";
             if (detail.isOnSDCard()) {

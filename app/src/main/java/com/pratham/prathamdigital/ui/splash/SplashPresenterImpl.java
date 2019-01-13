@@ -67,11 +67,12 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     public void checkVersion(String latestVersion) {
         String currentVersion = PD_Utility.getCurrentVersion(context);
         Log.d("version::", "Current version = $currentVersion");
+        FastSave.getInstance().saveString(PD_Constant.APP_VERSION, latestVersion);
         if (latestVersion != null && !latestVersion
                 .isEmpty() && (!currentVersion.equalsIgnoreCase(latestVersion))) {
             splashview.showAppUpdateDialog();
         } else {
-            splashview.signInUsingGoogle();
+            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
         }
     }
 
@@ -351,23 +352,24 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void checkConnectivity() {
-        if (PrathamApplication.isTablet) {
-            splashview.redirectToAttendance();
+        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+            getVersion();
+        } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+            getVersion();
         } else {
-            if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                getVersion();
-            } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-                getVersion();
-            } else {
-                PrathamApplication.wiseF.enableWifi(enableWifiCallbacks);
+            if (!FastSave.getInstance().getString(PD_Constant.APP_VERSION, "").isEmpty())
+                checkVersion(FastSave.getInstance().getString(PD_Constant.APP_VERSION, ""));
+            else
                 checkStudentList();
-            }
         }
     }
 
     @Override
     public void checkIfContentinSDCard() {
-        new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+        if (PrathamApplication.isTablet)
+            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+        else
+            checkConnectivity();
     }
 
     @Override

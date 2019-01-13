@@ -48,11 +48,11 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                         else detail.setOnSDCard(false);
                     }
                     BaseActivity.modalContentDao.addContentList(tempContents);
-                    filePath.delete();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            filePath.delete();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -63,9 +63,5 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
     @Override
     protected void onPostExecute(Boolean copied) {
         super.onPostExecute(copied);
-//        if (copied && interface_copying != null)
-//            interface_copying.successCopyingExisting(folder_file.getAbsolutePath());
-//        else
-//            interface_copying.failedCopyingExisting();
     }
 }

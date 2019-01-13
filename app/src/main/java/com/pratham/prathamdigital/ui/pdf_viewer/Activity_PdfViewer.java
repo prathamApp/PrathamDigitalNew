@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -60,15 +61,6 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
         finish();
     }
 
-    @Override
-    protected void onDestroy() {
-//        if (!backpressedFlag) {
-//            addScoreToDB();
-//        }
-        Log.d("pdf_activity", "Destroyed");
-        super.onDestroy();
-    }
-
     @Background
     public void addScoreToDB() {
         Modal_Score modalScore = new Modal_Score();
@@ -90,9 +82,9 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
         BaseActivity.scoreDao.insert(modalScore);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    @Click(R.id.close_pdf)
+    public void setClose_pdf() {
+        onBackPressed();
     }
 
     @UiThread

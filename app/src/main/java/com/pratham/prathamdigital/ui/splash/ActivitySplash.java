@@ -105,6 +105,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     }
                 }, R.id.btn_update)
                 .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(false)
                 .setScaleRatio(0.2f)
                 .setBlurRadius(10)
                 .setTintColor(0x30000000)

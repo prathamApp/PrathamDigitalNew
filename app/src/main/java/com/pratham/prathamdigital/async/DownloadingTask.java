@@ -14,6 +14,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -165,6 +166,7 @@ public class DownloadingTask extends AsyncTask {
         try {
             zipFile = new ZipFile(source);
             zipFile.extractAll(destination);
+            new File(source).delete();
         } catch (ZipException e) {
             e.printStackTrace();
         }

@@ -64,38 +64,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     int revealX;
     int revealY;
 
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(R.layout.select_avatar, container, false);
-//        ButterKnife.bind(this, rootView);
-//        avatar_circular_reveal.setListener(this);
-//        if (getArguments() != null) {
-//            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-//            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-//            avatar_circular_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-//                @Override
-//                public boolean onPreDraw() {
-//                    avatar_circular_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-//                    avatar_circular_reveal.revealFrom(revealX, revealY, 0);
-//                    return true;
-//                }
-//            });
-//        }
-//        return rootView;
-//    }
-
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        context = getActivity();
-//    }
-
-//    @Override
-//    public void onResume() {
-//        super.onResume();
-//    }
-
     @AfterViews
     public void initialize() {
         avatar_circular_reveal.setListener(this);

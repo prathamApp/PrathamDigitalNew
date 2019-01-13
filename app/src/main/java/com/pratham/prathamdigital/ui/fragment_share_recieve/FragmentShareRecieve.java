@@ -37,6 +37,7 @@ import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.SearchView;
+import com.pratham.prathamdigital.custom.progress_layout.ProgressLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.interfaces.PermissionResult;
@@ -110,6 +111,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     CircularRevelLayout circular_share_reveal;
     @ViewById(R.id.share_title)
     TextView share_title;
+    TextView dialog_tv;
+    ProgressLayout dialog_progressLayout;
 
     @Bean(SharePresenter.class)
     ContractShare.sharePresenter sharePresenter;
@@ -127,6 +130,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private int revealX;
     private int revealY;
     BlurPopupWindow sd_builder;
+    BlurPopupWindow sending_builder;
 
     @AfterViews
     public void initialize() {
@@ -482,6 +486,24 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         filesSent.put(model.getDetail().getNodeid(), model);
         filesSentPosition.put(model.getDetail().getNodeid(), position);
         sharePresenter.sendFiles(model.getDetail());
+        showSendingDialog();
+    }
+
+    public void showSendingDialog() {
+        sending_builder = new BlurPopupWindow.Builder(getContext())
+                .setContentView(R.layout.dialog_file_sending)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build();
+        dialog_tv = (TextView) sending_builder.findViewById(R.id.dialog_file_name);
+        dialog_progressLayout = (ProgressLayout) sending_builder.findViewById(R.id.dialog_progressLayout);
+        dialog_tv.setText("Please Wait...");
+        sending_builder.show();
     }
 
     @UiThread
@@ -566,10 +588,16 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 if (!filesSent.isEmpty()) {
                     File_Model model = filesSent.get(message.getDownloadId());
                     if (model != null) {
-                        model.setProgress((int) message.getProgress());
-                        fileListAdapter.notifyItemChanged(filesSentPosition.get(message.getDownloadId()), model);
+//                        model.setProgress((int) message.getProgress());
+//                        fileListAdapter.notifyItemChanged(filesSentPosition.get(message.getDownloadId()), model);
+                        dialog_tv.setText(message.getFile_name());
+                        dialog_progressLayout.setCurProgress((int) message.getProgress());
                     }
                 }
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_COMPLETE)) {
+                sharePresenter.startTimer();
+                if (sending_builder != null)
+                    sending_builder.dismiss();
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHARE_BACK)) {
                 sharePresenter.traverseFolderBackward();
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER)) {

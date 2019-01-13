@@ -97,7 +97,7 @@ public class FTPContentUploadTask extends AsyncTask {
             total += localFile.length();
             FileInputStream in = new FileInputStream(localFile);
             boolean result = ftpClient.storeFile(remoteFilePath, in);
-            publishProgress((total * 100) / lenghtOfFile);
+            publishProgress((total * 100) / lenghtOfFile, localFile.getName());
             Log.v("upload_result:::", "" + result);
             in.close();
         } catch (IOException e) {
@@ -112,12 +112,15 @@ public class FTPContentUploadTask extends AsyncTask {
         msg.setMessage(PD_Constant.FILE_SHARE_PROGRESS);
         msg.setDownloadId(downloadId);
         msg.setProgress((Long) values[0]);
+        msg.setFile_name((String) values[1]);
         EventBus.getDefault().post(msg);
     }
 
     @Override
     protected void onPostExecute(Object o) {
         super.onPostExecute(o);
-
+        EventMessage msg = new EventMessage();
+        msg.setMessage(PD_Constant.FILE_SHARE_COMPLETE);
+        EventBus.getDefault().post(msg);
     }
 }

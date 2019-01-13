@@ -94,6 +94,8 @@ public class PD_Constant {
     public static final String BROADCAST_DOWNLOADINGS = "broadcast_downloadings";
     public static final String SDCARD_URI = "sdcard_uri";
     public static final String SDCARD_PATH = "sdcard_path";
+    public static final String APP_VERSION = "app_version";
+    public static final String FILE_SHARE_COMPLETE = "file_share_complete";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";

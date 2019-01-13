@@ -2,8 +2,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-//todo update version code and name
-//def buildDateTime = new Date().format(‘yyMMddHHmm’).toInteger()
+//update version code and name
+def buildDateTime = new Date().format('yyMMddHHmm').toInteger()
 //and assign it like this:: "versionCode buildDateTime"
 android {
     compileSdkVersion 28
@@ -11,8 +11,8 @@ android {
         applicationId "com.pratham.prathamdigital"
         minSdkVersion 21
         targetSdkVersion 28
-        versionCode 17
-        versionName "2.6"
+        versionCode buildDateTime
+        versionName "2.5"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
