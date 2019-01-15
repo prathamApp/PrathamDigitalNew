@@ -2,8 +2,6 @@ package com.pratham.prathamdigital.models;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
-
 /**
  * Created by Administrator on 8/31/2015.
  */
@@ -11,7 +9,7 @@ public class RaspVillage {
     @SerializedName("id")
     public String id;
     @SerializedName("data")
-    public ArrayList<Modal_Village> data;
+    public Modal_Village data;
     @SerializedName("filter_name")
     public String filter_name;
     @SerializedName("table_name")
@@ -37,12 +35,20 @@ public class RaspVillage {
     public void setId(String id) {
         this.id = id;
     }
+//
+//    public ArrayList<Modal_Village> getData() {
+//        return data;
+//    }
+//
+//    public void setData(ArrayList<Modal_Village> data) {
+//        this.data = data;
+//    }
 
-    public ArrayList<Modal_Village> getData() {
+    public Modal_Village getData() {
         return data;
     }
 
-    public void setData(ArrayList<Modal_Village> data) {
+    public void setData(Modal_Village data) {
         this.data = data;
     }
 

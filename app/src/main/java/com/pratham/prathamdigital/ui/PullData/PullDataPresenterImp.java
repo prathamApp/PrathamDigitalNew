@@ -76,10 +76,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     public void proccessVillageData(String block) {
         ArrayList<Village> villageName = new ArrayList();
         for (RaspVillage raspVillage : vilageList) {
-            for (Modal_Village village : raspVillage.getData()) {
-                if (block.equalsIgnoreCase(village.getBlock().trim()))
-                    villageName.add(new Village(village.getVillageId(), village.getVillageName()));
-            }
+//            for (Modal_Village village : raspVillage.getData()) {
+            if (block.equalsIgnoreCase(raspVillage.getData().getBlock().trim()))
+                villageName.add(new Village(raspVillage.getData().getVillageId(), raspVillage.getData().getVillageName()));
+//            }
         }
         if (!villageName.isEmpty()) {
             pullDataView.showVillageDialog(villageName);
@@ -181,9 +181,9 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                             } else {
                                 blockList.add("Select block");
                                 for (RaspVillage raspVillage : vilageList) {
-                                    for (Modal_Village village : raspVillage.getData()) {
-                                        blockList.add(village.getBlock());
-                                    }
+//                                    for (Modal_Village village : raspVillage.getData()) {
+                                    blockList.add(raspVillage.getData().getBlock());
+//                                    }
                                 }
                             }
                             LinkedHashSet hs = new LinkedHashSet(blockList);
@@ -564,10 +564,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
 
     public void saveDownloadedVillages() {
         for (RaspVillage vill : vilageList) {
-            for (Modal_Village v : vill.getData()) {
-                if (villageIDList.contains(String.valueOf(v.getVillageId())))
-                    BaseActivity.villageDao.insertVillage(v);
-            }
+//            for (Modal_Village v : vill.getData()) {
+            if (villageIDList.contains(String.valueOf(vill.getData().getVillageId())))
+                BaseActivity.villageDao.insertVillage(vill.getData());
+//            }
         }
     }
 
@@ -625,9 +625,9 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 } else {
                     blockList.add("Select block");
                     for (RaspVillage raspVillage : vilageList) {
-                        for (Modal_Village village : raspVillage.getData()) {
-                            blockList.add(village.getBlock());
-                        }
+//                        for (Modal_Village village : raspVillage.getData()) {
+                        blockList.add(raspVillage.getData().getBlock());
+//                        }
                     }
                 }
                 LinkedHashSet hs = new LinkedHashSet(blockList);
@@ -647,9 +647,9 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 } else {
                     blockList.add("Select block");
                     for (RaspVillage raspVillage : vilageList) {
-                        for (Modal_Village village : raspVillage.getData()) {
-                            blockList.add(village.getBlock());
-                        }
+//                        for (Modal_Village village : raspVillage.getData()) {
+                        blockList.add(raspVillage.getData().getBlock());
+//                        }
                     }
                 }
                 LinkedHashSet hs = new LinkedHashSet(blockList);
