@@ -35,7 +35,7 @@ public class PrathamApplication extends Application {
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
 
-    public static final boolean isTablet = false;  //Also check "todo" before build
+    public static final boolean isTablet = true;  //Also check "todo" before build
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;

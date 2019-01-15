@@ -3,11 +3,11 @@
     <color name="colorPrimary">#7A8B5A</color>
     <color name="green">#7A8B5A</color>
     <color name="colorPrimaryDark">#2E3B41</color>
-    //#004853
+    <!--//#004853-->
     <color name="colorAccent">#b3c135</color>
     <color name="splash_background">#F6F6F6</color>
     <color name="toolbar_background">#37474f</color>
-    //#005765
+    <!--//#005765-->
     <color name="lightGrey">#d7d7db</color>
     <color name="dark_blue">#262B4B</color>
     <color name="blue">#00BEDE</color>
@@ -37,7 +37,7 @@
     <color name="charcoal">#34435E</color>
     <color name="trans_charcoal">#e134435e</color>
 
-    //chips
+    <!--//chips-->
     <color name="chip">#333</color>
     <color name="dark_grey">#333333</color>
     <color name="light_grey">#bbbbbb</color>

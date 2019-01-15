@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode buildDateTime
-        versionName "2.5"
+        versionName "2.7"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -28,7 +28,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    lintOptions {
+        checkReleaseBuilds false
+        // Or, if you prefer, you can continue to check for errors in release builds,
+        // but continue the build even when errors are found:
+        abortOnError false
+    }
     //since the release of Dex In Process, this old optimization is no longer needed:
 //    dexOptions {
 //        javaMaxHeapSize "4g"
@@ -71,7 +76,7 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'com.google.android.gms:play-services-location:16.0.0'
-    implementation 'com.google.firebase:firebase-auth:16.0.5'
+    implementation 'com.google.firebase:firebase-auth:16.1.0'
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.amitshekhar.android:android-networking:1.0.2'
     implementation 'com.isupatches:wisefy:3.0.1'

@@ -494,7 +494,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 .setContentView(R.layout.dialog_file_sending)
                 .setGravity(Gravity.CENTER)
                 .setScaleRatio(0.2f)
-                .setDismissOnClickBack(true)
+                .setDismissOnClickBack(false)
                 .setDismissOnTouchBackground(false)
                 .setScaleRatio(0.2f)
                 .setBlurRadius(8)
