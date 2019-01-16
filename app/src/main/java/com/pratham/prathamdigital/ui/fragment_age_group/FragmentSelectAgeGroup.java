@@ -145,7 +145,7 @@ public class FragmentSelectAgeGroup extends Fragment {
     public void openAdminPanel() {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
-        if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+        if (!PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() && !PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity()).build();
             connectDialog.isDismissOnClickBack();
             connectDialog.isDismissOnTouchBackground();
