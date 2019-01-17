@@ -52,7 +52,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     String selectedProgram;
     int count = 0;
     int groupCount = 0;
-    ArrayList<Modal_Village> vilageList;
+    ArrayList<Modal_Village> vilageList = new ArrayList<>();
     List<Modal_Crl> crlList = new ArrayList<>();
     List<Modal_Student> studentList = new ArrayList();
     List<Modal_Groups> groupList = new ArrayList();

@@ -34,6 +34,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,6 +61,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         this.contentView = (ContentContract.contentView) context;
     }
 
+    @Override
+    public void viewDestroyed() {
+        contentView = null;
+    }
+
     @Background
     @Override
     public void getContent(Modal_ContentDetail contentDetail) {
@@ -80,7 +86,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
             }
             if (!found) levelContents.add(contentDetail);
-            contentView.displayLevel(levelContents);
+            if (contentView != null)
+                contentView.displayLevel(levelContents);
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
         }
     }
@@ -91,7 +98,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             new GetDownloadedContent(ContentPresenterImpl.this,
                     levelContents.get(levelContents.size() - 1).getNodeid()).execute();
         } else {
-            contentView.dismissDialog();
+            if (contentView != null)
+                contentView.dismissDialog();
         }
     }
 
@@ -127,11 +135,13 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             }
         } else {
             if (contentList.isEmpty()) {
-                contentView.showNoConnectivity();
+                if (contentView != null)
+                    contentView.showNoConnectivity();
             } else {
 //                Collections.shuffle(totalContents);
                 contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(contentList);
+                if (contentView != null)
+                    contentView.displayContents(contentList);
             }
         }
     }
@@ -209,7 +219,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                if (contentView != null)
+                    contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -227,7 +238,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                if (contentView != null)
+                    contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -248,7 +260,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                if (contentView != null)
+                    contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -269,7 +282,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                contentView.displayContents(totalContents);
+                if (contentView != null)
+                    contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
                 Modal_DownloadContent download_content = gson.fromJson(jsonObject.toString(), Modal_DownloadContent.class);
@@ -337,11 +351,13 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void recievedError(String header, ArrayList<Modal_ContentDetail> contentList) {
         if (contentList != null && contentList.isEmpty()) {
-            contentView.showNoConnectivity();
+            if (contentView != null)
+                contentView.showNoConnectivity();
         } else {
 //            Collections.shuffle(totalContents);
             contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
-            contentView.displayContents(contentList);
+            if (contentView != null)
+                contentView.displayContents(contentList);
         }
     }
 
@@ -532,13 +548,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void showPreviousContent() {
         if (levelContents == null || levelContents.isEmpty()) {
-            contentView.exitApp();
+            if (contentView != null)
+                contentView.exitApp();
 //            new GetDownloadedContent(null).execute();
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
-            contentView.displayLevel(levelContents);
+            if (contentView != null)
+                contentView.displayLevel(levelContents);
         }
     }
 
@@ -550,7 +568,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             temp.addAll(levelContents);
             levelContents = new ArrayList<>();
             levelContents.addAll(temp);
-            contentView.displayLevel(levelContents);
+            if (contentView != null)
+                contentView.displayLevel(levelContents);
         }
     }
 
@@ -583,5 +602,37 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
         FastSave.getInstance().saveString(PD_Constant.SDCARD_PATH, path);
         PrathamApplication.getInstance().setExistingSDContentPath(path);
+    }
+
+    @Background
+    @Override
+    public void deleteContent(Modal_ContentDetail contentItem) {
+        checkAndDeleteParent(contentItem);
+        contentView.contentDeleted(levelContents.get(levelContents.size() - 1));
+        if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
+            String foldername = contentItem.getResourcepath().split("/")[0];
+            PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath + "/PrathamGame/" + foldername));
+        } else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
+            PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
+                    + "/PrathamVideo/" + contentItem.getResourcepath()));
+        } else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
+            PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
+                    + "/PrathamPdf/" + contentItem.getResourcepath()));
+        }
+        //delete content thumbnail image
+        PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
+                + "/PrathamImages/" + contentItem.getNodeimage()));
+    }
+
+    private void checkAndDeleteParent(Modal_ContentDetail contentItem) {
+        String parentId = contentItem.getParentid();
+        BaseActivity.modalContentDao.deleteContent(contentItem.getNodeid());
+        if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
+            int count = BaseActivity.modalContentDao.getChildCountOfParent(parentId,
+                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            if (count == 0)
+                checkAndDeleteParent(BaseActivity.modalContentDao.getContent(parentId,
+                        FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
+        }
     }
 }

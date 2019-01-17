@@ -72,20 +72,16 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @ViewById(R.id.iv_wifi_status)
     ImageView iv_wifi_status;
 
-    //    @EventBusGreenRobot
-//    EventBus eventBus;
     @Bean(ContentPresenterImpl.class)
     ContentContract.contentPresenter contentPresenter;
 
-    //    private DiffRequestManager<Modal_ContentDetail, ContentAdapter> mContentDiffRequestManager;
-//    private DiffRequestManager<Modal_ContentDetail, RV_LevelAdapter> mLevelDiffRequestManager;
     ContentAdapter contentAdapter;
     private RV_LevelAdapter levelAdapter;
-    //    ContentContract.mainView mainView;
     Map<String, Integer> filesDownloading = new HashMap<>();
     private int revealX;
     private int revealY;
     BlurPopupWindow download_builder;
+    BlurPopupWindow deleteDialog;
 
     @AfterViews
     public void initialize() {
@@ -117,7 +113,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
         }
     }
 
-
     @Override
     public void onStart() {
         super.onStart();
@@ -128,6 +123,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
     public void onStop() {
         EventBus.getDefault().unregister(this);
         super.onStop();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        contentPresenter.viewDestroyed();
     }
 
     @Override
@@ -318,6 +319,42 @@ public class FragmentContent extends FragmentManagePermission implements Content
             tv.setText(getString(R.string.content_download_alert) + " " + PD_Constant.STORING_IN);
             download_builder.show();
         }
+    }
+
+    @Override
+    public void deleteContent(int pos, Modal_ContentDetail contentItem) {
+        deleteDialog = new BlurPopupWindow.Builder(getContext())
+                .setContentView(R.layout.dialog_delete_content_alert)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        contentAdapter.notifyItemRemoved(pos);
+                        contentPresenter.deleteContent(contentItem);
+                    }
+                }, R.id.rl_delete_content)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        deleteDialog.dismiss();
+                    }
+                }, R.id.rl_stop_delete_content)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(true)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build();
+        deleteDialog.show();
+    }
+
+    @UiThread
+    @Override
+    public void contentDeleted(Modal_ContentDetail detail) {
+        deleteDialog.dismiss();
+        PD_Utility.showDialog(getActivity());
+        contentPresenter.getContent(detail);
     }
 
     @UiThread

@@ -21,6 +21,8 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.swipe_reveal_layout.SwipeRevealLayout;
+import com.pratham.prathamdigital.custom.swipe_reveal_layout.ViewBinderHelper;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -41,6 +43,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     Context context;
     ContentContract.contentClick contentInterface;
     private AsyncListDiffer<Modal_ContentDetail> mDiffer;
+    private final ViewBinderHelper binderHelper = new ViewBinderHelper();
 
     public ContentAdapter(Context context, ContentContract.contentClick contentClick) {
         mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
@@ -108,6 +111,9 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     break;
                 case FILE_TYPE:
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
+                    // Use ViewBindHelper to restore and save the open/close state of the SwipeRevealView
+                    // put an unique string id as value, can be any string which uniquely define the data
+                    binderHelper.bind(fileViewHolder.file_swipe_layout, contentDetail.getNodeid());
                     fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
                     break;
             }
@@ -128,6 +134,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     break;
                 case FILE_TYPE:
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
+                    binderHelper.bind(fileViewHolder.file_swipe_layout, contentDetail.getNodeid());
                     unreveal(fileViewHolder.rl_reveal);
                     fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
                     break;
@@ -267,6 +274,18 @@ public class ContentAdapter extends RecyclerView.Adapter {
         @Nullable
         @BindView(R.id.rl_play_content)
         RelativeLayout rl_play_content;
+        @Nullable
+        @BindView(R.id.txt_resource_title)
+        TextView txt_resource_title;
+        @Nullable
+        @BindView(R.id.file_content_desc)
+        TextView file_content_desc;
+        @Nullable
+        @BindView(R.id.delete_layout)
+        View delete_layout;
+        @Nullable
+        @BindView(R.id.file_swipe_layout)
+        SwipeRevealLayout file_swipe_layout;
         Modal_ContentDetail contentItem;
         ContentContract.contentClick contentClick;
 
@@ -279,24 +298,30 @@ public class ContentAdapter extends RecyclerView.Adapter {
         public void setContentItem(Modal_ContentDetail contentItem, int pos) {
             this.contentItem = contentItem;
             if (contentItem.isDownloaded())
-                if (contentItem.isOnSDCard())
+                if (contentItem.isOnSDCard()) {
+                    file_swipe_layout.setLockDrag(true);
                     Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
                             .resize(130, 130)
                             .placeholder(R.drawable.ic_app_logo_)
                             .into(file_content_image);
-                else
+                } else {
+                    file_swipe_layout.setLockDrag(false);
                     Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
                             .resize(130, 130)
                             .placeholder(R.drawable.ic_app_logo_)
                             .into(file_content_image);
-            else
+                }
+            else {
+                file_swipe_layout.setLockDrag(true);
                 Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(file_content_image);
+            }
             if (rl_reveal.getVisibility() == View.VISIBLE)
                 unreveal(rl_reveal);
             if (contentItem.isDownloaded()) {
                 rl_download.setVisibility(View.GONE);
                 rl_download.setOnClickListener(null);
                 rl_play_content.setVisibility(View.VISIBLE);
+                file_content_desc.setText(contentItem.getNodetitle());
                 if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
                     file_item_lottieview.setAnimation("gaming_pad.json");
                 else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
@@ -309,10 +334,18 @@ public class ContentAdapter extends RecyclerView.Adapter {
                         contentClick.openContent(pos, contentItem);
                     }
                 });
+                delete_layout.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        file_swipe_layout.close(true);
+                        contentClick.deleteContent(pos, contentItem);
+                    }
+                });
             } else {
                 rl_play_content.setVisibility(View.GONE);
                 rl_reveal.setVisibility(View.INVISIBLE);
                 rl_download.setVisibility(View.VISIBLE);
+                txt_resource_title.setText(contentItem.getNodetitle());
                 Drawable background = rl_download.getBackground();
                 if (background instanceof GradientDrawable) {
                     int color = PD_Utility.getRandomColorGradient();

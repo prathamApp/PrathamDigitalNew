@@ -379,6 +379,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
+                                share_title.setTextColor(Color.BLACK);
                                 share_title.setText("Share Contents");
                                 hideViewsandShowFolders();
                                 sharePresenter.showFolders(null);
@@ -478,7 +479,14 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     @Override
     public void fileItemClicked(Modal_ContentDetail detail, int position) {
-        sharePresenter.showFolders(detail);
+        if (detail.getNodeid().equalsIgnoreCase(PD_Constant.SHARE_PROFILE)) {
+            sharePresenter.sendProfiles();
+            showSendingDialog();
+        } else if (detail.getNodeid().equalsIgnoreCase(PD_Constant.SHARE_USAGE)) {
+            sharePresenter.sendUsages();
+            showSendingDialog();
+        } else
+            sharePresenter.showFolders(detail);
     }
 
     @Override
@@ -585,15 +593,14 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_PROGRESS)) {
-                if (!filesSent.isEmpty()) {
-                    File_Model model = filesSent.get(message.getDownloadId());
-                    if (model != null) {
+//                if (!filesSent.isEmpty()) {
+//                    File_Model model = filesSent.get(message.getDownloadId());
+//                    if (model != null) {
 //                        model.setProgress((int) message.getProgress());
 //                        fileListAdapter.notifyItemChanged(filesSentPosition.get(message.getDownloadId()), model);
-                        dialog_tv.setText(message.getFile_name());
-                        dialog_progressLayout.setCurProgress((int) message.getProgress());
-                    }
-                }
+                dialog_tv.setText(message.getFile_name());
+                dialog_progressLayout.setCurProgress((int) message.getProgress());
+//                    }
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_COMPLETE)) {
                 sharePresenter.startTimer();
                 if (sending_builder != null)
@@ -606,7 +613,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        share_title.setText("Files Receiving");
+                        share_title.setTextColor(Color.WHITE);
+                        share_title.setText("Receiving...");
                         hideViewsandShowFolders();
                         Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
                     }

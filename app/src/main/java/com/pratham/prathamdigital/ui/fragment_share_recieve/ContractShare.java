@@ -44,5 +44,9 @@ public interface ContractShare {
         void setView(FragmentShareRecieve fragmentShareRecieve);
 
         void startTimer();
+
+        void sendProfiles();
+
+        void sendUsages();
     }
 }

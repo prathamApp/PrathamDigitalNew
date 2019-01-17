@@ -26,6 +26,9 @@ public interface AttendanceDao {
     @Query("SELECT * FROM Attendance WHERE sentFlag=0 AND SessionID=:s_id")
     public List<Attendance> getNewAttendances(String s_id);
 
+    @Query("SELECT * FROM Attendance WHERE sentFlag=0")
+    public List<Attendance> getNewAttendances();
+
     @Query("UPDATE Attendance SET sentFlag=:pushStatus")
     void updateAllSentFlag(int pushStatus);
 

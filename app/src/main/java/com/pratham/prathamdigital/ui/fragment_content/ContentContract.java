@@ -31,6 +31,8 @@ public interface ContentContract {
         void onDownloadError(EventMessage message);
 
         void dismissDialog();
+
+        void contentDeleted(Modal_ContentDetail detail);
     }
 
     interface contentPresenter {
@@ -71,6 +73,10 @@ public interface ContentContract {
         void parseSD_UriandPath(Intent data);
 
         void getContent();
+
+        void viewDestroyed();
+
+        void deleteContent(Modal_ContentDetail contentItem);
     }
 
     interface contentClick {
@@ -79,6 +85,8 @@ public interface ContentContract {
         void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view);
 
         void openContent(int position, Modal_ContentDetail contentDetail);
+
+        void deleteContent(int pos, Modal_ContentDetail contentItem);
     }
 
     interface mainView {

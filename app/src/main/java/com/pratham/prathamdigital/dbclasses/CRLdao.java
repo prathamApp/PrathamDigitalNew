@@ -20,10 +20,10 @@ public interface CRLdao {
     @Query("SELECT * FROM CRL WHERE UserName=:user AND Password=:pass")
     public Modal_Crl checkUserValidation(String user, String pass);
 
-/*    @Query("SELECT * FROM KOLIBRI_CRL")
+    @Query("SELECT * FROM CRL")
     public List<Modal_Crl> getAllCRLs();
 
-    @Query("SELECT count(*) FROM KOLIBRI_CRL")
+   /*  @Query("SELECT count(*) FROM KOLIBRI_CRL")
     public int getCRLsCount();
 
     @Query("SELECT RoleId FROM KOLIBRI_CRL where CRLId=:id")

@@ -3,7 +3,6 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.WifiConfiguration;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,17 +12,28 @@ import com.google.gson.JsonArray;
 import com.isupatches.wisefy.callbacks.AddNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.ConnectToNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.GetSavedNetworkCallbacks;
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.CopyExistingJSONS;
 import com.pratham.prathamdigital.async.FTPContentUploadTask;
 import com.pratham.prathamdigital.async.FTPSingleFileUploadTask;
 import com.pratham.prathamdigital.async.GetDownloadedContent;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.ConnectToFTP;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.interfaces.FTPConnected;
+import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_Crl;
+import com.pratham.prathamdigital.models.Modal_Groups;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
+import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Modal_Session;
+import com.pratham.prathamdigital.models.Modal_Status;
+import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.services.MessageReveiver;
 import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
@@ -41,6 +51,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -178,7 +189,39 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             model.setDetail(detail);
             downloads.add(model);
         }
+        if (PrathamApplication.isTablet)
+            downloads.addAll(addProfileAndUsage());
         shareView.showFilesList(downloads, parentId);
+    }
+
+    public ArrayList<File_Model> addProfileAndUsage() {
+        ArrayList<File_Model> downloads = new ArrayList<>();
+        //Add Profile Item
+        Modal_ContentDetail profile_detail = new Modal_ContentDetail();
+        profile_detail.setNodeid(PD_Constant.SHARE_PROFILE);
+        profile_detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        profile_detail.setOnSDCard(false);
+        profile_detail.setNodeimage("");
+        profile_detail.setContentType(PD_Constant.FOLDER);
+        profile_detail.setNodetitle("Share Profiles");
+        File_Model model = new File_Model();
+        model.setProgress(0);
+        model.setDetail(profile_detail);
+        downloads.add(model);
+
+        //Add Usage Item
+        Modal_ContentDetail usage_detail = new Modal_ContentDetail();
+        usage_detail.setNodeid(PD_Constant.SHARE_USAGE);
+        usage_detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        usage_detail.setOnSDCard(false);
+        usage_detail.setNodeimage("");
+        usage_detail.setContentType(PD_Constant.FOLDER);
+        usage_detail.setNodetitle("Share Tab Usage");
+        File_Model model2 = new File_Model();
+        model2.setProgress(0);
+        model2.setDetail(usage_detail);
+        downloads.add(model2);
+        return downloads;
     }
 
     @Override
@@ -252,11 +295,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                     FTPContentUploadTask contentTask = new FTPContentUploadTask(context, ftpClient, dirPath,
                             detail.getResourcetype(), detail.getNodeid());
                     contentTask.execute();
-////                    for content Image Transfer
+//                    for content Image Transfer
                     imgDirPath += "/PrathamImages/" + detail.getNodeimage();
                     FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient, imgDirPath, true);
                     imgtask.execute();
-////                    for file Json Transfer
+//                    for file Json Transfer
                     FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, contentJson.getAbsolutePath(), false);
                     jsontask.execute();
                 }
@@ -273,7 +316,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             temp.add(detail);
             Gson gson = new GsonBuilder().create();
             JsonArray array = gson.toJsonTree(temp).getAsJsonArray();
-            File file = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/" + detail.getNodetitle() + ".json");
+            File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
+            if (!path.exists()) path.mkdir();
+            return createJsonFileOnInternal(array,
+                    path.getAbsolutePath() + "/" + detail.getNodetitle());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private File createJsonFileOnInternal(JsonArray array, String fileName) {
+        try {
+            File file = new File(fileName + ".json");
             FileWriter writer = new FileWriter(file.getAbsolutePath());
             writer.write(array.toString());
             writer.flush();
@@ -282,8 +337,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             return file;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
 
     @Override
@@ -324,7 +379,118 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             filesRecieving.put(pdf_name, modal);
             shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().endsWith(".json")) {
-            readRecievedFiles(filePath);
+            if (isProfile(filePath.getName())) {
+                modal.setGameName("Receiving Profiles");
+                modal.setGamePart(filePath.getName());
+                modal.setGameType(PD_Constant.PDF);
+                filesRecieving.put("Receiving Profiles", modal);
+                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+            } else if (isUsages(filePath.getName())) {
+                modal.setGameName("Receiving Usages");
+                modal.setGamePart(filePath.getName());
+                modal.setGameType(PD_Constant.PDF);
+                filesRecieving.put("Receiving Usages", modal);
+                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+            } else
+                readRecievedFiles(filePath);
+        }
+    }
+
+    private boolean isUsages(String name) {
+        switch (name) {
+            case "sessions.json":
+                return true;
+            case "logs.json":
+                return true;
+            case "attendance.json":
+                return true;
+            case "status.json":
+                return true;
+            case "scores.json":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    private boolean isProfile(String name) {
+        switch (name) {
+            case "villages.json":
+                return true;
+            case "groups.json":
+                return true;
+            case "crls.json":
+                return true;
+            case "students.json":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Background
+    @Override
+    public void sendProfiles() {
+        try {
+            Gson gson = new GsonBuilder().create();
+            File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
+            if (!path.exists()) path.mkdir();
+            //create village JSON file
+            List<Modal_Village> villages = BaseActivity.villageDao.getAllVillages();
+            JsonArray vill_array = gson.toJsonTree(villages).getAsJsonArray();
+            createJsonFileOnInternal(vill_array, path.getAbsolutePath() + "/villages");
+            //create crl JSON file
+            List<Modal_Crl> crLs = BaseActivity.crLdao.getAllCRLs();
+            JsonArray crl_array = gson.toJsonTree(crLs).getAsJsonArray();
+            createJsonFileOnInternal(crl_array, path.getAbsolutePath() + "/crls");
+            //create groups JSON file
+            List<Modal_Groups> groups = BaseActivity.groupDao.getAllGroups();
+            JsonArray grp_array = gson.toJsonTree(groups).getAsJsonArray();
+            createJsonFileOnInternal(grp_array, path.getAbsolutePath() + "/groups");
+            //create students JSON file
+            List<Modal_Student> students = BaseActivity.studentDao.getAllStudents();
+            JsonArray stu_array = gson.toJsonTree(students).getAsJsonArray();
+            createJsonFileOnInternal(stu_array, path.getAbsolutePath() + "/students");
+//            for file Json Transfer
+            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false);
+            jsontask.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Background
+    @Override
+    public void sendUsages() {
+        try {
+            Gson gson = new GsonBuilder().create();
+            File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
+            if (!path.exists()) path.mkdir();
+            //create session JSON file
+            List<Modal_Session> newSessions = BaseActivity.sessionDao.getAllNewSessions();
+            JsonArray session_array = gson.toJsonTree(newSessions).getAsJsonArray();
+            createJsonFileOnInternal(session_array, path.getAbsolutePath() + "/sessions");
+            //create logs JSON file
+            List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs();
+            JsonArray log_array = gson.toJsonTree(allLogs).getAsJsonArray();
+            createJsonFileOnInternal(log_array, path.getAbsolutePath() + "/logs");
+            //create attendance JSON file
+            List<Attendance> attendance = BaseActivity.attendanceDao.getNewAttendances();
+            JsonArray att_array = gson.toJsonTree(attendance).getAsJsonArray();
+            createJsonFileOnInternal(att_array, path.getAbsolutePath() + "/attendance");
+            //create score JSON file
+            List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores();
+            JsonArray score_array = gson.toJsonTree(newScores).getAsJsonArray();
+            createJsonFileOnInternal(score_array, path.getAbsolutePath() + "/scores");
+            //create status JSON file
+            List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
+            JsonArray meta_array = gson.toJsonTree(metadata).getAsJsonArray();
+            createJsonFileOnInternal(meta_array, path.getAbsolutePath() + "/status");
+            // for file Json Transfer
+            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false);
+            jsontask.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

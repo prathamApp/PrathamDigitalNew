@@ -19,4 +19,7 @@ public interface LogDao {
 
     @Query("select * from Logs where sentFlag=0 AND sessionId=:s_id")
     public List<Modal_Log> getAllLogs(String s_id);
+
+    @Query("select * from Logs where sentFlag=0")
+    public List<Modal_Log> getAllLogs();
 }

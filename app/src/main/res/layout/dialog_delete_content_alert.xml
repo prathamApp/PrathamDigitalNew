@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="@dimen/_200sdp">
+
+        <android.support.design.card.MaterialCardView
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_80sdp"
+            android:layout_centerHorizontal="true"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/_40sdp"
+            app:cardElevation="@dimen/_5sdp">
+
+            <ImageView
+                android:id="@+id/a1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/_12sdp"
+                app:srcCompat="@drawable/ic_alarm" />
+        </android.support.design.card.MaterialCardView>
+
+        <android.support.design.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/_40sdp"
+            app:cardBackgroundColor="@color/yellow_sand"
+            app:cardCornerRadius="@dimen/_5sdp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:weightSum="1">
+
+                <RelativeLayout
+                    android:id="@+id/rl_delete_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5"
+                    android:background="@color/dark_blue">
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/txt_yes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="Yes"
+                        android:textColor="@color/yellow_sand"
+                        android:textSize="@dimen/_45sdp" />
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txt_yes"
+                        android:gravity="center"
+                        android:text="Delete the content for me!!"
+                        android:textColor="@color/yellow_sand"
+                        android:textSize="@dimen/_15sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/rl_stop_delete_content"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight=".5">
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/txt_no"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="No"
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/_45sdp" />
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txt_no"
+                        android:gravity="center"
+                        android:text="Stop!! Don't delete the content."
+                        android:textColor="@color/dark_blue"
+                        android:textSize="@dimen/_15sdp" />
+                </RelativeLayout>
+            </LinearLayout>
+        </android.support.design.card.MaterialCardView>
+    </RelativeLayout>
+</RelativeLayout>

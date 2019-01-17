@@ -159,62 +159,19 @@
         <item name="android:windowEnterAnimation">@anim/enter_bottom</item>
         <item name="android:windowExitAnimation">@anim/exit_bottom</item>
     </style>
-    <!--<style name="button" parent="@android:style/Widget.Button">-->
-    <!--<item name="com.firsteat.firsteat:font">fonts/Lato_Regular.ttf</item>-->
-    <!--</style>-->
 
-    <!--<style name="MyCustomTabTextAppearance" parent="TextAppearance.Design.Tab">-->
-    <!--<item name="android:textSize">14sp</item>-->
-    <!--<item name="textAllCaps">true</item>-->
-    <!--</style>-->
-
-    <!--<style name="Custom" parent="android:Theme.DeviceDefault.Dialog">-->
-    <!--<item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>-->
-    <!--<item name="DialogTitleText">Please Wait</item>-->
-    <!--<item name="DialogSpotColor">@color/ghost_white</item>-->
-    <!--<item name="DialogSpotCount">6</item>-->
-    <!--</style>-->
-
-    <!--<style name="OrderDialogAnimation">-->
-    <!--<item name="android:windowEnterAnimation">@anim/enter_from_right</item>-->
-    <!--<item name="android:windowExitAnimation">@anim/exit_to_right</item>-->
-    <!--</style>-->
-
-    <!--<style name="AddDialogAnimation">-->
-    <!--<item name="android:windowEnterAnimation">@anim/pop_in</item>-->
-    <!--<item name="android:windowExitAnimation">@anim/pop_out</item>-->
-    <!--</style>-->
-    <!-- Animation for dialog box -->
-    <!--<style name="OrderDialog" parent="@android:style/Theme.Dialog">-->
-    <!--<item name="android:windowBackground">@null</item>-->
-    <!--<item name="android:windowFrame">@null</item>-->
-    <!--<item name="android:windowIsFloating">false</item>-->
-    <!--<item name="android:windowContentOverlay">@null</item>-->
-    <!--<item name="android:backgroundDimEnabled">false</item>-->
-    <!--<item name="android:background">@android:color/transparent</item>-->
-    <!--<item name="android:windowNoTitle">true</item>-->
-    <!--<item name="android:windowAnimationStyle">@style/OrderDialogAnimation</item>-->
-    <!--</style>-->
-
-    <!--<style name="AddDialog" parent="@android:style/Theme.Dialog">-->
-    <!--<item name="android:windowBackground">@null</item>-->
-    <!--<item name="android:windowFrame">@null</item>-->
-    <!--<item name="android:windowIsFloating">false</item>-->
-    <!--<item name="android:windowContentOverlay">@null</item>-->
-    <!--<item name="android:backgroundDimEnabled">false</item>-->
-    <!--<item name="android:background">@android:color/transparent</item>-->
-    <!--<item name="android:windowNoTitle">true</item>-->
-    <!--<item name="android:windowAnimationStyle">@style/AddDialogAnimation</item>-->
-    <!--</style>-->
-    <!--Credit and debit card footer style-->
-    <!--<style name="FooterStyle">-->
-    <!--<item name="android:textColor">@android:color/white</item>-->
-    <!--<item name="android:background">@color/dark_blue</item>-->
-    <!--<item name="android:textSize">16sp</item>-->
-    <!--<item name="android:padding">15dp</item>-->
-    <!--<item name="android:gravity">center</item>-->
-    <!--<item name="android:layout_width">match_parent</item>-->
-    <!--<item name="android:layout_height">wrap_content</item>-->
-    <!--<item name="android:clickable">true</item>-->
-    <!--</style>-->
+    <declare-styleable name="SwipeRevealLayout">
+        <attr name="dragEdge">
+            <flag name="left" value="1" />
+            <flag name="right" value="2" />
+            <flag name="top" value="4" />
+            <flag name="bottom" value="8" />
+        </attr>
+        <attr name="mode">
+            <enum name="normal" value="0" />
+            <enum name="same_level" value="1" />
+        </attr>
+        <attr name="flingVelocity" format="integer" />
+        <attr name="minDistRequestDisallowParent" format="dimension" />
+    </declare-styleable>
 </resources>
