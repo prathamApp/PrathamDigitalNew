@@ -34,8 +34,13 @@ public class PrathamApplication extends Application {
     public static String FILE_PATH;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-
-    public static final boolean isTablet = true;  //Also check "todo" before build
+    /*Also
+     * Check Todo
+     * Check Catcho in BaseActivity
+     * Disable App Force Update if distributing offline in SplashPresenterImpl in method checkIfContentinSDCard()
+     * and enable if uploading to playstore
+     */
+    public static final boolean isTablet = true;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;
