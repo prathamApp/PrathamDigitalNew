@@ -46,6 +46,9 @@ public class WifiUtils {
                 @Override
                 public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
                     super.onStarted(reservation);
+                    Log.d("Wifi Hotspot is on", "now reservation is::" + reservation.toString());
+                    Message msg = handler.obtainMessage(PD_Constant.ApCreateApSuccess);
+                    handler.sendMessage(msg);
                 }
 
                 @Override
@@ -60,26 +63,26 @@ public class WifiUtils {
             }, new Handler());
         } else {
             startAp(ssid, passwd);
-        }
-        TimerCheck timerCheck = new TimerCheck() {
-            @Override
-            public void doTimerCheckWork() {
-                if (isWifiApEnabled()) {
-                    // LogUtils.v(TAG, "WifiAp enabled success!");
-                    Message msg = handler.obtainMessage(PD_Constant.ApCreateApSuccess);
-                    handler.sendMessage(msg);
-                    this.exit();
-                } else {
-                    // LogUtils.v(TAG, "WifiAp enabled failed!");
+            TimerCheck timerCheck = new TimerCheck() {
+                @Override
+                public void doTimerCheckWork() {
+                    if (isWifiApEnabled()) {
+                        // LogUtils.v(TAG, "WifiAp enabled success!");
+                        Message msg = handler.obtainMessage(PD_Constant.ApCreateApSuccess);
+                        handler.sendMessage(msg);
+                        this.exit();
+                    } else {
+                        // LogUtils.v(TAG, "WifiAp enabled failed!");
+                    }
                 }
-            }
 
-            @Override
-            public void doTimeOutWork() {
-                this.exit();
-            }
-        };
-        timerCheck.start(12, 1000);
+                @Override
+                public void doTimeOutWork() {
+                    this.exit();
+                }
+            };
+            timerCheck.start(12, 1000);
+        }
     }
 
     private static void startAp(String ssid, String passwd) {

@@ -39,6 +39,7 @@ import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
 import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -268,7 +269,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void sendFiles(Modal_ContentDetail detail) {
         if (ftpClient != null) {
-            ftpTimer.cancel();
+            if (ftpTimer != null)
+                ftpTimer.cancel();
             String dirPath = "";
             String imgDirPath = "";
             if (detail.isOnSDCard()) {
@@ -295,7 +297,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                     FTPContentUploadTask contentTask = new FTPContentUploadTask(context, ftpClient, dirPath,
                             detail.getResourcetype(), detail.getNodeid());
                     contentTask.execute();
-//                    for content Image Transfer
+//                    for content thumbnail Image Transfer
                     imgDirPath += "/PrathamImages/" + detail.getNodeimage();
                     FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient, imgDirPath, true);
                     imgtask.execute();
@@ -358,6 +360,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameName(game_name);
             modal.setGamePart(game_parts);
             modal.setGameType(PD_Constant.GAME);
+            modal.setReceived(false);
             filesRecieving.put(game_name, modal);
             shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamVideo")) {
@@ -367,6 +370,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameName(vid_name);
             modal.setGamePart(vid_parts);
             modal.setGameType(PD_Constant.VIDEO);
+            modal.setReceived(false);
             filesRecieving.put(vid_name, modal);
             shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamPDF")) {
@@ -376,55 +380,26 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameName(pdf_name);
             modal.setGamePart(pdf_parts);
             modal.setGameType(PD_Constant.PDF);
+            modal.setReceived(false);
             filesRecieving.put(pdf_name, modal);
             shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().endsWith(".json")) {
-            if (isProfile(filePath.getName())) {
+            if (PD_Utility.isProfile(filePath.getName())) {
                 modal.setGameName("Receiving Profiles");
                 modal.setGamePart(filePath.getName());
                 modal.setGameType(PD_Constant.PDF);
+                modal.setReceived(false);
                 filesRecieving.put("Receiving Profiles", modal);
                 shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
-            } else if (isUsages(filePath.getName())) {
+            } else if (PD_Utility.isUsages(filePath.getName())) {
                 modal.setGameName("Receiving Usages");
                 modal.setGamePart(filePath.getName());
                 modal.setGameType(PD_Constant.PDF);
+                modal.setReceived(false);
                 filesRecieving.put("Receiving Usages", modal);
                 shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
-            } else
-                readRecievedFiles(filePath);
-        }
-    }
-
-    private boolean isUsages(String name) {
-        switch (name) {
-            case "sessions.json":
-                return true;
-            case "logs.json":
-                return true;
-            case "attendance.json":
-                return true;
-            case "status.json":
-                return true;
-            case "scores.json":
-                return true;
-            default:
-                return false;
-        }
-    }
-
-    private boolean isProfile(String name) {
-        switch (name) {
-            case "villages.json":
-                return true;
-            case "groups.json":
-                return true;
-            case "crls.json":
-                return true;
-            case "students.json":
-                return true;
-            default:
-                return false;
+            }
+            readRecievedFiles(filePath);
         }
     }
 

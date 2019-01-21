@@ -330,8 +330,12 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 .bindClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        contentAdapter.notifyItemRemoved(pos);
+                        List<Modal_ContentDetail> data = new ArrayList<>();
+                        data.addAll(contentAdapter.getData());
+                        data.remove(pos);
+                        contentAdapter.submitList(data);
                         contentPresenter.deleteContent(contentItem);
+                        deleteDialog.dismiss();
                     }
                 }, R.id.rl_delete_content)
                 .bindClickListener(new View.OnClickListener() {
@@ -347,14 +351,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 .setTintColor(0x30000000)
                 .build();
         deleteDialog.show();
-    }
-
-    @UiThread
-    @Override
-    public void contentDeleted(Modal_ContentDetail detail) {
-        deleteDialog.dismiss();
-        PD_Utility.showDialog(getActivity());
-        contentPresenter.getContent(detail);
     }
 
     @UiThread

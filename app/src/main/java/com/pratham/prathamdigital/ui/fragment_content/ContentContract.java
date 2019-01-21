@@ -31,8 +31,6 @@ public interface ContentContract {
         void onDownloadError(EventMessage message);
 
         void dismissDialog();
-
-        void contentDeleted(Modal_ContentDetail detail);
     }
 
     interface contentPresenter {

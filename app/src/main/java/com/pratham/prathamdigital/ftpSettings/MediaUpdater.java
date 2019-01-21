@@ -35,15 +35,16 @@ public enum MediaUpdater {
         @Override
         public void onScanCompleted(String path, Uri uri) {
             Log.i(TAG, "Scan completed: " + path + " : " + uri);
-            EventBus.getDefault().post(new File(path));
+//            EventBus.getDefault().post(new File(path));
         }
     }
 
     public static void notifyFileCreated(String path) {
         Log.d(TAG, "Notifying others about new file: " + path);
         Context context = PrathamApplication.getInstance();
-        MediaScannerConnection.scanFile(context, new String[]{path}, null,
-                new ScanCompletedListener());
+        EventBus.getDefault().post(new File(path));
+//        MediaScannerConnection.scanFile(context, new String[]{path}, null,
+//                new ScanCompletedListener());
     }
 
     public static void notifyFileDeleted(String path) {
@@ -73,8 +74,8 @@ public enum MediaUpdater {
         } else {
             // on newer devices, we hope that this works correctly:
             Context context = PrathamApplication.getInstance();
-            MediaScannerConnection.scanFile(context, new String[]{path}, null,
-                    new ScanCompletedListener());
+//            MediaScannerConnection.scanFile(context, new String[]{path}, null,
+//                    new ScanCompletedListener());
         }
     }
 }

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -40,6 +41,10 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
 
     public void submitList(List<Modal_ReceivingFilesThroughFTP> data) {
         mDiffer.submitList(data);
+    }
+
+    public List<Modal_ReceivingFilesThroughFTP> getList() {
+        return mDiffer.getCurrentList();
     }
 
     public ReceivedFileListAdapter(Context context) {
@@ -82,6 +87,8 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
         TextView receive_content_title;
         @BindView(R.id.receive_lottie_view)
         LottieAnimationView receive_lottie_view;
+        @BindView(R.id.img_recieve_file)
+        ImageView img_recieve_file;
         Modal_ReceivingFilesThroughFTP files;
 
         public FileViewHolder(View itemView) {
@@ -93,24 +100,38 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
             this.files = files;
             switch (files.getGameType()) {
                 case PD_Constant.GAME:
-                    receive_lottie_view.setAnimation("gaming_pad.json");
+                    img_recieve_file.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_joystick));
+//                    receive_lottie_view.setAnimation("gaming_pad.json");
                     break;
                 case PD_Constant.VIDEO:
-                    receive_lottie_view.setAnimation("play_button.json");
+                    img_recieve_file.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_video));
+//                    receive_lottie_view.setAnimation("play_button.json");
                     break;
                 case PD_Constant.PDF:
-                    receive_lottie_view.setAnimation("book.json");
+                    img_recieve_file.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_book));
+//                    receive_lottie_view.setAnimation("book.json");
                     break;
                 case PD_Constant.APK:
-                    receive_lottie_view.setAnimation("gaming_pad.json");
+                    img_recieve_file.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_joystick));
+//                    receive_lottie_view.setAnimation("gaming_pad.json");
                     break;
             }
             receive_content_title.setText(files.getGameName());
             receive_content_parts.setText(files.getGamePart());
+            if (files.isReceived()) {
+                receive_lottie_view.setVisibility(View.VISIBLE);
+                receive_lottie_view.playAnimation();
+            } else
+                receive_lottie_view.setVisibility(View.GONE);
         }
 
         public void updateFileItem(Modal_ReceivingFilesThroughFTP files) {
             receive_content_parts.setText(files.getGamePart());
+            if (files.isReceived()) {
+                receive_lottie_view.setVisibility(View.VISIBLE);
+                receive_lottie_view.playAnimation();
+            } else
+                receive_lottie_view.setVisibility(View.GONE);
         }
     }
 }

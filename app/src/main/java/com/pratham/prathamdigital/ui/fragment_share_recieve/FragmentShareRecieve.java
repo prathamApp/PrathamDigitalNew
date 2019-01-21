@@ -83,6 +83,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 100;
+    private static final int CREATE_HOTSPOT = 11;
+    private static final int JOIN_HOTSPOT = 12;
     @ViewById(R.id.root_share)
     LinearLayout root_share;
     @ViewById(R.id.rl_share)
@@ -238,6 +240,10 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 //create Hotspot
                 animateHotspotCreation();
             }
+        } else if (requestCode == CREATE_HOTSPOT) {
+            createAP();
+        } else if (requestCode == JOIN_HOTSPOT) {
+            setRl_recieve();
         }
     }
 
@@ -262,7 +268,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                     } else {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                         intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                        startActivityForResult(intent, 1);
+                        startActivityForResult(intent, JOIN_HOTSPOT);
                     }
                 } else {
                     connectHotspotAndRecieve();
@@ -324,7 +330,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                startActivityForResult(intent, 1);
+                startActivityForResult(intent, CREATE_HOTSPOT);
             }
         } else {
             WifiUtils.startWifiAp(PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName(), PD_Constant.WIFI_AP_PASSWORD, mHandler);
@@ -603,8 +609,26 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 //                    }
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_COMPLETE)) {
                 sharePresenter.startTimer();
-                if (sending_builder != null)
-                    sending_builder.dismiss();
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (sending_builder != null)
+                            sending_builder.dismiss();
+                    }
+                }, 4000);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_RECEIVE_COMPLETE)) {
+                List<Modal_ReceivingFilesThroughFTP> list = receivedFileListAdapter.getList();
+                Modal_ReceivingFilesThroughFTP ftpItem = null;
+                int pos = 0;
+                for (int i = 0; i < list.size(); i++) {
+                    if (list.get(i).getGameName().contains(message.getFile_name())) {
+                        list.get(i).setReceived(true);
+                        ftpItem = list.get(i);
+                        pos = i;
+                    }
+                }
+                if (ftpItem != null)
+                    receivedFileListAdapter.notifyItemChanged(pos, ftpItem);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHARE_BACK)) {
                 sharePresenter.traverseFolderBackward();
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER)) {

@@ -366,10 +366,10 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void checkIfContentinSDCard() {
-        if (PrathamApplication.isTablet)
-            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
-        else
-            checkConnectivity();
+//        if (PrathamApplication.isTablet)
+        new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+//        else
+//            checkConnectivity();
     }
 
     @Override

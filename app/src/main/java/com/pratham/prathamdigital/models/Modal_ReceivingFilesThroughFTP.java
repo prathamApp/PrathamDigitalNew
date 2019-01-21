@@ -6,6 +6,15 @@ public class Modal_ReceivingFilesThroughFTP implements Comparable {
     String gameName;
     String gamePart;
     String gameType;
+    boolean isReceived = false;
+
+    public boolean isReceived() {
+        return isReceived;
+    }
+
+    public void setReceived(boolean received) {
+        isReceived = received;
+    }
 
     public String getGameType() {
         return gameType;

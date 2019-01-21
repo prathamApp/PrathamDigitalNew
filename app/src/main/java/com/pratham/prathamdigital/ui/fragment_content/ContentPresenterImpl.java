@@ -608,7 +608,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void deleteContent(Modal_ContentDetail contentItem) {
         checkAndDeleteParent(contentItem);
-        contentView.contentDeleted(levelContents.get(levelContents.size() - 1));
         if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
             String foldername = contentItem.getResourcepath().split("/")[0];
             PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath + "/PrathamGame/" + foldername));

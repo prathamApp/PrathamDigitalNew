@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.elastic_view.ElasticView;
 import com.pratham.prathamdigital.custom.swipe_reveal_layout.SwipeRevealLayout;
 import com.pratham.prathamdigital.custom.swipe_reveal_layout.ViewBinderHelper;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -145,6 +146,10 @@ public class ContentAdapter extends RecyclerView.Adapter {
     @Override
     public int getItemCount() {
         return mDiffer.getCurrentList().size();
+    }
+
+    public List<Modal_ContentDetail> getData() {
+        return mDiffer.getCurrentList();
     }
 
     public void reveal(View view) {
@@ -286,6 +291,9 @@ public class ContentAdapter extends RecyclerView.Adapter {
         @Nullable
         @BindView(R.id.file_swipe_layout)
         SwipeRevealLayout file_swipe_layout;
+        @Nullable
+        @BindView(R.id.content_card_file)
+        ElasticView content_card_file;
         Modal_ContentDetail contentItem;
         ContentContract.contentClick contentClick;
 
@@ -305,7 +313,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                             .placeholder(R.drawable.ic_app_logo_)
                             .into(file_content_image);
                 } else {
-                    file_swipe_layout.setLockDrag(false);
+                    file_swipe_layout.setLockDrag(true);
                     Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
                             .resize(130, 130)
                             .placeholder(R.drawable.ic_app_logo_)
@@ -328,7 +336,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     file_item_lottieview.setAnimation("play_button.json");
                 else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
                     file_item_lottieview.setAnimation("book.json");
-                itemView.setOnClickListener(new View.OnClickListener() {
+                content_card_file.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         contentClick.openContent(pos, contentItem);
@@ -358,7 +366,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
                         contentClick.onDownloadClicked(pos, contentItem, rl_reveal);
                     }
                 });
-                itemView.setOnClickListener(null);
+                content_card_file.setOnClickListener(null);
             }
         }
     }

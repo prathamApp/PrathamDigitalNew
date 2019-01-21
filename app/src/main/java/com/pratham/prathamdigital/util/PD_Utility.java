@@ -1967,4 +1967,36 @@ public class PD_Utility {
                 deleteRecursive(child);
         fileOrDirectory.delete();
     }
+
+    public static boolean isUsages(String name) {
+        switch (name) {
+            case "sessions.json":
+                return true;
+            case "logs.json":
+                return true;
+            case "attendance.json":
+                return true;
+            case "status.json":
+                return true;
+            case "scores.json":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    public static boolean isProfile(String name) {
+        switch (name) {
+            case "villages.json":
+                return true;
+            case "groups.json":
+                return true;
+            case "crls.json":
+                return true;
+            case "students.json":
+                return true;
+            default:
+                return false;
+        }
+    }
 }

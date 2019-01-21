@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.dbclasses;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
+import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.database.Cursor;
 
@@ -13,11 +14,11 @@ import java.util.List;
 @Dao
 public interface SessionDao {
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Modal_Session session);
 
-    @Insert
-    long[] insertAll(Modal_Session... sessions);
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertAll(List<Modal_Session> sessions);
 
     @Query("UPDATE Session SET sentFlag = 1 where SessionID = :s_id")
     int updateFlag(String s_id);
