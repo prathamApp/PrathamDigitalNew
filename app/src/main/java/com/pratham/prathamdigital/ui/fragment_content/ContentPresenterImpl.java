@@ -35,7 +35,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -180,12 +182,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-                String url = contentDetail.getNodekeywords();
-                String fileName = contentDetail.getNodekeywords().substring(
-                        contentDetail.getNodekeywords().lastIndexOf('/') + 1);
-                String foldername = contentDetail.getResourcetype();
-                zipDownloader.initialize(ContentPresenterImpl.this
-                        , url, foldername, fileName, contentDetail, levelContents);
+                try {
+                    String url = contentDetail.getNodekeywords();
+                    String filename = URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8")
+                            .substring(URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8").lastIndexOf('/') + 1);
+                    String foldername = contentDetail.getResourcetype();
+                    zipDownloader.initialize(ContentPresenterImpl.this
+                            , url, foldername, filename, contentDetail, levelContents);
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             } else {
                 new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
                         PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);

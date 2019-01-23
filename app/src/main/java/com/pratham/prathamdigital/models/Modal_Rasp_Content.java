@@ -295,7 +295,7 @@ public class Modal_Rasp_Content {
                     //fileNameWithoutExtn
                     filename = filename.substring(0, filename.lastIndexOf("."));
                     if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Game")) {
-                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + /*URLDecoder.decode(*/filesItem.getDownloadUrl()/*, "UTF-8")*/);
                         modal_contentDetail.setResourcepath(filename + "/index.html");
                     } else if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Video")) {
                         modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());

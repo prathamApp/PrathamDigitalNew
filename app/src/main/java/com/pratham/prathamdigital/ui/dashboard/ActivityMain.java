@@ -56,7 +56,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.io.File;
 
 @EActivity(R.layout.main_activity)
-public class ActivityMain extends BaseActivity implements ContentContract.mainView {
+public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     @ViewById(R.id.download_notification)
@@ -94,6 +94,21 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 bundle, FragmentContent_.class.getSimpleName());
         showIntro();
     }
+/*
+    private void initializeMenu() {
+        ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
+        String[] menus = getResources().getStringArray(R.array.navigation_menu);
+        for (String menu : menus) {
+            Modal_NavigationMenu nav = new Modal_NavigationMenu();
+            nav.setMenu_name(menu);
+            nav.setIsselected(false);
+            navigationMenus.add(nav);
+        }
+        menuAdapter = new RV_MenuAdapter(this, navigationMenus, this);
+        rv_drawer.setHasFixedSize(true);
+        rv_drawer.setLayoutManager(new WrapContentLinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rv_drawer.setAdapter(menuAdapter);
+    }*/
 
     @Click(R.id.download_badge)
     public void showDownloadList() {
@@ -416,4 +431,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         .startSequence();
         }
     };
+
+    @Override
+    public void menuClicked(int position) {
+
+    }
 }
