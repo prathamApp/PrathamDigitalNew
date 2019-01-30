@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.net.wifi.WifiConfiguration;
+import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -77,16 +78,21 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     @Background
     @Override
-    public void connectToWify(String ssid) {
+    public void connectToWify(String ssid, String wifipass) {
         PrathamApplication.wiseF.getSavedNetwork(ssid, new GetSavedNetworkCallbacks() {
             @Override
             public void savedNetworkNotFound() {
-                addNetwork(ssid);
+                addNetwork(ssid, wifipass);
             }
 
             @Override
             public void retrievedSavedNetwork(@NotNull WifiConfiguration wifiConfiguration) {
-                connectToNetwork(ssid);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectToNetwork(wifiConfiguration.SSID);
+                    }
+                }, 1500);
             }
 
             @Override
@@ -96,16 +102,50 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         });
     }
 
-    private void addNetwork(String ssid) {
-        PrathamApplication.wiseF.addWPA2Network(ssid, PD_Constant.WIFI_AP_PASSWORD, new AddNetworkCallbacks() {
+    private void addNetwork(String ssid, String wifipass) {
+        if (wifipass.isEmpty())
+            PrathamApplication.wiseF.addOpenNetwork(ssid, addNetworkCallbacks);
+        else
+            PrathamApplication.wiseF.addWPA2Network(ssid, wifipass, addNetworkCallbacks);
+    }
+
+    AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
+        @Override
+        public void failureAddingNetwork(int i) {
+            Log.d(TAG, "failureAddingNetwork: ");
+        }
+
+        @Override
+        public void networkAdded(int i, @NotNull WifiConfiguration wifiConfiguration) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    connectToNetwork(wifiConfiguration.SSID);
+                }
+            }, 1500);
+        }
+
+        @Override
+        public void wisefyFailure(int i) {
+            Log.d(TAG, "wisefyFailure: ");
+        }
+    };
+
+    public void connectToNetwork(String ssid) {
+        PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
-            public void failureAddingNetwork(int i) {
-                Log.d(TAG, "failureAddingNetwork: ");
+            public void connectedToNetwork() {
+                shareView.onWifiConnected(ssid);
             }
 
             @Override
-            public void networkAdded(int i, @NotNull WifiConfiguration wifiConfiguration) {
-                connectToNetwork(ssid);
+            public void failureConnectingToNetwork() {
+                Log.d(TAG, "failureConnectingToNetwork: ");
+            }
+
+            @Override
+            public void networkNotFoundToConnectTo() {
+                Log.d(TAG, "networkNotFoundToConnectTo: ");
             }
 
             @Override
@@ -115,7 +155,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         });
     }
 
-    private void connectToNetwork(String ssid) {
+    @Override
+    public void connectToAddedSSID(String ssid) {
         PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
@@ -154,7 +195,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         if (levels.isEmpty()) {
             shareView.disconnectFTP();
         } else {
-            new GetDownloadedContent(SharePresenter.this, levels.get(levels.size() - 1).getNodeid()).execute();
+            new GetDownloadedContent(SharePresenter.this, levels.get(levels.size() - 1).getParentid()).execute();
             levels.remove(levels.size() - 1);
         }
     }

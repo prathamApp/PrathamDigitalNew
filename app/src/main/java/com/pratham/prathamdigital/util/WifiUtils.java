@@ -47,6 +47,8 @@ public class WifiUtils {
                 public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
                     super.onStarted(reservation);
                     Log.d("Wifi Hotspot is on", "now reservation is::" + reservation.toString());
+                    PD_Constant.HOTSPOT_SSID = reservation.getWifiConfiguration().SSID;
+                    PD_Constant.HOTSPOT_PASSWORD = reservation.getWifiConfiguration().preSharedKey;
                     Message msg = handler.obtainMessage(PD_Constant.ApCreateApSuccess);
                     handler.sendMessage(msg);
                 }
@@ -92,19 +94,21 @@ public class WifiUtils {
             WifiConfiguration netConfig = new WifiConfiguration();
 
             netConfig.SSID = ssid;
-            netConfig.preSharedKey = passwd;
+//            netConfig.preSharedKey = passwd;
 
-            netConfig.allowedKeyManagement.set(4);
-            netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-            netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-            netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-//            netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-            netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-            netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-            netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-            netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+//            netConfig.allowedKeyManagement.set(4);
+//            netConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+//            netConfig.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+//            netConfig.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+            netConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+//            netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+//            netConfig.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+//            netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+//            netConfig.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
 
             method1.invoke(mWifiManager, netConfig, true);
+            PD_Constant.HOTSPOT_SSID = ssid;
+            PD_Constant.HOTSPOT_PASSWORD = "";
 
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

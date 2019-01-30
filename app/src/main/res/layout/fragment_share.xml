@@ -134,6 +134,73 @@
                 android:clickable="false" />
         </RelativeLayout>
 
+        <LinearLayout
+            android:id="@+id/rl_hotspot_qr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            android:weightSum="1">
+
+            <ImageView
+                android:id="@+id/img_hotspot_qr"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:paddingLeft="@dimen/_10sdp"
+                android:paddingTop="@dimen/_40sdp"
+                android:paddingRight="@dimen/_10sdp"
+                android:paddingBottom="@dimen/_40sdp"
+                android:scaleType="fitXY"
+                app:srcCompat="@drawable/ic_qrcode_white" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_scan_qr_"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight=".5"
+                android:gravity="center"
+                android:text="Scan the QR to connect to hotspot"
+                android:textColor="@color/green"
+                android:textSize="@dimen/_25sdp" />
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_scan_qr"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <FrameLayout
+                android:id="@+id/qr_frame"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:id="@+id/connecting_progress"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/black_20"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true" />
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:text="Connecting..."
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/_15sdp" />
+            </LinearLayout>
+        </RelativeLayout>
+
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/share_title"
             android:layout_width="wrap_content"

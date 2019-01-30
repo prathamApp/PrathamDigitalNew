@@ -426,8 +426,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 SpotlightSequence.getInstance(ActivityMain.this, null)
                         .addSpotlight(sheet_home, "DISPLAY CONTENT", "Click here to view contents", "sheet_home")
                         .addSpotlight(sheet_language, "CHANGE LANGUAGE", "Click here to change Language", "sheet_language")
-                        .addSpotlight(sheet_connect, "CONNECT WIFI", "Click here to connect wifi", "sheet_connect")
-                        .addSpotlight(sheet_connect, "CONNECT WIFI", "Click here to connect wifi", "sheet_connect")
+                        .addSpotlight(sheet_connect, "CONNECT FTP_HOTSPOT_SSID", "Click here to connect wifi", "sheet_connect")
+                        .addSpotlight(sheet_connect, "CONNECT FTP_HOTSPOT_SSID", "Click here to connect wifi", "sheet_connect")
                         .startSequence();
         }
     };

@@ -33,7 +33,7 @@ public interface ContractShare {
 
         void traverseFolderBackward();
 
-        void connectToWify(String ssid);
+        void connectToWify(String ssid, String wifipass);
 
         void sendFiles(Modal_ContentDetail detail);
 
@@ -48,5 +48,7 @@ public interface ContractShare {
         void sendProfiles();
 
         void sendUsages();
+
+        void connectToAddedSSID(String ssid);
     }
 }

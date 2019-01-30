@@ -3,6 +3,8 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -25,11 +27,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.MultiFormatWriter;
+import com.google.zxing.Result;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -51,8 +59,10 @@ import com.pratham.prathamdigital.socket.udp.IPMSGConst;
 import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
 import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
+import com.pratham.prathamdigital.util.ConnectionUtils;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.FragmentManagePermission;
+import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.PermissionUtils;
@@ -66,6 +76,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -75,11 +87,15 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
+import static android.graphics.Color.BLACK;
+import static android.graphics.Color.WHITE;
 import static com.pratham.prathamdigital.util.PD_Utility.getPhoneModel;
 
 @EFragment(R.layout.fragment_share)
 public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView,
-        UDPMessageListener.OnNewMsgListener, CircularRevelLayout.CallBacks {
+        UDPMessageListener.OnNewMsgListener, CircularRevelLayout.CallBacks, ZXingScannerView.ResultHandler {
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 100;
@@ -113,6 +129,18 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     CircularRevelLayout circular_share_reveal;
     @ViewById(R.id.share_title)
     TextView share_title;
+    @ViewById(R.id.rl_hotspot_qr)
+    LinearLayout rl_hotspot_qr;
+    @ViewById(R.id.img_hotspot_qr)
+    ImageView img_hotspot_qr;
+    @ViewById(R.id.txt_scan_qr_)
+    TextView txt_scan_qr_;
+    @ViewById(R.id.connecting_progress)
+    LinearLayout connecting_progress;
+    @ViewById(R.id.qr_frame)
+    ViewGroup qr_frame;
+    @ViewById(R.id.rl_scan_qr)
+    RelativeLayout rl_scan_qr;
     TextView dialog_tv;
     ProgressLayout dialog_progressLayout;
 
@@ -133,6 +161,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private int revealY;
     BlurPopupWindow sd_builder;
     BlurPopupWindow sending_builder;
+    public ZXingScannerView startCameraScan;
 
     @AfterViews
     public void initialize() {
@@ -150,6 +179,33 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 }
             });
         }
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (startCameraScan != null)
+            startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (startCameraScan != null)
+            startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (startCameraScan != null)
+            startCameraScan.stopCamera();
+    }
+
+    @Override
+    public void onDestroy() {
+        if (startCameraScan != null) startCameraScan.stopCamera();
+        super.onDestroy();
     }
 
     @Override
@@ -264,14 +320,16 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 rl_recieve.setClickable(false);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (Settings.System.canWrite(getActivity())) {
-                        connectHotspotAndRecieve();
+//                        connectHotspotAndRecieve();
+                        initCamera();
                     } else {
                         Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                         intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                         startActivityForResult(intent, JOIN_HOTSPOT);
                     }
                 } else {
-                    connectHotspotAndRecieve();
+                    initCamera();
+//                    connectHotspotAndRecieve();
                 }
             } else {
                 new LocationService(getActivity()).checkLocation();
@@ -326,14 +384,16 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             PrathamApplication.wiseF.disableWifi();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (Settings.System.canWrite(getActivity())) {
-                WifiUtils.startWifiAp(PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName(), PD_Constant.WIFI_AP_PASSWORD, mHandler);
+                HotspotUtils.getInstance(getActivity(), mHandler).enableConfigured("pratham", null);
+//                WifiUtils.startWifiAp(/*PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName()*/"pratham", PD_Constant.WIFI_AP_PASSWORD, mHandler);
             } else {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                 intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                 startActivityForResult(intent, CREATE_HOTSPOT);
             }
         } else {
-            WifiUtils.startWifiAp(PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName(), PD_Constant.WIFI_AP_PASSWORD, mHandler);
+//            WifiUtils.startWifiAp(/*PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName()*/"pratham", PD_Constant.WIFI_AP_PASSWORD, mHandler);
+            HotspotUtils.getInstance(getActivity(), mHandler).enableConfigured("pratham", null);
         }
     }
 
@@ -350,7 +410,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                     ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
                     status.setText(ss);
                     circleProgress.finishAnim();
-                    getActivity().sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
+                    createHotspotQrCode();
                     break;
                 case PD_Constant.LOCATION_GRANTED:
                     createAP();
@@ -358,7 +418,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 case PD_Constant.ApScanResult:
                     for (ScanResult wifi : WifiUtils.getScanResults()) {
                         String ssid = wifi.SSID;
-                        if (ssid.startsWith(PD_Constant.WIFI_AP_HEADER)) {
+                        if (ssid.startsWith(/*PD_Constant.WIFI_AP_HEADER*/"pratham")) {
                             if (!mList.contains(ssid)) {
                                 mList.add(wifi.SSID);
                                 searchView.addApView(wifi);
@@ -385,30 +445,68 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                share_title.setTextColor(Color.BLACK);
+                                share_title.setTextColor(BLACK);
                                 share_title.setText("Share Contents");
                                 hideViewsandShowFolders();
                                 sharePresenter.showFolders(null);
                             }
-                        }, 2000);
+                        }, 500);
                     }
                     break;
             }
         }
     };
 
+    private void createHotspotQrCode() {
+        try {
+            JSONObject jsonObject = new JSONObject();
+            jsonObject.put(PD_Constant.FTP_HOTSPOT_SSID, PD_Constant.HOTSPOT_SSID);
+            jsonObject.put(PD_Constant.FTP_HOTSPOT_PASS, PD_Constant.HOTSPOT_PASSWORD);
+            jsonObject.put(PD_Constant.FTP_KEYMGMT, PD_Constant.FTP_HOTSPOT_KEYMGMT);
+            MultiFormatWriter formatWriter = new MultiFormatWriter();
+            BitMatrix bitMatrix = formatWriter.encode(jsonObject.toString(), BarcodeFormat.QR_CODE, 400, 400);
+            Bitmap bitmap = createBitmap(bitMatrix);
+            hideViewsandShowFolders();
+            rl_hotspot_qr.setVisibility(View.VISIBLE);
+            img_hotspot_qr.setImageBitmap(bitmap);
+            getActivity().sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
+            Thread.sleep(2000);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (WriterException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Bitmap createBitmap(BitMatrix matrix) {
+        int width = matrix.getWidth();
+        int height = matrix.getHeight();
+        int[] pixels = new int[width * height];
+        for (int y = 0; y < height; y++) {
+            int offset = y * width;
+            for (int x = 0; x < width; x++) {
+                pixels[offset + x] = matrix.get(x, y) ? BLACK : WHITE;
+            }
+        }
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        return bitmap;
+    }
+
     private void hideViewsandShowFolders() {
         root_share.setClickable(false);
         shareCircle.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
         rl_recieve_block.setVisibility(View.GONE);
+        rl_hotspot_qr.setVisibility(View.GONE);
+        rl_scan_qr.setVisibility(View.GONE);
     }
 
     private void connectHotspotAndRecieve() {
         rl_recieve_block.setVisibility(View.GONE);
         startJoinAnim();
-        if (!PrathamApplication.wiseF.isWifiEnabled())
-            PrathamApplication.wiseF.enableWifi();
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -425,6 +523,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     private void onAvatarClick(final View v) {
+/*
         startAvatarClickAnim(v);
         mHandler.postDelayed(new Runnable() {
             @Override
@@ -433,12 +532,51 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 connectAp(wifi.SSID);
             }
         }, 1500);
+*/
+        initCamera();
     }
 
-    private void connectAp(final String hostName) {
-        if (hostName.startsWith(PD_Constant.WIFI_AP_HEADER)) {
-            sharePresenter.connectToWify(hostName);
+    private void initCamera() {
+        if (!isPermissionGranted(getActivity(), PermissionUtils.Manifest_CAMERA)) {
+            askCompactPermission(PermissionUtils.Manifest_CAMERA, new PermissionResult() {
+                @Override
+                public void permissionGranted() {
+                    _initCamera();
+
+                }
+
+                @Override
+                public void permissionDenied() {
+
+                }
+
+                @Override
+                public void permissionForeverDenied() {
+
+                }
+            });
+        } else {
+            _initCamera();
         }
+    }
+
+    private void _initCamera() {
+        try {
+            rl_scan_qr.setVisibility(View.VISIBLE);
+            startCameraScan = new ZXingScannerView(getActivity());
+            startCameraScan.setResultHandler(FragmentShareRecieve.this);
+            qr_frame.addView((startCameraScan));
+            startCameraScan.startCamera();
+            startCameraScan.resumeCameraPreview(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void connectAp(final String hostName, String wifipass) {
+//        if (hostName.startsWith(PD_Constant.WIFI_AP_HEADER)) {
+        sharePresenter.connectToWify(hostName, wifipass);
+//        }
     }
 
     private void startAvatarClickAnim(final View v) {
@@ -464,7 +602,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 circleProgress.startAnim(800);
             }
         }, 300);
-        searchView.setTextColor(v, Color.BLACK);
+        searchView.setTextColor(v, BLACK);
     }
 
     private void startJoinAnim() {
@@ -478,7 +616,12 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     @UiThread
     @Override
     public void onWifiConnected(String ssid) {
-        circleProgress.finishAnim();
+        if (connecting_progress.getVisibility() == View.VISIBLE)
+            connecting_progress.setVisibility(View.GONE);
+        if (rl_scan_qr.getVisibility() == View.VISIBLE)
+            rl_scan_qr.setVisibility(View.GONE);
+//        if (circleProgress != null)
+//            circleProgress.finishAnim();
         connectTimer = new Timer();
         Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
     }
@@ -637,7 +780,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        share_title.setTextColor(Color.WHITE);
+                        share_title.setTextColor(WHITE);
                         share_title.setText("Receiving...");
                         hideViewsandShowFolders();
                         Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
@@ -695,5 +838,23 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+    }
+
+    @Override
+    public void handleResult(Result result) {
+        try {
+            startCameraScan.stopCamera();
+            connecting_progress.setVisibility(View.VISIBLE);
+            if (!result.getText().isEmpty()) {
+                JSONObject jsonobject = new JSONObject(result.getText());
+                String wifiname = jsonobject.getString(PD_Constant.FTP_HOTSPOT_SSID);
+                String wifipass = jsonobject.getString(PD_Constant.FTP_HOTSPOT_PASS);
+                int wifikeymgmt = jsonobject.getInt(PD_Constant.FTP_KEYMGMT);
+                ConnectionUtils.getInstance(getActivity()).toggleConnection(wifiname, wifipass, wifikeymgmt, sharePresenter);
+//                connectAp(wifiname, wifipass);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -46,7 +46,9 @@ public class PD_Constant {
     public static final String NO_CONNECTION = "no_connection";
     public static final String CONNECTION_NAME = "connection_name";
     public static final String CONNECTION_TYPE = "connection_type";
-    public static final String WIFI = "wifi";
+    public static final String FTP_HOTSPOT_SSID = "ftp_hotspot_ssid";
+    public static final String FTP_HOTSPOT_PASS = "ftp_hotspot_pass";
+    public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String MOBILE = "mobile";
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";
@@ -100,6 +102,9 @@ public class PD_Constant {
     public static final String SHARE_USAGE = "id_usage_";
     public static final String PRATHAM_TEMP_FILES = "pratham_temp_files";
     public static final String FILE_RECEIVE_COMPLETE = "file_receive_complete";
+    public static final String FTP_KEYMGMT = "ftp_keymgmt";
+    public static String HOTSPOT_SSID = "pratham";
+    public static String HOTSPOT_PASSWORD = "";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
