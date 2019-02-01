@@ -110,21 +110,21 @@
         <item>Assam(AS)</item>
         <item>Bihar(BR)</item>
         <item>Chhattisgarh(CG)</item>
-        <item>Goa(GA)</item>
+        <item>Goa(GO)</item>
         <item>Gujarat(GJ)</item>
         <item>Haryana(HR)</item>
         <item>Himachal Pradesh(HP)</item>
         <item>Jammu and kashmir(JK)</item>
         <item>Jharkhand(JH)</item>
-        <item>Karnataka(KA)</item>
+        <item>Karnataka(KN)</item>
         <item>Kerala(KL)</item>
         <item>Madhya Pradesh(MP)</item>
         <item>Maharashtra(MH)</item>
         <item>Manipur(MN)</item>
-        <item>Meghalaya(ML)</item>
+        <item>Meghalaya(MG)</item>
         <item>Mizoram(MZ)</item>
-        <item>Nagaland(NL)</item>
-        <item>Orissa(OR)</item>
+        <item>Nagaland(NG)</item>
+        <item>Orissa(OD)</item>
         <item>Punjab(PB)</item>
         <item>Rajasthan(RJ)</item>
         <item>Sikkim(SK)</item>
@@ -136,7 +136,7 @@
         <item>West Bengal(WB)</item>
         <item>Andaman and Nicobar Islands(AN)</item>
         <item>Chandigarh(CH)</item>
-        <item>Dadra and Nagar Haveli(DH)</item>
+        <item>Dadra and Nagar Haveli(DN)</item>
         <item>Daman and Diu(DD)</item>
         <item>Delhi(DL)</item>
         <item>Lakshadweep(LD)</item>
@@ -149,21 +149,21 @@
         <item>AS</item>
         <item>BR</item>
         <item>CG</item>
-        <item>GA</item>
+        <item>GO</item>
         <item>GJ</item>
         <item>HR</item>
         <item>HP</item>
         <item>JK</item>
         <item>JH</item>
-        <item>KA</item>
+        <item>KN</item>
         <item>KL</item>
         <item>MP</item>
         <item>MH</item>
         <item>MN</item>
-        <item>ML</item>
+        <item>MG</item>
         <item>MZ</item>
-        <item>NL</item>
-        <item>OR</item>
+        <item>NG</item>
+        <item>OD</item>
         <item>PB</item>
         <item>RJ</item>
         <item>SK</item>
@@ -175,7 +175,7 @@
         <item>WB</item>
         <item>AN</item>
         <item>CH</item>
-        <item>DH</item>
+        <item>DN</item>
         <item>DD</item>
         <item>DL</item>
         <item>LD</item>

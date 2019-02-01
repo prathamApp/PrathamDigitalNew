@@ -235,19 +235,23 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
         public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
             this.contentItem = contentItem;
-            if (contentItem.isDownloaded())
-                if (contentItem.isOnSDCard())
-                    Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                            .resize(130, 130)
-                            .placeholder(R.drawable.ic_app_logo_)
-                            .into(folder_content_image);
+            if (contentItem.getNodeserverimage() == null || contentItem.getNodeserverimage().isEmpty())
+                folder_content_image.setImageDrawable(context.getDrawable(R.drawable.ic_app_logo_));
+            else {
+                if (contentItem.isDownloaded())
+                    if (contentItem.isOnSDCard())
+                        Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                                .resize(130, 130)
+                                .placeholder(R.drawable.ic_app_logo_)
+                                .into(folder_content_image);
+                    else
+                        Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                                .resize(130, 130)
+                                .placeholder(R.drawable.ic_app_logo_)
+                                .into(folder_content_image);
                 else
-                    Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                            .resize(130, 130)
-                            .placeholder(R.drawable.ic_app_logo_)
-                            .into(folder_content_image);
-            else
-                Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folder_content_image);
+                    Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folder_content_image);
+            }
             content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
             folder_title.setText(contentItem.getNodetitle());
             if (contentItem.getNodedesc() == null || contentItem.getNodedesc().isEmpty())
@@ -305,23 +309,27 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
         public void setContentItem(Modal_ContentDetail contentItem, int pos) {
             this.contentItem = contentItem;
-            if (contentItem.isDownloaded())
-                if (contentItem.isOnSDCard()) {
-                    file_swipe_layout.setLockDrag(true);
-                    Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                            .resize(130, 130)
-                            .placeholder(R.drawable.ic_app_logo_)
-                            .into(file_content_image);
-                } else {
-                    file_swipe_layout.setLockDrag(true);
-                    Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                            .resize(130, 130)
-                            .placeholder(R.drawable.ic_app_logo_)
-                            .into(file_content_image);
-                }
+            if (contentItem.getNodeserverimage() == null || contentItem.getNodeserverimage().isEmpty())
+                file_content_image.setImageDrawable(context.getDrawable(R.drawable.ic_app_logo_));
             else {
-                file_swipe_layout.setLockDrag(true);
-                Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(file_content_image);
+                if (contentItem.isDownloaded())
+                    if (contentItem.isOnSDCard()) {
+                        file_swipe_layout.setLockDrag(true);
+                        Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                                .resize(130, 130)
+                                .placeholder(R.drawable.ic_app_logo_)
+                                .into(file_content_image);
+                    } else {
+                        file_swipe_layout.setLockDrag(true);
+                        Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
+                                .resize(130, 130)
+                                .placeholder(R.drawable.ic_app_logo_)
+                                .into(file_content_image);
+                    }
+                else {
+                    file_swipe_layout.setLockDrag(true);
+                    Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(file_content_image);
+                }
             }
             if (rl_reveal.getVisibility() == View.VISIBLE)
                 unreveal(rl_reveal);

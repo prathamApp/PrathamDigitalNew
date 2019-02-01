@@ -50,7 +50,7 @@
     <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
     <uses-feature
         android:name="android.software.device_admin"
-        android:required="true" />
+        android:required="false" />
 
     <application
         android:name=".PrathamApplication"

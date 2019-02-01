@@ -22,6 +22,7 @@ import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
+import com.pratham.prathamdigital.models.Modal_Rasp_Header;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -216,11 +217,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 displayedContents.clear();
                 totalContents.clear();
                 totalContents.addAll(contentList);
-                Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
+                Type listType = new TypeToken<ArrayList<Modal_Rasp_Header>>() {
                 }.getType();
-                List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
-                for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
-                    displayedContents.add(modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content));
+                List<Modal_Rasp_Header> rasp_headers = gson.fromJson(response, listType);
+                for (Modal_Rasp_Header modal_rasp_header : rasp_headers) {
+                    String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
+                    if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_header.getLang_code()))
+                            || modal_rasp_header.getLang_code().equalsIgnoreCase("mul"))
+                        displayedContents.add(modal_rasp_header.setContentToConfigNodeStructure(modal_rasp_header));
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);

@@ -40,7 +40,7 @@ public class PrathamApplication extends Application {
      * Disable App Force Update if distributing offline in SplashPresenterImpl in method checkIfContentinSDCard()
      * and enable if uploading to playstore
      */
-    public static final boolean isTablet = false;
+    public static final boolean isTablet = true;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;

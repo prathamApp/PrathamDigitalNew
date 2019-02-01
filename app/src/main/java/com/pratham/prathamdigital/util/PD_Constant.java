@@ -187,7 +187,8 @@ public class PD_Constant {
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
-        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
+        //        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
+        GET_RASPBERRY_HEADER(RASP_IP + "/api/channel/"),
         POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
