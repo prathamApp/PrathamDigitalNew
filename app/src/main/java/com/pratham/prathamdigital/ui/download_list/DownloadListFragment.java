@@ -7,8 +7,6 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
-import com.stolets.rxdiffutil.RxDiffUtil;
-import com.stolets.rxdiffutil.diffrequest.DiffRequestManager;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -26,18 +24,15 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
     RecyclerView rv_download;
 
     DownloadListAdapter adapter;
-    private DiffRequestManager<Modal_FileDownloading, DownloadListAdapter> mDiffRequestManager;
 
     @UiThread
     public void initializeAdapter(List<Modal_FileDownloading> downloadings) {
-        adapter = new DownloadListAdapter(getActivity(), downloadings);
+        adapter = new DownloadListAdapter(getActivity());
         LinearLayoutManager manager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_download.setHasFixedSize(true);
         rv_download.setLayoutManager(manager);
         rv_download.setAdapter(adapter);
-        mDiffRequestManager = RxDiffUtil
-                .bindTo(getActivity())
-                .with(adapter);
+        adapter.submitList(downloadings);
     }
 
     @Override
@@ -56,16 +51,10 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
     public void onEvent(final List<Modal_FileDownloading> downloadings) {
         if (downloadings != null) {
             if (adapter != null) {
-                mDiffRequestManager
-                        .newDiffRequestWith(new DownloadDiffUtilCallback(adapter.getModelList(), downloadings))
-                        .updateAdapterWithNewData(downloadings)
-                        .detectMoves(true)
-                        .calculate();
+                adapter.submitList(downloadings);
             } else {
                 initializeAdapter(downloadings);
             }
         }
     }
-
-
 }

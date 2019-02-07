@@ -67,7 +67,6 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
 //        MyApplication.ftpClient = client1;
 //        ftpConnectInterface.onConnectionEshtablished(client1.isConnected());
         if (connected) {
-//            Toast.makeText(context, "hotspot connected", Toast.LENGTH_SHORT).show();
             ftpConnected.onFTPConnected(connected, client1);
         } else {
             Toast.makeText(context, "not connected", Toast.LENGTH_SHORT).show();

@@ -129,13 +129,6 @@
             android:screenOrientation="sensorLandscape"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.settings_activity.SettingsActivity"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.Transparent"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".ui.assign.Activity_AssignGroups_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"

@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.util;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
-import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.database.Cursor;
@@ -16,11 +15,6 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.pratham.prathamdigital.socket.entity.MusicEntity;
-import com.pratham.prathamdigital.socket.entity.PictureEntity;
-import com.pratham.prathamdigital.socket.entity.PictureFolderEntity;
-import com.pratham.prathamdigital.socket.entity.VedioEntity;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -30,8 +24,6 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 public class FileUtils {
 
@@ -162,100 +154,6 @@ public class FileUtils {
             }
         }
         return paths;
-    }
-
-    public static List<PictureFolderEntity> getPictureFolderList(Context context) {
-        List<PictureFolderEntity> list = new ArrayList<PictureFolderEntity>();
-
-        HashMap<String, Integer> tmpDir = new HashMap<String, Integer>();
-
-        ContentResolver mContentResolver = context.getContentResolver();
-        Cursor mCursor = mContentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Images.ImageColumns.DATA}, "", null,
-                MediaStore.MediaColumns.DATE_ADDED + " DESC");
-        if (mCursor.moveToFirst()) {
-            int _date = mCursor.getColumnIndex(MediaStore.Images.Media.DATA);
-            do {
-                String path = mCursor.getString(_date);
-                File parentFile = new File(path).getParentFile();
-                if (parentFile == null) {
-                    continue;
-                }
-                PictureFolderEntity pictureFoldery = null;
-                String dirPath = parentFile.getAbsolutePath();
-                if (!tmpDir.containsKey(dirPath)) {
-                    pictureFoldery = new PictureFolderEntity();
-                    pictureFoldery.setDir(dirPath);
-                    pictureFoldery.setFirstImagePath(path);
-                    list.add(pictureFoldery);
-                    // Log.d("zyh", dirPath + "," + path);
-                    tmpDir.put(dirPath, list.indexOf(pictureFoldery));
-                } else {
-                    pictureFoldery = list.get(tmpDir.get(dirPath));
-                }
-                pictureFoldery.images.add(new PictureEntity(path));
-            } while (mCursor.moveToNext());
-        }
-        if (mCursor != null) {
-            mCursor.close();
-        }
-        tmpDir = null;
-        return list;
-    }
-
-    public static List<MusicEntity> getMusicList(Context context) {
-        List<MusicEntity> list = new ArrayList<MusicEntity>();
-
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
-                new String[]{MediaStore.Video.Media.TITLE,
-                        MediaStore.Audio.Media.DURATION,
-                        MediaStore.Audio.Media.ARTIST,
-                        MediaStore.Audio.Media._ID,
-                        MediaStore.Audio.Media.DISPLAY_NAME,
-                        MediaStore.Audio.Media.DATA
-                }, null,
-                null,
-                null);
-        while (cursor.moveToNext()) {
-            MusicEntity music = new MusicEntity(cursor.getString(5));
-            music.setTitle(cursor.getString(0));
-            music.setDuration(cursor.getLong(1));
-            music.setArtist(cursor.getString(2));
-            music.setId(cursor.getInt(3));
-            music.setDisplayName(cursor.getString(4));
-            // L.i(music.toString());
-            if (music.getDuration() < 60 * 1000)
-                continue;
-            list.add(music);
-        }
-        if (cursor != null) {
-            cursor.close();
-        }
-        return list;
-    }
-
-    public static List<VedioEntity> getVedioList(Context context) {
-        List<VedioEntity> list = new ArrayList<VedioEntity>();
-        ContentResolver resolver = context.getContentResolver();
-        Cursor cursor = resolver.query(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, //
-                new String[]{MediaStore.Video.Media._ID,//
-                        MediaStore.Video.Media.DATA, //
-                        MediaStore.Video.Media.DURATION, //
-                        MediaStore.Video.Media.DISPLAY_NAME,//
-                        MediaStore.Video.Media.SIZE //
-                }, null, // 查询条件，相当于sql中的where语句
-                null, // 查询条件中使用到的数据
-                null);
-        while (cursor.moveToNext()) {
-            VedioEntity vedio = new VedioEntity(cursor.getString(1));
-            vedio.setId(cursor.getInt(0));
-            vedio.setDuration(cursor.getLong(2));
-            vedio.setDisplayName(cursor.getString(3));
-//            vedio.setSize(cursor.getLong(4));
-            list.add(vedio);
-        }
-        return list;
     }
 
     public static File fileFromAsset(Context context, String assetName) throws IOException {

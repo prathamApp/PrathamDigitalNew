@@ -175,7 +175,7 @@ public class ConnectionUtils {
         if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(ssid)) {
             WifiConfiguration config = new WifiConfiguration();
 
-            config.SSID = String.format("\"%s\"", ssid);
+            config.SSID = String.format("\"%s\"", ssid)/*ssid*/;
 
             switch (keyManagement) {
                 case 0: // OPEN
@@ -238,10 +238,10 @@ public class ConnectionUtils {
             }
 
             int netId = getWifiManager().addNetwork(config);
-            sharePresenter.connectToAddedSSID(ssid);
-//            getWifiManager().disconnect();
-//            getWifiManager().enableNetwork(netId, true);
-
+            getWifiManager().disconnect();
+            boolean result = getWifiManager().enableNetwork(netId, true);
+            if (result)
+                sharePresenter.connectToAddedSSID(ssid);
             return getWifiManager().reconnect();
         }
 

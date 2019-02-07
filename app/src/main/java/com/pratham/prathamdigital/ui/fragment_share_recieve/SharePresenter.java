@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
 import android.content.Context;
-import android.content.IntentFilter;
 import android.net.wifi.WifiConfiguration;
 import android.os.Handler;
 import android.util.Log;
@@ -35,10 +34,6 @@ import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
-import com.pratham.prathamdigital.services.MessageReveiver;
-import com.pratham.prathamdigital.socket.udp.IPMSGConst;
-import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
-import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -49,7 +44,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -76,6 +70,35 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         this.shareView = (ContractShare.shareView) fragmentShareRecieve;
     }
 
+    AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
+        @Override
+        public void failureAddingNetwork(int i) {
+            Log.d(TAG, "failureAddingNetwork: ");
+        }
+
+        @Override
+        public void networkAdded(int i, @NotNull WifiConfiguration wifiConfiguration) {
+            connectToNetwork(wifiConfiguration.SSID);
+        }
+
+        @Override
+        public void wisefyFailure(int i) {
+            Log.d(TAG, "wisefyFailure: ");
+        }
+    };
+
+    @Override
+    public void viewDestroyed() {
+        shareView = null;
+    }
+
+    private void addNetwork(String ssid, String wifipass) {
+        if (wifipass.isEmpty())
+            PrathamApplication.wiseF.addOpenNetwork(ssid, addNetworkCallbacks);
+        else
+            PrathamApplication.wiseF.addWPA2Network(ssid, wifipass, addNetworkCallbacks);
+    }
+
     @Background
     @Override
     public void connectToWify(String ssid, String wifipass) {
@@ -87,12 +110,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
             @Override
             public void retrievedSavedNetwork(@NotNull WifiConfiguration wifiConfiguration) {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        connectToNetwork(wifiConfiguration.SSID);
-                    }
-                }, 1500);
+                connectToNetwork(wifiConfiguration.SSID);
             }
 
             @Override
@@ -102,40 +120,12 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         });
     }
 
-    private void addNetwork(String ssid, String wifipass) {
-        if (wifipass.isEmpty())
-            PrathamApplication.wiseF.addOpenNetwork(ssid, addNetworkCallbacks);
-        else
-            PrathamApplication.wiseF.addWPA2Network(ssid, wifipass, addNetworkCallbacks);
-    }
-
-    AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
-        @Override
-        public void failureAddingNetwork(int i) {
-            Log.d(TAG, "failureAddingNetwork: ");
-        }
-
-        @Override
-        public void networkAdded(int i, @NotNull WifiConfiguration wifiConfiguration) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    connectToNetwork(wifiConfiguration.SSID);
-                }
-            }, 1500);
-        }
-
-        @Override
-        public void wisefyFailure(int i) {
-            Log.d(TAG, "wisefyFailure: ");
-        }
-    };
-
     public void connectToNetwork(String ssid) {
         PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
-                shareView.onWifiConnected(ssid);
+                if (shareView != null)
+                    shareView.onWifiConnected(ssid);
             }
 
             @Override
@@ -157,10 +147,17 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     @Override
     public void connectToAddedSSID(String ssid) {
-        PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (shareView != null) shareView.onWifiConnected(ssid);
+            }
+        }, 1000);
+/*        PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
-                shareView.onWifiConnected(ssid);
+                if (shareView != null)
+                    shareView.onWifiConnected(ssid);
             }
 
             @Override
@@ -177,7 +174,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             public void wisefyFailure(int i) {
                 Log.d(TAG, "wisefyFailure: ");
             }
-        });
+        });*/
     }
 
     @Override
@@ -193,32 +190,12 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void traverseFolderBackward() {
         if (levels.isEmpty()) {
-            shareView.disconnectFTP();
+            if (shareView != null)
+                shareView.disconnectFTP();
         } else {
             new GetDownloadedContent(SharePresenter.this, levels.get(levels.size() - 1).getParentid()).execute();
             levels.remove(levels.size() - 1);
         }
-    }
-
-    public void registerListener(FragmentShareRecieve fragmentShareRecieve) {
-        MessageReveiver messageReveiver = new MessageReveiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(PD_Constant.ACTION_NEW_MSG);
-        context.registerReceiver(messageReveiver, filter);
-
-        UDPMessageListener udpMessageListener = UDPMessageListener.getInstance(context);
-        udpMessageListener.addMsgListener(fragmentShareRecieve);
-    }
-
-    public void sendMessage(String content, com.pratham.prathamdigital.socket.entity.Message.CONTENT_TYPE type, String localIPaddress, String serverIPaddres) {
-        String nowtime = new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date());
-        IPMSGProtocol command = new IPMSGProtocol();
-        command.targetIP = serverIPaddres;
-        command.senderIP = localIPaddress;
-        command.packetNo = new Date().getTime() + "";
-        command.addObject = new com.pratham.prathamdigital.socket.entity.Message("", nowtime, content, type);
-        command.commandNo = IPMSGConst.NO_SEND_TXT;
-        UDPMessageListener.sendUDPdata(command);
     }
 
     @Background
@@ -233,7 +210,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         }
         if (PrathamApplication.isTablet)
             downloads.addAll(addProfileAndUsage());
-        shareView.showFilesList(downloads, parentId);
+        if (shareView != null)
+            shareView.showFilesList(downloads, parentId);
     }
 
     public ArrayList<File_Model> addProfileAndUsage() {
@@ -276,6 +254,15 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         if (connected) {
             this.ftpClient = client;
             startConnectionDisconnectlistener(client);
+            shareView.ftpConnected_showFolders();
+        } else {
+            Log.d(TAG, "onFTPConnected: trying to connect again");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    connectFTP();
+                }
+            }, 1000);
         }
     }
 
@@ -285,7 +272,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             ftpTimer = new Timer();
             startConnectionDisconnectlistener(ftpClient);
         } else {
-            shareView.closeFTPJoin();
+            if (shareView != null)
+                shareView.closeFTPJoin();
         }
     }
 
@@ -299,7 +287,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                     Log.d(TAG, "run::" + client.getStatus());
                 } catch (Exception e) {
                     e.printStackTrace();
-                    shareView.closeFTPJoin();
+                    if (shareView != null)
+                        shareView.closeFTPJoin();
                     ftpTimer.cancel();
                 }
             }
@@ -403,7 +392,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameType(PD_Constant.GAME);
             modal.setReceived(false);
             filesRecieving.put(game_name, modal);
-            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+            if (shareView != null)
+                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamVideo")) {
             String[] sub = filePath.getAbsolutePath().split("PrathamVideo/");
             String vid_name = filePath.getName();
@@ -413,7 +403,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameType(PD_Constant.VIDEO);
             modal.setReceived(false);
             filesRecieving.put(vid_name, modal);
-            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+            if (shareView != null)
+                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamPDF")) {
             String[] sub = filePath.getAbsolutePath().split("PrathamPDF/");
             String pdf_name = filePath.getName();
@@ -423,7 +414,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setGameType(PD_Constant.PDF);
             modal.setReceived(false);
             filesRecieving.put(pdf_name, modal);
-            shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+            if (shareView != null)
+                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().endsWith(".json")) {
             if (PD_Utility.isProfile(filePath.getName())) {
                 modal.setGameName("Receiving Profiles");
@@ -431,14 +423,16 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 modal.setGameType(PD_Constant.PDF);
                 modal.setReceived(false);
                 filesRecieving.put("Receiving Profiles", modal);
-                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                if (shareView != null)
+                    shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
             } else if (PD_Utility.isUsages(filePath.getName())) {
                 modal.setGameName("Receiving Usages");
                 modal.setGamePart(filePath.getName());
                 modal.setGameType(PD_Constant.PDF);
                 modal.setReceived(false);
                 filesRecieving.put("Receiving Usages", modal);
-                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                if (shareView != null)
+                    shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
             }
             readRecievedFiles(filePath);
         }

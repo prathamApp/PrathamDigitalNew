@@ -79,7 +79,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     public GoogleApiClient configureSignIn() {
         // Configure sign-in to request the user’s basic profile like name and email
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestIdToken(context.getString(R.string.default_web_client_id))
+                .requestIdToken(context.getString(R.string.default_notification_channel_id))
                 .requestEmail()
                 .build();
         // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
@@ -366,10 +366,10 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void checkIfContentinSDCard() {
-//        if (PrathamApplication.isTablet)
-        new CopyExistingDb(context, SplashPresenterImpl.this).execute();
-//        else
-//            checkConnectivity();
+        if (PrathamApplication.isTablet)
+            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+        else
+            checkConnectivity();
     }
 
     @Override

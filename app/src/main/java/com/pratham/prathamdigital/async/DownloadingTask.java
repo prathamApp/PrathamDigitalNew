@@ -10,6 +10,7 @@ import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.SpeedMonitor;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -75,7 +76,7 @@ public class DownloadingTask extends AsyncTask {
             if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
                 return false;
             }
-            // getting file length
+            // getting file lengthz
             dowloadImages();
             int lenghtOfFile = connection.getContentLength();
             if (lenghtOfFile < 0)
@@ -97,7 +98,7 @@ public class DownloadingTask extends AsyncTask {
                 // writing data to file
                 output.write(data, 0, count);
                 long download_percentage_new = (100 * total) / lenghtOfFile;
-                updateProgress(download_percentage_new);
+                updateProgress(download_percentage_new, SpeedMonitor.compute(count));
             }
             // flushing output
             if (output != null)
@@ -134,7 +135,7 @@ public class DownloadingTask extends AsyncTask {
         BaseActivity.modalContentDao.addContentList(temp);
     }
 
-    private void updateProgress(long download_percentage_new) {
+    private void updateProgress(long download_percentage_new, String total) {
         Log.d(TAG, "updateFileProgress: " + downloadID + ":::" + f_name + ":::" + download_percentage_new);
         if (downloadID != null) {
             Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
@@ -142,6 +143,7 @@ public class DownloadingTask extends AsyncTask {
             modal_fileDownloading.setFilename(content.getNodetitle());
             modal_fileDownloading.setProgress((int) download_percentage_new);
             modal_fileDownloading.setContentDetail(content);
+            modal_fileDownloading.setRemaining_time(total);
             publishProgress(modal_fileDownloading);
         }
     }

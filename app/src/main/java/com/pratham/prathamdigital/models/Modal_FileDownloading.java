@@ -7,6 +7,7 @@ public class Modal_FileDownloading implements Comparable {
     String filename;
     int progress;
     Modal_ContentDetail contentDetail;
+    String remaining_time;
 
     @Override
     public String toString() {
@@ -48,6 +49,14 @@ public class Modal_FileDownloading implements Comparable {
 
     public void setProgress(int progress) {
         this.progress = progress;
+    }
+
+    public String getRemaining_time() {
+        return remaining_time;
+    }
+
+    public void setRemaining_time(String remaining_time) {
+        this.remaining_time = remaining_time;
     }
 
     @Override

@@ -166,12 +166,12 @@ public class FsService extends Service implements Runnable {
     public void run() {
         Log.d(TAG, "Server thread running");
 
-        if (isConnectedToLocalNetwork() == false) {
-            Log.w(TAG, "run: There is no local network, bailing out");
-            stopSelf();
-            sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
-            return;
-        }
+//        if (isConnectedToLocalNetwork() == false) {
+//            Log.w(TAG, "run: There is no local network, bailing out");
+//            stopSelf();
+//            sendBroadcast(new Intent(ACTION_FAILEDTOSTART));
+//            return;
+//        }
 
         // Initialization of wifi, set up the socket
         try {
@@ -345,6 +345,14 @@ public class FsService extends Service implements Runnable {
             }
         }
         return connected;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            registerReceiver()
+//        }
     }
 
     /**

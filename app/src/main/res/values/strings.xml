@@ -210,4 +210,5 @@
     <string name="notification_stop_text">Stop Server</string>
     <string name="notif_settings_text">Settings</string>
     <string name="swiftp_name">FTP Server</string>
+    <string name="txt_network_error">No content found. Please check your internet connection or try to change language</string>
 </resources>

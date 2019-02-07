@@ -50,6 +50,7 @@
                 android:layout_marginBottom="@dimen/_15sdp"
                 app:c_progressRadius="@dimen/_8sdp"
                 card_view:c_borderWidth="0dp"
+                app:c_progress="23"
                 card_view:c_isShowDesc="false"
                 card_view:c_max="100"
                 card_view:c_progressColor="@color/green" />

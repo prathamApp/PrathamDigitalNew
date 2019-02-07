@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -8,6 +9,8 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -54,10 +57,6 @@ import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
 import com.pratham.prathamdigital.services.LocationService;
-import com.pratham.prathamdigital.socket.entity.Users;
-import com.pratham.prathamdigital.socket.udp.IPMSGConst;
-import com.pratham.prathamdigital.socket.udp.IPMSGProtocol;
-import com.pratham.prathamdigital.socket.udp.UDPMessageListener;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.util.ConnectionUtils;
 import com.pratham.prathamdigital.util.FileUtils;
@@ -80,6 +79,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -89,18 +89,20 @@ import java.util.TimerTask;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
+import static android.content.Context.WIFI_SERVICE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
-import static com.pratham.prathamdigital.util.PD_Utility.getPhoneModel;
 
 @EFragment(R.layout.fragment_share)
 public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView,
-        UDPMessageListener.OnNewMsgListener, CircularRevelLayout.CallBacks, ZXingScannerView.ResultHandler {
+        CircularRevelLayout.CallBacks, ZXingScannerView.ResultHandler {
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 100;
     private static final int CREATE_HOTSPOT = 11;
     private static final int JOIN_HOTSPOT = 12;
+    private static final int CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION = 13;
+    private static final int RECIEVED_FROM_TETHERING_ACTIVITY = 14;
     @ViewById(R.id.root_share)
     LinearLayout root_share;
     @ViewById(R.id.rl_share)
@@ -148,9 +150,9 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     ContractShare.sharePresenter sharePresenter;
 
     private List<String> mList = new ArrayList<>();
-    private UDPMessageListener mUDPListener;
     private boolean share = false;
-    private Timer connectTimer;
+    private boolean isHotspotEnabled = false;
+    //    private Timer connectTimer;
     private String localIPaddress;
     private String serverIPaddres;
     FileListAdapter fileListAdapter;
@@ -162,10 +164,106 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     BlurPopupWindow sd_builder;
     BlurPopupWindow sending_builder;
     public ZXingScannerView startCameraScan;
+    private HotspotUtils hotspotUtils;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case PD_Constant.ApCreateApSuccess:
+                    String s = PD_Utility.getLocalHostName();
+                    SpannableString ss = new SpannableString(s);
+                    ss.setSpan(new ForegroundColorSpan(Color.RED), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                    ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
+                    status.setText(ss);
+                    circleProgress.finishAnim();
+                    createHotspotQrCode();
+                    break;
+                case PD_Constant.LOCATION_GRANTED:
+                    animateHotspotCreation();
+                    break;
+                case PD_Constant.ApScanResult:
+                    for (ScanResult wifi : WifiUtils.getScanResults()) {
+                        String ssid = wifi.SSID;
+                        if (ssid.startsWith(/*PD_Constant.WIFI_AP_HEADER*/"pratham")) {
+                            if (!mList.contains(ssid)) {
+                                mList.add(wifi.SSID);
+                                searchView.addApView(wifi);
+                            }
+                        }
+                    }
+                    break;
+                case PD_Constant.WiFiConnectSuccess:
+//                    if (isValidated()) {
+                    status.setText("connection succeeded...");
+                    sharePresenter.connectFTP();
+//                        connectTimer.cancel();
+//                        new Handler().postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                            }
+//                        }, 1500);
+//                    }
+                    break;
+                case CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION:
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (Settings.System.canWrite(getActivity())) {
+                            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.N_MR1) {
+                                try {
+                                    final Intent intent = new Intent(Intent.ACTION_MAIN, null);
+                                    intent.addCategory(Intent.CATEGORY_LAUNCHER);
+                                    final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.TetherSettings");
+                                    intent.setComponent(cn);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                    isHotspotEnabled = true;
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            } else
+                                animateHotspotCreation();
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                            intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                            startActivityForResult(intent, CREATE_HOTSPOT);
+                        }
+                    } else
+                        animateHotspotCreation();
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (startCameraScan != null)
+            startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
+    }
+
+    public static boolean isSharingWiFi(final WifiManager manager) {
+        try {
+            final Method method = manager.getClass().getDeclaredMethod("isWifiApEnabled");
+            method.setAccessible(true);
+            return (Boolean) method.invoke(manager);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (startCameraScan != null)
+            startCameraScan.stopCamera();
+    }
 
     @AfterViews
     public void initialize() {
         sharePresenter.setView(FragmentShareRecieve.this);
+        hotspotUtils = HotspotUtils.getInstance(getActivity(), mHandler);
         circular_share_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -182,30 +280,14 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (startCameraScan != null)
-            startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         if (startCameraScan != null)
             startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (startCameraScan != null)
-            startCameraScan.stopCamera();
-    }
-
-    @Override
-    public void onDestroy() {
-        if (startCameraScan != null) startCameraScan.stopCamera();
-        super.onDestroy();
+        if (isHotspotEnabled) {
+            isHotspotEnabled = false;
+            onActivityResult(RECIEVED_FROM_TETHERING_ACTIVITY, 0, null);
+        }
     }
 
     @Override
@@ -220,37 +302,19 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         super.onStop();
     }
 
-    @Click(R.id.rl_share)
-    public void setRl_share() {
-        share = true;
-        if (isPermissionsGranted(getActivity(),
-                new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            if (new LocationService(getActivity()).checkLocationEnabled()) {
-                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
-                if (sdPath.size() > 0) {
-                    if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
-                        showSdCardDialog();
-                    else
-                        animateHotspotCreation();
-                } else
-                    animateHotspotCreation();
-            } else
-                new LocationService(getActivity()).checkLocation();
-        } else
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
-                    PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
+    @Override
+    public void onDestroy() {
+        if (startCameraScan != null) startCameraScan.stopCamera();
+        super.onDestroy();
+        sharePresenter.viewDestroyed();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            PrathamApplication.getInstance().unregisterReceiver();
     }
 
-    @UiThread
-    public void animateHotspotCreation() {
-        TransitionManager.beginDelayedTransition(root_share);
-        ViewGroup.LayoutParams params = rl_share.getLayoutParams();
-        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-        rl_share.requestLayout();
-        rl_recieve.setVisibility(View.GONE);
-        rl_share.setClickable(false);
-        createHotspot();
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        sharePresenter.viewDestroyed();
     }
 
     @UiThread
@@ -282,25 +346,48 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         sd_builder.show();
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == SDCARD_LOCATION_CHOOSER) {
-            if (data != null && data.getData() != null) {
-                Uri treeUri = data.getData();
-                final int takeFlags = data.getFlags()
-                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
-                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
-                FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
-                //create Hotspot
-                animateHotspotCreation();
+    @Click(R.id.rl_share)
+    public void setRl_share() {
+        share = true;
+        if (PrathamApplication.wiseF.isWifiEnabled())
+            PrathamApplication.wiseF.disableWifi();
+        if (isPermissionsGranted(getActivity(),
+                new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
+            if (new LocationService(getActivity()).checkLocationEnabled()) {
+                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                if (sdPath.size() > 0) {
+                    if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                        showSdCardDialog();
+                    else
+                        mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
+//                        animateHotspotCreation();
+                } else
+                    mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
+//                    animateHotspotCreation();
+            } else
+                new LocationService(getActivity()).checkLocation();
+        } else
+            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
+                    PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
+    }
+
+    @UiThread
+    public void animateHotspotCreation() {
+        TransitionManager.beginDelayedTransition(root_share);
+        ViewGroup.LayoutParams params = rl_share.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+        rl_share.requestLayout();
+        rl_recieve.setVisibility(View.GONE);
+        rl_share.setClickable(false);
+        rl_share_block.setVisibility(View.GONE);
+        startCreateAnim();
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                hotspotUtils.enableConfigured("pratham", null);
             }
-        } else if (requestCode == CREATE_HOTSPOT) {
-            createAP();
-        } else if (requestCode == JOIN_HOTSPOT) {
-            setRl_recieve();
-        }
+        }, 2000);
     }
 
     @Click(R.id.rl_recieve)
@@ -358,16 +445,34 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     };
 
-    @UiThread
-    public void createHotspot() {
-        rl_share_block.setVisibility(View.GONE);
-        startCreateAnim();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                createAP();
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SDCARD_LOCATION_CHOOSER) {
+            if (data != null && data.getData() != null) {
+                Uri treeUri = data.getData();
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+                FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
+                //create Hotspot
+                mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
             }
-        }, 2000);
+        } else if (requestCode == CREATE_HOTSPOT) {
+            mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
+        } else if (requestCode == JOIN_HOTSPOT) {
+            setRl_recieve();
+        } else if (requestCode == RECIEVED_FROM_TETHERING_ACTIVITY) {
+            WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(WIFI_SERVICE);
+            if (isSharingWiFi(wifiManager)) {
+                WifiConfiguration wifiConfiguration = hotspotUtils.getConfiguration();
+                PD_Constant.HOTSPOT_SSID = wifiConfiguration.SSID;
+                PD_Constant.HOTSPOT_PASSWORD = wifiConfiguration.preSharedKey;
+                PD_Constant.FTP_HOTSPOT_KEYMGMT = HotspotUtils.getAllowedKeyManagement(wifiConfiguration);
+                createHotspotQrCode();
+            }
+        }
     }
 
     public void startCreateAnim() {
@@ -379,86 +484,25 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         circleProgress.startAnim(2000);
     }
 
-    private void createAP() {
-        if (PrathamApplication.wiseF.isWifiEnabled())
-            PrathamApplication.wiseF.disableWifi();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            if (Settings.System.canWrite(getActivity())) {
-                HotspotUtils.getInstance(getActivity(), mHandler).enableConfigured("pratham", null);
-//                WifiUtils.startWifiAp(/*PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName()*/"pratham", PD_Constant.WIFI_AP_PASSWORD, mHandler);
-            } else {
-                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                startActivityForResult(intent, CREATE_HOTSPOT);
-            }
-        } else {
-//            WifiUtils.startWifiAp(/*PD_Constant.WIFI_AP_HEADER + PD_Utility.getLocalHostName()*/"pratham", PD_Constant.WIFI_AP_PASSWORD, mHandler);
-            HotspotUtils.getInstance(getActivity(), mHandler).enableConfigured("pratham", null);
-        }
+    @UiThread
+    public void createHotspot() {
+
     }
 
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            switch (msg.what) {
-                case PD_Constant.ApCreateApSuccess:
-                    String s = PD_Utility.getLocalHostName();
-                    SpannableString ss = new SpannableString(s);
-                    ss.setSpan(new ForegroundColorSpan(Color.RED), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-                    ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
-                    status.setText(ss);
-                    circleProgress.finishAnim();
-                    createHotspotQrCode();
-                    break;
-                case PD_Constant.LOCATION_GRANTED:
-                    createAP();
-                    break;
-                case PD_Constant.ApScanResult:
-                    for (ScanResult wifi : WifiUtils.getScanResults()) {
-                        String ssid = wifi.SSID;
-                        if (ssid.startsWith(/*PD_Constant.WIFI_AP_HEADER*/"pratham")) {
-                            if (!mList.contains(ssid)) {
-                                mList.add(wifi.SSID);
-                                searchView.addApView(wifi);
-                            }
-                        }
-                    }
-                    break;
-                case IPMSGConst.AN_CONNECT_SUCCESS:
-                    Users user = new Users();
-                    user.setDevice(getPhoneModel());
-                    user.setIpaddress(serverIPaddres);
-                    break;
-                case IPMSGConst.NO_CONNECT_SUCCESS:
-                    IPMSGProtocol command = (IPMSGProtocol) msg.obj;
-                    Users user2 = new Users();
-                    user2.setDevice(getPhoneModel());
-                    user2.setIpaddress(command.senderIP);
-                    break;
-                case PD_Constant.WiFiConnectSuccess:
-                    if (isValidated()) {
-                        status.setText("connection succeeded...");
-                        connectTimer.cancel();
-                        sharePresenter.connectFTP();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                share_title.setTextColor(BLACK);
-                                share_title.setText("Share Contents");
-                                hideViewsandShowFolders();
-                                sharePresenter.showFolders(null);
-                            }
-                        }, 500);
-                    }
-                    break;
-            }
-        }
-    };
+    @Override
+    public void ftpConnected_showFolders() {
+        share_title.setTextColor(BLACK);
+        share_title.setText("Share Content");
+        hideViewsandShowFolders();
+        sharePresenter.showFolders(null);
+    }
 
     private void createHotspotQrCode() {
         try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                PrathamApplication.getInstance().registerFtpReceiver();
+            }
+            getActivity().sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(PD_Constant.FTP_HOTSPOT_SSID, PD_Constant.HOTSPOT_SSID);
             jsonObject.put(PD_Constant.FTP_HOTSPOT_PASS, PD_Constant.HOTSPOT_PASSWORD);
@@ -468,14 +512,13 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             Bitmap bitmap = createBitmap(bitMatrix);
             hideViewsandShowFolders();
             rl_hotspot_qr.setVisibility(View.VISIBLE);
+            rl_hotspot_qr.setClickable(true);
             img_hotspot_qr.setImageBitmap(bitmap);
-            getActivity().sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
-            Thread.sleep(2000);
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (WriterException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -496,10 +539,11 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     private void hideViewsandShowFolders() {
+        root_share.setVisibility(View.GONE);
         root_share.setClickable(false);
         shareCircle.setVisibility(View.GONE);
         searchView.setVisibility(View.GONE);
-        rl_recieve_block.setVisibility(View.GONE);
+//        rl_recieve_block.setVisibility(View.GONE);
         rl_hotspot_qr.setVisibility(View.GONE);
         rl_scan_qr.setVisibility(View.GONE);
     }
@@ -573,12 +617,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         }
     }
 
-    private void connectAp(final String hostName, String wifipass) {
-//        if (hostName.startsWith(PD_Constant.WIFI_AP_HEADER)) {
-        sharePresenter.connectToWify(hostName, wifipass);
-//        }
-    }
-
     private void startAvatarClickAnim(final View v) {
         int[] mAvatarLocation = new int[2];
         v.getLocationOnScreen(mAvatarLocation);
@@ -622,7 +660,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             rl_scan_qr.setVisibility(View.GONE);
 //        if (circleProgress != null)
 //            circleProgress.finishAnim();
-        connectTimer = new Timer();
+//        connectTimer = new Timer();
         Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
     }
 
@@ -728,14 +766,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
             return false;
         }
         return true;
-    }
-
-    @Override
-    public void processMessage(IPMSGProtocol pMsg) {
-        Message msg = Message.obtain();
-        msg.what = pMsg.commandNo;
-        msg.obj = pMsg;
-        Toast.makeText(getActivity(), "message" + pMsg.commandNo + ":::" + pMsg, Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe
@@ -851,7 +881,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 String wifipass = jsonobject.getString(PD_Constant.FTP_HOTSPOT_PASS);
                 int wifikeymgmt = jsonobject.getInt(PD_Constant.FTP_KEYMGMT);
                 ConnectionUtils.getInstance(getActivity()).toggleConnection(wifiname, wifipass, wifikeymgmt, sharePresenter);
-//                connectAp(wifiname, wifipass);
+//                sharePresenter.connectToWify(wifiname, wifipass);
             }
         } catch (JSONException e) {
             e.printStackTrace();

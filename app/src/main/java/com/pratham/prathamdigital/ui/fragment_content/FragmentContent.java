@@ -204,7 +204,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         PD_Utility.dismissDialog();
         if (rv_content.getVisibility() == View.GONE)
             rv_content.setVisibility(View.VISIBLE);
-        if (!content.isEmpty()) {
+        if (!content.isEmpty() && content.size() > 1) {
             if (contentAdapter == null) {
                 contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
                 rv_content.setHasFixedSize(true);
@@ -232,6 +232,8 @@ public class FragmentContent extends FragmentManagePermission implements Content
                 contentAdapter.submitList(content);
                 rv_content.smoothScrollToPosition(0);
             }
+        } else {
+            showNoConnectivity();
         }
     }
 
@@ -400,6 +402,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @UiThread
     @Override
     public void exitApp() {
+        PD_Utility.dismissDialog();
         new AlertDialog.Builder(getActivity())
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("PraDigi")

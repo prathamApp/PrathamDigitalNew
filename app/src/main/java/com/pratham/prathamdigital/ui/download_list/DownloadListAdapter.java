@@ -3,29 +3,47 @@ package com.pratham.prathamdigital.ui.download_list;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.recyclerview.extensions.AsyncListDiffer;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.number_progressbar.NumberProgressBar;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
-import com.stolets.rxdiffutil.Swappable;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> implements Swappable<Modal_FileDownloading> {
+public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
     Context context;
-    List<Modal_FileDownloading> downloadings;
+    //    List<Modal_FileDownloading> downloadings;
+    private AsyncListDiffer<Modal_FileDownloading> mDiffer;
+    private DiffUtil.ItemCallback<Modal_FileDownloading> diffcallback = new DiffUtil.ItemCallback<Modal_FileDownloading>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
+            return Objects.equals(detail.getDownloadId(), t1.getDownloadId());
+        }
 
-    public DownloadListAdapter(Context context, List<Modal_FileDownloading> downloadings) {
+        @Override
+        public boolean areContentsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
+            int result = detail.compareTo(t1);
+            if (result == 0) return true;
+            return false;
+        }
+    };
+
+    public DownloadListAdapter(Context context) {
+        mDiffer = new AsyncListDiffer<Modal_FileDownloading>(this, diffcallback);
         this.context = context;
-        this.downloadings = downloadings;
     }
 
     @Override
@@ -37,16 +55,21 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
     @Override
     public void onBindViewHolder(@NonNull DownloadViewHolder holder, int i) {
-//        if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-//            holder.download_lottie_view.setAnimation("gaming_pad.json");
-//        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-//            holder.download_lottie_view.setAnimation("play_button.json");
-//        else if (downloadings.get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-//            holder.download_lottie_view.setAnimation("book.json");
-//        else
-//            holder.download_lottie_view.setAnimation("gaming_pad.json");
-        holder.content_title.setText(downloadings.get(holder.getAdapterPosition()).getFilename());
-        holder.number_progress.setProgress(downloadings.get(holder.getAdapterPosition()).getProgress());
+        if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
+                .equalsIgnoreCase(PD_Constant.GAME))
+            holder.download_file_view.setImageResource(R.drawable.ic_joystick);
+        else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
+                .equalsIgnoreCase(PD_Constant.VIDEO))
+            holder.download_file_view.setImageResource(R.drawable.ic_video);
+        else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
+                .equalsIgnoreCase(PD_Constant.PDF))
+            holder.download_file_view.setImageResource(R.drawable.ic_book);
+        else
+            holder.download_file_view.setImageResource(R.drawable.ic_joystick);
+
+        holder.download_remaining_time.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());
+        holder.content_title.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getFilename());
+        holder.number_progress.setProgress(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getProgress());
     }
 
     @Override
@@ -61,23 +84,15 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
     @Override
     public int getItemCount() {
-        return downloadings.size();
+        return mDiffer.getCurrentList().size();
     }
-//
-//    public void updateList(final List<Modal_FileDownloading> newList) {
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new DownloadDiffUtilCallback(newList, downloadings));
-//        downloadings.clear();
-//        this.downloadings.addAll(newList);
-//        diffResult.dispatchUpdatesTo(this);
-//    }
 
-    @Override
-    public void swapData(@NonNull List<Modal_FileDownloading> newData) {
-        this.downloadings = newData;
+    public void submitList(List<Modal_FileDownloading> data) {
+        mDiffer.submitList(data);
     }
 
     public List<Modal_FileDownloading> getModelList() {
-        return downloadings;
+        return mDiffer.getCurrentList();
     }
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {
@@ -88,9 +103,12 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         @Nullable
         @BindView(R.id.download_content_title)
         TextView content_title;
-//        @Nullable
-//        @BindView(R.id.download_lottie_view)
-//        LottieAnimationView download_lottie_view;
+        @Nullable
+        @BindView(R.id.download_remaining_time)
+        TextView download_remaining_time;
+        @Nullable
+        @BindView(R.id.download_file_view)
+        ImageView download_file_view;
 
         public DownloadViewHolder(View itemView) {
             super(itemView);
