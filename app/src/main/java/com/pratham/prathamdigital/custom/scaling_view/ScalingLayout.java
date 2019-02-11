@@ -337,7 +337,7 @@ public class ScalingLayout extends FrameLayout {
     }
 
     /**
-     * Notify observers about change
+     * Noty observers about change
      */
     private void notifyListener() {
         if (scalingLayoutListener != null) {

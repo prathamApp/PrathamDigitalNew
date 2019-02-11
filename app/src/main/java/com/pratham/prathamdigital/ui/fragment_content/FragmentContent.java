@@ -527,6 +527,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
             f_path = pradigiPath + "/PrathamGame/" + contentDetail.getResourcepath();
         intent.putExtra("index_path", f_path);
         intent.putExtra("resId", contentDetail.getResourceid());
+        intent.putExtra("isOnSdCard", contentDetail.isOnSDCard());
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.nothing);
         startActivity(intent);
     }

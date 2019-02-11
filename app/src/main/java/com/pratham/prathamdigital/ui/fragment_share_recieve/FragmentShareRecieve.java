@@ -263,7 +263,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     @AfterViews
     public void initialize() {
         sharePresenter.setView(FragmentShareRecieve.this);
-        hotspotUtils = HotspotUtils.getInstance(getActivity(), mHandler);
         circular_share_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -282,6 +281,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     @Override
     public void onResume() {
         super.onResume();
+        hotspotUtils = HotspotUtils.getInstance(getActivity(), mHandler);
         if (startCameraScan != null)
             startCameraScan.resumeCameraPreview(FragmentShareRecieve.this);
         if (isHotspotEnabled) {
@@ -491,10 +491,31 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     @Override
     public void ftpConnected_showFolders() {
+        if (connecting_progress.getVisibility() == View.VISIBLE)
+            connecting_progress.setVisibility(View.GONE);
+        if (rl_scan_qr.getVisibility() == View.VISIBLE)
+            rl_scan_qr.setVisibility(View.GONE);
         share_title.setTextColor(BLACK);
         share_title.setText("Share Content");
         hideViewsandShowFolders();
         sharePresenter.showFolders(null);
+    }
+
+    @Override
+    public void ftpConnectionFailed() {
+        shareCircle.setVisibility(View.GONE);
+        searchView.setVisibility(View.GONE);
+        rl_hotspot_qr.setVisibility(View.GONE);
+        rl_scan_qr.setVisibility(View.GONE);
+        root_share.setVisibility(View.VISIBLE);
+        rl_recieve.setVisibility(View.VISIBLE);
+        TransitionManager.beginDelayedTransition(root_share);
+        ViewGroup.LayoutParams params = rl_recieve.getLayoutParams();
+        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+        params.width = 0;
+        rl_share.setVisibility(View.VISIBLE);
+        rl_recieve.requestLayout();
+        rl_recieve.setClickable(true);
     }
 
     private void createHotspotQrCode() {
@@ -581,22 +602,22 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     }
 
     private void initCamera() {
+        connecting_progress.setVisibility(View.GONE);
         if (!isPermissionGranted(getActivity(), PermissionUtils.Manifest_CAMERA)) {
             askCompactPermission(PermissionUtils.Manifest_CAMERA, new PermissionResult() {
                 @Override
                 public void permissionGranted() {
                     _initCamera();
-
                 }
 
                 @Override
                 public void permissionDenied() {
-
+                    Log.d(TAG, "camera permissionDenied: ");
                 }
 
                 @Override
                 public void permissionForeverDenied() {
-
+                    Log.d(TAG, "camera permissionForeverDenied: ");
                 }
             });
         } else {
@@ -654,10 +675,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     @UiThread
     @Override
     public void onWifiConnected(String ssid) {
-        if (connecting_progress.getVisibility() == View.VISIBLE)
-            connecting_progress.setVisibility(View.GONE);
-        if (rl_scan_qr.getVisibility() == View.VISIBLE)
-            rl_scan_qr.setVisibility(View.GONE);
 //        if (circleProgress != null)
 //            circleProgress.finishAnim();
 //        connectTimer = new Timer();
@@ -748,26 +765,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     }
 
-    public void setIPaddress() {
-        if (WifiUtils.isWifiApEnabled()) {
-            serverIPaddres = localIPaddress = "192.168.43.1";
-        } else {
-            localIPaddress = WifiUtils.getLocalIPAddress();
-            serverIPaddres = WifiUtils.getServerIPAddress();
-        }
-        Log.d("IPAddress:::", "localIPaddress:" + localIPaddress + " serverIPaddres:" + serverIPaddres);
-    }
-
-    private boolean isValidated() {
-        setIPaddress();
-        String nullIP = "0.0.0.0";
-        if (nullIP.equals(localIPaddress) || nullIP.equals(serverIPaddres)
-                || localIPaddress == null || serverIPaddres == null) {
-            return false;
-        }
-        return true;
-    }
-
     @Subscribe
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {
@@ -810,7 +807,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        share_title.setTextColor(WHITE);
+                        share_title.setTextColor(BLACK);
                         share_title.setText("Receiving...");
                         hideViewsandShowFolders();
                         Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
@@ -881,7 +878,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                 String wifipass = jsonobject.getString(PD_Constant.FTP_HOTSPOT_PASS);
                 int wifikeymgmt = jsonobject.getInt(PD_Constant.FTP_KEYMGMT);
                 ConnectionUtils.getInstance(getActivity()).toggleConnection(wifiname, wifipass, wifikeymgmt, sharePresenter);
-//                sharePresenter.connectToWify(wifiname, wifipass);
+                //sharePresenter.connectToWify(wifiname, wifipass);
             }
         } catch (JSONException e) {
             e.printStackTrace();

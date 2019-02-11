@@ -21,6 +21,7 @@ package com.pratham.prathamdigital.ftpSettings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Gravity;
@@ -43,7 +44,10 @@ public class RequestStartStopReceiver extends BroadcastReceiver {
                 Intent serverService = new Intent(context, FsService.class);
 //                if (!FsService.isRunning()) {
                 warnIfNoExternalStorage();
-                context.startService(serverService);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    PrathamApplication.getInstance().startForegroundService(serverService);
+                else
+                    context.startService(serverService);
 //                }
             } else if (intent.getAction().equals(FsService.ACTION_STOP_FTPSERVER)) {
                 Intent serverService = new Intent(context, FsService.class);

@@ -40,6 +40,7 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
         try {
 //            ipaddress = ipaddress.replace("ftp://", "");
 //            ipaddress = ipaddress.replace(":8080", "");
+            Thread.sleep(2500);
             client1.setControlEncoding("UTF-8");
             client1.setAutodetectUTF8(true);
             /*The Apache Commons Net library believes that the 220 response from the server does not conform to RFC 959 (probably rightfully).
@@ -62,10 +63,6 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
     @Override
     protected void onPostExecute(Boolean connected) {
         super.onPostExecute(connected);
-//        if (pd != null)
-//            pd.dismiss();
-//        MyApplication.ftpClient = client1;
-//        ftpConnectInterface.onConnectionEshtablished(client1.isConnected());
         if (connected) {
             ftpConnected.onFTPConnected(connected, client1);
         } else {

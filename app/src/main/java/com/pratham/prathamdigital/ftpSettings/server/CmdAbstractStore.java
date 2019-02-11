@@ -76,7 +76,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
                             errString = "451 Couldn't truncate file\r\n";
                             break storing;
                         }
-                        // Notify other apps that we just deleted a file
+                        // Noty other apps that we just deleted a file
                         MediaUpdater.notifyFileDeleted(storeFile.getPath());
                     }
                 }
@@ -244,7 +244,7 @@ abstract public class CmdAbstractStore extends FtpCmd {
             sessionThread.writeString(errString);
         } else {
             sessionThread.writeString("226 Transmission complete\r\n");
-            // Notify the music player (and possibly others) that a few file has
+            // Noty the music player (and possibly others) that a few file has
             // been uploaded.
             MediaUpdater.notifyFileCreated(storeFile.getPath());
         }

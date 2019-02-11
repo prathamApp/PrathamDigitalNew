@@ -28,7 +28,6 @@ public class JSInterface {
     public static MediaPlayer mp;
     WebView w;
     //    RadioGroup radioGroup;
-    public static int flag = 0;
     public static Boolean MediaFlag = false;
     //    static Boolean pdfFlag = false;
     //    static Boolean audioFlag = false;
@@ -40,14 +39,14 @@ public class JSInterface {
     //    private TextToSpeech textToSp;
     private String resId;
     private String audio_directory_path = "";
+    private boolean isOnSdCard;
 
-
-    JSInterface(Context c, WebView w, String gamePath, String resId) {
+    JSInterface(Context c, WebView w, String gamePath, String resId, boolean isOnSdCard) {
         mContext = c;
         ttspeech = BaseActivity.ttsService;
-//        this.textToSp = Activity_Main.ttspeech;
         this.resId = resId;
         this.gamePath = gamePath;
+        this.isOnSdCard = isOnSdCard;
         createRecordingFolder();
         mp = new MediaPlayer();
         this.w = w;
@@ -83,7 +82,9 @@ public class JSInterface {
     @JavascriptInterface
     public void startRecording(String recName) {
         try {
-            recordAudio = new Audio(recName);
+            File file = new File(audio_directory_path, recName);
+            if (!file.exists()) file.createNewFile();
+            recordAudio = new Audio(file.getAbsolutePath());
             recordAudio.start();
         } catch (Exception e) {
             e.printStackTrace();
@@ -100,7 +101,6 @@ public class JSInterface {
             e.printStackTrace();
         }
     }
-
 
     @JavascriptInterface
     public void getPath(String gameFolder) {
@@ -137,55 +137,31 @@ public class JSInterface {
             if (ttspeech.isSpeaking()) {
                 ttspeech.stop();
             }
-            String path = "";
-            flag = 0;
-            String mp3File;
-            try {
-                if (storyName != null) {
-                    File file = new File(audio_directory_path + "/" + storyName);
-                    if (!file.exists()) file.mkdirs();
-                    mp3File = file.getAbsolutePath() + "/" + filename;
-                } else
-                    mp3File = audio_directory_path + "/" + filename;
-
-                if (filename.charAt(0) == '/') {
-                    path = audio_directory_path + filename;//check for recording game and then change
-                    mp.setDataSource(path);
-                } else
-                    mp.setDataSource(path);
-
-                if (mp.isPlaying())
-                    mp.stop();
-
-                mp.prepare();
-                mp.start();
-
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        //audioFlag = false;
-                        try {
-                            w.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    w.loadUrl("javascript:temp()");
-                                }
-                            });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
+            File file = new File(audio_directory_path, filename);
+            mp.setDataSource(file.getAbsolutePath());
+            mp.prepare();
+            mp.start();
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    //audioFlag = false;
+                    try {
+                        w.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                w.loadUrl("javascript:temp()");
+                            }
+                        });
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    // Ketan's Code
     @JavascriptInterface
     public void audioPlayer(String filename) {
         try {

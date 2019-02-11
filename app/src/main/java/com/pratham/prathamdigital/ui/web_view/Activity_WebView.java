@@ -35,17 +35,18 @@ public class Activity_WebView extends BaseActivity {
         String index_path = getIntent().getStringExtra("index_path");
         String path = new File(index_path).getParent() + "/";
         String resId = getIntent().getStringExtra("resId");
-        createWebView(index_path, path, resId);
+        boolean isOnSdCard = getIntent().getBooleanExtra("isOnSdCard", false);
+        createWebView(index_path, path, resId, isOnSdCard);
     }
 
-    public void createWebView(String GamePath, String parse, String resId) {
+    public void createWebView(String GamePath, String parse, String resId, boolean isOnSdCard) {
         try {
             webView.loadUrl("file:///" + GamePath);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
             webView.addJavascriptInterface(new JSInterface(Activity_WebView.this, webView,
-                    "file://" + parse, resId), "Android");
+                    "file://" + parse, resId, isOnSdCard), "Android");
             webView.setWebContentsDebuggingEnabled(true);
             webView.setWebViewClient(new WebViewClient());
             webView.setWebChromeClient(new WebChromeClient());

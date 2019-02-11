@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatDelegate;
 import com.androidnetworking.AndroidNetworking;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.ftpSettings.FsNotification;
+import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.ftpSettings.RequestStartStopReceiver;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -36,6 +38,7 @@ public class PrathamApplication extends Application {
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;
     RequestStartStopReceiver requestStartStopReceiver;
+    FsNotification fsNotification;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -91,17 +94,26 @@ public class PrathamApplication extends Application {
     }
 
     public void registerFtpReceiver() {
+        //registering receivers in case of android version above Oreo
         requestStartStopReceiver = new RequestStartStopReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.pratham.prathamdigital.ACTION_START_FTPSERVER");
         intentFilter.addAction("com.pratham.prathamdigital.ACTION_STOP_FTPSERVER");
         registerReceiver(requestStartStopReceiver, intentFilter);
+
+        fsNotification = new FsNotification();
+        IntentFilter fsIntentFilter = new IntentFilter();
+        fsIntentFilter.addAction(FsNotification.ACTION_UPDATE_NOTIFICATION);
+        fsIntentFilter.addAction(FsService.ACTION_STARTED);
+        fsIntentFilter.addAction(FsService.ACTION_STOPPED);
+        registerReceiver(fsNotification, fsIntentFilter);
     }
 
     public void unregisterReceiver() {
-        if (requestStartStopReceiver != null) {
+        if (requestStartStopReceiver != null)
             unregisterReceiver(requestStartStopReceiver);
-        }
+        if (fsNotification != null)
+            unregisterReceiver(fsNotification);
     }
 }
 

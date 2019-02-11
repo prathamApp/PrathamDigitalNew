@@ -23,6 +23,38 @@
           }
         },
         {
+          "client_id": "157148656702-q72h5quts49gebckflmvghhuep59sadh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pratham.prathamdigital",
+            "certificate_hash": "dac9b608ea6a894aa1605435d816e8877d32da20"
+          }
+        },
+        {
+          "client_id": "157148656702-2gbmt1n8g3dj78cch15iu1kd7fdt9c6p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pratham.prathamdigital",
+            "certificate_hash": "567574534cd4cc17863c3dc5ab26a011cb1d2dd2"
+          }
+        },
+        {
+          "client_id": "157148656702-s3gf0gpkjppnh21h4o7jgi0f2tbltptf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pratham.prathamdigital",
+            "certificate_hash": "11cceed96e709931e39fb862f58a82f4e40b9e42"
+          }
+        },
+        {
+          "client_id": "157148656702-mrmdhdbspruim7vsh01feuj41e4je6an.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pratham.prathamdigital",
+            "certificate_hash": "42db34ff4d843c74c552cfb11c5f16f9bfb763cf"
+          }
+        },
+        {
           "client_id": "157148656702-nspaths4vsmnene8dujsogdr54naii0o.apps.googleusercontent.com",
           "client_type": 3
         }

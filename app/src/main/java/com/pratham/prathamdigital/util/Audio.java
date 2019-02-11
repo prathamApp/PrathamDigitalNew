@@ -3,26 +3,23 @@ package com.pratham.prathamdigital.util;
 import android.media.MediaRecorder;
 import android.util.Log;
 
-public class Audio extends Thread
-{
+public class Audio extends Thread {
     private boolean stopped = false;
     MediaRecorder mediaRecorder;
-    String recName;
-    private boolean isRecording=false;
+    String recFilePath;
+    private boolean isRecording = false;
 
     /**
      * Give the thread high priority so that it's not canceled unexpectedly, and start it
      */
 
-    public Audio(String recName)
-    {
-        this.recName=recName;
+    public Audio(String recFilePath) {
+        this.recFilePath = recFilePath;
         android.os.Process.setThreadPriority(android.os.Process.THREAD_PRIORITY_URGENT_AUDIO);
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         /*Log.i("Audio", "Running Audio Thread");
         AudioRecord recorder = null;
         AudioTrack track = null;
@@ -33,8 +30,7 @@ public class Audio extends Thread
          * Initialize buffer to hold continuously recorded audio data, start recording, and start
          * playback.
          */
-        try
-        {
+        try {
             /*int N = AudioRecord.getMinBufferSize(8000, AudioFormat.CHANNEL_IN_MONO,AudioFormat.ENCODING_PCM_16BIT);
             recorder = new AudioRecord(MediaRecorder.AudioSource.MIC, 8000, AudioFormat.CHANNEL_IN_MONO, AudioFormat.ENCODING_PCM_16BIT,N);
             track = new AudioTrack(AudioManager.STREAM_MUSIC, 8000,
@@ -57,18 +53,16 @@ public class Audio extends Thread
                 mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
                 mediaRecorder.setAudioEncodingBitRate(96000);
                 mediaRecorder.setAudioSamplingRate(44100);
-                mediaRecorder.setOutputFile("/storage/sdcard0/.POSinternal/recordings/"+recName);
+                mediaRecorder.setOutputFile(recFilePath);
                 mediaRecorder.prepare();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
             mediaRecorder.start();
-            isRecording=true;
+            isRecording = true;
 
-        }
-        catch(Throwable x)
-        {
+        } catch (Throwable x) {
             Log.w("Audio", "Error reading voice audio", x);
         }
         /*
@@ -86,18 +80,16 @@ public class Audio extends Thread
     /**
      * Called from outside of the thread in order to stop the recording/playback loop
      */
-    public void close()
-    {
+    public void close() {
         //stopped = false;
-        try{
-            if (isRecording)
-            {
+        try {
+            if (isRecording) {
                 mediaRecorder.stop();
                 mediaRecorder.release();
                 mediaRecorder = null;
                 isRecording = false;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

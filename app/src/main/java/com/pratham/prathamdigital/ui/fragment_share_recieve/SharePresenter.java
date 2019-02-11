@@ -60,6 +60,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
     HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
     Timer ftpTimer = new Timer();
+    int ftpConnectionTry = 0;
 
     public SharePresenter(Context context) {
         this.context = context;
@@ -147,34 +148,13 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     @Override
     public void connectToAddedSSID(String ssid) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (shareView != null) shareView.onWifiConnected(ssid);
-            }
-        }, 1000);
-/*        PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
-            @Override
-            public void connectedToNetwork() {
-                if (shareView != null)
-                    shareView.onWifiConnected(ssid);
-            }
+        if (shareView != null)
+            shareView.onWifiConnected(ssid);
+    }
 
-            @Override
-            public void failureConnectingToNetwork() {
-                Log.d(TAG, "failureConnectingToNetwork: ");
-            }
-
-            @Override
-            public void networkNotFoundToConnectTo() {
-                Log.d(TAG, "networkNotFoundToConnectTo: ");
-            }
-
-            @Override
-            public void wisefyFailure(int i) {
-                Log.d(TAG, "wisefyFailure: ");
-            }
-        });*/
+    @Override
+    public void connectionFailed() {
+        if (shareView != null) shareView.ftpConnectionFailed();
     }
 
     @Override
@@ -254,13 +234,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         if (connected) {
             this.ftpClient = client;
             startConnectionDisconnectlistener(client);
-            shareView.ftpConnected_showFolders();
+            if (shareView != null)
+                shareView.ftpConnected_showFolders();
         } else {
             Log.d(TAG, "onFTPConnected: trying to connect again");
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    connectFTP();
+                    if (ftpConnectionTry < 5) {     //not more than 5 tries, otherwise infinite loop until success
+                        ftpConnectionTry += 1;
+                        connectFTP();
+                    } else {
+                        if (shareView != null) shareView.ftpConnectionFailed();
+                    }
                 }
             }, 1000);
         }

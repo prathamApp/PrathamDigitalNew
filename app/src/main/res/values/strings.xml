@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">Pratham Digital</string>
     <string name="child_name">Name</string>
-    <string name="share">Create</string>
-    <string name="recieve">Join</string>
+    <string name="share">Share</string>
+    <string name="recieve">Receive</string>
     <string name="age_3to7">Age 3-7</string>
     <string name="age_8to14">Age 8-14</string>
     <string name="pref_key_transition_time">pref_key_transition_time</string>
@@ -211,4 +211,6 @@
     <string name="notif_settings_text">Settings</string>
     <string name="swiftp_name">FTP Server</string>
     <string name="txt_network_error">No content found. Please check your internet connection or try to change language</string>
+    <string name="recieve_txt">Hotspot will be created to receive content</string>
+    <string name="share_txt">Connect to hotspot by scanning the QR displayed.</string>
 </resources>

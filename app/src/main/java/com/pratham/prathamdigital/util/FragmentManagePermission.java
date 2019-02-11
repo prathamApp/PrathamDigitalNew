@@ -1,9 +1,7 @@
 package com.pratham.prathamdigital.util;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -137,17 +135,5 @@ public class FragmentManagePermission extends Fragment {
         permissionsAsk = permissions;
         this.permissionResult = permissionResult;
         internalRequestPermission(permissionsAsk);
-    }
-
-
-    public void openSettingsApp(Context context) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
-            Intent intent = new Intent(android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            intent.setData(Uri.parse("package:" + context.getPackageName()));
-            startActivity(intent);
-        }
-
-
     }
 }

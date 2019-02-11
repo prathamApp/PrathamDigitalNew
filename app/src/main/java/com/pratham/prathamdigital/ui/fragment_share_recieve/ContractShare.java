@@ -26,6 +26,8 @@ public interface ContractShare {
         void showRecieving(ArrayList<Modal_ReceivingFilesThroughFTP> filesRecieving);
 
         void ftpConnected_showFolders();
+
+        void ftpConnectionFailed();
     }
 
     interface sharePresenter {
@@ -54,5 +56,7 @@ public interface ContractShare {
         void connectToAddedSSID(String ssid);
 
         void viewDestroyed();
+
+        void connectionFailed();
     }
 }

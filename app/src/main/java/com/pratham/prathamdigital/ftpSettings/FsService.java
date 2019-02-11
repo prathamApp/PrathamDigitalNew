@@ -21,6 +21,7 @@ along with SwiFTP.  If not, see <http://www.gnu.org/licenses/>.
 package com.pratham.prathamdigital.ftpSettings;
 
 import android.app.AlarmManager;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -29,6 +30,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.net.wifi.WifiManager.WifiLock;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.SystemClock;
@@ -39,6 +41,7 @@ import com.pratham.prathamdigital.ftpSettings.server.SessionThread;
 import com.pratham.prathamdigital.ftpSettings.server.TcpListener;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.lang.reflect.Method;
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -78,10 +81,23 @@ public class FsService extends Service implements Runnable {
 
     private PowerManager.WakeLock wakeLock;
     private WifiLock wifiLock = null;
+    private static WeakReference<Service> serverService;
+
+    public static void setForeground(int id, Notification notification) {
+        if (null != serverService) {
+            Service service = serverService.get();
+            if (null != service)
+                service.startForeground(id, notification);
+        }
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         shouldExit = false;
+        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)) {
+            serverService = new WeakReference<>(this);
+            FsNotification.startingNotification(this);
+        }
         int attempts = 10;
         // The previous server thread may still be cleaning up, wait for it to finish.
         while (serverThread != null) {
@@ -140,6 +156,7 @@ public class FsService extends Service implements Runnable {
                 listenSocket.close();
             }
         } catch (IOException e) {
+            e.printStackTrace();
         }
 
         if (wifiLock != null) {
@@ -151,6 +168,9 @@ public class FsService extends Service implements Runnable {
             Log.d(TAG, "onDestroy: Releasing wake lock");
             wakeLock.release();
             wakeLock = null;
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            stopForeground(true); //true will remove notification
         }
         Log.d(TAG, "FTPServerService.onDestroy() finished");
     }
@@ -350,9 +370,6 @@ public class FsService extends Service implements Runnable {
     @Override
     public void onCreate() {
         super.onCreate();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            registerReceiver()
-//        }
     }
 
     /**

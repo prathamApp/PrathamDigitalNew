@@ -11,7 +11,6 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 
 public class ConnectionUtils {
@@ -52,7 +51,6 @@ public class ConnectionUtils {
     }
 
     public boolean disableCurrentNetwork() {
-        // TODO: Networks added by other applications will possibly reconnect even if we disconnect them
         // This is because we are only allowed to manipulate the connections that we added.
         // And if it is the case, then the return value of disableNetwork will be false.
         return isConnectedToAnyNetwork()
@@ -171,83 +169,83 @@ public class ConnectionUtils {
                 && mConnectivityManager.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_MOBILE;
     }
 
-    public boolean toggleConnection(String ssid, String password, int keyManagement, ContractShare.sharePresenter sharePresenter) {
-        if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(ssid)) {
-            WifiConfiguration config = new WifiConfiguration();
+    public void toggleConnection(String ssid, String password, int keyManagement, ContractShare.sharePresenter sharePresenter) {
+        disableCurrentNetwork();
+//        if (!PrathamApplication.wiseF.isDeviceConnectedToSSID(ssid)) {
+        WifiConfiguration config = new WifiConfiguration();
 
-            config.SSID = String.format("\"%s\"", ssid)/*ssid*/;
+        config.SSID = String.format("\"%s\"", ssid)/*ssid*/;
 
-            switch (keyManagement) {
-                case 0: // OPEN
-                    config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                    break;
-                case 1: // WEP64
-                    config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
-                    config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
+        switch (keyManagement) {
+            case 0: // OPEN
+                config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                break;
+            case 1: // WEP64
+                config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+                config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP40);
 
-                    if (password != null && password.matches("[0-9A-Fa-f]*")) {
-                        config.wepKeys[0] = password;
-                    } else {
-                        //fail("Please type hex pair for the password");
-                    }
-                    break;
-                case 2: // WEP128
-                    config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
-                    config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
+                if (password != null && password.matches("[0-9A-Fa-f]*")) {
+                    config.wepKeys[0] = password;
+                } else {
+                    //fail("Please type hex pair for the password");
+                }
+                break;
+            case 2: // WEP128
+                config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.SHARED);
+                config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.WEP104);
 
-                    if (password != null
-                            && password.matches("[0-9A-Fa-f]*")) {
-                        config.wepKeys[0] = password;
-                    } else {
-                        //fail("Please type hex pair for the password");
-                    }
-                    break;
-                case 3: // WPA_TKIP
-                    config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-                    config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
-                    config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
-                    config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
+                if (password != null
+                        && password.matches("[0-9A-Fa-f]*")) {
+                    config.wepKeys[0] = password;
+                } else {
+                    //fail("Please type hex pair for the password");
+                }
+                break;
+            case 3: // WPA_TKIP
+                config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                config.allowedProtocols.set(WifiConfiguration.Protocol.WPA);
+                config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.TKIP);
+                config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.TKIP);
 
-                    if (password != null
-                            && password.matches("[0-9A-Fa-f]{64}")) {
-                        config.preSharedKey = password;
-                    } else {
-                        config.preSharedKey = '"' + password + '"';
-                    }
-                    break;
-                case 4: // WPA2_AES
-                    config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-                    config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
-                    config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
-                    config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
-                    config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
-                    config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                if (password != null
+                        && password.matches("[0-9A-Fa-f]{64}")) {
+                    config.preSharedKey = password;
+                } else {
+                    config.preSharedKey = '"' + password + '"';
+                }
+                break;
+            default: // WPA2_AES
+                config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+                config.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN);
+                config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
+                config.allowedPairwiseCiphers.set(WifiConfiguration.PairwiseCipher.CCMP);
+                config.allowedGroupCiphers.set(WifiConfiguration.GroupCipher.CCMP);
+                config.allowedProtocols.set(WifiConfiguration.Protocol.RSN);
 
-                    if (password != null
-                            && password.matches("[0-9A-Fa-f]{64}")) {
-                        config.preSharedKey = password;
-                    } else {
-                        config.preSharedKey = '"' + password + '"';
-                    }
-                    break;
-            }
-
-            int netId = getWifiManager().addNetwork(config);
-            getWifiManager().disconnect();
-            boolean result = getWifiManager().enableNetwork(netId, true);
-            if (result)
-                sharePresenter.connectToAddedSSID(ssid);
-            return getWifiManager().reconnect();
+                if (password != null
+                        && password.matches("[0-9A-Fa-f]{64}")) {
+                    config.preSharedKey = password;
+                } else {
+                    config.preSharedKey = '"' + password + '"';
+                }
+                break;
         }
 
-        disableCurrentNetwork();
-
-        return false;
+        int netId = getWifiManager().addNetwork(config);
+        getWifiManager().disconnect();
+        boolean result = getWifiManager().enableNetwork(netId, true);
+        if (result)
+            sharePresenter.connectToAddedSSID(ssid);
+        else
+            sharePresenter.connectionFailed();
+//        return getWifiManager().reconnect();
+//        }
+//        return false;
     }
 
     public interface ConnectionCallback {
