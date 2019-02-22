@@ -31,6 +31,8 @@ public interface ContentContract {
         void onDownloadError(EventMessage message);
 
         void dismissDialog();
+
+        void animateHamburger();
     }
 
     interface contentPresenter {
@@ -50,7 +52,7 @@ public interface ContentContract {
 
         void getContent(Modal_ContentDetail contentDetail);
 
-        void getLevels();
+        int getLevels();
 
         void eventFileDownloadStarted(EventMessage message);
 

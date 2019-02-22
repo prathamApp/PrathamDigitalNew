@@ -24,14 +24,6 @@ import java.util.ArrayList;
 @EActivity(R.layout.activity_attendance)
 public class AttendanceActivity extends BaseActivity {
 
-//    @Override
-//    protected void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-////        setContentView(R.layout.activity_attendance);
-////        ButterKnife.bind(this);
-//
-//    }
-
     @AfterViews
     public void initialize() {
         if (PrathamApplication.isTablet) {
@@ -50,6 +42,7 @@ public class AttendanceActivity extends BaseActivity {
                 Bundle bundle = new Bundle();
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
+                bundle.putBoolean(PD_Constant.SHOW_BACK, false);
                 PD_Utility.showFragment(this, new Fragment_SelectAvatar_(), R.id.frame_attendance,
                         bundle, Fragment_SelectAvatar_.class.getSimpleName());
             }

@@ -26,8 +26,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginRight="@dimen/_50sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginRight="@dimen/_5sdp"
             android:orientation="horizontal">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
@@ -50,8 +50,8 @@
             android:id="@+id/rv_level"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
-            android:layout_marginLeft="@dimen/_37sdp"
-            android:layout_marginTop="@dimen/_8sdp" />
+            android:layout_marginLeft="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_10sdp" />
 
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

@@ -25,7 +25,6 @@ import butterknife.ButterKnife;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
     Context context;
-    //    List<Modal_FileDownloading> downloadings;
     private AsyncListDiffer<Modal_FileDownloading> mDiffer;
     private DiffUtil.ItemCallback<Modal_FileDownloading> diffcallback = new DiffUtil.ItemCallback<Modal_FileDownloading>() {
         @Override

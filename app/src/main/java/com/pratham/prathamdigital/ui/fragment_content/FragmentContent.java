@@ -1,13 +1,16 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -21,18 +24,18 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
+import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
-import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer_;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
 import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
-import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.PermissionUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -43,6 +46,7 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,11 +56,13 @@ import java.util.Map;
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 @EFragment(R.layout.fragment_content)
-public class FragmentContent extends FragmentManagePermission implements ContentContract.contentView,
+public class FragmentContent extends Fragment implements ContentContract.contentView,
         ContentContract.contentClick, CircularRevelLayout.CallBacks, LevelContract {
 
     private static final String TAG = FragmentContent.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 99;
+    private static final int INITIALIZE_CONTENT_ADAPTER = 1;
+    private static final int INITIALIZE_LEVEL_ADAPTER = 2;
     @ViewById(R.id.frag_content_bkgd)
     RelativeLayout frag_content_bkgd;
     @ViewById(R.id.circular_content_reveal)
@@ -82,25 +88,44 @@ public class FragmentContent extends FragmentManagePermission implements Content
     private int revealY;
     BlurPopupWindow download_builder;
     BlurPopupWindow deleteDialog;
-
-    @AfterViews
-    public void initialize() {
-        frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
-        contentPresenter.setView(FragmentContent.this);
-        circular_content_reveal.setListener(this);
-        if (getArguments() != null) {
-            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-            circular_content_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_content_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_content_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case INITIALIZE_CONTENT_ADAPTER:
+                    contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
+                    rv_content.setHasFixedSize(true);
+                    rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
+                    GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
+                    gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
+                        @Override
+                        public int getSpanSize(int pos) {
+                            switch (contentAdapter.getItemViewType(pos)) {
+                                case ContentAdapter.HEADER_TYPE:
+                                    return gridLayoutManager.getSpanCount();
+                                case ContentAdapter.FOLDER_TYPE:
+                                    return 1;
+                                case ContentAdapter.FILE_TYPE:
+                                    return 1;
+                                default:
+                                    return 1;
+                            }
+                        }
+                    });
+                    rv_content.setAdapter(contentAdapter);
+                    rv_content.scheduleLayoutAnimation();
+                    break;
+                case INITIALIZE_LEVEL_ADAPTER:
+                    levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
+                    rv_level.setHasFixedSize(true);
+                    rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                    rv_level.setAdapter(levelAdapter);
+                    break;
+            }
         }
-    }
+    };
 
     @Override
     public void onResume() {
@@ -196,6 +221,27 @@ public class FragmentContent extends FragmentManagePermission implements Content
         onResume();
     }
 
+    @AfterViews
+    public void initialize() {
+        frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
+        contentPresenter.setView(FragmentContent.this);
+        mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
+        mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
+        circular_content_reveal.setListener(this);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_content_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_content_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_content_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
+    }
+
     @UiThread
     @Override
     public void displayContents(List<Modal_ContentDetail> content) {
@@ -206,49 +252,13 @@ public class FragmentContent extends FragmentManagePermission implements Content
             rv_content.setVisibility(View.VISIBLE);
         if (!content.isEmpty() && content.size() > 1) {
             if (contentAdapter == null) {
-                contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
-                rv_content.setHasFixedSize(true);
-                rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-                GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
-                gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                    @Override
-                    public int getSpanSize(int pos) {
-                        switch (contentAdapter.getItemViewType(pos)) {
-                            case ContentAdapter.HEADER_TYPE:
-                                return gridLayoutManager.getSpanCount();
-                            case ContentAdapter.FOLDER_TYPE:
-                                return 1;
-                            case ContentAdapter.FILE_TYPE:
-                                return 1;
-                            default:
-                                return 1;
-                        }
-                    }
-                });
-                rv_content.setAdapter(contentAdapter);
-                rv_content.scheduleLayoutAnimation();
-                contentAdapter.submitList(content);
+                mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
             } else {
                 contentAdapter.submitList(content);
                 rv_content.smoothScrollToPosition(0);
             }
         } else {
             showNoConnectivity();
-        }
-    }
-
-    @UiThread
-    public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
-        if (levelContents != null) {
-            if (levelAdapter == null) {
-                levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
-                rv_level.setHasFixedSize(true);
-                rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-                rv_level.setAdapter(levelAdapter);
-                levelAdapter.submitList(levelContents);
-            } else {
-                levelAdapter.submitList(levelContents);
-            }
         }
     }
 
@@ -275,6 +285,7 @@ public class FragmentContent extends FragmentManagePermission implements Content
         PD_Utility.showDialog(getActivity());
         contentPresenter.getContent(contentDetail);
     }
+
 
     @Override
     public void displayHeader(Modal_ContentDetail contentDetail) {
@@ -303,12 +314,6 @@ public class FragmentContent extends FragmentManagePermission implements Content
                     .bindClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-/*                            new Handler().postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    showSdCardDialog();
-                                }
-                            }, 1500);*/
                             download_builder.dismiss();
                         }
                     }, R.id.btn_change)
@@ -441,49 +446,14 @@ public class FragmentContent extends FragmentManagePermission implements Content
     }
 
     @UiThread
-    @Override
-    public void openContent(int position, Modal_ContentDetail contentDetail) {
-        PrathamApplication.bubble_mp.start();
-        if (isPermissionGranted(getActivity(), PermissionUtils.Manifest_RECORD_AUDIO)) {
-            switch (contentDetail.getResourcetype().toLowerCase()) {
-                case PD_Constant.GAME:
-                    openGame(contentDetail);
-                    break;
-                case PD_Constant.VIDEO:
-                    openVideo(contentDetail);
-                    break;
-                case PD_Constant.PDF:
-                    openPdf(contentDetail);
-                    break;
+    public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
+        if (levelContents != null) {
+            if (levelAdapter == null) {
+                mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
+//                levelAdapter.submitList(levelContents);
+            } else {
+                levelAdapter.submitList(levelContents);
             }
-        } else {
-            askCompactPermission(PermissionUtils.Manifest_RECORD_AUDIO, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    switch (contentDetail.getResourcetype().toLowerCase()) {
-                        case PD_Constant.GAME:
-                            Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
-                            openGame(contentDetail);
-                            break;
-                        case PD_Constant.VIDEO:
-                            openVideo(contentDetail);
-                            break;
-                        case PD_Constant.PDF:
-                            openPdf(contentDetail);
-                            break;
-                    }
-                }
-
-                @Override
-                public void permissionDenied() {
-                    Log.d(TAG, "permissionDenied:");
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                    Log.d(TAG, "permissionForeverDenied:");
-                }
-            });
         }
     }
 
@@ -540,5 +510,51 @@ public class FragmentContent extends FragmentManagePermission implements Content
     @Override
     public void onUnRevealed() {
 
+    }
+
+    @UiThread
+    @Override
+    public void openContent(int position, Modal_ContentDetail contentDetail) {
+        PrathamApplication.bubble_mp.start();
+        if (!PD_Utility.checkIfPermissionGranted(getActivity(), Manifest.permission.RECORD_AUDIO)) {
+            KotlinPermissions.with(getActivity())
+                    .permissions(Manifest.permission.RECORD_AUDIO)
+                    .onAccepted(new ResponsePermissionCallback() {
+                        @Override
+                        public void onResult(@NotNull List<String> permissionResult) {
+                            switch (contentDetail.getResourcetype().toLowerCase()) {
+                                case PD_Constant.GAME:
+                                    Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
+                                    openGame(contentDetail);
+                                    break;
+                                case PD_Constant.VIDEO:
+                                    openVideo(contentDetail);
+                                    break;
+                                case PD_Constant.PDF:
+                                    openPdf(contentDetail);
+                                    break;
+                            }
+                        }
+                    })
+                    .ask();
+        } else {
+            switch (contentDetail.getResourcetype().toLowerCase()) {
+                case PD_Constant.GAME:
+                    Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
+                    openGame(contentDetail);
+                    break;
+                case PD_Constant.VIDEO:
+                    openVideo(contentDetail);
+                    break;
+                case PD_Constant.PDF:
+                    openPdf(contentDetail);
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void animateHamburger() {
+        ((ContractMenu) getActivity()).toggleMenuIcon();
     }
 }

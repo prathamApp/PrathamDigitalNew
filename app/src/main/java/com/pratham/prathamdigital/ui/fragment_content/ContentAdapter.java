@@ -74,7 +74,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     public int getItemViewType(int position) {
         if (position == 0)
             return HEADER_TYPE;
-        else if (mDiffer.getCurrentList().get(position).getContentType().equalsIgnoreCase("folder"))
+        else if (mDiffer.getCurrentList().get(position).getContentType().equalsIgnoreCase(PD_Constant.FOLDER))
             return FOLDER_TYPE;
         else
             return FILE_TYPE;

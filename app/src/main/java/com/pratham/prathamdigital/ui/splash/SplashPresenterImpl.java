@@ -76,6 +76,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+    @Override
     public GoogleApiClient configureSignIn() {
         // Configure sign-in to request the user’s basic profile like name and email
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -133,7 +134,8 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             BaseActivity.statusDao.insert(status);
 //            AuthCredential credential = GoogleAuthProvider.getCredential(token, null);
 //            firebaseAuthWithGoogle(credential);
-            checkStudentList();
+//            checkStudentList();
+            checkIfContentinSDCard();
         }
     }
 
@@ -168,7 +170,6 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void populateDefaultDB() {
         Modal_Status statusObj = new Modal_Status();
-
         if (BaseActivity.statusDao.getKey("CRLID") == null) {
             statusObj.statusKey = "CRLID";
             statusObj.value = "default";

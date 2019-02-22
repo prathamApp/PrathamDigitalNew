@@ -144,12 +144,12 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
 
     @Override
     public void onConnectionSuspended(int i) {
-
+        Log.d(TAG, "onConnectionSuspended");
     }
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG, "onConnectionFailed");
     }
 
     public boolean checkLocationEnabled() {

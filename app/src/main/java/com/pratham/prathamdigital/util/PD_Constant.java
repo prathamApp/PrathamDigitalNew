@@ -48,6 +48,10 @@ public class PD_Constant {
     public static final String CONNECTION_TYPE = "connection_type";
     public static final String FTP_HOTSPOT_SSID = "ftp_hotspot_ssid";
     public static final String FTP_HOTSPOT_PASS = "ftp_hotspot_pass";
+    public static final String GROUP_NAME = "group_name";
+    public static final String PROFILE_NAME = "profile_name";
+    public static final String SHOW_BACK = "show_back";
+    public static final String PRADIGI_ICON = "pradigi_icon";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String MOBILE = "mobile";
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";

@@ -39,7 +39,6 @@ import java.util.List;
 
 public class FsNotification extends BroadcastReceiver {
 
-    public final static String ACTION_UPDATE_NOTIFICATION = "com.pratham.prathamdigital.ACTION_UPDATE_NOTIFICATION";
     private static final String CHANNEL_ID = "ftp_channel";
     private static final int NOTIFICATION_ID = 7890;
 
@@ -137,7 +136,7 @@ public class FsNotification extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("onReceive broadcast::", "" + intent.getAction());
         switch (intent.getAction()) {
-            case FsNotification.ACTION_UPDATE_NOTIFICATION:
+            case FsService.ACTION_UPDATE_NOTIFICATION:
                 clearNotification(context);
                 setupNotification(context);
                 break;

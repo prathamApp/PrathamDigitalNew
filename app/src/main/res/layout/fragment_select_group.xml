@@ -5,6 +5,7 @@
     android:layout_height="match_parent">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/att_bkgd">
@@ -15,18 +16,27 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true" />
 
-        <!--<Button-->
-        <!--android:id="@+id/btn_group_next"-->
-        <!--android:layout_width="@dimen/_150sdp"-->
-        <!--android:layout_height="@dimen/_50sdp"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_centerHorizontal="true"-->
-        <!--android:layout_marginTop="@dimen/_10sdp"-->
-        <!--android:layout_marginBottom="@dimen/_10sdp"-->
-        <!--android:background="@drawable/avatar_next_button_round_bg"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--android:scaleType="centerCrop"-->
-        <!--android:text="Next"-->
-        <!--android:textColor="@android:color/white" />-->
+        <ImageView
+            android:id="@+id/img_att_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_att_back" />
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_group_next"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/inner_shadow"
+            android:elevation="@dimen/_10sdp"
+            android:text="Next"
+            android:textColor="@color/white"
+            android:visibility="visible" />
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

@@ -3,28 +3,46 @@ package com.pratham.prathamdigital.ui.fragment_select_group;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.design.card.MaterialCardView;
+import android.support.v7.recyclerview.extensions.AsyncListDiffer;
+import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Groups;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
-    private ArrayList<Modal_Groups> datalist;
     private Context context;
     private ContractGroup contractGroup;
+    private AsyncListDiffer<Modal_Groups> mDiffer;
+    private DiffUtil.ItemCallback<Modal_Groups> diffcallback = new DiffUtil.ItemCallback<Modal_Groups>() {
+        @Override
+        public boolean areItemsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
+            return Objects.equals(detail.getGroupId(), t1.getGroupId());
+        }
 
-    public GroupAdapter(Context context, ArrayList<Modal_Groups> datalist, ContractGroup contractGroup) {
+        @Override
+        public boolean areContentsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
+            int result = detail.compareTo(t1);
+            if (result == 0) return true;
+            return false;
+        }
+    };
+
+    public GroupAdapter(Context context/*, ArrayList<Modal_Groups> datalist*/, ContractGroup contractGroup) {
+        mDiffer = new AsyncListDiffer<Modal_Groups>(this, diffcallback);
         this.context = context;
-        this.datalist = datalist;
+//        this.datalist = datalist;
         this.contractGroup = contractGroup;
     }
 
@@ -39,25 +57,34 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
         pos = viewHolder.getAdapterPosition();
-        viewHolder.group_name.setText(datalist.get(pos).getGroupName());
-//        if (datalist.get(pos).isSelected()) {
-//            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.green));
-//            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.white));
-//        } else {
-//            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.white));
-//            viewHolder.group_name.setTextColor(context.getResources().getColor(R.color.black_20));
-//        }
+        viewHolder.group_name.setText(mDiffer.getCurrentList().get(pos).getGroupName());
+        if (mDiffer.getCurrentList().get(pos).isSelected()) {
+            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.att_selected));
+            viewHolder.img_grp_selected.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.att_unselected));
+            viewHolder.img_grp_selected.setVisibility(View.GONE);
+        }
         viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                contractGroup.groupItemClicked(viewHolder.itemView, datalist.get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
+                contractGroup.groupItemClicked(viewHolder.itemView,
+                        mDiffer.getCurrentList().get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return datalist.size();
+        return mDiffer.getCurrentList().size();
+    }
+
+    public void submitList(List<Modal_Groups> new_groups) {
+        mDiffer.submitList(new_groups);
+    }
+
+    public List<Modal_Groups> getList() {
+        return mDiffer.getCurrentList();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -65,6 +92,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         MaterialCardView group_card;
         @BindView(R.id.group_name)
         TextView group_name;
+        @BindView(R.id.img_grp_selected)
+        ImageView img_grp_selected;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

@@ -1,14 +1,18 @@
 package com.pratham.prathamdigital;
 
+import android.Manifest;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.custom.fluid_keyboard.FluidContentResizer;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
+import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -22,7 +26,6 @@ import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
-import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_PushData;
@@ -30,18 +33,20 @@ import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
-import com.pratham.prathamdigital.util.ActivityManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.PermissionUtils;
+
+import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.UUID;
 
-public class BaseActivity extends ActivityManagePermission {
+public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     public static String sessionId = UUID.randomUUID().toString();
     public static AttendanceDao attendanceDao;
@@ -68,10 +73,10 @@ public class BaseActivity extends ActivityManagePermission {
         super.onCreate(savedInstanceState);
         FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
-//        Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
-////                .recipients("your-email@domain.com")
-//                .build();
+        Catcho.Builder(this)
+                .activity(CatchoTransparentActivity.class)
+//                .recipients("your-email@domain.com")
+                .build();
 
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
@@ -127,10 +132,8 @@ public class BaseActivity extends ActivityManagePermission {
     }
 
     public static void hideSystemUI(Window window) {
-
         window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
         window.getDecorView().setSystemUiVisibility(
                 View.SYSTEM_UI_FLAG_FULLSCREEN
                         | View.SYSTEM_UI_FLAG_LOW_PROFILE
@@ -142,45 +145,34 @@ public class BaseActivity extends ActivityManagePermission {
     }
 
     public void requestLocation() {
-        if (!isPermissionsGranted(this, new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE})) {
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION
-                    , PermissionUtils.Manifest_ACCESS_FINE_LOCATION, PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE}, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    new LocationService(BaseActivity.this).checkLocation();
-                }
-
-                @Override
-                public void permissionDenied() {
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                }
-            });
+        if (!PD_Utility.checkIfPermissionGranted(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                || !PD_Utility.checkIfPermissionGranted(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            KotlinPermissions.with(this)
+                    .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                    .onAccepted(new ResponsePermissionCallback() {
+                        @Override
+                        public void onResult(@NotNull List<String> permissionResult) {
+                            new LocationService(BaseActivity.this).checkLocation();
+                        }
+                    })
+                    .ask();
         } else {
             new LocationService(this).checkLocation();
         }
     }
 
     public void requestWritePermission() {
-        if (!isPermissionGranted(this, PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE)) {
-            askCompactPermission(PermissionUtils.Manifest_WRITE_EXTERNAL_STORAGE, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    BackupDatabase.backup(BaseActivity.this);
-                }
-
-                @Override
-                public void permissionDenied() {
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                }
-            });
+        if (!PD_Utility.checkIfPermissionGranted(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            KotlinPermissions.with(this)
+                    .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    .onAccepted(new ResponsePermissionCallback() {
+                        @Override
+                        public void onResult(@NotNull List<String> permissionResult) {
+                            BackupDatabase.backup(BaseActivity.this);
+                        }
+                    })
+                    .ask();
         }
     }
 

@@ -8,7 +8,7 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "Groups")
-public class Modal_Groups {
+public class Modal_Groups implements Comparable {
     @NonNull
     @PrimaryKey
     @SerializedName("GroupId")
@@ -114,6 +114,17 @@ public class Modal_Groups {
 
     public void setSelected(boolean selected) {
         isSelected = selected;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Modal_Groups compare = (Modal_Groups) o;
+        if (compare.getGroupId() != null) {
+            if (compare.getGroupId() == (this.GroupId) && compare.isSelected() == this.isSelected)
+                return 0;
+            else return 1;
+        } else
+            return 0;
     }
 }
 

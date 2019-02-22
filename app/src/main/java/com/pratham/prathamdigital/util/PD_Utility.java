@@ -1999,4 +1999,11 @@ public class PD_Utility {
                 return false;
         }
     }
+
+    public static boolean checkIfPermissionGranted(Context context, String permission) {
+        PackageManager pm = context.getPackageManager();
+        int hasPerm = pm.checkPermission(permission, context.getPackageName());
+        if (hasPerm != PackageManager.PERMISSION_GRANTED) return false;
+        else return true;
+    }
 }

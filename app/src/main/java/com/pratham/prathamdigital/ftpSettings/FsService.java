@@ -57,13 +57,14 @@ public class FsService extends Service implements Runnable {
     private static final String TAG = FsService.class.getSimpleName();
 
     // Service will (global) broadcast when server start/stop
-    static public final String ACTION_STARTED = "com.pratham.prathamdigital.FTPSERVER_STARTED";
-    static public final String ACTION_STOPPED = "com.pratham.prathamdigital.FTPSERVER_STOPPED";
-    static public final String ACTION_FAILEDTOSTART = "com.pratham.prathamdigital.FTPSERVER_FAILEDTOSTART";
+    static public final String ACTION_STARTED = "com.pratham.prathamdigital.ftpSettings.FTPSERVER_STARTED";
+    static public final String ACTION_STOPPED = "com.pratham.prathamdigital.ftpSettings.FTPSERVER_STOPPED";
+    static public final String ACTION_FAILEDTOSTART = "com.pratham.prathamdigital.ftpSettings.FTPSERVER_FAILEDTOSTART";
+    static public final String ACTION_UPDATE_NOTIFICATION = "com.pratham.prathamdigital.ftpSettings.ACTION_UPDATE_NOTIFICATION";
 
     // RequestStartStopReceiver listens for these actions to start/stop this server
-    static public final String ACTION_START_FTPSERVER = "com.pratham.prathamdigital.ACTION_START_FTPSERVER";
-    static public final String ACTION_STOP_FTPSERVER = "com.pratham.prathamdigital.ACTION_STOP_FTPSERVER";
+    static public final String ACTION_START_FTPSERVER = "com.pratham.prathamdigital.ftpSettings.ACTION_START_FTPSERVER";
+    static public final String ACTION_STOP_FTPSERVER = "com.pratham.prathamdigital.ftpSettings.ACTION_STOP_FTPSERVER";
 
     protected static Thread serverThread = null;
     protected boolean shouldExit = false;
@@ -169,9 +170,6 @@ public class FsService extends Service implements Runnable {
             wakeLock.release();
             wakeLock = null;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            stopForeground(true); //true will remove notification
-        }
         Log.d(TAG, "FTPServerService.onDestroy() finished");
     }
 
@@ -209,7 +207,9 @@ public class FsService extends Service implements Runnable {
 
         // A socket is open now, so the FTP server is started, notify rest of world
         Log.i(TAG, "Ftp Server up and running, broadcasting ACTION_STARTED");
-        sendBroadcast(new Intent(ACTION_STARTED));
+        Intent intent = new Intent(ACTION_STARTED);
+        intent.setPackage(this.getPackageName());
+        sendBroadcast(intent);
 
         while (!shouldExit) {
             if (wifiListener != null) {
@@ -247,7 +247,9 @@ public class FsService extends Service implements Runnable {
         Log.d(TAG, "Exiting cleanly, returning from run()");
 
         stopSelf();
-        sendBroadcast(new Intent(ACTION_STOPPED));
+        Intent stop = new Intent(ACTION_STOPPED);
+        stop.setPackage(this.getPackageName());
+        sendBroadcast(stop);
     }
 
     private void terminateAllSessions() {

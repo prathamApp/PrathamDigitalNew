@@ -61,26 +61,12 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
     private final String SPINNER = "spinner";
     private final String VILLAGE = "village";
 
-
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_assign_groups);
-//        ButterKnife.bind(this);
-//
-//    }
-
     @AfterViews
     public void initialize() {
         assignPresenter.getStates();
         assignPresenter.getProgramId(SPINNER);
 //        showProgramwiseSpinners();
     }
-
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//    }
 
     // Show/Hide Spinners according to Program
     @UiThread
@@ -105,13 +91,11 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         // Hint for AllSpinners
         spinner_SelectState.setPrompt("Select State");
         spinner_SelectState.setAdapter(StateAdapter);
-
         spinner_SelectState.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String selectedState = spinner_SelectState.getSelectedItem().toString();
                 assignPresenter.getBlocks(selectedState);
-//                populateBlock(selectedState);
             }
 
             @Override
@@ -131,7 +115,6 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         // Hint for AllSpinners
         spinner_SelectBlock.setPrompt("Select Block");
         spinner_SelectBlock.setAdapter(BlockAdapter);
-
         spinner_SelectBlock.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -171,17 +154,6 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         });
     }
 
-//
-//    // Populate RI Villages (Block Not present in Groups)
-//    public void populateRIVillage(List<Modal_Village> villages) {
-//
-//        try {
-//            populateGroups(vilID);
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
 
     @UiThread
     @Override
@@ -221,27 +193,6 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         LinearLayoutGroups.startAnimation(animation1);
         allocateGroups.setVisibility(View.VISIBLE);
     }
-/*
-
-    // Populate Groups
-    private void populateGroups(int vilID) throws JSONException {
-        String programID = BaseActivity.statusDao.getValue("programId");
-        // Check Spinner Emptyness
-        int VillagesSpinnerValue = spinner_selectVillage.getSelectedItemPosition();
-
-//        Toast.makeText(this, ""+vilID, Toast.LENGTH_SHORT).show();
-
-//        if (VillagesSpinnerValue > 0 || programID.equals("2")) {
-
-        // Showing Groups from Database
-        checkBoxIds = null;
-
-//        dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
-
-//            groupList.remove(0);
-    }
-*/
-
 
     // Assign Groups
     @Click(R.id.allocateGroups)

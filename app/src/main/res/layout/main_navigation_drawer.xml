@@ -2,24 +2,27 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/drawer"
-    android:layout_width="@dimen/_180sdp"
+    android:layout_width="@dimen/_230sdp"
     android:layout_height="match_parent"
-    android:background="@drawable/drawer_bkgd">
+    android:layout_gravity="start"
+    android:background="@drawable/ic_drawer_bkgd"
+    android:fitsSystemWindows="true"
+    app:headerLayout="@null"
+    app:menu="@null">
 
     <RelativeLayout
         android:id="@+id/rl_drawer_profile"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="@dimen/_50sdp"
+        android:gravity="center">
 
         <android.support.design.card.MaterialCardView
             android:id="@+id/drawer_profile_card"
-            android:layout_width="@dimen/_60sdp"
-            android:layout_height="@dimen/_60sdp"
-            android:layout_marginLeft="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_centerVertical="true"
             app:cardBackgroundColor="@color/white"
-            app:cardCornerRadius="@dimen/_30sdp">
+            app:cardCornerRadius="@dimen/_20sdp">
 
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/drawer_profile_lottie"
@@ -30,32 +33,26 @@
         </android.support.design.card.MaterialCardView>
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/drawer_profile_name"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="@dimen/_20sdp"
             android:layout_centerVertical="true"
             android:layout_marginLeft="@dimen/_5sdp"
-            android:layout_marginRight="@dimen/_5sdp"
             android:layout_toRightOf="@+id/drawer_profile_card"
+            android:background="@drawable/drawer_profile_round_bg"
+            android:elevation="@dimen/_5sdp"
             android:gravity="center"
             android:maxLines="3"
+            android:paddingLeft="@dimen/_10sdp"
+            android:paddingRight="@dimen/_10sdp"
             android:text="askdalskssksdas"
-            android:textColor="@color/white" />
+            android:textColor="@android:color/black" />
     </RelativeLayout>
-
-    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-        android:id="@+id/drawer_exit"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/_25sdp"
-        android:layout_alignParentBottom="true"
-        android:background="@color/mustord_yellow"
-        android:gravity="center"
-        android:text="Exit"
-        android:textColor="#5E032F" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@id/drawer_exit"
-        android:layout_below="@+id/rl_drawer_profile" />
+        android:layout_below="@+id/rl_drawer_profile"
+        android:layout_margin="@dimen/_5sdp" />
 </RelativeLayout>

@@ -32,6 +32,7 @@ public class PrathamApplication extends Application {
     /*Also
      * Check Todo
      * Check Catcho in BaseActivity
+     * Remove LeakCanary from oncreate
      */
     public static final boolean isTablet = false;
     public static boolean contentExistOnSD = false;
@@ -50,6 +51,12 @@ public class PrathamApplication extends Application {
         if (mInstance == null) {
             mInstance = this;
         }
+//        if (LeakCanary.isInAnalyzerProcess(this)) {
+//            // This process is dedicated to LeakCanary for heap analysis.
+//            // You should not init your app in this process.
+//            return;
+//        }
+//        LeakCanary.install(this);
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         setPradigiPath();
@@ -97,13 +104,13 @@ public class PrathamApplication extends Application {
         //registering receivers in case of android version above Oreo
         requestStartStopReceiver = new RequestStartStopReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.pratham.prathamdigital.ACTION_START_FTPSERVER");
-        intentFilter.addAction("com.pratham.prathamdigital.ACTION_STOP_FTPSERVER");
+        intentFilter.addAction(FsService.ACTION_START_FTPSERVER);
+        intentFilter.addAction(FsService.ACTION_STOP_FTPSERVER);
         registerReceiver(requestStartStopReceiver, intentFilter);
 
         fsNotification = new FsNotification();
         IntentFilter fsIntentFilter = new IntentFilter();
-        fsIntentFilter.addAction(FsNotification.ACTION_UPDATE_NOTIFICATION);
+        fsIntentFilter.addAction(FsService.ACTION_UPDATE_NOTIFICATION);
         fsIntentFilter.addAction(FsService.ACTION_STARTED);
         fsIntentFilter.addAction(FsService.ACTION_STOPPED);
         registerReceiver(fsNotification, fsIntentFilter);

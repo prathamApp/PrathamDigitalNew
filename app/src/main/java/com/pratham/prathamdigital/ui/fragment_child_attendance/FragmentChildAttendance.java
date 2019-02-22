@@ -9,6 +9,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -49,6 +50,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     Button btn_attendance_next;
     @ViewById(R.id.add_child)
     RelativeLayout add_child;
+    @ViewById(R.id.img_child_back)
+    ImageView img_child_back;
 
     ChildAdapter childAdapter;
     ArrayList<Modal_Student> students;
@@ -76,12 +79,14 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
         avatars = new ArrayList<>();
         if (PrathamApplication.isTablet) {
+            img_child_back.setVisibility(View.VISIBLE);
             btn_attendance_next.setVisibility(View.VISIBLE);
             add_child.setVisibility(View.GONE);
             groupID = getArguments().getString(PD_Constant.GROUPID);
             for (Modal_Student stu : students)
                 avatars.add(PD_Utility.getRandomAvatar(getActivity()));
         } else {
+            img_child_back.setVisibility(View.GONE);
             btn_attendance_next.setVisibility(View.GONE);
             add_child.setVisibility(View.VISIBLE);
             groupID = "SmartPhone";
@@ -117,6 +122,10 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public void moveToDashboardOnChildClick(Modal_Student student, int position, View v) {
         PrathamApplication.bubble_mp.start();
         FastSave.getInstance().saveString(PD_Constant.AVATAR, student.getAvatarName());
+        if (student.getFullName() != null && !student.getFullName().isEmpty())
+            FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, student.getFullName());
+        else
+            FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, student.getFirstName() + " " + student.getLastName());
         ArrayList<Modal_Student> s = new ArrayList<>();
         s.add(student);
         markAttendance(s);
@@ -147,6 +156,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         if (checkedStds.size() > 0) {
             PrathamApplication.bubble_mp.start();
             FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
+            FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, getArguments().getString(PD_Constant.GROUP_NAME));
             markAttendance(checkedStds);
             presentActivity(v);
         } else {
@@ -194,8 +204,18 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         Bundle bundle = new Bundle();
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        bundle.putBoolean(PD_Constant.SHOW_BACK, true);
         PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
                 bundle, Fragment_SelectAvatar_.class.getSimpleName());
+    }
+
+    @Click(R.id.img_child_back)
+    public void setAttBack() {
+        try {
+            getActivity().getSupportFragmentManager().popBackStack();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

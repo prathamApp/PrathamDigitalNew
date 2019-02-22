@@ -56,7 +56,7 @@
     <application
         android:name=".PrathamApplication"
         android:allowBackup="true"
-        android:hardwareAccelerated="false"
+        android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
@@ -222,9 +222,9 @@
             android:name=".ftpSettings.FsNotification"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.prathamdigital.ACTION_UPDATE_NOTIFICATION" />
-                <action android:name="com.pratham.prathamdigital.FTPSERVER_STARTED" />
-                <action android:name="com.pratham.prathamdigital.FTPSERVER_STOPPED" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.ACTION_UPDATE_NOTIFICATION" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.FTPSERVER_STARTED" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.FTPSERVER_STOPPED" />
             </intent-filter>
         </receiver>
         <service android:name=".ftpSettings.NsdService" />
@@ -233,16 +233,16 @@
             android:name=".ftpSettings.NsdService$StartStopReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.prathamdigital.FTPSERVER_STARTED" />
-                <action android:name="com.pratham.prathamdigital.FTPSERVER_STOPPED" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.FTPSERVER_STARTED" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.FTPSERVER_STOPPED" />
             </intent-filter>
         </receiver>
         <receiver
             android:name=".ftpSettings.RequestStartStopReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.pratham.prathamdigital.ACTION_START_FTPSERVER" />
-                <action android:name="com.pratham.prathamdigital.ACTION_STOP_FTPSERVER" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.ACTION_START_FTPSERVER" />
+                <action android:name="com.pratham.prathamdigital.ftpSettings.ACTION_STOP_FTPSERVER" />
             </intent-filter>
         </receiver>
 

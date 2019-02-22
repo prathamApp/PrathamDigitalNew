@@ -23,6 +23,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Environment;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.Gravity;
 import android.widget.Toast;
@@ -34,6 +35,7 @@ public class RequestStartStopReceiver extends BroadcastReceiver {
 
     static final String TAG = RequestStartStopReceiver.class.getSimpleName();
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.v(TAG, "Received: " + intent.getAction());
@@ -45,13 +47,14 @@ public class RequestStartStopReceiver extends BroadcastReceiver {
 //                if (!FsService.isRunning()) {
                 warnIfNoExternalStorage();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    PrathamApplication.getInstance().startForegroundService(serverService);
+                    context.startForegroundService(serverService);
                 else
                     context.startService(serverService);
 //                }
             } else if (intent.getAction().equals(FsService.ACTION_STOP_FTPSERVER)) {
                 Intent serverService = new Intent(context, FsService.class);
                 context.stopService(serverService);
+                Log.d(TAG, "stop FTP server service");
             }
         } catch (Exception e) {
             Log.e(TAG, "Failed to start/stop on intent " + e.getMessage());

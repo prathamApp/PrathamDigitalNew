@@ -89,8 +89,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
             }
             if (!found) levelContents.add(contentDetail);
-            if (contentView != null)
+            if (contentView != null) {
+                if (levelContents.size() == 1)
+                    contentView.animateHamburger();
                 contentView.displayLevel(levelContents);
+            }
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
         }
     }
@@ -565,22 +568,20 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
-            if (contentView != null)
+            if (contentView != null) {
+                if (levelContents.isEmpty())
+                    contentView.animateHamburger();
                 contentView.displayLevel(levelContents);
+            }
         }
     }
 
-    @Background
     @Override
-    public void getLevels() {
-        if (levelContents != null) {
-            ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-            temp.addAll(levelContents);
-            levelContents = new ArrayList<>();
-            levelContents.addAll(temp);
-            if (contentView != null)
-                contentView.displayLevel(levelContents);
-        }
+    public int getLevels() {
+        if (levelContents != null)
+            return levelContents.size();
+        else
+            return 0;
     }
 
     @Override

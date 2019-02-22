@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Pratham Digital</string>
     <string name="child_name">Name</string>
@@ -186,8 +187,9 @@
         <item>Language</item>
         <item>Connect Wifi</item>
         <item>Share OR Recieve</item>
-        <item>Rate Us</item>
+        <!--<item>Rate Us</item>-->
         <item>Share App</item>
+        <item>Exit</item>
     </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>

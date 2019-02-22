@@ -236,4 +236,11 @@
         <attr name="adl_viewElevation" format="dimension" />
         <attr name="adl_drawerElevation" format="dimension" />
     </declare-styleable>
+    <declare-styleable name="BlurLayout">
+        <attr name="blk_downscaleFactor" format="float" />
+        <attr name="blk_blurRadius" format="integer" />
+        <attr name="blk_fps" format="integer" />
+        <attr name="blk_cornerRadius" format="dimension" />
+        <attr name="blk_alpha" format="float" />
+    </declare-styleable>
 </resources>

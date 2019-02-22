@@ -144,7 +144,7 @@ public class Modal_Rasp_Header {
             modal_contentDetail.setResourcepath("");
             modal_contentDetail.setLevel(modal_rasp_header.getVersion());
             modal_contentDetail.setContent_language(modal_rasp_header.getLang_name());
-            modal_contentDetail.setParentid(modal_rasp_header.getRoot());
+            modal_contentDetail.setParentid("0");
             modal_contentDetail.setContentType(PD_Constant.FOLDER);
             modal_contentDetail.setDownloaded(false);
             modal_contentDetail.setOnSDCard(false);

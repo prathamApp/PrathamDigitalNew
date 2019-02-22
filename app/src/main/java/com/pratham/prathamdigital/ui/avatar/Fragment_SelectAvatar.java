@@ -5,10 +5,12 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -57,6 +59,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     Spinner spinner_class;
     @ViewById(R.id.spinner_age)
     Spinner spinner_age;
+    @ViewById(R.id.img_add_child_back)
+    ImageView img_add_child_back;
 
     ArrayList<String> avatarList = new ArrayList<>();
     private Context context;
@@ -67,6 +71,9 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @AfterViews
     public void initialize() {
         avatar_circular_reveal.setListener(this);
+        if (getArguments().getBoolean(PD_Constant.SHOW_BACK))
+            img_add_child_back.setVisibility(View.VISIBLE);
+        else img_add_child_back.setVisibility(View.GONE);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -133,6 +140,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @Background
     public void insertStudentAndMarkAttendance() {
         FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
+        FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, et_child_name.getText().toString());
         Modal_Student modal_student = new Modal_Student();
         modal_student.setStudentId(PD_Utility.getUUID().toString());
         modal_student.setFullName(et_child_name.getText().toString());
@@ -180,13 +188,21 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         BaseActivity.sessionDao.insert(s);
     }
 
+    @Click(R.id.img_add_child_back)
+    public void setAttBack() {
+        try {
+            getActivity().getSupportFragmentManager().popBackStack();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void openDashboard() {
     }
 
     @Override
     public void onRevealed() {
-
     }
 
 

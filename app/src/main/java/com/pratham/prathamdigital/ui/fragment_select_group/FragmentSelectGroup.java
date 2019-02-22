@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.Button;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -20,11 +21,13 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @EFragment(R.layout.fragment_select_group)
 public class FragmentSelectGroup extends Fragment implements ContractGroup, CircularRevelLayout.CallBacks {
@@ -33,9 +36,10 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     RecyclerView rv_group;
     @ViewById(R.id.circular_group_reveal)
     CircularRevelLayout circular_group_reveal;
+    @ViewById(R.id.btn_group_next)
+    Button btn_group_next;
 
     GroupAdapter groupAdapter;
-    ArrayList<Modal_Groups> groups;
     private int revealX;
     private int revealY;
 
@@ -70,49 +74,83 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
         String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
         if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
+        List<Modal_Groups> groups;
         if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
-            get3to6Groups(present_groups);
+            groups = get3to6Groups(present_groups);
         } else {
-            get8to14Groups(present_groups);
+            groups = get8to14Groups(present_groups);
         }
-        setGroups();
+        setGroups(groups);
     }
 
-    private void get3to6Groups(ArrayList<String> allGroups) {
-        groups = new ArrayList<>();
+    private List<Modal_Groups> get3to6Groups(ArrayList<String> allGroups) {
+        List<Modal_Groups> groups = new ArrayList<>();
+        Modal_Groups group;
+        boolean grpFound;
         for (String grID : allGroups) {
+            grpFound = false;
             ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) < 7) {
-                    Modal_Groups group = BaseActivity.groupDao.getGroupByGrpID(grID);
-                    groups.add(group);
-                    break;
+                    grpFound = true;
                 }
             }
+            if (grpFound) {
+                group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                groups.add(group);
+            }
         }
+        return groups;
     }
 
-    private void get8to14Groups(ArrayList<String> allGroups) {
-        groups = new ArrayList<>();
+    private List<Modal_Groups> get8to14Groups(ArrayList<String> allGroups) {
+        List<Modal_Groups> groups = new ArrayList<>();
         Modal_Groups group;
+        boolean grpFound;
         for (String grID : allGroups) {
+            grpFound = false;
             ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) >= 7) {
-                    group = BaseActivity.groupDao.getGroupByGrpID(grID);
-                    groups.add(group);
-                    break;
+                    grpFound = true;
                 }
             }
+            if (grpFound) {
+                group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                groups.add(group);
+            }
         }
+        return groups;
     }
 
     @UiThread
-    public void setGroups(/*ArrayList<Modal_Groups> groups*/) {
-        groupAdapter = new GroupAdapter(getActivity(), groups, FragmentSelectGroup.this);
+    public void setGroups(List<Modal_Groups> groups) {
+        groupAdapter = new GroupAdapter(getActivity()/*, groups*/, FragmentSelectGroup.this);
         rv_group.setHasFixedSize(true);
         rv_group.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         rv_group.setAdapter(groupAdapter);
+        groupAdapter.submitList(groups);
+    }
+
+    @Click(R.id.btn_group_next)
+    public void setSelectedGroup() {
+        Modal_Groups tempGrp = new Modal_Groups();
+        for (Modal_Groups grp : groupAdapter.getList()) {
+            if (grp.isSelected()) {
+                tempGrp = grp;
+                break;
+            }
+        }
+        setNext(btn_group_next, tempGrp);
+    }
+
+    @Click(R.id.img_att_back)
+    public void setAttBack() {
+        try {
+            getActivity().getSupportFragmentManager().popBackStack();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @UiThread
@@ -125,6 +163,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         outLocation[0] += v.getWidth() / 2;
         Bundle bundle = new Bundle();
         bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+        bundle.putString(PD_Constant.GROUP_NAME, modal_groups.getGroupName());
         bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
@@ -135,7 +174,14 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Override
     public void groupItemClicked(View v, Modal_Groups modalGroup, int position) {
         PrathamApplication.bubble_mp.start();
-        setNext(v, modalGroup);
+        for (Modal_Groups grp : groupAdapter.getList()) {
+            if (grp.getGroupId().equalsIgnoreCase(modalGroup.getGroupId()))
+                grp.setSelected(true);
+            else
+                grp.setSelected(false);
+        }
+//        temp.set(position, modalGroup);
+        groupAdapter.notifyDataSetChanged();
     }
 
     @Override

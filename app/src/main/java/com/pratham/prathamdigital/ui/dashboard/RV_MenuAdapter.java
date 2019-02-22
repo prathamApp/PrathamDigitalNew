@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
@@ -44,11 +45,17 @@ public class RV_MenuAdapter extends RecyclerView.Adapter<RV_MenuAdapter.NormalIt
     @Override
     public void onBindViewHolder(@NonNull NormalItemViewHolder holder, int i) {
         holder.txt_menu_name.setText(menus.get(holder.getAdapterPosition()).getMenu_name());
-        if (menus.get(holder.getAdapterPosition()).isIsselected()) {
-            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_selected_round_bkgd));
-        } else {
-            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_unselected_round_bkgd));
-        }
+        holder.img_nav_menu.setImageResource(menus.get(holder.getAdapterPosition()).getMenuImage());
+//        if (menus.get(holder.getAdapterPosition()).isIsselected())
+//            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_selected_round_bkgd));
+//        else
+//            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_unselected_round_bkgd));
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                contractMenu.menuClicked(holder.getAdapterPosition(), menus.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
@@ -56,9 +63,15 @@ public class RV_MenuAdapter extends RecyclerView.Adapter<RV_MenuAdapter.NormalIt
         return menus.size();
     }
 
+    public ArrayList<Modal_NavigationMenu> getMenus() {
+        return menus;
+    }
+
     public class NormalItemViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.txt_nav_menu_name)
         TextView txt_menu_name;
+        @BindView(R.id.img_nav_menu)
+        ImageView img_nav_menu;
 
         public NormalItemViewHolder(View itemView) {
             super(itemView);
