@@ -20,7 +20,6 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -88,9 +87,9 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            if (!PrathamApplication.isTablet)
-                                signInUsingGoogle();
-                            else
+//                            if (!PrathamApplication.isTablet)
+//                                signInUsingGoogle();
+//                            else
                                 splashPresenter.checkIfContentinSDCard();
                         }
                     }, 2000);
@@ -141,12 +140,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     protected void onResume() {
         super.onResume();
-        if (!PrathamApplication.isTablet) {
-            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
-            if (mGoogleApiClient == null && !signedIn) {
-                mGoogleApiClient = splashPresenter.configureSignIn();
-            }
-        }
+//        if (!PrathamApplication.isTablet) {
+//            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
+//            if (mGoogleApiClient == null && !signedIn) {
+//                mGoogleApiClient = splashPresenter.configureSignIn();
+//            }
+//        }
     }
 
     @UiThread

@@ -124,6 +124,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     initializeDrawer();
                     break;
                 case MENU_HOME:
+                    if (isChecked)
+                        toggleToArrow();
                     Bundle bundle = new Bundle();
                     bundle.putInt(PD_Constant.REVEALX, 0);
                     bundle.putInt(PD_Constant.REVEALY, 0);
@@ -194,8 +196,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (!FastSave.getInstance().getBoolean(PD_Constant.PRADIGI_ICON, false))
-                    showWelcomeDialog();
+//                if (!FastSave.getInstance().getBoolean(PD_Constant.PRADIGI_ICON, false))
+//                    showWelcomeDialog();
+                showIntro();
             }
         }, 2000);
     }

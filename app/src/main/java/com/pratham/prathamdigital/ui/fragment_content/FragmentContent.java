@@ -17,7 +17,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -425,16 +424,12 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     @Override
     public void increaseNotification(int number) {
-//        ((ActivityMain) getActivity()).showNotificationBadge(number);
-//        mainView.showNotificationBadge(number);
     }
 
     @UiThread
     @Override
     public void decreaseNotification(int number, Modal_ContentDetail
             contentDetail, ArrayList<String> selectedNodeIds) {
-//        ((ActivityMain) getActivity()).hideNotificationBadge(number);
-//        if (selectedNodeIds.contains(contentDetail.getNodeid())) {
     }
 
     @UiThread
@@ -516,41 +511,25 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void openContent(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
-        if (!PD_Utility.checkIfPermissionGranted(getActivity(), Manifest.permission.RECORD_AUDIO)) {
-            KotlinPermissions.with(getActivity())
-                    .permissions(Manifest.permission.RECORD_AUDIO)
-                    .onAccepted(new ResponsePermissionCallback() {
-                        @Override
-                        public void onResult(@NotNull List<String> permissionResult) {
-                            switch (contentDetail.getResourcetype().toLowerCase()) {
-                                case PD_Constant.GAME:
-                                    Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
-                                    openGame(contentDetail);
-                                    break;
-                                case PD_Constant.VIDEO:
-                                    openVideo(contentDetail);
-                                    break;
-                                case PD_Constant.PDF:
-                                    openPdf(contentDetail);
-                                    break;
-                            }
+        KotlinPermissions.with(getActivity())
+                .permissions(Manifest.permission.RECORD_AUDIO)
+                .onAccepted(new ResponsePermissionCallback() {
+                    @Override
+                    public void onResult(@NotNull List<String> permissionResult) {
+                        switch (contentDetail.getResourcetype().toLowerCase()) {
+                            case PD_Constant.GAME:
+                                openGame(contentDetail);
+                                break;
+                            case PD_Constant.VIDEO:
+                                openVideo(contentDetail);
+                                break;
+                            case PD_Constant.PDF:
+                                openPdf(contentDetail);
+                                break;
                         }
-                    })
-                    .ask();
-        } else {
-            switch (contentDetail.getResourcetype().toLowerCase()) {
-                case PD_Constant.GAME:
-                    Toast.makeText(getActivity(), "Granted", Toast.LENGTH_SHORT).show();
-                    openGame(contentDetail);
-                    break;
-                case PD_Constant.VIDEO:
-                    openVideo(contentDetail);
-                    break;
-                case PD_Constant.PDF:
-                    openPdf(contentDetail);
-                    break;
-            }
-        }
+                    }
+                })
+                .ask();
     }
 
     @Override

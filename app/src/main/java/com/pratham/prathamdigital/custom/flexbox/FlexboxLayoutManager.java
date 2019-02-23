@@ -5,6 +5,7 @@ import android.graphics.PointF;
 import android.graphics.Rect;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.LinearSmoothScroller;
@@ -18,8 +19,6 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import io.reactivex.annotations.NonNull;
 
 import static android.support.v7.widget.LinearLayoutManager.INVALID_OFFSET;
 import static android.support.v7.widget.RecyclerView.NO_POSITION;
