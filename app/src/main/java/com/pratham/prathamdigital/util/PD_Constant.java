@@ -52,6 +52,7 @@ public class PD_Constant {
     public static final String PROFILE_NAME = "profile_name";
     public static final String SHOW_BACK = "show_back";
     public static final String PRADIGI_ICON = "pradigi_icon";
+    public static final String CANCEL_DOWNLOAD = "cancel_download";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String MOBILE = "mobile";
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";

@@ -24,7 +24,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
-    Context context;
+    private Context context;
+    private DowloadContract dowloadContract;
     private AsyncListDiffer<Modal_FileDownloading> mDiffer;
     private DiffUtil.ItemCallback<Modal_FileDownloading> diffcallback = new DiffUtil.ItemCallback<Modal_FileDownloading>() {
         @Override
@@ -40,9 +41,10 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         }
     };
 
-    public DownloadListAdapter(Context context) {
+    public DownloadListAdapter(Context context, DowloadContract dowloadContract) {
         mDiffer = new AsyncListDiffer<Modal_FileDownloading>(this, diffcallback);
         this.context = context;
+        this.dowloadContract = dowloadContract;
     }
 
     @Override
@@ -65,20 +67,16 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
             holder.download_file_view.setImageResource(R.drawable.ic_book);
         else
             holder.download_file_view.setImageResource(R.drawable.ic_joystick);
-
         holder.download_remaining_time.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());
         holder.content_title.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getFilename());
         holder.number_progress.setProgress(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getProgress());
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull DownloadViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads);
-        } else {
-            Modal_FileDownloading content = (Modal_FileDownloading) payloads.get(0);
-            holder.number_progress.setProgress(content.getProgress());
-        }
+        holder.download_delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dowloadContract.deleteDownload(holder.getAdapterPosition(),
+                        mDiffer.getCurrentList().get(holder.getAdapterPosition()).getDownloadId());
+            }
+        });
     }
 
     @Override
@@ -108,6 +106,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         @Nullable
         @BindView(R.id.download_file_view)
         ImageView download_file_view;
+        @Nullable
+        @BindView(R.id.download_delete)
+        ImageView download_delete;
 
         public DownloadViewHolder(View itemView) {
             super(itemView);

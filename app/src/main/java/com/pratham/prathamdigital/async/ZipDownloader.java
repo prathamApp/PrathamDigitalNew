@@ -71,7 +71,8 @@ public class ZipDownloader {
         modal_download.setContent(contentDetail);
         modal_download.setContentPresenter(contentPresenter);
         modal_download.setLevelContents(levelContents);
-        new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
+        AsyncTask task = new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
+        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
     }
 
 

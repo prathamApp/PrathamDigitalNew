@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
@@ -8,15 +9,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.progress_layout.ProgressLayout;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
@@ -90,11 +89,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
 
     class FileViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.share_content_image)
-        ImageView share_content_image;
+        SimpleDraweeView share_content_image;
         @BindView(R.id.share_title)
         TextView share_title;
-        @BindView(R.id.progressLayout)
-        ProgressLayout progressLayout;
 
         File_Model file_model;
 
@@ -106,18 +103,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         public void setFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
-                Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + file_model.getDetail().getNodeimage()))
-//                    .resize(130, 130)
-                        .placeholder(R.drawable.ic_app_logo_)
-                        .into(share_content_image);
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
+                        + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             else
-                Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + file_model.getDetail().getNodeimage()))
-//                    .resize(130, 130)
-                        .placeholder(R.drawable.ic_app_logo_)
-                        .into(share_content_image);
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.pradigiPath
+                        + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
-                progressLayout.setVisibility(View.GONE);
-                progressLayout.setCurProgress(0);
                 share_title.setText(file_model.getDetail().getNodetitle());
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -126,8 +117,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                     }
                 });
             } else {
-                progressLayout.setVisibility(View.VISIBLE);
-                progressLayout.setCurProgress(file_model.getProgress());
                 share_title.setText("Share");
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -141,17 +130,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         public void updateFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
-                Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + file_model.getDetail().getNodeimage()))
-//                        .resize(130, 130)
-                        .placeholder(R.drawable.ic_app_logo_)
-                        .into(share_content_image);
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
+                        + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             else
-                Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + file_model.getDetail().getNodeimage()))
-//                        .resize(130, 130)
-                        .placeholder(R.drawable.ic_app_logo_)
-                        .into(share_content_image);
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.pradigiPath +
+                        "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
-                progressLayout.setVisibility(View.GONE);
                 share_title.setText(file_model.getDetail().getNodetitle());
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -160,14 +144,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                     }
                 });
             } else {
-                progressLayout.setVisibility(View.VISIBLE);
-                progressLayout.setCurProgress(file_model.getProgress());
-                if (progressLayout.getProgress() > 98)
-                    share_title.setText("Sent");
-                else if (progressLayout.getProgress() > 2)
-                    share_title.setText("Sending...");
-                else
-                    share_title.setText("Send");
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

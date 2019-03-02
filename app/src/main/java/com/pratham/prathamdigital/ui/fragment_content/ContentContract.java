@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.view.View;
 
 import com.pratham.prathamdigital.models.EventMessage;
@@ -42,7 +43,7 @@ public interface ContentContract {
 
         void onDownloadPaused(int downloadId);
 
-        void ondownloadCancelled(int downloadId);
+        void ondownloadCancelled(String downloadId);
 
         void ondownloadError(String downloadId);
 
@@ -77,6 +78,10 @@ public interface ContentContract {
         void viewDestroyed();
 
         void deleteContent(Modal_ContentDetail contentItem);
+
+        void currentDownloadRunning(String nodeid, AsyncTask task);
+
+        void cancelDownload(String downloadId);
     }
 
     interface contentClick {

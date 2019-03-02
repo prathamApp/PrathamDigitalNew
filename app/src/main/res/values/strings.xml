@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Pratham Digital</string>
+    <string name="app_name">PraDigi</string>
     <string name="child_name">Name</string>
     <string name="share">Share</string>
     <string name="recieve">Receive</string>
@@ -186,7 +186,7 @@
         <item>Home</item>
         <item>Language</item>
         <item>Connect Wifi</item>
-        <item>Share OR Recieve</item>
+        <item>Share or Receive</item>
         <!--<item>Rate Us</item>-->
         <item>Share App</item>
         <item>Exit</item>

@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
@@ -14,11 +15,11 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.elastic_view.ElasticView;
@@ -27,7 +28,6 @@ import com.pratham.prathamdigital.custom.swipe_reveal_layout.ViewBinderHelper;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
@@ -213,7 +213,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     class FolderViewHolder extends RecyclerView.ViewHolder {
         @Nullable
         @BindView(R.id.folder_content_image)
-        ImageView folder_content_image;
+        SimpleDraweeView folder_content_image;
         @Nullable
         @BindView(R.id.folder_title)
         TextView folder_title;
@@ -235,22 +235,20 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
         public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
             this.contentItem = contentItem;
-            if (contentItem.getNodeserverimage() == null || contentItem.getNodeserverimage().isEmpty())
-                folder_content_image.setImageDrawable(context.getDrawable(R.drawable.ic_app_logo_));
-            else {
+            if (contentItem.getNodeserverimage() != null || !contentItem.getNodeserverimage().isEmpty()) {
                 if (contentItem.isDownloaded())
                     if (contentItem.isOnSDCard())
-                        Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                                .resize(130, 130)
-                                .placeholder(R.drawable.ic_app_logo_)
-                                .into(folder_content_image);
+                        folder_content_image.setImageURI(Uri.fromFile(new File(
+                                PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage())));
                     else
-                        Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                                .resize(130, 130)
-                                .placeholder(R.drawable.ic_app_logo_)
-                                .into(folder_content_image);
-                else
-                    Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(folder_content_image);
+                        folder_content_image.setImageURI(Uri.fromFile(new File(
+                                PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage())));
+                else {
+                    if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty())
+                        folder_content_image.setImageURI(Uri.parse(contentItem.getKolibriNodeImageUrl()));
+                    else
+                        folder_content_image.setImageURI(Uri.parse(contentItem.getNodeserverimage()));
+                }
             }
             content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
             folder_title.setText(contentItem.getNodetitle());
@@ -270,7 +268,7 @@ public class ContentAdapter extends RecyclerView.Adapter {
     class FileViewHolder extends RecyclerView.ViewHolder {
         @Nullable
         @BindView(R.id.file_content_image)
-        ImageView file_content_image;
+        SimpleDraweeView file_content_image;
         @Nullable
         @BindView(R.id.rl_reveal)
         RelativeLayout rl_reveal;
@@ -309,26 +307,23 @@ public class ContentAdapter extends RecyclerView.Adapter {
 
         public void setContentItem(Modal_ContentDetail contentItem, int pos) {
             this.contentItem = contentItem;
-            if (contentItem.getNodeserverimage() == null || contentItem.getNodeserverimage().isEmpty())
-                file_content_image.setImageDrawable(context.getDrawable(R.drawable.ic_app_logo_));
-            else {
+            if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
                 if (contentItem.isDownloaded())
                     if (contentItem.isOnSDCard()) {
                         file_swipe_layout.setLockDrag(true);
-                        Picasso.get().load(new File(PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                                .resize(130, 130)
-                                .placeholder(R.drawable.ic_app_logo_)
-                                .into(file_content_image);
+                        file_content_image.setImageURI(Uri.fromFile(new File(
+                                PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage())));
                     } else {
-                        file_swipe_layout.setLockDrag(true);
-                        Picasso.get().load(new File(PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()))
-                                .resize(130, 130)
-                                .placeholder(R.drawable.ic_app_logo_)
-                                .into(file_content_image);
+                        file_swipe_layout.setLockDrag(false);
+                        file_content_image.setImageURI(Uri.fromFile(new File(
+                                PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage())));
                     }
                 else {
                     file_swipe_layout.setLockDrag(true);
-                    Picasso.get().load(contentItem.getNodeserverimage()).placeholder(R.drawable.ic_app_logo_).into(file_content_image);
+                    if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty())
+                        file_content_image.setImageURI(Uri.parse(contentItem.getKolibriNodeImageUrl()));
+                    else
+                        file_content_image.setImageURI(Uri.parse(contentItem.getNodeserverimage()));
                 }
             }
             if (rl_reveal.getVisibility() == View.VISIBLE)

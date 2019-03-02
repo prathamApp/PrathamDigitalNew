@@ -48,12 +48,13 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/content_item_bkgd">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/file_content_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="fitXY"
-                    android:src="@mipmap/ic_launcher" />
+                    app:actualImageScaleType="fitXY"
+                    app:placeholderImage="@mipmap/ic_launcher" />
+                <!--android:scaleType="fitXY"-->
 
                 <RelativeLayout
                     android:id="@+id/rl_play_content"

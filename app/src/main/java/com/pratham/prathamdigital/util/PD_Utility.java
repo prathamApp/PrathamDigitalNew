@@ -2006,4 +2006,11 @@ public class PD_Utility {
         if (hasPerm != PackageManager.PERMISSION_GRANTED) return false;
         else return true;
     }
+
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                & Configuration.SCREENLAYOUT_SIZE_MASK)
+                >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 }

@@ -6,7 +6,9 @@ import android.support.v7.widget.RecyclerView;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -18,7 +20,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.List;
 
 @EFragment(R.layout.download_list_fragment)
-public class DownloadListFragment extends SuperBottomSheetFragment {
+public class DownloadListFragment extends SuperBottomSheetFragment implements DowloadContract {
     private static final String TAG = DownloadListFragment.class.getSimpleName();
     @ViewById(R.id.rv_download)
     RecyclerView rv_download;
@@ -27,7 +29,7 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
 
     @UiThread
     public void initializeAdapter(List<Modal_FileDownloading> downloadings) {
-        adapter = new DownloadListAdapter(getActivity());
+        adapter = new DownloadListAdapter(getActivity(), this);
         LinearLayoutManager manager = new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
         rv_download.setHasFixedSize(true);
         rv_download.setLayoutManager(manager);
@@ -56,5 +58,13 @@ public class DownloadListFragment extends SuperBottomSheetFragment {
                 initializeAdapter(downloadings);
             }
         }
+    }
+
+    @Override
+    public void deleteDownload(int pos, String downloadId) {
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.CANCEL_DOWNLOAD);
+        message.setDownloadId(downloadId);
+        EventBus.getDefault().post(message);
     }
 }

@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.models;
 
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -45,6 +46,8 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private boolean isDownloaded = false;
     //for offline content sharing
     private boolean onSDCard = false;
+    @Ignore
+    private String kolibriNodeImageUrl;
 
     public Modal_ContentDetail() {
     }
@@ -67,6 +70,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         contentType = in.readString();
         isDownloaded = in.readByte() != 0;
         onSDCard = in.readByte() != 0;
+        kolibriNodeImageUrl = in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -237,6 +241,14 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.onSDCard = onSDCard;
     }
 
+    public String getKolibriNodeImageUrl() {
+        return kolibriNodeImageUrl;
+    }
+
+    public void setKolibriNodeImageUrl(String kolibriNodeImageUrl) {
+        this.kolibriNodeImageUrl = kolibriNodeImageUrl;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -273,5 +285,6 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(contentType);
         dest.writeByte((byte) (isDownloaded ? 1 : 0));
         dest.writeByte((byte) (onSDCard ? 1 : 0));
+        dest.writeString(kolibriNodeImageUrl);
     }
 }

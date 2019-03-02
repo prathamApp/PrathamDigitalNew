@@ -8,6 +8,7 @@ import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 
 import com.androidnetworking.AndroidNetworking;
+import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsNotification;
@@ -33,8 +34,9 @@ public class PrathamApplication extends Application {
      * Check Todo
      * Check Catcho in BaseActivity
      * Remove LeakCanary from oncreate
+     * check version
      */
-    public static final boolean isTablet = false;
+    public static boolean isTablet = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;
@@ -57,6 +59,8 @@ public class PrathamApplication extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
+        isTablet = PD_Utility.isTablet(this);
+        Fresco.initialize(this);
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         setPradigiPath();

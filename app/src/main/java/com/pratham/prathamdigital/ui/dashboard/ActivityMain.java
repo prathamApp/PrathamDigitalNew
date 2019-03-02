@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.dashboard;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -34,6 +35,8 @@ import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
+import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
 import com.pratham.prathamdigital.ftpSettings.FsService;
@@ -59,9 +62,11 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 @EActivity(R.layout.main_activity_two)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu,
@@ -133,6 +138,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             bundle, FragmentContent_.class.getSimpleName());
                     break;
                 case MENU_LANGUAGE:
+                    if (isChecked)
+                        toggleToArrow();
                     Bundle bundle2 = new Bundle();
                     bundle2.putInt(PD_Constant.REVEALX, 0);
                     bundle2.putInt(PD_Constant.REVEALY, 0);
@@ -140,6 +147,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             bundle2, FragmentLanguage.class.getSimpleName());
                     break;
                 case MENU_CONNECT_WIFI:
+                    if (isChecked)
+                        toggleToArrow();
                     ConnectDialog connectDialog = new ConnectDialog.Builder(ActivityMain.this).build();
                     connectDialog.isDismissOnTouchBackground();
                     connectDialog.isDismissOnClickBack();
@@ -156,6 +165,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     connectDialog.show();
                     break;
                 case MENU_SHARE:
+                    if (isChecked)
+                        toggleToArrow();
                     Bundle bundle3 = new Bundle();
                     bundle3.putInt(PD_Constant.REVEALX, 0);
                     bundle3.putInt(PD_Constant.REVEALY, 0);
@@ -163,19 +174,29 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             bundle3, FragmentShareRecieve.class.getSimpleName());
                     break;
                 case MENU_SHARE_APP:
-                    try {
-                        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                        PackageManager pm = PrathamApplication.getInstance().getPackageManager();
-                        ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
-                        File localFile = new File(ai.publicSourceDir);
-                        intentShareFile.setType("*/*");
-                        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + localFile.getAbsolutePath()));
-                        intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
-                        intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
-                        startActivity(Intent.createChooser(intentShareFile, "Share through"));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    KotlinPermissions.with(ActivityMain.this)
+                            .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_EXTERNAL_STORAGE)
+                            .onAccepted(new ResponsePermissionCallback() {
+                                @Override
+                                public void onResult(@NotNull List<String> permissionResult) {
+                                    try {
+                                        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+                                        PackageManager pm = PrathamApplication.getInstance().getPackageManager();
+                                        ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
+                                        File localFile = new File(ai.publicSourceDir);
+                                        intentShareFile.setType("*/*");
+                                        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + localFile.getAbsolutePath()));
+                                        intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
+                                        intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
+                                        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                        startActivity(Intent.createChooser(intentShareFile, "Share through"));
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            })
+                            .ask();
                     break;
                 case MENU_EXIT:
                     exitApp();
@@ -305,95 +326,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    //    ScalingLayoutListener listener = new ScalingLayoutListener() {
-//        @Override
-//        public void onCollapsed() {
-////            ViewCompat.animate(pull_down_menu).alpha(1).setDuration(150).start();
-//            ViewCompat.animate(tab_card).alpha(0).setDuration(150).setListener(new ViewPropertyAnimatorListener() {
-//                @Override
-//                public void onAnimationStart(View view) {
-////                    pull_down_menu.setVisibility(View.VISIBLE);
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(View view) {
-//                    outer_area.setVisibility(View.GONE);
-//                    tab_card.setVisibility(View.INVISIBLE);
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(View view) {
-//
-//                }
-//            }).start();
-//        }
-//
-//        @Override
-//        public void onExpanded() {
-////            ViewCompat.animate(pull_down_menu).alpha(0).setDuration(200).start();
-//            ViewCompat.animate(tab_card).alpha(1).setDuration(200).setListener(new ViewPropertyAnimatorListener() {
-//                @Override
-//                public void onAnimationStart(View view) {
-//                    outer_area.setVisibility(View.VISIBLE);
-//                    tab_card.setVisibility(View.VISIBLE);
-//                }
-//
-//                @Override
-//                public void onAnimationEnd(View view) {
-////                    pull_down_menu.setVisibility(View.INVISIBLE);
-//                }
-//
-//                @Override
-//                public void onAnimationCancel(View view) {
-//
-//                }
-//            }).start();
-//        }
-//
-//        @Override
-//        public void onProgress(float progress) {
-//            if (progress > 0) {
-////                pull_down_menu.setVisibility(View.INVISIBLE);
-//            }
-//            if (progress < 1) {
-//                outer_area.setVisibility(View.GONE);
-//                tab_card.setVisibility(View.INVISIBLE);
-//            }
-//        }
-//    };
-
-//    public void setTop_scaling() {
-//        if (top_scaling.getState() == State.COLLAPSED)
-//            top_scaling.expand();
-//        else top_scaling.collapse();
-//    }
-
-//    private void animate(View v) {
-//        float start = 0F;
-//        float end = (float) Math.hypot(sheet_tab_holder.getWidth(), sheet_tab_holder.getHeight());
-//        Animator animator = ViewAnimationUtils.createCircularReveal(sheet_tab_holder, (int) event.getRawX(), (int) event.getY(), start, end);
-//        animator.setDuration(1150L);
-//        animator.setInterpolator(new FastOutSlowInInterpolator());
-//        animator.addListener(new AnimatorListenerAdapter() {
-//            @Override
-//            public void onAnimationStart(Animator animation) {
-//                tab_card.setCardBackgroundColor(((ColorDrawable) sheet_tab_holder.getBackground()).getColor());
-////                sheet_tab_holder.setBackgroundColor(backgroundColor);
-//            }
-//        });
-//        animator.start();
-//        sliding_strip.animate()
-//                .x(v.getX())
-//                .setDuration(500)
-//                .withEndAction(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        sliding_strip.setX(v.getX());
-//                        setTop_scaling();
-//                    }
-//                }).start();
-//    }
-
     public void exitApp() {
         if (!FsService.isRunning()) {
             new AlertDialog.Builder(ActivityMain.this)
@@ -502,7 +434,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_LANGUAGE);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Connect Wifi"))
             mHandler.sendEmptyMessage(MENU_CONNECT_WIFI);
-        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Share OR Recieve"))
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Share OR Receive"))
             mHandler.sendEmptyMessage(MENU_SHARE);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Share App"))
             mHandler.sendEmptyMessage(MENU_SHARE_APP);

@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
@@ -51,6 +52,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     ContentContract.contentView contentView;
     ArrayList<Modal_ContentDetail> levelContents;
     Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
+    Map<String, AsyncTask> currentDownloadTasks = new HashMap<>();
 
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
@@ -391,6 +393,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         filesDownloading.remove(downloadID);
         postAllDownloadsCompletedMessage();
         postSingleFileDownloadCompleteMessage(content);
+        if (currentDownloadTasks.containsKey(downloadID))
+            currentDownloadTasks.remove(downloadID);
     }
 
     @Override
@@ -399,6 +403,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         postSingleFileDownloadErrorMessage(content);
         filesDownloading.remove(downloadId);
         EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        cancelDownload(downloadId);
     }
 
     @Override
@@ -553,8 +558,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     @Override
-    public void ondownloadCancelled(int downloadId) {
-
+    public void ondownloadCancelled(String downloadId) {
     }
 
     @Background
@@ -632,6 +636,22 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         //delete content thumbnail image
         PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
                 + "/PrathamImages/" + contentItem.getNodeimage()));
+    }
+
+    @Override
+    public void currentDownloadRunning(String downloadId, AsyncTask task) {
+        if (!currentDownloadTasks.containsKey(downloadId)) {
+            currentDownloadTasks.put(downloadId, task);
+        }
+    }
+
+    @Override
+    public void cancelDownload(String downloadId) {
+        if (downloadId != null && !downloadId.isEmpty()) {
+            if (currentDownloadTasks.containsKey(downloadId))
+                currentDownloadTasks.get(downloadId).cancel(true);
+            postProgressMessage();
+        }
     }
 
     private void checkAndDeleteParent(Modal_ContentDetail contentItem) {

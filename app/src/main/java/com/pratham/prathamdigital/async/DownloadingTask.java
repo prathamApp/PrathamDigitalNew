@@ -182,13 +182,17 @@ public class DownloadingTask extends AsyncTask {
     }
 
     @Override
+    protected void onCancelled(Object o) {
+        contentPresenter.ondownloadError(downloadID);
+    }
+
+    @Override
     protected void onPostExecute(Object r) {
         Log.d(TAG, "onPostExecute");
         boolean result = (boolean) r;
-        if (result) {
+        if (result)
             contentPresenter.onDownloadCompleted(downloadID, content);
-        } else {
+        else
             contentPresenter.ondownloadError(downloadID);
-        }
     }
 }

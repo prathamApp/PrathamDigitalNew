@@ -53,19 +53,16 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
     AssignContract.assignPresenter assignPresenter;
     Boolean isAssigned = false;
 
-    private List<Modal_Groups> dbgroupList;
     private int vilID, cnt = 0;
     public String checkBoxIds[], group1 = "0", group2 = "0", group3 = "0", group4 = "0", group5 = "0";
     private ProgressDialog progress;
 
     private final String SPINNER = "spinner";
-    private final String VILLAGE = "village";
 
     @AfterViews
     public void initialize() {
         assignPresenter.getStates();
         assignPresenter.getProgramId(SPINNER);
-//        showProgramwiseSpinners();
     }
 
     // Show/Hide Spinners according to Program

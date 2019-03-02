@@ -81,6 +81,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     ContentContract.contentPresenter contentPresenter;
 
     ContentAdapter contentAdapter;
+    GridLayoutManager gridLayoutManager;
     private RV_LevelAdapter levelAdapter;
     Map<String, Integer> filesDownloading = new HashMap<>();
     private int revealX;
@@ -97,7 +98,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
                     rv_content.setHasFixedSize(true);
                     rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-                    GridLayoutManager gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
+                    gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
                     gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int pos) {
@@ -113,6 +114,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
                             }
                         }
                     });
+//                    GridPagerSnapHelper gridPagerSnapHelper = new GridPagerSnapHelper();
+//                    gridPagerSnapHelper.setRow(2).setColumn(gridLayoutManager.getSpanCount());
+//                    gridPagerSnapHelper.attachToRecyclerView(rv_content);
                     rv_content.setAdapter(contentAdapter);
                     rv_content.scheduleLayoutAnimation();
                     break;
@@ -181,6 +185,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 onDownloadError(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BROADCAST_DOWNLOADINGS)) {
                 contentPresenter.broadcast_downloadings();
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CANCEL_DOWNLOAD)) {
+                contentPresenter.cancelDownload(message.getDownloadId());
             }
         }
     }
@@ -339,6 +345,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         List<Modal_ContentDetail> data = new ArrayList<>();
                         data.addAll(contentAdapter.getData());
                         data.remove(pos);
+                        contentAdapter.notifyItemRemoved(pos);
                         contentAdapter.submitList(data);
                         contentPresenter.deleteContent(contentItem);
                         deleteDialog.dismiss();
@@ -432,6 +439,12 @@ public class FragmentContent extends Fragment implements ContentContract.content
             contentDetail, ArrayList<String> selectedNodeIds) {
     }
 
+    //    SpringAnimation(recyclerView, ScrollXProperty())
+//            .setSpring(SpringForce()
+//            .setFinalPosition(0f)
+//            .setStiffness(SpringForce.STIFFNESS_LOW)
+//            .setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY))
+//            .start()
     @UiThread
     @Override
     public void onDownloadError(EventMessage message) {

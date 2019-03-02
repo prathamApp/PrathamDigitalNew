@@ -10,7 +10,6 @@ import android.view.Window;
 import android.view.WindowManager;
 
 import com.google.gson.Gson;
-import com.pratham.prathamdigital.custom.fluid_keyboard.FluidContentResizer;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -71,7 +70,7 @@ public class BaseActivity extends AppCompatActivity {
         hideSystemUI(getWindow());   //this hides NavigationBar before showing the activity
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         super.onCreate(savedInstanceState);
-        FluidContentResizer.INSTANCE.listen(this);
+//        FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
                 .activity(CatchoTransparentActivity.class)

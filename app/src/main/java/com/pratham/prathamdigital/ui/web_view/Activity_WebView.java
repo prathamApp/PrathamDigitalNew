@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.web_view;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -31,12 +30,6 @@ public class Activity_WebView extends BaseActivity {
         setContentView(R.layout.activity_web_view);
         ButterKnife.bind(this);
         startTime = PD_Utility.getCurrentDateTime();
-
-        String index_path = getIntent().getStringExtra("index_path");
-        String path = new File(index_path).getParent() + "/";
-        String resId = getIntent().getStringExtra("resId");
-        boolean isOnSdCard = getIntent().getBooleanExtra("isOnSdCard", false);
-        createWebView(index_path, path, resId, isOnSdCard);
     }
 
     public void createWebView(String GamePath, String parse, String resId, boolean isOnSdCard) {
@@ -63,18 +56,25 @@ public class Activity_WebView extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        PrathamApplication.getInstance().toggleBackgroundMusic(false);
+        String index_path = getIntent().getStringExtra("index_path");
+        String path = new File(index_path).getParent() + "/";
+        String resId = getIntent().getStringExtra("resId");
+        boolean isOnSdCard = getIntent().getBooleanExtra("isOnSdCard", false);
+        createWebView(index_path, path, resId, isOnSdCard);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        webView.post(new Runnable() {
+            public void run() {
+                webView.loadUrl("about:blank");
+            }
+        });
     }
 
     @Override
     protected void onDestroy() {
-        if (!backpressedFlag)
-//            addScoreToDB();
-            Log.d("Destroyed Score Entry", "Destroyed Score Entry");
-//        if (tts != null) {
-//            tts.shutdown();
-//            Log.d("tts_destroyed", "TTS Destroyed");
-//        }
         super.onDestroy();
     }
 
@@ -83,9 +83,6 @@ public class Activity_WebView extends BaseActivity {
         backpressedFlag = true;
         webView.post(new Runnable() {
             public void run() {
-                //String jsString = "javascript:Utils.closeAllAudios()";
-                //webView.loadUrl(jsString);
-                //JSInterface.stopTtsBackground();
                 webView.loadUrl("about:blank");
             }
         });
