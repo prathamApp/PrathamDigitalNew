@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.dashboard;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -14,8 +13,8 @@ import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SlidingPaneLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +27,7 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.BuildConfig;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -45,6 +45,8 @@ import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
+import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
+import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
@@ -74,34 +76,20 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     private static final int INITILIZE_DRAWER = 1;
-    private static final int MENU_HOME = 7;
     private static final int MENU_LANGUAGE = 2;
     private static final int MENU_CONNECT_WIFI = 3;
     private static final int MENU_SHARE = 4;
     private static final int MENU_SHARE_APP = 5;
     private static final int MENU_EXIT = 6;
+    private static final int MENU_HOME = 7;
+    private static final int SHOW_MENU_WITH_DEEP_LINK = 8;
+    private static final int SHOW_AKS = 9;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
     RelativeLayout download_badge;
-    //    @ViewById(R.id.top_scaling)
-//    ScalingLayout top_scaling;
     @ViewById(R.id.outer_area)
     View outer_area;
-    @ViewById(R.id.tab_card)
-    MaterialCardView tab_card;
-    @ViewById(R.id.sliding_strip)
-    View sliding_strip;
-    @ViewById(R.id.sheet_tab_holder)
-    RelativeLayout sheet_tab_holder;
-    //    @ViewById(R.id.pradigi_icon)
-//    ImageView pradigi_icon;
-    @ViewById(R.id.sheet_connect)
-    ImageView sheet_connect;
-    @ViewById(R.id.sheet_home)
-    ImageView sheet_home;
-    @ViewById(R.id.sheet_language)
-    ImageView sheet_language;
     @ViewById(R.id.main_hamburger)
     ImageView main_hamburger;
     @ViewById(R.id.main_sliding_drawer)
@@ -117,25 +105,51 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     DownloadListFragment_ downloadListFragment_;
     RV_MenuAdapter rv_menuAdapter;
-    BlurPopupWindow welcomeDialog;
     private boolean isChecked;
+    private BlurPopupWindow exitDialog;
+
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case SHOW_MENU_WITH_DEEP_LINK:
+                    Bundle bundle = new Bundle();
+                    if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
+                        bundle.putBoolean(PD_Constant.DEEP_LINK, true);
+                        bundle.putString(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
+                    } else {
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                showIntro();
+                            }
+                        }, 2000);
+                    }
+                    bundle.putInt(PD_Constant.REVEALX, 0);
+                    bundle.putInt(PD_Constant.REVEALY, 0);
+                    PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
+                            bundle, FragmentContent_.class.getSimpleName());
+                    break;
+                case SHOW_AKS:
+                    File aksFile = new File(PrathamApplication.contentSDPath + "/AajKaSawal.json");
+                    Bundle aksbundle = new Bundle();
+                    aksbundle.putString(PD_Constant.AKS_FILE_PATH, aksFile.getAbsolutePath());
+                    PD_Utility.showFragment(ActivityMain.this, new Fragment_AAJ_KA_SAWAL_(), R.id.main_frame,
+                            aksbundle, Fragment_AAJ_KA_SAWAL.class.getSimpleName());
+                    break;
                 case INITILIZE_DRAWER:
                     initializeDrawer();
                     break;
                 case MENU_HOME:
                     if (isChecked)
                         toggleToArrow();
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(PD_Constant.REVEALX, 0);
-                    bundle.putInt(PD_Constant.REVEALY, 0);
+                    Bundle homebundle = new Bundle();
+                    homebundle.putInt(PD_Constant.REVEALX, 0);
+                    homebundle.putInt(PD_Constant.REVEALY, 0);
                     PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
-                            bundle, FragmentContent_.class.getSimpleName());
+                            homebundle, FragmentContent_.class.getSimpleName());
                     break;
                 case MENU_LANGUAGE:
                     if (isChecked)
@@ -185,8 +199,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                                         PackageManager pm = PrathamApplication.getInstance().getPackageManager();
                                         ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
                                         File localFile = new File(ai.publicSourceDir);
+                                        Uri uri = FileProvider.getUriForFile(ActivityMain.this,
+                                                BuildConfig.APPLICATION_ID + ".provider", localFile);
                                         intentShareFile.setType("*/*");
-                                        intentShareFile.putExtra(Intent.EXTRA_STREAM, Uri.parse("file://" + localFile.getAbsolutePath()));
+                                        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
                                         intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
                                         intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
                                         intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -208,20 +224,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
-//        top_scaling.setListener(listener);
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, 0);
-        bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(this, new FragmentContent_(), R.id.main_frame,
-                bundle, FragmentContent_.class.getSimpleName());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                if (!FastSave.getInstance().getBoolean(PD_Constant.PRADIGI_ICON, false))
-//                    showWelcomeDialog();
-                showIntro();
-            }
-        }, 2000);
+        if (PrathamApplication.contentExistOnSD) {
+            File aksFile = new File(PrathamApplication.contentSDPath + "/AajKaSawal.json");
+            if (aksFile.exists())
+                mHandler.sendEmptyMessage(SHOW_AKS);
+            else
+                mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
+        } else
+            mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
     }
 
     private void initializeDrawer() {
@@ -328,18 +338,40 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     public void exitApp() {
         if (!FsService.isRunning()) {
-            new AlertDialog.Builder(ActivityMain.this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("PraDigi")
-                    .setMessage("Do you want to exit?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//            new AlertDialog.Builder(ActivityMain.this)
+//                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                    .setTitle("PraDigi")
+//                    .setMessage("Do you want to exit?")
+//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            finishAffinity();
+//                        }
+//                    })
+//                    .setNegativeButton("No", null)
+//                    .show();
+            exitDialog = new BlurPopupWindow.Builder(ActivityMain.this)
+                    .setContentView(R.layout.app_exit_dialog)
+                    .bindClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                        public void onClick(View v) {
                             finishAffinity();
                         }
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+                    }, R.id.dialog_btn_exit)
+                    .bindClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exitDialog.dismiss();
+                        }
+                    }, R.id.btn_cancel)
+                    .setGravity(Gravity.CENTER)
+                    .setDismissOnTouchBackground(true)
+                    .setDismissOnClickBack(true)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(10)
+                    .setTintColor(0x30000000)
+                    .build();
+            exitDialog.show();
         } else {
             EventMessage msg = new EventMessage();
             msg.setMessage(PD_Constant.CLOSE_FTP_SERVER);
@@ -349,36 +381,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @Click(R.id.outer_area)
     public void onRootTouch(View v) {
-//        if (top_scaling.getState() == State.EXPANDED)
-//            top_scaling.collapse();
         if (main_sliding_drawer.isOpen())
             main_sliding_drawer.closePane();
-    }
-
-    public void showWelcomeDialog() {
-        welcomeDialog = new BlurPopupWindow.Builder(this)
-                .setContentView(R.layout.dialog_welcome)
-                .bindClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        welcomeDialog.dismiss();
-                        showIntro();
-                    }
-                }, R.id.dialog_txt_get_started)
-                .bindClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        welcomeDialog.dismiss();
-                    }
-                }, R.id.dialog_skip)
-                .setGravity(Gravity.CENTER)
-                .setDismissOnTouchBackground(true)
-                .setDismissOnClickBack(true)
-                .setScaleRatio(0.2f)
-                .setBlurRadius(10)
-                .setTintColor(0x30000000)
-                .build();
-        welcomeDialog.show();
     }
 
 //    SpotlightListener spotlightListener = new SpotlightListener() {
@@ -420,11 +424,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @Override
     public void menuClicked(int position, Modal_NavigationMenu modal_navigationMenu) {
-//        for (Modal_NavigationMenu menu : rv_menuAdapter.getMenus()) {
-//            if (menu.getMenu_name().equalsIgnoreCase(modal_navigationMenu.getMenu_name()))
-//                menu.setIsselected(true);
-//            else menu.setIsselected(false);
-//        }
         PrathamApplication.bubble_mp.start();
         if (main_sliding_drawer.isOpen())
             main_sliding_drawer.closePane();
@@ -440,7 +439,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_SHARE_APP);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Exit"))
             mHandler.sendEmptyMessage(MENU_EXIT);
-//        rv_menuAdapter.notifyDataSetChanged();
     }
 
     @Override

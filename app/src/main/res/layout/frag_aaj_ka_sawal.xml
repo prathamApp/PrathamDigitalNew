@@ -4,6 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/aaj_play_video"
+        android:layout_width="@dimen/_44sdp"
+        android:layout_height="@dimen/_44sdp"
+        android:layout_centerInParent="true"
+        android:elevation="@dimen/_5sdp"
+        app:srcCompat="@drawable/ic_video" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -14,7 +22,7 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:background="#DB6145">
+            android:background="#530c0c">
 
             <com.pratham.prathamdigital.custom.elastic_view.ElasticView
                 android:id="@+id/aaj_btn_skip"
@@ -53,10 +61,10 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
-            android:background="#DF7155">
+            android:background="#8f0e0e">
 
             <com.pratham.prathamdigital.custom.elastic_view.ElasticView
-                android:id="@+id/aaj_okay_skip"
+                android:id="@+id/aaj_okay"
                 android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_alignParentBottom="true"
@@ -91,8 +99,7 @@
                     android:layout_weight="1"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="@dimen/_20sdp"
-                    app:cardElevation="0dp"
-                    app:cardMaxElevation="0dp">
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -126,8 +133,7 @@
                     android:layout_weight="1"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="@dimen/_20sdp"
-                    app:cardElevation="0dp"
-                    app:cardMaxElevation="0dp">
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -159,10 +165,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_35sdp"
                     android:layout_weight="1"
-                    app:cardBackgroundColor="#52596C"
+                    app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="@dimen/_20sdp"
-                    app:cardElevation="@dimen/_5sdp"
-                    app:cardMaxElevation="0dp">
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -196,8 +201,7 @@
                     android:layout_weight="1"
                     app:cardBackgroundColor="@android:color/transparent"
                     app:cardCornerRadius="@dimen/_20sdp"
-                    app:cardElevation="0dp"
-                    app:cardMaxElevation="0dp">
+                    app:cardElevation="0dp">
 
                     <LinearLayout
                         android:layout_width="match_parent"

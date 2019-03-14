@@ -36,11 +36,7 @@ public class ZipDownloader {
                            String foldername, String f_name, Modal_ContentDetail contentDetail,
                            ArrayList<Modal_ContentDetail> levelContents) {
         this.filename = f_name;
-//        if (!PrathamApplication.contentExistOnSD) {
         createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
-        /*} else {
-            createOverSdCardAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
-        }*/
     }
 
     /*Creating folder in internal.

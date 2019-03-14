@@ -121,13 +121,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         }
     };
 
-//    @Touch(R.id.btn_avatar_next)
-//    public boolean setNextAvatar(View view, MotionEvent event) {
-//        revealX = (int) event.getRawX();
-//        revealY = (int) event.getY();
-//        return getActivity().onTouchEvent(event);
-//    }
-
     @Click(R.id.btn_avatar_next)
     public void setNext() {
         PrathamApplication.bubble_mp.start();
@@ -164,6 +157,10 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         getActivity().startService(new Intent(getActivity(), AppKillService.class));
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
+        if (getArguments().getBoolean(PD_Constant.DEEP_LINK, false)) {
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
+        }
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
@@ -204,7 +201,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @Override
     public void onRevealed() {
     }
-
 
     @Override
     public void onUnRevealed() {

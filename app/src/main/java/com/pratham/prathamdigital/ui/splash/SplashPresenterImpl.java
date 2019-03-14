@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.ui.splash;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
@@ -38,10 +37,6 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
-import java.util.Iterator;
-import java.util.List;
-
-import static android.content.Context.ACTIVITY_SERVICE;
 
 @EBean
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
@@ -110,7 +105,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-
+        Log.d(TAG, "onConnectionFailed: google sign in failed");
     }
 
     @Background
@@ -136,6 +131,8 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 //            firebaseAuthWithGoogle(credential);
 //            checkStudentList();
             checkIfContentinSDCard();
+        } else {
+            splashview.googleSignInFailed();
         }
     }
 
@@ -290,62 +287,21 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             }
         }
         if (BaseActivity.statusDao.getKey("appName") == null) {
-            CharSequence c = "";
-            ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
-            List l = am.getRunningAppProcesses();
-            Iterator i = l.iterator();
-            PackageManager pm = context.getPackageManager();
-            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
-            try {
-                c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
-                appname = c.toString();
-                Log.w("LABEL", c.toString());
-            } catch (Exception e) {
-            }
             statusObj.statusKey = "appName";
-            statusObj.value = appname;
+            statusObj.value = PD_Utility.getApplicationName(context);
             BaseActivity.statusDao.insert(statusObj);
         } else {
-            CharSequence c = "";
-            ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
-            List l = am.getRunningAppProcesses();
-            Iterator i = l.iterator();
-            PackageManager pm = context.getPackageManager();
-            ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
-            try {
-                c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
-                appname = c.toString();
-                Log.w("LABEL", c.toString());
-            } catch (Exception e) {
-            }
             statusObj.statusKey = "appName";
-            statusObj.value = appname;
+            statusObj.value = PD_Utility.getApplicationName(context);
             BaseActivity.statusDao.insert(statusObj);
         }
-
         if (BaseActivity.statusDao.getKey("apkVersion") == null) {
             statusObj.statusKey = "apkVersion";
-            PackageInfo pInfo = null;
-            String verCode = "";
-            try {
-                pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-                verCode = pInfo.versionName;
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            statusObj.value = verCode;
+            statusObj.value = PD_Utility.getCurrentVersion(context);
             BaseActivity.statusDao.insert(statusObj);
         } else {
             statusObj.statusKey = "apkVersion";
-            PackageInfo pInfo = null;
-            String verCode = "";
-            try {
-                pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-                verCode = pInfo.versionName;
-            } catch (PackageManager.NameNotFoundException e) {
-                e.printStackTrace();
-            }
-            statusObj.value = verCode;
+            statusObj.value = PD_Utility.getCurrentVersion(context);
             BaseActivity.statusDao.insert(statusObj);
         }
     }

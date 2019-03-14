@@ -62,6 +62,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private static final int SDCARD_LOCATION_CHOOSER = 99;
     private static final int INITIALIZE_CONTENT_ADAPTER = 1;
     private static final int INITIALIZE_LEVEL_ADAPTER = 2;
+    private static final int CLICK_DL_CONTENT = 3;
+    private static boolean IS_DEEP_LINK = false;
     @ViewById(R.id.frag_content_bkgd)
     RelativeLayout frag_content_bkgd;
     @ViewById(R.id.circular_content_reveal)
@@ -88,6 +90,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private int revealY;
     BlurPopupWindow download_builder;
     BlurPopupWindow deleteDialog;
+    Modal_ContentDetail dl_Content;
+
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -126,6 +130,26 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
                     rv_level.setAdapter(levelAdapter);
                     break;
+                case CLICK_DL_CONTENT:
+                    List<Modal_ContentDetail> details;
+                    View itemview = null;
+                    if (contentAdapter != null) {
+                        boolean found = false;
+                        details = contentAdapter.getData();
+                        for (int i = 0; i < details.size(); i++) {
+                            if (details.get(i).getNodeid() != null) {
+                                if (dl_Content.getNodeid().equalsIgnoreCase(details.get(i).getNodeid())) {
+                                    RecyclerView.ViewHolder vh = rv_content.findViewHolderForLayoutPosition(i);
+                                    itemview = vh.itemView;
+                                    found = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (found)
+                            itemview.findViewById(R.id.rl_download).performClick();
+                    }
+                    break;
             }
         }
     };
@@ -133,12 +157,21 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void onResume() {
         super.onResume();
-        PD_Utility.showDialog(getActivity());
-        if (levelAdapter == null) {
-            contentPresenter.getContent(null);
+        if (IS_DEEP_LINK) {
+            contentPresenter.openDeepLinkContent(getArguments().getString(PD_Constant.DEEP_LINK_CONTENT, null));
         } else {
-            contentPresenter.getContent();
+            PD_Utility.showDialog(getActivity());
+            if (levelAdapter == null)
+                contentPresenter.getContent(null);
+            else
+                contentPresenter.getContent();
         }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        IS_DEEP_LINK = false;
     }
 
     @Override
@@ -202,6 +235,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
         txt_wifi_status.setText(message.getConnection_name());
         iv_wifi_status.setImageDrawable(message.getConnection_resource());
         contentPresenter.checkConnectionForRaspberry();
+        contentPresenter.getContent(null);
     }
 
     @UiThread
@@ -223,11 +257,12 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Click(R.id.btn_retry)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
-        onResume();
+        contentPresenter.getContent(null);
     }
 
     @AfterViews
     public void initialize() {
+        IS_DEEP_LINK = getArguments().getBoolean(PD_Constant.DEEP_LINK, false);
         frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
         contentPresenter.setView(FragmentContent.this);
         mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
@@ -491,6 +526,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
         intent.putExtra("videoPath", f_path);
         intent.putExtra("videoTitle", contentDetail.getNodetitle());
         intent.putExtra("resId", contentDetail.getResourceid());
+        intent.putExtra("hint", false);
         getActivity().startActivity(intent);
         getActivity().overridePendingTransition(R.anim.pop_in, R.anim.nothing);
     }
@@ -548,5 +584,12 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void animateHamburger() {
         ((ContractMenu) getActivity()).toggleMenuIcon();
+    }
+
+    @Override
+    public void displayDLContents(List<Modal_ContentDetail> details) {
+        dl_Content = details.get(details.size() - 1);
+        displayContents(details);
+        mHandler.sendEmptyMessage(CLICK_DL_CONTENT);
     }
 }

@@ -36,7 +36,7 @@ public class PrathamApplication extends Application {
      * Remove LeakCanary from oncreate
      * check version
      */
-    public static boolean isTablet = false;
+    public static boolean isTablet = true;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;
@@ -59,7 +59,7 @@ public class PrathamApplication extends Application {
 //            return;
 //        }
 //        LeakCanary.install(this);
-        isTablet = PD_Utility.isTablet(this);
+//        isTablet = PD_Utility.isTablet(this);
         Fresco.initialize(this);
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
@@ -72,16 +72,6 @@ public class PrathamApplication extends Application {
                 .build();
         AndroidNetworking.initialize(getApplicationContext(), okHttpClient);
     }
-
-//    public void toggleBackgroundMusic(boolean start) {
-//        if (start) {
-//            if (!PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
-//                startService(new Intent(this, BackgroundSoundService.class));
-//        } else {
-//            if (PD_Utility.isServiceRunning(BackgroundSoundService.class, this))
-//                stopService(new Intent(this, BackgroundSoundService.class));
-//        }
-//    }
 
     @Override
     protected void attachBaseContext(Context base) {

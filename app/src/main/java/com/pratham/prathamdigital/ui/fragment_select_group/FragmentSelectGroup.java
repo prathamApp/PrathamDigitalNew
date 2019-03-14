@@ -167,7 +167,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
+        PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
                 bundle, FragmentChildAttendance.class.getSimpleName());
     }
 

@@ -22,7 +22,7 @@ public class AppKillService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
         try {
 //            stopService(new Intent(this, BackgroundSoundService.class));
-            PrathamSmartSync.pushTabletJsons(false);
+            PrathamSmartSync.pushUsageToServer(false);
             if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
                 BaseActivity.sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
                 stopSelf();

@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.DialogInterface;
@@ -24,7 +25,6 @@ import android.text.SpannableString;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.RelativeSizeSpan;
 import android.transition.TransitionManager;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,10 +48,11 @@ import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.SearchView;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
+import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.progress_layout.ProgressLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsService;
-import com.pratham.prathamdigital.interfaces.PermissionResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -64,7 +65,6 @@ import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.PermissionUtils;
 import com.pratham.prathamdigital.util.WifiUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -75,6 +75,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -103,6 +104,7 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
     private static final int JOIN_HOTSPOT = 12;
     private static final int CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION = 13;
     private static final int RECIEVED_FROM_TETHERING_ACTIVITY = 14;
+    private static final int ANIMATE_RECIEVE_AND_INIT_CAMERA = 15;
     @ViewById(R.id.root_share)
     LinearLayout root_share;
     @ViewById(R.id.rl_share)
@@ -171,6 +173,25 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
+                case ANIMATE_RECIEVE_AND_INIT_CAMERA:
+                    if (new LocationService(getActivity()).checkLocationEnabled()) {
+                        TransitionManager.beginDelayedTransition(root_share);
+                        ViewGroup.LayoutParams params = rl_recieve.getLayoutParams();
+                        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                        rl_recieve.requestLayout();
+                        rl_share.setVisibility(View.GONE);
+                        rl_recieve.setClickable(false);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (Settings.System.canWrite(getActivity())) initCamera();
+                            else {
+                                Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                startActivityForResult(intent, JOIN_HOTSPOT);
+                            }
+                        } else initCamera();
+                    } else new LocationService(getActivity()).checkLocation();
+                    break;
                 case PD_Constant.ApCreateApSuccess:
                     String s = PD_Utility.getLocalHostName();
                     SpannableString ss = new SpannableString(s);
@@ -195,16 +216,8 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
                     }
                     break;
                 case PD_Constant.WiFiConnectSuccess:
-//                    if (isValidated()) {
                     status.setText("connection succeeded...");
                     sharePresenter.connectFTP();
-//                        connectTimer.cancel();
-//                        new Handler().postDelayed(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                            }
-//                        }, 1500);
-//                    }
                     break;
                 case CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION:
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -351,24 +364,25 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         share = true;
         if (PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.disableWifi();
-        if (isPermissionsGranted(getActivity(),
-                new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            if (new LocationService(getActivity()).checkLocationEnabled()) {
-                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
-                if (sdPath.size() > 0) {
-                    if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
-                        showSdCardDialog();
-                    else
-                        mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
-//                        animateHotspotCreation();
-                } else
-                    mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
-//                    animateHotspotCreation();
-            } else
-                new LocationService(getActivity()).checkLocation();
-        } else
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
-                    PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
+        KotlinPermissions.with(getActivity())
+                .permissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
+                .onAccepted(new ResponsePermissionCallback() {
+                    @Override
+                    public void onResult(@NotNull List<String> permissionResult) {
+                        if (new LocationService(getActivity()).checkLocationEnabled()) {
+                            ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                            if (sdPath.size() > 0) {
+                                if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                                    showSdCardDialog();
+                                else
+                                    mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
+                            } else
+                                mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
+                        } else
+                            new LocationService(getActivity()).checkLocation();
+                    }
+                })
+                .ask();
     }
 
     @UiThread
@@ -395,55 +409,16 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
         WifiUtils.closeWifiAp();
         if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();
         share = false;
-        if (isPermissionsGranted(getActivity(),
-                new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION, PermissionUtils.Manifest_ACCESS_FINE_LOCATION})) {
-            if (new LocationService(getActivity()).checkLocationEnabled()) {
-                TransitionManager.beginDelayedTransition(root_share);
-                ViewGroup.LayoutParams params = rl_recieve.getLayoutParams();
-                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                rl_recieve.requestLayout();
-                rl_share.setVisibility(View.GONE);
-                rl_recieve.setClickable(false);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (Settings.System.canWrite(getActivity())) {
-//                        connectHotspotAndRecieve();
-                        initCamera();
-                    } else {
-                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                        startActivityForResult(intent, JOIN_HOTSPOT);
+        KotlinPermissions.with(getActivity())
+                .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
+                .onAccepted(new ResponsePermissionCallback() {
+                    @Override
+                    public void onResult(@NotNull List<String> permissionResult) {
+                        mHandler.sendEmptyMessage(ANIMATE_RECIEVE_AND_INIT_CAMERA);
                     }
-                } else {
-                    initCamera();
-//                    connectHotspotAndRecieve();
-                }
-            } else {
-                new LocationService(getActivity()).checkLocation();
-            }
-        } else {
-            askCompactPermissions(new String[]{PermissionUtils.Manifest_ACCESS_COARSE_LOCATION,
-                    PermissionUtils.Manifest_ACCESS_FINE_LOCATION}, locationPermissionResult);
-        }
+                })
+                .ask();
     }
-
-    PermissionResult locationPermissionResult = new PermissionResult() {
-        @Override
-        public void permissionGranted() {
-            if (share) setRl_share();
-            else setRl_recieve();
-        }
-
-        @Override
-        public void permissionDenied() {
-
-        }
-
-        @Override
-        public void permissionForeverDenied() {
-
-        }
-    };
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -486,7 +461,6 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     @UiThread
     public void createHotspot() {
-
     }
 
     @Override
@@ -603,34 +577,27 @@ public class FragmentShareRecieve extends FragmentManagePermission implements Co
 
     private void initCamera() {
         connecting_progress.setVisibility(View.GONE);
-        if (!isPermissionGranted(getActivity(), PermissionUtils.Manifest_CAMERA)) {
-            askCompactPermission(PermissionUtils.Manifest_CAMERA, new PermissionResult() {
-                @Override
-                public void permissionGranted() {
-                    _initCamera();
-                }
-
-                @Override
-                public void permissionDenied() {
-                    Log.d(TAG, "camera permissionDenied: ");
-                }
-
-                @Override
-                public void permissionForeverDenied() {
-                    Log.d(TAG, "camera permissionForeverDenied: ");
-                }
-            });
-        } else {
-            _initCamera();
-        }
+        KotlinPermissions.with(getActivity())
+                .permissions(Manifest.permission.CAMERA)
+                .onAccepted(new ResponsePermissionCallback() {
+                    @Override
+                    public void onResult(@NotNull List<String> permissionResult) {
+                        _initCamera();
+                    }
+                })
+                .ask();
     }
 
     private void _initCamera() {
         try {
             rl_scan_qr.setVisibility(View.VISIBLE);
-            startCameraScan = new ZXingScannerView(getActivity());
-            startCameraScan.setResultHandler(FragmentShareRecieve.this);
-            qr_frame.addView((startCameraScan));
+            if (startCameraScan == null) {
+                startCameraScan = new ZXingScannerView(getActivity());
+                startCameraScan.setResultHandler(FragmentShareRecieve.this);
+                qr_frame.addView((startCameraScan));
+            } else {
+                startCameraScan.stopCamera();
+            }
             startCameraScan.startCamera();
             startCameraScan.resumeCameraPreview(this);
         } catch (Exception e) {

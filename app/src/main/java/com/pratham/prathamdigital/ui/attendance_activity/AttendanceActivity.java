@@ -1,13 +1,14 @@
 package com.pratham.prathamdigital.ui.attendance_activity;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
+import android.view.Gravity;
+import android.view.View;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 @EActivity(R.layout.activity_attendance)
 public class AttendanceActivity extends BaseActivity {
 
+    private BlurPopupWindow exitDialog;
+
     @AfterViews
     public void initialize() {
         if (PrathamApplication.isTablet) {
@@ -33,6 +36,10 @@ public class AttendanceActivity extends BaseActivity {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
                 ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getAllStudents();
                 Bundle bundle = new Bundle();
+                if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
+                    bundle.putBoolean(PD_Constant.DEEP_LINK, true);
+                    bundle.putString(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
+                }
                 bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
@@ -40,6 +47,10 @@ public class AttendanceActivity extends BaseActivity {
                         bundle, FragmentChildAttendance_.class.getSimpleName());
             } else {
                 Bundle bundle = new Bundle();
+                if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
+                    bundle.putBoolean(PD_Constant.DEEP_LINK, true);
+                    bundle.putString(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
+                }
                 bundle.putInt(PD_Constant.REVEALX, 0);
                 bundle.putInt(PD_Constant.REVEALY, 0);
                 bundle.putBoolean(PD_Constant.SHOW_BACK, false);
@@ -53,18 +64,28 @@ public class AttendanceActivity extends BaseActivity {
     public void onBackPressed() {
         Fragment f = getSupportFragmentManager().findFragmentById(R.id.frame_attendance);
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
-            new AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("PraDigi")
-                    .setMessage("Do you want to exit?")
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            exitDialog = new BlurPopupWindow.Builder(this)
+                    .setContentView(R.layout.app_exit_dialog)
+                    .bindClickListener(new View.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            finish();
+                        public void onClick(View v) {
+                            finishAffinity();
                         }
-                    })
-                    .setNegativeButton("No", null)
-                    .show();
+                    }, R.id.dialog_btn_exit)
+                    .bindClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            exitDialog.dismiss();
+                        }
+                    }, R.id.btn_cancel)
+                    .setGravity(Gravity.CENTER)
+                    .setDismissOnTouchBackground(true)
+                    .setDismissOnClickBack(true)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(10)
+                    .setTintColor(0x30000000)
+                    .build();
+            exitDialog.show();
         } else {
             getSupportFragmentManager().popBackStack();
         }

@@ -98,6 +98,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -107,6 +108,8 @@ import java.util.regex.Pattern;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 public class PD_Utility {
 
@@ -218,6 +221,25 @@ public class PD_Utility {
             ((AttendanceActivity) mActivity).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
+        }
+    }
+
+    public static void addFragment(Activity mActivity, Fragment mFragment, int frame,
+                                   Bundle mBundle, String TAG) {
+        if (mBundle != null)
+            mFragment.setArguments(mBundle);
+        if (mActivity instanceof ActivityMain) {
+            ((ActivityMain) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (mActivity instanceof AttendanceActivity) {
+            ((AttendanceActivity) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(frame, mFragment, TAG)
                     .addToBackStack(TAG)
                     .commit();
         }
@@ -1076,6 +1098,25 @@ public class PD_Utility {
 
         return 0;
 
+    }
+
+    public static String getApplicationName(Context context) {
+        String appname = "";
+        CharSequence c = "";
+        ActivityManager am = (ActivityManager) context.getSystemService(ACTIVITY_SERVICE);
+        List l = am.getRunningAppProcesses();
+        Iterator i = l.iterator();
+        PackageManager pm = context.getPackageManager();
+        ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo) (i.next());
+        try {
+            c = pm.getApplicationLabel(pm.getApplicationInfo(info.processName, PackageManager.GET_META_DATA));
+            appname = c.toString();
+            Log.w("LABEL", c.toString());
+            return appname;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "PraDigi";
+        }
     }
 
     /**
@@ -2012,5 +2053,20 @@ public class PD_Utility {
         return (context.getResources().getConfiguration().screenLayout
                 & Configuration.SCREENLAYOUT_SIZE_MASK)
                 >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+
+    public static String readJSONFile(String filePath) {
+        try {
+            FileInputStream is = new FileInputStream(filePath);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            String mResponse = new String(buffer);
+            return mResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "";
+        }
     }
 }

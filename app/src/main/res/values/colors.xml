@@ -78,4 +78,5 @@
     <color name="endColor">#23FFFFFF</color>
     <color name="att_unselected">#F5FFCA75</color>
     <color name="att_selected">#F8A306</color>
+    <color name="aks_selected">#fa7e0a</color>
 </resources>

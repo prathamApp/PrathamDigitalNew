@@ -51,26 +51,6 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
 
     ProgressDialog progressDialog;
 
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.pull_data_fragment, container, false);
-//    }
-
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        ButterKnife.bind(this, view);
-//        pullDataPresenter = new PullDataPresenterImp(getActivity(), this);
-//        pullDataPresenter.loadSpinner();
-//        radioGroupPrograms.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                pullDataPresenter.clearLists();
-//            }
-//        });
-//    }
-
     @AfterViews
     public void initialize() {
         pullDataPresenter.setView(PullDataFragment.this);
@@ -231,10 +211,6 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @UiThread
     @Override
     public void openLoginActivity() {
-/*
-        PD_Utility.showFragment(getActivity(), new AdminPanelFragment(), R.id.frame_attendance,
-                null, AdminPanelFragment.class.getSimpleName());
-*/
         getActivity().getSupportFragmentManager().popBackStack();
     }
 

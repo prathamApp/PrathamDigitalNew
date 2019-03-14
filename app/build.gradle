@@ -24,6 +24,7 @@ android {
     }
     buildTypes {
         debug {
+            minifyEnabled false
             splits.abi.enable = false
             splits.density.enable = false
         }
@@ -85,7 +86,8 @@ dependencies {
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'
     implementation 'org.greenrobot:eventbus:3.1.1'
     implementation 'io.nlopez.smartlocation:library:3.3.3'
-    implementation 'com.google.firebase:firebase-messaging:17.3.4'
+    implementation 'com.google.firebase:firebase-messaging:17.4.0'
+    implementation 'com.google.firebase:firebase-inappmessaging-display:17.1.0'
     //    debugImplementation 'com.amitshekhar.android:debug-db:1.0.4'
     //QR scan
     implementation 'me.dm7.barcodescanner:zxing:1.9.8'

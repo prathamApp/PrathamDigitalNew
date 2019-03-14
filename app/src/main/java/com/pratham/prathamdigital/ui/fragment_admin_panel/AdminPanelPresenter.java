@@ -60,7 +60,7 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
 
     @Override
     public void pushData() {
-        PrathamSmartSync.pushTabletJsons(true);
+        PrathamSmartSync.pushUsageToServer(true);
     }
 
 }

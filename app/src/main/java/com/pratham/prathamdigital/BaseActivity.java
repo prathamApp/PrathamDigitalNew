@@ -35,8 +35,6 @@ import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import net.alhazmy13.catcho.library.Catcho;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.jetbrains.annotations.NotNull;
@@ -72,10 +70,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 //        FluidContentResizer.INSTANCE.listen(this);
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
-//                .recipients("your-email@domain.com")
-                .build();
+//        Catcho.Builder(this)
+//                .activity(CatchoTransparentActivity.class)
+////                .recipients("your-email@domain.com")
+//                .build();
 
         ttsService = new TTSService(getApplication());
         ttsService.setActivity(this);
@@ -94,9 +92,8 @@ public class BaseActivity extends AppCompatActivity {
         villageDao = db.getVillageDao();
         logDao = db.getLogDao();
         language = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
-        if (language.isEmpty()) {
+        if (language.isEmpty())
             FastSave.getInstance().saveString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
-        }
     }
 
     @Override

@@ -4,141 +4,141 @@ import com.google.gson.annotations.SerializedName;
 
 public class Modal_Rasp_ContentFilesItem {
 
-	@SerializedName("extension")
-	private String extension;
+    @SerializedName("extension")
+    private String extension;
 
-	@SerializedName("thumbnail")
-	private boolean thumbnail;
+    @SerializedName("thumbnail")
+    private boolean thumbnail;
 
-	@SerializedName("available")
-	private boolean available;
+    @SerializedName("available")
+    private boolean available;
 
-	@SerializedName("download_url")
-	private String downloadUrl;
+    @SerializedName("download_url")
+    private String downloadUrl;
 
-	@SerializedName("supplementary")
-	private boolean supplementary;
+    @SerializedName("supplementary")
+    private boolean supplementary;
 
-	@SerializedName("storage_url")
-	private Object storageUrl;
+    @SerializedName("storage_url")
+    private String storageUrl;
 
-	@SerializedName("id")
-	private String id;
+    @SerializedName("id")
+    private String id;
 
-	@SerializedName("preset")
-	private String preset;
+    @SerializedName("preset")
+    private String preset;
 
-	@SerializedName("priority")
-	private int priority;
+    @SerializedName("priority")
+    private int priority;
 
-	@SerializedName("lang")
-	private Object lang;
+    @SerializedName("lang")
+    private Object lang;
 
-	@SerializedName("file_size")
-	private int fileSize;
+    @SerializedName("file_size")
+    private int fileSize;
 
-	@Override
-	public String toString() {
-		return "Modal_Rasp_ContentFilesItem{" +
-				"extension='" + extension + '\'' +
-				", thumbnail=" + thumbnail +
-				", available=" + available +
-				", downloadUrl='" + downloadUrl + '\'' +
-				", supplementary=" + supplementary +
-				", storageUrl=" + storageUrl +
-				", id='" + id + '\'' +
-				", preset='" + preset + '\'' +
-				", priority=" + priority +
-				", lang=" + lang +
-				", fileSize=" + fileSize +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Modal_Rasp_ContentFilesItem{" +
+                "extension='" + extension + '\'' +
+                ", thumbnail=" + thumbnail +
+                ", available=" + available +
+                ", downloadUrl='" + downloadUrl + '\'' +
+                ", supplementary=" + supplementary +
+                ", storageUrl=" + storageUrl +
+                ", id='" + id + '\'' +
+                ", preset='" + preset + '\'' +
+                ", priority=" + priority +
+                ", lang=" + lang +
+                ", fileSize=" + fileSize +
+                '}';
+    }
 
-	public void setExtension(String extension){
-		this.extension = extension;
-	}
+    public String getExtension() {
+        return extension;
+    }
 
-	public String getExtension(){
-		return extension;
-	}
+    public void setExtension(String extension) {
+        this.extension = extension;
+    }
 
-	public void setThumbnail(boolean thumbnail){
-		this.thumbnail = thumbnail;
-	}
+    public boolean isThumbnail() {
+        return thumbnail;
+    }
 
-	public boolean isThumbnail(){
-		return thumbnail;
-	}
+    public void setThumbnail(boolean thumbnail) {
+        this.thumbnail = thumbnail;
+    }
 
-	public void setAvailable(boolean available){
-		this.available = available;
-	}
+    public boolean isAvailable() {
+        return available;
+    }
 
-	public boolean isAvailable(){
-		return available;
-	}
+    public void setAvailable(boolean available) {
+        this.available = available;
+    }
 
-	public void setDownloadUrl(String downloadUrl){
-		this.downloadUrl = downloadUrl;
-	}
+    public String getDownloadUrl() {
+        return downloadUrl;
+    }
 
-	public String getDownloadUrl(){
-		return downloadUrl;
-	}
+    public void setDownloadUrl(String downloadUrl) {
+        this.downloadUrl = downloadUrl;
+    }
 
-	public void setSupplementary(boolean supplementary){
-		this.supplementary = supplementary;
-	}
+    public boolean isSupplementary() {
+        return supplementary;
+    }
 
-	public boolean isSupplementary(){
-		return supplementary;
-	}
+    public void setSupplementary(boolean supplementary) {
+        this.supplementary = supplementary;
+    }
 
-	public void setStorageUrl(Object storageUrl){
-		this.storageUrl = storageUrl;
-	}
+    public String getStorageUrl() {
+        return storageUrl;
+    }
 
-	public Object getStorageUrl(){
-		return storageUrl;
-	}
+    public void setStorageUrl(String storageUrl) {
+        this.storageUrl = storageUrl;
+    }
 
-	public void setId(String id){
-		this.id = id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public String getId(){
-		return id;
-	}
+    public void setId(String id) {
+        this.id = id;
+    }
 
-	public void setPreset(String preset){
-		this.preset = preset;
-	}
+    public String getPreset() {
+        return preset;
+    }
 
-	public String getPreset(){
-		return preset;
-	}
+    public void setPreset(String preset) {
+        this.preset = preset;
+    }
 
-	public void setPriority(int priority){
-		this.priority = priority;
-	}
+    public int getPriority() {
+        return priority;
+    }
 
-	public int getPriority(){
-		return priority;
-	}
+    public void setPriority(int priority) {
+        this.priority = priority;
+    }
 
-	public void setLang(Object lang){
-		this.lang = lang;
-	}
+    public Object getLang() {
+        return lang;
+    }
 
-	public Object getLang(){
-		return lang;
-	}
+    public void setLang(Object lang) {
+        this.lang = lang;
+    }
 
-	public void setFileSize(int fileSize){
-		this.fileSize = fileSize;
-	}
+    public int getFileSize() {
+        return fileSize;
+    }
 
-	public int getFileSize(){
-		return fileSize;
-	}
+    public void setFileSize(int fileSize) {
+        this.fileSize = fileSize;
+    }
 }

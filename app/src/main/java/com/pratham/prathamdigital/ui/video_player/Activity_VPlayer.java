@@ -1,8 +1,6 @@
 package com.pratham.prathamdigital.ui.video_player;
 
 import android.media.MediaPlayer;
-import android.view.Gravity;
-import android.view.View;
 import android.widget.VideoView;
 
 import com.pratham.prathamdigital.BaseActivity;
@@ -19,7 +17,6 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
-import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 @EActivity(R.layout.activity_generic_vplayer)
@@ -35,30 +32,15 @@ public class Activity_VPlayer extends BaseActivity {
     private String resId;
     private long videoDuration = 0;
     BlurPopupWindow nextDialog;
-
-/*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_generic_vplayer);
-        ButterKnife.bind(this);
-        myVideo = getIntent().getStringExtra("videoPath");
-        resId = getIntent().getStringExtra("resId");
-//        PrathamApplication.getInstance().toggleBackgroundMusic(false);
-        initializePlayer(myVideo);
-    }
-*/
+    private boolean isHint = false;
 
     @AfterViews
     public void initialize() {
         myVideo = getIntent().getStringExtra("videoPath");
         resId = getIntent().getStringExtra("resId");
+        isHint = getIntent().getBooleanExtra("hint", false);
         initializePlayer(myVideo);
     }
-//    @Override
-//    protected void onResume() {
-//        super.onResume();
-//    }
 
     private void initializePlayer(String myVideo) {
         videoView.setVideoPath(myVideo);
@@ -75,14 +57,12 @@ public class Activity_VPlayer extends BaseActivity {
         videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
             @Override
             public void onCompletion(MediaPlayer mp) {
-//                addScoreToDB();
-//                showNextVideoDialog();
                 onBackPressed();
             }
         });
     }
 
-    @UiThread
+ /*   @UiThread
     public void showNextVideoDialog() {
         nextDialog = new BlurPopupWindow.Builder(Activity_VPlayer.this)
                 .setContentView(R.layout.dialog_next_content)
@@ -100,7 +80,7 @@ public class Activity_VPlayer extends BaseActivity {
                 .setTintColor(0x30000000)
                 .build();
         nextDialog.show();
-    }
+    }*/
 
     @Click(R.id.close_video)
     public void setClose_video() {
@@ -110,7 +90,8 @@ public class Activity_VPlayer extends BaseActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        addScoreToDB();
+        if (!isHint)
+            addScoreToDB();
         Runtime rs = Runtime.getRuntime();
         rs.freeMemory();
         rs.gc();

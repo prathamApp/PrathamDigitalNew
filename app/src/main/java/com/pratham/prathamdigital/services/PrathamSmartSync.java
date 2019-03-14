@@ -32,15 +32,7 @@ public class PrathamSmartSync extends AutoSync {
         super.onCreate(context);
     }
 
-    @Override
-    public void onSync(Context context) throws Exception {
-        this.context = context;
-        Log.d(TAG, "onSync: ");
-        // Push Tab related Jsons
-        pushTabletJsons(false);
-    }
-
-    public static void pushTabletJsons(Boolean isPressed) {
+    public static void pushUsageToServer(Boolean isPressed) {
         try {
             String programID = "";
             JSONObject rootJson = new JSONObject();
@@ -121,5 +113,13 @@ public class PrathamSmartSync extends AutoSync {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onSync(Context context) throws Exception {
+        this.context = context;
+        Log.d(TAG, "onSync: ");
+        // Push Tab related Jsons
+        pushUsageToServer(false);
     }
 }

@@ -53,6 +53,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     ArrayList<Modal_ContentDetail> levelContents;
     Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
     Map<String, AsyncTask> currentDownloadTasks = new HashMap<>();
+    ArrayList<String> dlContentIDs = new ArrayList<>();
 
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
@@ -305,10 +306,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Modal_ContentDetail contentDetail = download_content.getNodelist().get(download_content.getNodelist().size() - 1);
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
-/*
-                new ZipDownloader(context, ContentPresenterImpl.this, null, download_content.getDownloadurl(),
-                        download_content.getFoldername(), fileName, pradigiPath, contentDetail);
-*/
                 zipDownloader.initialize(ContentPresenterImpl.this, download_content.getDownloadurl(),
                         download_content.getFoldername(), fileName, contentDetail, levelContents);
             }
@@ -336,10 +333,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (!found)
                     onlineContents.add(total);
             }
-//            if (!filesDownloading.isEmpty()) {
-//                ArrayList<Modal_FileDownloading> mfd = new ArrayList<Modal_FileDownloading>(filesDownloading.values());
-//                temp = removeIfCurrentlyDownloading(temp, mfd);
-//            }
             return onlineContents;
         } else
             return onlineContents;
@@ -663,6 +656,42 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             if (count == 0)
                 checkAndDeleteParent(BaseActivity.modalContentDao.getContent(parentId,
                         FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
+        }
+    }
+
+    @Background
+    @Override
+    public void openDeepLinkContent(String dl_content) {
+        if (dl_content != null && !dl_content.isEmpty()) {
+            Modal_DownloadContent download_content = new Gson().fromJson(dl_content, Modal_DownloadContent.class);
+            for (Modal_ContentDetail detail : download_content.getNodelist()) {
+                Modal_ContentDetail temp = BaseActivity.modalContentDao.getContent(detail.getNodeid(), BaseActivity.language);
+                if (temp == null) {
+                    detail.setContent_language(BaseActivity.language);
+                    if (detail.getResourcetype().equalsIgnoreCase("Game")
+                            || detail.getResourcetype().equalsIgnoreCase("Video")
+                            || detail.getResourcetype().equalsIgnoreCase("Pdf"))
+                        detail.setContentType(PD_Constant.FILE);
+                    else {
+                        detail.setContentType(PD_Constant.FOLDER);
+                        if (levelContents == null) levelContents = new ArrayList<>();
+                        levelContents.add(detail);
+                    }
+                } else {
+                    detail = temp;
+                    if (detail.getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
+                        if (levelContents == null) levelContents = new ArrayList<>();
+                        levelContents.add(detail);
+                    }
+                }
+            }
+            if (contentView != null) {
+                contentView.displayLevel(levelContents);
+                List<Modal_ContentDetail> details = new ArrayList<>();
+                details.add(0, new Modal_ContentDetail());//null modal for displaying header
+                details.add(download_content.getNodelist().get(download_content.getNodelist().size() - 1));
+                contentView.displayDLContents(details);
+            }
         }
     }
 }

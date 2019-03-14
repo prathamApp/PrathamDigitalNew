@@ -289,7 +289,7 @@ public class Modal_Rasp_Content {
                             .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
                     modal_contentDetail.setNodeimage(filename);
                     modal_contentDetail.setNodeserverimage(PD_Constant.RASP_IP + URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8"));
-                    modal_contentDetail.setKolibriNodeImageUrl(PD_Constant.RASP_IP + filesItem.getDownloadUrl());
+                    modal_contentDetail.setKolibriNodeImageUrl(PD_Constant.RASP_IP + filesItem.getStorageUrl());
                 } else {
                     String filename = URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8")
                             .substring(URLDecoder.decode(filesItem.getDownloadUrl(), "UTF-8").lastIndexOf('/') + 1);
@@ -322,3 +322,5 @@ public class Modal_Rasp_Content {
         return modal_contentDetail;
     }
 }
+
+

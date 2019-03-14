@@ -19,24 +19,6 @@
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_att_back" />
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:gravity="center">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_child"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
-            <include
-                layout="@layout/item_add_child"
-                android:layout_width="@dimen/_120sdp"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/rv_child" />
-        </RelativeLayout>
-
         <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
             android:id="@+id/btn_attendance_next"
             android:layout_width="@dimen/_150sdp"
@@ -50,5 +32,13 @@
             android:text="Next"
             android:textColor="@color/white"
             android:visibility="visible" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_child"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/_5sdp" />
+
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

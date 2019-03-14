@@ -1,22 +1,26 @@
 package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
+import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
+import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
+import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
@@ -42,23 +46,54 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         CircularRevelLayout.CallBacks {
 
     private static final String TAG = FragmentChildAttendance.class.getSimpleName();
+    private static final int INITIALIZE_STUDENTS = 1;
     @ViewById(R.id.chid_attendance_reveal)
     CircularRevelLayout chid_attendance_reveal;
     @ViewById(R.id.rv_child)
     RecyclerView rv_child;
     @ViewById(R.id.btn_attendance_next)
     Button btn_attendance_next;
-    @ViewById(R.id.add_child)
-    RelativeLayout add_child;
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
 
     ChildAdapter childAdapter;
-    ArrayList<Modal_Student> students;
-    ArrayList<String> avatars;
+    ArrayList<Modal_Student> students = new ArrayList<>();
+    ArrayList<String> avatars = new ArrayList<>();
     private int revealX;
     private int revealY;
     private String groupID = "";
+
+    @SuppressLint("HandlerLeak")
+    Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case INITIALIZE_STUDENTS:
+                    students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
+                    if (PrathamApplication.isTablet) {
+                        img_child_back.setVisibility(View.VISIBLE);
+                        btn_attendance_next.setVisibility(View.VISIBLE);
+                        groupID = getArguments().getString(PD_Constant.GROUPID);
+                        for (Modal_Student stu : students)
+                            avatars.add(PD_Utility.getRandomAvatar(getActivity()));
+                    } else {
+                        img_child_back.setVisibility(View.GONE);
+                        btn_attendance_next.setVisibility(View.GONE);
+                        groupID = "SmartPhone";
+                        for (Modal_Student stu : students)
+                            avatars.add(stu.getAvatarName());
+                        //adding add child item
+                        Modal_Student add_student = new Modal_Student();
+                        add_student.setFullName("Add Child");
+                        add_student.setStudentId("Add Child");
+                        if (!students.contains(add_student)) students.add(add_student);
+                    }
+                    setChilds(students);
+                    break;
+            }
+        }
+    };
 
     @AfterViews
     public void initialize() {
@@ -75,33 +110,18 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                 }
             });
         }
-        students = new ArrayList<>();
-        students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
-        avatars = new ArrayList<>();
-        if (PrathamApplication.isTablet) {
-            img_child_back.setVisibility(View.VISIBLE);
-            btn_attendance_next.setVisibility(View.VISIBLE);
-            add_child.setVisibility(View.GONE);
-            groupID = getArguments().getString(PD_Constant.GROUPID);
-            for (Modal_Student stu : students)
-                avatars.add(PD_Utility.getRandomAvatar(getActivity()));
-        } else {
-            img_child_back.setVisibility(View.GONE);
-            btn_attendance_next.setVisibility(View.GONE);
-            add_child.setVisibility(View.VISIBLE);
-            groupID = "SmartPhone";
-            for (Modal_Student stu : students)
-                avatars.add(stu.getAvatarName());
-        }
-        setChilds(students);
+        mHandler.sendEmptyMessage(INITIALIZE_STUDENTS);
     }
 
     @UiThread
     public void setChilds(ArrayList<Modal_Student> childs) {
         childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentChildAttendance.this);
         rv_child.setHasFixedSize(true);
-        rv_child.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
+        flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
+        rv_child.setLayoutManager(flexboxLayoutManager);
         rv_child.setAdapter(childAdapter);
+        rv_child.scheduleLayoutAnimation();
     }
 
     @Override
@@ -116,6 +136,19 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             }
         }
         childAdapter.notifyItemChanged(position, stud);
+    }
+
+    @Override
+    public void addChild(View view) {
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        bundle.putBoolean(PD_Constant.SHOW_BACK, true);
+        PD_Utility.addFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
+                bundle, Fragment_SelectAvatar_.class.getSimpleName());
     }
 
     @Override
@@ -191,22 +224,13 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         getActivity().startService(new Intent(getActivity(), AppKillService.class));
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
+        if (getArguments().getBoolean(PD_Constant.DEEP_LINK, false)) {
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
+        }
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
-    }
-
-    @Click(R.id.add_child)
-    public void setAdd_child(View view) {
-        int[] outLocation = new int[2];
-        view.getLocationOnScreen(outLocation);
-        outLocation[0] += view.getWidth() / 2;
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
-        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        bundle.putBoolean(PD_Constant.SHOW_BACK, true);
-        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
-                bundle, Fragment_SelectAvatar_.class.getSimpleName());
     }
 
     @Click(R.id.img_child_back)

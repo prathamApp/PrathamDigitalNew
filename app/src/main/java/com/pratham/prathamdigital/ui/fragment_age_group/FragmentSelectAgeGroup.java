@@ -2,20 +2,17 @@ package com.pratham.prathamdigital.ui.fragment_age_group;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.view.View;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
-import com.pratham.prathamdigital.ui.QRLogin.QRLogin;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
+import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
+import com.pratham.prathamdigital.ui.QRLogin.QRLogin_;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment_;
@@ -26,92 +23,80 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @EFragment(R.layout.fragment_age_group)
 public class FragmentSelectAgeGroup extends Fragment {
-
-  /*  @BindView(R.id.admin_panel)
-    com.airbnb.lottie.LottieAnimationView admin_panel;*/
-
     private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
-
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//    }
-//
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        View rootView = inflater.inflate(, container, false);
-//        return rootView;
-//    }
-//
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        ButterKnife.bind(this, view);
-//    }
 
     @Click(R.id.scan_qr)
     public void setScanQR() {
-        checkPermission();
-    }
-
-    protected void checkPermission() {
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            // Do something, when permissions not granted
-            if (ActivityCompat.shouldShowRequestPermissionRationale(
-                    getActivity(), Manifest.permission.CAMERA)) {
-                // If we should give explanation of requested permissions
-
-                // Show an alert dialog here with request explanation
-                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Permissions");
-//                builder.setIcon(R.drawable.ic_warning);
-                builder.setMessage("Please Grant All Permissions in order to Run the App.");
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        KotlinPermissions.with(getActivity())
+                .permissions(Manifest.permission.CAMERA)
+                .onAccepted(new ResponsePermissionCallback() {
                     @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-                                MY_PERMISSIONS_REQUEST_CODE);
+                    public void onResult(@NotNull List<String> permissionResult) {
+                        Intent intent = new Intent(getActivity(), QRLogin_.class);
+                        startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     }
-                });
-                builder.setNeutralButton("Cancel", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            } else {
-                // Directly request for required permissions, without explanation
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-                        MY_PERMISSIONS_REQUEST_CODE);
-            }
-        } else {
-            // Do something, when permissions are already granted
-            Intent intent = new Intent(getActivity(), QRLogin.class);
-            startActivity(intent);
-            getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-        }
+                })
+                .ask();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_CODE: {
-                // When request is cancelled, the results array are empty
-                if ((grantResults.length > 0) && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
-                    // if granted
-                    Intent intent = new Intent(getActivity(), QRLogin.class);
-                    startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                } else {
-                    // Permissions are denied
-                    checkPermission();
-//                    Toast.makeText(mContext, "Permissions denied.", Toast.LENGTH_SHORT).show();
-                }
-                return;
-            }
-        }
-    }
+//    protected void checkPermission() {
+//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+//            // Do something, when permissions not granted
+//            if (ActivityCompat.shouldShowRequestPermissionRationale(
+//                    getActivity(), Manifest.permission.CAMERA)) {
+//                // If we should give explanation of requested permissions
+//
+//                // Show an alert dialog here with request explanation
+//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+//                builder.setTitle("Permissions");
+////                builder.setIcon(R.drawable.ic_warning);
+//                builder.setMessage("Please Grant All Permissions in order to Run the App.");
+//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+//                                MY_PERMISSIONS_REQUEST_CODE);
+//                    }
+//                });
+//                builder.setNeutralButton("Cancel", null);
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//            } else {
+//                // Directly request for required permissions, without explanation
+//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
+//                        MY_PERMISSIONS_REQUEST_CODE);
+//            }
+//        } else {
+//            // Do something, when permissions are already granted
+//        }
+//    }
+
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_CODE: {
+//                // When request is cancelled, the results array are empty
+//                if ((grantResults.length > 0) && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
+//                    // if granted
+//                    Intent intent = new Intent(getActivity(), QRLogin.class);
+//                    startActivity(intent);
+//                    getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                } else {
+//                    // Permissions are denied
+//                    checkPermission();
+////                    Toast.makeText(mContext, "Permissions denied.", Toast.LENGTH_SHORT).show();
+//                }
+//                return;
+//            }
+//        }
+//    }
 
     @Click(R.id.iv_age_3_to_6)
     public void open3to6Groups(View view) {
@@ -123,7 +108,7 @@ public class FragmentSelectAgeGroup extends Fragment {
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, true);
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
+        PD_Utility.addFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
@@ -137,7 +122,7 @@ public class FragmentSelectAgeGroup extends Fragment {
         bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.showFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
+        PD_Utility.addFragment(getActivity(), new FragmentSelectGroup_(), R.id.frame_attendance,
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 

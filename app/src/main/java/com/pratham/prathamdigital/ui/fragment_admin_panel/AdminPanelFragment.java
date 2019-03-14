@@ -41,11 +41,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Bean(AdminPanelPresenter.class)
     AdminPanelContract.AdminPanelPresenter adminPanelPresenter;
 
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//    }
-
     @AfterViews
     public void setViews() {
         adminPanelPresenter.setView(AdminPanelFragment.this);
@@ -62,19 +57,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         EventBus.getDefault().unregister(this);
         super.onStop();
     }
-
-//    @Nullable
-//    @Override
-//    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.admin_panel_login, container, false);
-//    }
-//
-//    @Override
-//    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-//        super.onViewCreated(view, savedInstanceState);
-//        ButterKnife.bind(this, view);
-//        adminPanelPresenter = new AdminPanelPresenter(getActivity(), this);
-//    }
 
     @Click(R.id.btn_login)
     public void loginCheck() {

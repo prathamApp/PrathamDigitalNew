@@ -52,7 +52,7 @@ public class FsNotification extends BroadcastReceiver {
         String ns = Context.NOTIFICATION_SERVICE;
         NotificationManager nm = (NotificationManager) context.getSystemService(ns);
         // Instantiate a Notification
-        int icon = R.mipmap.ic_launcher;
+        int icon = R.mipmap.ic_launcher_;
         long when = System.currentTimeMillis();
         CharSequence contentTitle = "FTP Server";
         CharSequence contentText = "server is starting";
@@ -168,7 +168,7 @@ public class FsNotification extends BroadcastReceiver {
                 + FsSettings.getPortNumber() + "/"*/;
 
         // Instantiate a Notification
-        int icon = R.mipmap.ic_launcher;
+        int icon = R.mipmap.ic_launcher_;
         CharSequence tickerText = String.format(context.getString(R.string.notification_server_starting), iptext);
         long when = System.currentTimeMillis();
 

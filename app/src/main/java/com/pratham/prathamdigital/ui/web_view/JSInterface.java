@@ -240,6 +240,7 @@ public class JSInterface {
             Intent intent = new Intent(mContext, Activity_VPlayer_.class);
             intent.putExtra("videoPath", vidPath);
             intent.putExtra("resId", resId);
+            intent.putExtra("hint", true);
             MediaFlag = true;
             ((Activity) mContext).startActivityForResult(intent, 1);
         } catch (Exception e) {

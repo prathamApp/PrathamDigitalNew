@@ -15,6 +15,8 @@ public interface SplashContract {
         void redirectToAttendance();
 
         void signInUsingGoogle();
+
+        void googleSignInFailed();
     }
 
     interface splashPresenter {

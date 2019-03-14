@@ -9,5 +9,7 @@ public interface ContractChildAttendance {
         void childItemClicked(Modal_Student student, int position);
 
         void moveToDashboardOnChildClick(Modal_Student student, int position, View v);
+
+        void addChild(View itemView);
     }
 }

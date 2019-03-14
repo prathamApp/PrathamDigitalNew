@@ -215,4 +215,5 @@
     <string name="txt_network_error">No content found. Please check your internet connection or try to change language</string>
     <string name="recieve_txt">Hotspot will be created to receive content</string>
     <string name="share_txt">Connect to hotspot by scanning the QR displayed.</string>
+    <string name="exit_statement">Are you sure you want to quit?</string>
 </resources>

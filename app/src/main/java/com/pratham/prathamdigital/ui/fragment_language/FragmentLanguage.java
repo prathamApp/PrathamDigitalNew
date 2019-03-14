@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
+import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.CopyExistingDb;
@@ -97,6 +98,7 @@ public class FragmentLanguage extends FragmentManagePermission implements Contra
     public void languageSelected(int position) {
         PrathamApplication.bubble_mp.start();
         Modal_Language language = adapter.getitem(position);
+        BaseActivity.language = language.getMain_language();
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));

@@ -1,53 +1,21 @@
 {
   "project_info": {
-    "project_number": "157148656702",
-    "firebase_url": "https://pradigi-pratham.firebaseio.com",
-    "project_id": "pradigi-pratham",
-    "storage_bucket": "pradigi-pratham.appspot.com"
+    "project_number": "182377020648",
+    "firebase_url": "https://pradigi-9ea38.firebaseio.com",
+    "project_id": "pradigi-9ea38",
+    "storage_bucket": "pradigi-9ea38.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:157148656702:android:a8c99dfca0c44d61",
+        "mobilesdk_app_id": "1:182377020648:android:a8c99dfca0c44d61",
         "android_client_info": {
           "package_name": "com.pratham.prathamdigital"
         }
       },
       "oauth_client": [
         {
-          "client_id": "157148656702-l08bqcj7fvnthjo13ff3pubstu5spi4b.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pratham.prathamdigital",
-            "certificate_hash": "5e9fa6ed6247b9ccf09f5c1e78a009782add290c"
-          }
-        },
-        {
-          "client_id": "157148656702-q72h5quts49gebckflmvghhuep59sadh.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pratham.prathamdigital",
-            "certificate_hash": "dac9b608ea6a894aa1605435d816e8877d32da20"
-          }
-        },
-        {
-          "client_id": "157148656702-2gbmt1n8g3dj78cch15iu1kd7fdt9c6p.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pratham.prathamdigital",
-            "certificate_hash": "567574534cd4cc17863c3dc5ab26a011cb1d2dd2"
-          }
-        },
-        {
-          "client_id": "157148656702-s3gf0gpkjppnh21h4o7jgi0f2tbltptf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.pratham.prathamdigital",
-            "certificate_hash": "11cceed96e709931e39fb862f58a82f4e40b9e42"
-          }
-        },
-        {
-          "client_id": "157148656702-mrmdhdbspruim7vsh01feuj41e4je6an.apps.googleusercontent.com",
+          "client_id": "182377020648-8d1li3pn719ag19lv8gb1s9mr1b10qcl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.pratham.prathamdigital",
@@ -55,13 +23,13 @@
           }
         },
         {
-          "client_id": "157148656702-nspaths4vsmnene8dujsogdr54naii0o.apps.googleusercontent.com",
+          "client_id": "182377020648-qn8t7iqjvqs7ucjlkvjbnie2aua79lkn.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyDYQB8dJyrU6dMRW6CejROyOMXJoQUOmtM"
+          "current_key": "AIzaSyBw4nTedjYna_sz7Rt4x-ZWw5FTkuFBDBM"
         }
       ],
       "services": {
@@ -72,7 +40,7 @@
           "status": 2,
           "other_platform_oauth_client": [
             {
-              "client_id": "157148656702-nspaths4vsmnene8dujsogdr54naii0o.apps.googleusercontent.com",
+              "client_id": "182377020648-l4573g12056qcendqqdu0dm80e9sat31.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

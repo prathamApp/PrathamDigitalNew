@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.Auth;
@@ -58,15 +59,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private Context mContext;
     GoogleApiClient mGoogleApiClient;
 
-    @AfterViews
-    public void initializeViews() {
-        mContext = this;
-        splashPresenter.clearPreviousBuildData();
-        startLightsAnimation();
-        splashPresenter.populateDefaultDB();
-        PrathamSmartSync.pushTabletJsons(false);
-    }
-
     @SuppressLint("HandlerLeak")
     private Handler mhandler = new Handler() {
         @Override
@@ -90,7 +82,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //                            if (!PrathamApplication.isTablet)
 //                                signInUsingGoogle();
 //                            else
-                                splashPresenter.checkIfContentinSDCard();
+                            splashPresenter.checkIfContentinSDCard();
                         }
                     }, 2000);
                     break;
@@ -115,6 +107,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     break;
                 case REDIRECT_TO_DASHBOARD:
                     Intent intent = new Intent(ActivitySplash.this, AttendanceActivity_.class);
+                    if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
+                        intent.putExtra(PD_Constant.DEEP_LINK, true);
+                        intent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
+                    }
                     intent.putExtra(PD_Constant.STUDENT_ADDED, true);
                     startActivity(intent);
                     overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -122,6 +118,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     break;
                 case REDIRECT_TO_AVATAR:
                     Intent intent2 = new Intent(ActivitySplash.this, AttendanceActivity_.class);
+                    if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
+                        intent2.putExtra(PD_Constant.DEEP_LINK, true);
+                        intent2.putExtra(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
+                    }
                     intent2.putExtra(PD_Constant.STUDENT_ADDED, false);
                     startActivity(intent2);
                     overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -137,15 +137,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         }
     };
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        if (!PrathamApplication.isTablet) {
-//            boolean signedIn = FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false);
-//            if (mGoogleApiClient == null && !signedIn) {
-//                mGoogleApiClient = splashPresenter.configureSignIn();
-//            }
-//        }
+    @AfterViews
+    public void initializeViews() {
+        mContext = this;
+        splashPresenter.clearPreviousBuildData();
+        startLightsAnimation();
+        splashPresenter.populateDefaultDB();
+        PrathamSmartSync.pushUsageToServer(false);
     }
 
     @UiThread
@@ -162,10 +160,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     public void signInUsingGoogle() {
         if (!FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false)) {
+            if (mGoogleApiClient == null) {
+                mGoogleApiClient = splashPresenter.configureSignIn();
+            }
             Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
             startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
         } else {
-//            splashPresenter.checkStudentList();
             splashPresenter.checkIfContentinSDCard();
         }
     }
@@ -192,11 +192,19 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_SIGN_IN) {
+//            if (resultCode == RESULT_OK)
             splashPresenter.validateSignIn(data);
         } else {
             // Google Sign In failed, update UI appropriately
             Log.d(TAG, "Login Unsuccessful.");
             splashPresenter.checkIfContentinSDCard();
         }
+    }
+
+    @UiThread
+    @Override
+    public void googleSignInFailed() {
+        Toast.makeText(mContext, "Error connecting to Google. Please check your Internet connection or try with different ID", Toast.LENGTH_SHORT).show();
+        signInUsingGoogle();
     }
 }

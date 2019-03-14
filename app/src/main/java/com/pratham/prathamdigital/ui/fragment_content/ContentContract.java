@@ -34,6 +34,8 @@ public interface ContentContract {
         void dismissDialog();
 
         void animateHamburger();
+
+        void displayDLContents(List<Modal_ContentDetail> details);
     }
 
     interface contentPresenter {
@@ -82,6 +84,8 @@ public interface ContentContract {
         void currentDownloadRunning(String nodeid, AsyncTask task);
 
         void cancelDownload(String downloadId);
+
+        void openDeepLinkContent(String string);
     }
 
     interface contentClick {

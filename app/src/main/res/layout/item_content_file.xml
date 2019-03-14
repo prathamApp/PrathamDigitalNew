@@ -53,7 +53,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     app:actualImageScaleType="fitXY"
-                    app:placeholderImage="@mipmap/ic_launcher" />
+                    app:placeholderImage="@mipmap/ic_launcher_" />
                 <!--android:scaleType="fitXY"-->
 
                 <RelativeLayout
