@@ -58,6 +58,11 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         initiaiteParametersInGroup();
     }
 

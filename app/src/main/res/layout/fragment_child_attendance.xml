@@ -10,15 +10,6 @@
         android:layout_height="match_parent"
         android:background="@drawable/attendance_bkgd">
 
-        <ImageView
-            android:id="@+id/img_child_back"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_10sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:scaleType="centerInside"
-            app:srcCompat="@drawable/ic_att_back" />
-
         <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
             android:id="@+id/btn_attendance_next"
             android:layout_width="@dimen/_150sdp"
@@ -40,5 +31,13 @@
             android:layout_centerInParent="true"
             android:padding="@dimen/_5sdp" />
 
+        <ImageView
+            android:id="@+id/img_child_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_att_back" />
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

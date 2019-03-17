@@ -61,7 +61,6 @@ import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.util.ConnectionUtils;
 import com.pratham.prathamdigital.util.FileUtils;
-import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -95,7 +94,7 @@ import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
 @EFragment(R.layout.fragment_share)
-public class FragmentShareRecieve extends FragmentManagePermission implements ContractShare.shareView,
+public class FragmentShareRecieve extends Fragment implements ContractShare.shareView,
         CircularRevelLayout.CallBacks, ZXingScannerView.ResultHandler {
 
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();

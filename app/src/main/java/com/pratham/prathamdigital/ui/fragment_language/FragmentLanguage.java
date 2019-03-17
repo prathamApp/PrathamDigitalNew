@@ -17,7 +17,6 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Modal_Language;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
-import com.pratham.prathamdigital.util.FragmentManagePermission;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -31,8 +30,10 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 
+import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
+
 @EFragment(R.layout.fragment_language)
-public class FragmentLanguage extends FragmentManagePermission implements ContractLanguage, CircularRevelLayout.CallBacks,
+public class FragmentLanguage extends Fragment implements ContractLanguage, CircularRevelLayout.CallBacks,
         Interface_copying {
 
     private static final String TAG = FragmentLanguage.class.getSimpleName();
@@ -103,6 +104,9 @@ public class FragmentLanguage extends FragmentManagePermission implements Contra
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
         new CopyExistingDb(getActivity(), FragmentLanguage.this).execute();
+        String filename = "AajKaSawal_" + language.getMain_language() + ".json";
+        String aksUrl = PD_Constant.URL.AAJ_KA_SAWAL_URL.toString() + filename;
+        downloadAajKaSawal(aksUrl, filename);
     }
 
     @Override

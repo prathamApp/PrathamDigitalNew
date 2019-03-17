@@ -24,7 +24,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
 
@@ -40,11 +44,6 @@ public class PD_ApiRequest {
     public PD_ApiRequest(Context context, ApiResult apiResult) {
         this.mContext = context;
         this.apiResult = apiResult;
-//        okHttpClient = new OkHttpClient().newBuilder()
-//                .connectTimeout(30, TimeUnit.SECONDS)
-//                .readTimeout(60, TimeUnit.SECONDS)
-//                .writeTimeout(60, TimeUnit.SECONDS)
-//                .build();
     }
 
     public void getContentFromRaspberry(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
@@ -247,6 +246,33 @@ public class PD_ApiRequest {
                     public void onError(ANError error) {
                         if (apiResult != null)
                             apiResult.recievedError(header, null);
+                    }
+                });
+    }
+
+    public static void downloadAajKaSawal(String url, String filename) {
+        AndroidNetworking.get(url)
+                .addHeaders("Content-Type", "application/json")
+                .setPriority(Priority.HIGH)
+                .setExecutor(Executors.newSingleThreadExecutor())
+                .build()
+                .getAsJSONObject(new JSONObjectRequestListener() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename); //Creating an internal dir;
+                            if (!aksFile.exists()) aksFile.createNewFile();
+                            Writer output = new BufferedWriter(new FileWriter(aksFile));
+                            output.write(response.toString());
+                            output.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+
                     }
                 });
     }

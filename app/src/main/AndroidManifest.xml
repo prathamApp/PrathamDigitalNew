@@ -10,6 +10,7 @@
         android:smallScreens="true"
         android:xlargeScreens="true" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission
         android:name="android.permission.WRITE_SECURE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -64,14 +65,14 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning">
-        <receiver
-            android:name=".services.ConnectivityReceiver"
-            android:enabled="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+        <!--android:name=".services.connectivity.ConnectivityReceiver"-->
+        <!--android:enabled="true">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+        <!--<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <activity
             android:name=".ui.splash.ActivitySplash_"
@@ -278,5 +279,8 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+        <service
+            android:name="com.novoda.merlin.MerlinService"
+            android:exported="false" />
     </application>
 </manifest>

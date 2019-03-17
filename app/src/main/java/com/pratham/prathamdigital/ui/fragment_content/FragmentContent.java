@@ -2,12 +2,10 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -91,6 +89,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     BlurPopupWindow download_builder;
     BlurPopupWindow deleteDialog;
     Modal_ContentDetail dl_Content;
+    private BlurPopupWindow exitDialog;
 
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
@@ -153,6 +152,28 @@ public class FragmentContent extends Fragment implements ContentContract.content
             }
         }
     };
+
+    @AfterViews
+    public void initialize() {
+        IS_DEEP_LINK = getArguments().getBoolean(PD_Constant.DEEP_LINK, false);
+        frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
+        contentPresenter.setView(FragmentContent.this);
+        mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
+        mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
+        circular_content_reveal.setListener(this);
+        if (getArguments() != null) {
+            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_content_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_content_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_content_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
+    }
 
     @Override
     public void onResume() {
@@ -258,28 +279,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
         contentPresenter.getContent(null);
-    }
-
-    @AfterViews
-    public void initialize() {
-        IS_DEEP_LINK = getArguments().getBoolean(PD_Constant.DEEP_LINK, false);
-        frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
-        contentPresenter.setView(FragmentContent.this);
-        mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
-        mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
-        circular_content_reveal.setListener(this);
-        if (getArguments() != null) {
-            revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
-            revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
-            circular_content_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
-                @Override
-                public boolean onPreDraw() {
-                    circular_content_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
-                    circular_content_reveal.revealFrom(revealX, revealY, 0);
-                    return true;
-                }
-            });
-        }
     }
 
     @UiThread
@@ -449,18 +448,28 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void exitApp() {
         PD_Utility.dismissDialog();
-        new AlertDialog.Builder(getActivity())
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("PraDigi")
-                .setMessage("Do you want to exit?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        exitDialog = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.app_exit_dialog)
+                .bindClickListener(new View.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    public void onClick(View v) {
                         getActivity().finishAffinity();
                     }
-                })
-                .setNegativeButton("No", null)
-                .show();
+                }, R.id.dialog_btn_exit)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        exitDialog.dismiss();
+                    }
+                }, R.id.btn_cancel)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(true)
+                .setDismissOnClickBack(true)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        exitDialog.show();
     }
 
     @UiThread

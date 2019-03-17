@@ -1,27 +1,26 @@
 package com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
-import android.os.Bundle;
+import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
-import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.view_animator.ViewAnimator;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Score;
-import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
+import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -31,14 +30,14 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
-
-import java.util.Random;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 @EFragment(R.layout.frag_aaj_ka_sawal)
 public class Fragment_AAJ_KA_SAWAL extends Fragment {
-    private static final int SHOW_HOME_FRAGMENT = 1;
-    private static final int CHECK_VIDEO = 2;
     private static final int HIGHLIGHT_SELECTED_ANSWER = 3;
+    @ViewById(R.id.aks_reveal)
+    CircularRevelLayout aks_reveal;
     @ViewById(R.id.aaj_txt_question)
     TextView aaj_txt_question;
     @ViewById(R.id.card_option_one)
@@ -65,27 +64,22 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
     private String startTime;
     private boolean hintVideoViewed = false;
     private Modal_ContentDetail vidContent = null;
-
+    MediaPlayer.OnCompletionListener applauseCompletionListener = new MediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(MediaPlayer mp) {
+            ((Activity_VPlayer) getActivity()).onBackPressed();
+        }
+    };
+    private MediaPlayer wrong_mp;
+    private MediaPlayer correct_mp;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case SHOW_HOME_FRAGMENT:
-                    Bundle bundle = new Bundle();
-                    bundle.putInt(PD_Constant.REVEALX, 0);
-                    bundle.putInt(PD_Constant.REVEALY, 0);
-                    PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
-                            bundle, FragmentContent_.class.getSimpleName());
-                    break;
-                case CHECK_VIDEO:
-                    vidContent = BaseActivity.modalContentDao.getContent(
-                            selectedAajKaSawal.getResourceId(), selectedAajKaSawal.getProgramLanguage());
-                    if (vidContent == null) aaj_play_video.setVisibility(View.GONE);
-                    else aaj_play_video.setVisibility(View.VISIBLE);
-                    break;
                 case HIGHLIGHT_SELECTED_ANSWER:
+                    wrong_mp.start();
                     if (txt_option_one.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
                         ViewAnimator.animate(card_option_one)
                                 .flash()
@@ -113,96 +107,85 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
 
     @AfterViews
     public void init() {
+        wrong_mp = MediaPlayer.create(getActivity(), R.raw.wrong_buzzer);
+        correct_mp = MediaPlayer.create(getActivity(), R.raw.applause);
+        correct_mp.setOnCompletionListener(applauseCompletionListener);
+        wrong_mp.setOnCompletionListener(applauseCompletionListener);
         startTime = PD_Utility.getCurrentDateTime();
         if (getArguments() != null)
-            parseAksJSON(getArguments().getString(PD_Constant.AKS_FILE_PATH));
-        else
-            mHandler.sendEmptyMessage(SHOW_HOME_FRAGMENT);
+            showQuestion(getArguments().getParcelable(PD_Constant.AKS_QUESTION));
+        else ((Activity_VPlayer) getActivity()).onBackPressed();
+        aks_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                int[] outLocation = new int[2];
+                aaj_play_video.getLocationOnScreen(outLocation);
+                outLocation[0] += aaj_play_video.getWidth() / 2;
+                aks_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                aks_reveal.revealFrom(outLocation[0], outLocation[1], 0);
+                return true;
+            }
+        });
     }
 
     @Background
-    public void parseAksJSON(String filePath) {
-        String aks = PD_Utility.readJSONFile(filePath);
-        Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
-        //get random subject from list
-//        if (aajKaSawal.getNodelist().size() > 1)
-        Modal_AajKaSawal subjectOfSawal = new Modal_AajKaSawal();
-        subjectOfSawal = rootAajKaSawal.getNodelist().get(new Random().nextInt(rootAajKaSawal.getNodelist().size()));
-//        else subjectOfSawal = aajKaSawal.getNodelist().get(0);
-        //get random question from subject list
-//        if (subjectOfSawal.getNodelist().size() > 1)
-        Modal_AajKaSawal aajtKaSawal = new Modal_AajKaSawal();
-        aajtKaSawal = subjectOfSawal.getNodelist().get(new Random().nextInt(subjectOfSawal.getNodelist().size()));
-//        else subjectOfSawal = aajKaSawal.getNodelist().get(0);
-        showQuestion(aajtKaSawal);
+    public void parseAksJSON(Modal_AajKaSawal sawal) {
     }
 
     @UiThread
-    public void showQuestion(Modal_AajKaSawal aajtKaSawal) {
-        selectedAajKaSawal = aajtKaSawal;
-        mHandler.sendEmptyMessage(CHECK_VIDEO);
-        aaj_txt_question.setText(aajtKaSawal.getQuestion());
-        txt_option_one.setText(aajtKaSawal.getOption1());
-        txt_option_two.setText(aajtKaSawal.getOption2());
-        txt_option_three.setText(aajtKaSawal.getOption3());
-        txt_option_four.setText(aajtKaSawal.getOption4());
+    public void showQuestion(Modal_AajKaSawal aajKaSawal) {
+        selectedAajKaSawal = aajKaSawal;
+        aaj_txt_question.setText(aajKaSawal.getQuestion());
+        txt_option_one.setText(aajKaSawal.getOption1());
+        txt_option_two.setText(aajKaSawal.getOption2());
+        txt_option_three.setText(aajKaSawal.getOption3());
+        txt_option_four.setText(aajKaSawal.getOption4());
     }
 
     @Click(R.id.aaj_btn_skip)
     public void setskip() {
         PrathamApplication.bubble_mp.start();
-        addScoreToDB(0);
-        mHandler.sendEmptyMessage(SHOW_HOME_FRAGMENT);
+        addScoreToDB(0, true, false);
+        ((Activity_VPlayer) getActivity()).onBackPressed();
     }
 
     @Click(R.id.aaj_okay)
     public void setOkay() {
         PrathamApplication.bubble_mp.start();
         if (selectedAnswer.equalsIgnoreCase(selectedAajKaSawal.getAnswer())) {
-//            addScoreToDB(10);
-//            mHandler.sendEmptyMessage(SHOW_HOME_FRAGMENT);
+            correct_mp.start();
+            addScoreToDB(10, false, false);
         } else {
+            addScoreToDB(0, false, false);
             mHandler.sendEmptyMessage(HIGHLIGHT_SELECTED_ANSWER);
         }
     }
 
     @Click(R.id.aaj_play_video)
     public void setPlayVideo() {
-        hintVideoViewed = true;
-        String f_path;
-        if (vidContent.isOnSDCard())
-            f_path = PrathamApplication.contentSDPath + "/PrathamVideo/" + vidContent.getResourcepath();
-        else
-            f_path = PrathamApplication.pradigiPath + "/PrathamVideo/" + vidContent.getResourcepath();
-        Intent intent = new Intent(getActivity(), Activity_VPlayer_.class);
-        intent.putExtra("videoPath", f_path);
-        intent.putExtra("videoTitle", vidContent.getNodetitle());
-        intent.putExtra("resId", vidContent.getResourceid());
-        intent.putExtra("hint", true);
-        getActivity().startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.pop_in, R.anim.nothing);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
-    @Background
-    public void addScoreToDB(int ttlScore) {
-        String endTime = PD_Utility.getCurrentDateTime();
-        Modal_Score modalScore = new Modal_Score();
-        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        if (PrathamApplication.isTablet)
-            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-        else
-            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
-        modalScore.setDeviceID(PD_Utility.getDeviceID());
-        modalScore.setResourceID(selectedAajKaSawal.getResourceId());
-        modalScore.setQuestionId(Integer.parseInt(selectedAajKaSawal.getQueId()));
-        modalScore.setScoredMarks(ttlScore);
-        modalScore.setTotalMarks(10);
-        modalScore.setStartDateTime(startTime);
-        modalScore.setEndDateTime(endTime);
-        modalScore.setLevel((hintVideoViewed) ? 991 : 990);
-        modalScore.setLabel("_");
-        modalScore.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modalScore);
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @Subscribe
+    public void messageReceived(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.VIDEO_PLAYER_BACK_PRESS)) {
+                addScoreToDB(0, true, true);
+                ((Activity_VPlayer) getActivity()).onBackPressed();
+            }
+        }
     }
 
     @Click(R.id.card_option_one)
@@ -239,5 +222,30 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         card_option_three.setCardBackgroundColor(getResources().getColor(android.R.color.transparent));
         card_option_four.setCardBackgroundColor(getResources().getColor(R.color.aks_selected));
         selectedAnswer = txt_option_four.getText().toString();
+    }
+
+    @Background
+    public void addScoreToDB(int ttlScore, boolean isSkipped, boolean isClosed) {
+        String endTime = PD_Utility.getCurrentDateTime();
+        Modal_Score modalScore = new Modal_Score();
+        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        if (PrathamApplication.isTablet)
+            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        else
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+        modalScore.setDeviceID(PD_Utility.getDeviceID());
+        modalScore.setResourceID(selectedAajKaSawal.getResourceId());
+        modalScore.setQuestionId(Integer.parseInt(selectedAajKaSawal.getQueId()));
+        modalScore.setScoredMarks(ttlScore);
+        modalScore.setTotalMarks(10);
+        modalScore.setStartDateTime(startTime);
+        modalScore.setEndDateTime(endTime);
+        modalScore.setLevel((hintVideoViewed) ? 991 : 990);
+        if (isClosed)
+            modalScore.setLabel("Video Closed. Sawal was not attempted");
+        else
+            modalScore.setLabel((isSkipped) ? "Skipped" : ((hintVideoViewed) ? "Video Viewed" : "Video not Viewed"));
+        modalScore.setSentFlag(0);
+        BaseActivity.scoreDao.insert(modalScore);
     }
 }

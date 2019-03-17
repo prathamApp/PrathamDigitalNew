@@ -46,58 +46,6 @@ public class FragmentSelectAgeGroup extends Fragment {
                 .ask();
     }
 
-//    protected void checkPermission() {
-//        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-//            // Do something, when permissions not granted
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                    getActivity(), Manifest.permission.CAMERA)) {
-//                // If we should give explanation of requested permissions
-//
-//                // Show an alert dialog here with request explanation
-//                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-//                builder.setTitle("Permissions");
-////                builder.setIcon(R.drawable.ic_warning);
-//                builder.setMessage("Please Grant All Permissions in order to Run the App.");
-//                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-//                    @Override
-//                    public void onClick(DialogInterface dialogInterface, int i) {
-//                        ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-//                                MY_PERMISSIONS_REQUEST_CODE);
-//                    }
-//                });
-//                builder.setNeutralButton("Cancel", null);
-//                AlertDialog dialog = builder.create();
-//                dialog.show();
-//            } else {
-//                // Directly request for required permissions, without explanation
-//                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.CAMERA},
-//                        MY_PERMISSIONS_REQUEST_CODE);
-//            }
-//        } else {
-//            // Do something, when permissions are already granted
-//        }
-//    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_CODE: {
-//                // When request is cancelled, the results array are empty
-//                if ((grantResults.length > 0) && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED)) {
-//                    // if granted
-//                    Intent intent = new Intent(getActivity(), QRLogin.class);
-//                    startActivity(intent);
-//                    getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-//                } else {
-//                    // Permissions are denied
-//                    checkPermission();
-////                    Toast.makeText(mContext, "Permissions denied.", Toast.LENGTH_SHORT).show();
-//                }
-//                return;
-//            }
-//        }
-//    }
-
     @Click(R.id.iv_age_3_to_6)
     public void open3to6Groups(View view) {
         PrathamApplication.bubble_mp.start();

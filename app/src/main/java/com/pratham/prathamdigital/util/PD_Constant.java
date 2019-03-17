@@ -43,7 +43,8 @@ public class PD_Constant {
     public static final String CANCEL_DOWNLOAD = "cancel_download";
     public static final String DEEP_LINK = "deep_link";
     public static final String DEEP_LINK_CONTENT = "deep_link_content";
-    public static final String AKS_FILE_PATH = "aks_file_path";
+    public static final String AKS_QUESTION = "aks_file_path";
+    public static final String VIDEO_PLAYER_BACK_PRESS = "video_player_back_press";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";
@@ -133,6 +134,7 @@ public class PD_Constant {
         GET_RASPBERRY_HEADER(RASP_IP + "/api/channel/"),
         POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
+        AAJ_KA_SAWAL_URL("http://rpi.prathamskills.org/aajkasawaal/"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;

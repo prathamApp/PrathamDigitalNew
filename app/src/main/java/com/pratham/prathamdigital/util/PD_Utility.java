@@ -70,6 +70,7 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParserException;
@@ -223,6 +224,12 @@ public class PD_Utility {
                     .replace(frame, mFragment, TAG)
                     .addToBackStack(TAG)
                     .commit();
+        } else if (mActivity instanceof Activity_VPlayer) {
+            ((Activity_VPlayer) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
         }
     }
 
@@ -238,6 +245,12 @@ public class PD_Utility {
                     .commit();
         } else if (mActivity instanceof AttendanceActivity) {
             ((AttendanceActivity) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .add(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (mActivity instanceof Activity_VPlayer) {
+            ((Activity_VPlayer) mActivity).getSupportFragmentManager()
                     .beginTransaction()
                     .add(frame, mFragment, TAG)
                     .addToBackStack(TAG)
@@ -1823,7 +1836,7 @@ public class PD_Utility {
     }
 
     public static String getDeviceSerialID() {
-        return android.os.Build.SERIAL;
+        return Build.SERIAL;
     }
 
     public static String getDeviceID() {

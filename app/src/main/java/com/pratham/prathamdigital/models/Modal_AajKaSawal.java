@@ -1,10 +1,13 @@
 package com.pratham.prathamdigital.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class Modal_AajKaSawal {
+public class Modal_AajKaSawal implements Parcelable {
     @SerializedName("aksVersion")
     public String aksVersion;
     @SerializedName("nodeId")
@@ -41,6 +44,39 @@ public class Modal_AajKaSawal {
     public String programLanguage;
     @SerializedName("nodelist")
     public List<Modal_AajKaSawal> nodelist;
+
+    public static final Creator<Modal_AajKaSawal> CREATOR = new Creator<Modal_AajKaSawal>() {
+        @Override
+        public Modal_AajKaSawal createFromParcel(Parcel in) {
+            return new Modal_AajKaSawal(in);
+        }
+
+        @Override
+        public Modal_AajKaSawal[] newArray(int size) {
+            return new Modal_AajKaSawal[size];
+        }
+    };
+
+    protected Modal_AajKaSawal(Parcel in) {
+        aksVersion = in.readString();
+        nodeId = in.readString();
+        nodeType = in.readString();
+        nodeTitle = in.readString();
+        QueId = in.readString();
+        Question = in.readString();
+        QuestionType = in.readString();
+        Option1 = in.readString();
+        Option2 = in.readString();
+        Option3 = in.readString();
+        Option4 = in.readString();
+        Answer = in.readString();
+        resourceName = in.readString();
+        resourceType = in.readString();
+        resourceId = in.readString();
+        resourcePath = in.readString();
+        programLanguage = in.readString();
+        nodelist = in.createTypedArrayList(Modal_AajKaSawal.CREATOR);
+    }
 
     public String getAksVersion() {
         return aksVersion;
@@ -184,5 +220,32 @@ public class Modal_AajKaSawal {
 
     public void setNodelist(List<Modal_AajKaSawal> nodelist) {
         this.nodelist = nodelist;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(aksVersion);
+        dest.writeString(nodeId);
+        dest.writeString(nodeType);
+        dest.writeString(nodeTitle);
+        dest.writeString(QueId);
+        dest.writeString(Question);
+        dest.writeString(QuestionType);
+        dest.writeString(Option1);
+        dest.writeString(Option2);
+        dest.writeString(Option3);
+        dest.writeString(Option4);
+        dest.writeString(Answer);
+        dest.writeString(resourceName);
+        dest.writeString(resourceType);
+        dest.writeString(resourceId);
+        dest.writeString(resourcePath);
+        dest.writeString(programLanguage);
+        dest.writeTypedList(nodelist);
     }
 }

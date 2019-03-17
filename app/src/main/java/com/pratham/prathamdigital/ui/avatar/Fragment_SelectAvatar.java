@@ -148,6 +148,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setSentFlag(0);
         modal_student.setAvatarName(avatar_selected);
         studentDao.insertStudent(modal_student);
+        FastSave.getInstance().saveString(PD_Constant.STUDENTID, modal_student.getStudentId());
         markAttendance(modal_student);
         presentActivity();
     }

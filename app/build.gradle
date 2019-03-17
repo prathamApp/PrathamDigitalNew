@@ -12,7 +12,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 28
         versionCode buildDateTime
-        versionName "3.0"
+        versionName "3.0.1"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -105,5 +105,6 @@ dependencies {
     releaseImplementation 'com.squareup.leakcanary:leakcanary-android-no-op:1.6.3'
     // Optional, if you use support library fragments:
     debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
+    implementation 'com.novoda:merlin:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -104,6 +104,10 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             List<Modal_Score> scoretemp = gson.fromJson(mResponse, scoreType);
                             BaseActivity.scoreDao.insertAll(scoretemp);
                             break;
+//                        case "status.json":
+//                            Modal_Status status=new Modal_Status();
+//                            status.setStatusKey("");
+//                            break;
                     }
                 } else if (filePath.exists()) {
                     String filename = "";

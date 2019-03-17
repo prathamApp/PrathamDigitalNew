@@ -110,6 +110,11 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                 }
             });
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         mHandler.sendEmptyMessage(INITIALIZE_STUDENTS);
     }
 
@@ -154,6 +159,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public void moveToDashboardOnChildClick(Modal_Student student, int position, View v) {
         PrathamApplication.bubble_mp.start();
+        FastSave.getInstance().saveString(PD_Constant.STUDENTID, student.getStudentId());
         FastSave.getInstance().saveString(PD_Constant.AVATAR, student.getAvatarName());
         if (student.getFullName() != null && !student.getFullName().isEmpty())
             FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, student.getFullName());

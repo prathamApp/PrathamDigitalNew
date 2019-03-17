@@ -20,18 +20,10 @@
         app:cardCornerRadius="@dimen/_5sdp"
         app:cardElevation="0dp">
 
-        <com.pratham.prathamdigital.custom.FullScreenVideoView
-            android:id="@+id/videoView"
+        <FrameLayout
+            android:id="@+id/vp_frame"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.pratham.prathamdigital.custom.media_controller.PlayerControlView
-            android:id="@+id/player_control_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            app:pcv_fast_forward_ms="1000"
-            app:pcv_fast_rewind_ms="500"
-            app:pcv_show_timeout_ms="5000" />
+            android:layout_height="match_parent"
+            android:background="#0d000000" />
     </android.support.design.card.MaterialCardView>
 </RelativeLayout>

@@ -45,8 +45,6 @@ import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
@@ -70,6 +68,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
+
 @EActivity(R.layout.main_activity_two)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu,
         SlidingPaneLayout.PanelSlideListener {
@@ -83,7 +83,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_EXIT = 6;
     private static final int MENU_HOME = 7;
     private static final int SHOW_MENU_WITH_DEEP_LINK = 8;
-    private static final int SHOW_AKS = 9;
+    private static final int SCHEDULE_CONNETIVITY_JOB = 10;
+    private static final int CHECK_AAJ_KA_SAWAL = 11;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -131,13 +132,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     bundle.putInt(PD_Constant.REVEALY, 0);
                     PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
                             bundle, FragmentContent_.class.getSimpleName());
-                    break;
-                case SHOW_AKS:
-                    File aksFile = new File(PrathamApplication.contentSDPath + "/AajKaSawal.json");
-                    Bundle aksbundle = new Bundle();
-                    aksbundle.putString(PD_Constant.AKS_FILE_PATH, aksFile.getAbsolutePath());
-                    PD_Utility.showFragment(ActivityMain.this, new Fragment_AAJ_KA_SAWAL_(), R.id.main_frame,
-                            aksbundle, Fragment_AAJ_KA_SAWAL.class.getSimpleName());
                     break;
                 case INITILIZE_DRAWER:
                     initializeDrawer();
@@ -217,6 +211,26 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 case MENU_EXIT:
                     exitApp();
                     break;
+                case SCHEDULE_CONNETIVITY_JOB:
+//                    JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
+//                            .setRequiresCharging(true)
+//                            .setMinimumLatency(1000)
+//                            .setOverrideDeadline(2000)
+//                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+//                            .setPersisted(true)
+//                            .build();
+//
+//                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
+//                    jobScheduler.schedule(myJob);
+                    break;
+                case CHECK_AAJ_KA_SAWAL:
+                    String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
+                    File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename); //Creating an internal dir;
+                    if (!aksFile.exists()) {
+                        String aksUrl = PD_Constant.URL.AAJ_KA_SAWAL_URL.toString() + filename;
+                        downloadAajKaSawal(aksUrl, filename);
+                    }
+                    break;
             }
         }
     };
@@ -224,14 +238,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
-        if (PrathamApplication.contentExistOnSD) {
-            File aksFile = new File(PrathamApplication.contentSDPath + "/AajKaSawal.json");
-            if (aksFile.exists())
-                mHandler.sendEmptyMessage(SHOW_AKS);
-            else
-                mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
-        } else
-            mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
+        mHandler.sendEmptyMessage(SCHEDULE_CONNETIVITY_JOB);
+        mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
+        mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
     }
 
     private void initializeDrawer() {
@@ -338,18 +347,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     public void exitApp() {
         if (!FsService.isRunning()) {
-//            new AlertDialog.Builder(ActivityMain.this)
-//                    .setIcon(android.R.drawable.ic_dialog_alert)
-//                    .setTitle("PraDigi")
-//                    .setMessage("Do you want to exit?")
-//                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-//                        @Override
-//                        public void onClick(DialogInterface dialog, int which) {
-//                            finishAffinity();
-//                        }
-//                    })
-//                    .setNegativeButton("No", null)
-//                    .show();
             exitDialog = new BlurPopupWindow.Builder(ActivityMain.this)
                     .setContentView(R.layout.app_exit_dialog)
                     .bindClickListener(new View.OnClickListener() {
