@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -76,6 +77,7 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             }.getType();
                             List<Modal_Student> stutemp = gson.fromJson(mResponse, stuType);
                             BaseActivity.studentDao.insertAllStudents(stutemp);
+                            publishProgress("Receiving Profiles");
                             break;
                     }
                 } else if (PD_Utility.isUsages(filePath.getName())) {
@@ -104,10 +106,26 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             List<Modal_Score> scoretemp = gson.fromJson(mResponse, scoreType);
                             BaseActivity.scoreDao.insertAll(scoretemp);
                             break;
-//                        case "status.json":
-//                            Modal_Status status=new Modal_Status();
-//                            status.setStatusKey("");
-//                            break;
+                        case "status.json":
+                            Modal_Score modalScore = new Modal_Score();
+                            modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+                            if (PrathamApplication.isTablet)
+                                modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+                            else
+                                modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+                            modalScore.setDeviceID(PD_Utility.getDeviceID());
+                            modalScore.setResourceID("received metadata");
+                            modalScore.setQuestionId(0);
+                            modalScore.setScoredMarks(0);
+                            modalScore.setTotalMarks(0);
+                            modalScore.setStartDateTime(PD_Utility.getCurrentDateTime());
+                            modalScore.setEndDateTime(PD_Utility.getCurrentDateTime());
+                            modalScore.setLevel(0);
+                            modalScore.setLabel(mResponse);
+                            modalScore.setSentFlag(0);
+                            BaseActivity.scoreDao.insert(modalScore);
+                            publishProgress("Receiving Usages");
+                            break;
                     }
                 } else if (filePath.exists()) {
                     String filename = "";

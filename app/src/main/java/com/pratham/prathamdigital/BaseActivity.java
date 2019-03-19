@@ -62,8 +62,6 @@ public class BaseActivity extends AppCompatActivity {
     private static final int UPDATE_CONNECTION = 1;
     private static final int HIDE_SYSTEM_UI = 2;
     private static final int INITIALIZE_TTS = 3;
-    private static final int INITIALIZE_DATABASE = 4;
-    private static final int INITIALIZE_CONNECTION_SERVICE = 5;
     private static final int REQUEST_WRITE_PERMISSION = 6;
     private static final int GET_LOCATION_PERMISSION = 7;
     private static final int GET_READ_PHONE_STATE = 8;
@@ -126,8 +124,6 @@ public class BaseActivity extends AppCompatActivity {
                     ttsService.setActivity(BaseActivity.this);
                     ttsService.setSpeechRate(0.7f);
                     ttsService.setLanguage(new Locale("en", "IN"));
-                    break;
-                case INITIALIZE_CONNECTION_SERVICE:
                     break;
                 case REQUEST_WRITE_PERMISSION:
                     KotlinPermissions.with(BaseActivity.this)
@@ -198,7 +194,6 @@ public class BaseActivity extends AppCompatActivity {
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
                 .activity(CatchoTransparentActivity.class)
-//                .recipients("your-email@domain.com")
                 .build();
         initializeDatabaseDaos();
         initializeConnectionService();

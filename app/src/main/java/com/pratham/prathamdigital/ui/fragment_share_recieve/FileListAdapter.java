@@ -80,13 +80,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         return mDiffer.getCurrentList().size();
     }
 
-//    public void updateList(final ArrayList<File_Model> newList) {
-//        DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(new FileDiffUtilCallback(newList, files));
-//        files.clear();
-//        this.files.addAll(newList);
-//        diffResult.dispatchUpdatesTo(this);
-//    }
-
     class FileViewHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.share_content_image)
         SimpleDraweeView share_content_image;

@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -11,9 +12,12 @@ import android.widget.Button;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -42,6 +46,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     GroupAdapter groupAdapter;
     private int revealX;
     private int revealY;
+    private BlurPopupWindow noGrpDialog;
 
     @AfterViews
     public void initialize() {
@@ -85,7 +90,31 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         } else {
             groups = get8to14Groups(present_groups);
         }
-        setGroups(groups);
+        if (groups != null && groups.size() > 0) {
+            setGroups(groups);
+        } else {
+            showNoGroupsDialog();
+        }
+    }
+
+    private void showNoGroupsDialog() {
+        noGrpDialog = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.no_grp_dialog)
+                .bindClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        noGrpDialog.dismiss();
+                        getActivity().getSupportFragmentManager().popBackStack();
+                    }
+                }, R.id.dialog_no_grp_btn_exit)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        noGrpDialog.show();
     }
 
     private List<Modal_Groups> get3to6Groups(ArrayList<String> allGroups) {
