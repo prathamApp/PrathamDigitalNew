@@ -36,7 +36,7 @@ public class PrathamApplication extends Application {
      * Remove LeakCanary from oncreate
      * check version
      */
-    public static boolean isTablet = false;
+    public static boolean isTablet = true;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;

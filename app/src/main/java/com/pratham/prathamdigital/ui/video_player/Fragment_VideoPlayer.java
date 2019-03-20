@@ -131,8 +131,8 @@ public class Fragment_VideoPlayer extends Fragment {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     @Subscribe

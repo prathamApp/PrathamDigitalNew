@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.web_view;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.media.MediaPlayer;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
@@ -12,7 +11,6 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.services.TTSService;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
 import com.pratham.prathamdigital.util.Audio;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -40,8 +38,10 @@ public class JSInterface {
     private String resId;
     private String audio_directory_path = "";
     private boolean isOnSdCard;
+    VideoListener videoListener;
+    Activity activity;
 
-    JSInterface(Context c, WebView w, String gamePath, String resId, boolean isOnSdCard) {
+    JSInterface(Context c, WebView w, String gamePath, String resId, boolean isOnSdCard, VideoListener videoListener, Activity activity) {
         mContext = c;
         ttspeech = BaseActivity.ttsService;
         this.resId = resId;
@@ -50,6 +50,8 @@ public class JSInterface {
         createRecordingFolder();
         mp = new MediaPlayer();
         this.w = w;
+        this.videoListener = videoListener;
+        this.activity = activity;
     }
 
     private void createRecordingFolder() {
@@ -237,12 +239,18 @@ public class JSInterface {
     public void showVideo(String filename, String resId) {
         try {
             String vidPath = gamePath + filename;
-            Intent intent = new Intent(mContext, Activity_VPlayer_.class);
-            intent.putExtra("videoPath", vidPath);
-            intent.putExtra("resId", resId);
-            intent.putExtra("hint", true);
+//            Intent intent = new Intent(mContext, Activity_VPlayer_.class);
+//            intent.putExtra("videoPath", vidPath);
+//            intent.putExtra("resId", resId);
+//            intent.putExtra("hint", true);
             MediaFlag = true;
-            ((Activity) mContext).startActivityForResult(intent, 1);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    videoListener.showVideo(vidPath);
+                }
+            });
+//            ((Activity) mContext).startActivityForResult(intent, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }

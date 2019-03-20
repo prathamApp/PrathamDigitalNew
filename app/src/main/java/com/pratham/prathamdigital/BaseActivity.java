@@ -218,8 +218,8 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     public void onStop() {
-        EventBus.getDefault().unregister(this);
         super.onStop();
+        EventBus.getDefault().unregister(this);
     }
 
     private void initializeDatabaseDaos() {
