@@ -7,10 +7,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
+import android.view.ViewTreeObserver;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
+import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
 import com.pratham.prathamdigital.ui.PullData.PullDataFragment_;
@@ -33,6 +35,8 @@ import org.greenrobot.eventbus.ThreadMode;
  */
 @EFragment(R.layout.admin_panel_login)
 public class AdminPanelFragment extends Fragment implements AdminPanelContract.AdminPanelView {
+    @ViewById(R.id.circular_admin_reveal)
+    CircularRevelLayout circular_admin_reveal;
     @ViewById(R.id.userName)
     android.support.design.widget.TextInputEditText userNameET;
     @ViewById(R.id.password)
@@ -44,6 +48,18 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @AfterViews
     public void setViews() {
         adminPanelPresenter.setView(AdminPanelFragment.this);
+        if (getArguments() != null) {
+            int revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
+            int revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            circular_admin_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+                @Override
+                public boolean onPreDraw() {
+                    circular_admin_reveal.getViewTreeObserver().removeOnPreDrawListener(this);
+                    circular_admin_reveal.revealFrom(revealX, revealY, 0);
+                    return true;
+                }
+            });
+        }
     }
 
     @Override
@@ -176,5 +192,10 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
                         .show();
             }
         }
+    }
+
+    @Click(R.id.img_admin_back)
+    public void setAdminBack() {
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

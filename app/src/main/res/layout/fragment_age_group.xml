@@ -15,7 +15,7 @@
         app:lottie_fileName="scan.json"
         app:lottie_loop="true" />
 
-    <com.airbnb.lottie.LottieAnimationView
+    <ImageView
         android:id="@+id/admin_panel"
         android:layout_width="@dimen/_60sdp"
         android:layout_height="@dimen/_60sdp"

@@ -8,6 +8,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -16,8 +17,6 @@ import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
-import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
-import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -97,7 +96,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
     }
 
-    private void showNoGroupsDialog() {
+    @UiThread
+    public void showNoGroupsDialog() {
         noGrpDialog = new BlurPopupWindow.Builder(getActivity())
                 .setContentView(R.layout.no_grp_dialog)
                 .bindClickListener(new View.OnClickListener() {
@@ -173,9 +173,11 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
             if (grp.isSelected()) {
                 tempGrp = grp;
                 break;
-            }
+            } else tempGrp = null;
         }
-        setNext(btn_group_next, tempGrp);
+        if (tempGrp != null)
+            setNext(btn_group_next, tempGrp);
+        else Toast.makeText(getActivity(), "Please select a Group.", Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.img_att_back)

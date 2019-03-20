@@ -35,7 +35,7 @@ public class Activity_VPlayer extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
         Runtime rs = Runtime.getRuntime();
         rs.freeMemory();
         rs.gc();

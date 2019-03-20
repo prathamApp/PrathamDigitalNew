@@ -720,8 +720,10 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
             rv_files_receiving.setHasFixedSize(true);
             rv_files_receiving.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false));
             rv_files_receiving.setAdapter(receivedFileListAdapter);
+            receivedFileListAdapter.submitList(filesRecieving);
+        } else {
+            receivedFileListAdapter.submitList(filesRecieving);
         }
-        receivedFileListAdapter.submitList(filesRecieving);
     }
 
     @Override
@@ -733,8 +735,14 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_PROGRESS)) {
+//                if (!filesSent.isEmpty()) {
+//                    File_Model model = filesSent.get(message.getDownloadId());
+//                    if (model != null) {
+//                        model.setProgress((int) message.getProgress());
+//                        fileListAdapter.notifyItemChanged(filesSentPosition.get(message.getDownloadId()), model);
                 dialog_tv.setText(message.getFile_name());
                 dialog_progressLayout.setCurProgress((int) message.getProgress());
+//                    }
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_COMPLETE)) {
                 sharePresenter.startTimer();
                 new Handler().postDelayed(new Runnable() {

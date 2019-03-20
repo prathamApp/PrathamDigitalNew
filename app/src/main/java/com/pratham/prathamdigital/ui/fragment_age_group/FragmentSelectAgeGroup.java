@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
+import android.widget.ImageView;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -23,12 +24,16 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.ViewById;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @EFragment(R.layout.fragment_age_group)
 public class FragmentSelectAgeGroup extends Fragment {
+    @ViewById(R.id.admin_panel)
+    ImageView admin_panel;
+
     private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
 
     @Click(R.id.scan_qr)
@@ -99,8 +104,14 @@ public class FragmentSelectAgeGroup extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 3) {
             if (resultCode == Activity.RESULT_OK) {
-                PD_Utility.showFragment(getActivity(), new AdminPanelFragment_(), R.id.frame_attendance,
-                        null, AdminPanelFragment.class.getSimpleName());
+                int[] outLocation = new int[2];
+                admin_panel.getLocationOnScreen(outLocation);
+                outLocation[0] += admin_panel.getWidth() / 2;
+                Bundle bundle = new Bundle();
+                bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+                bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+                PD_Utility.addFragment(getActivity(), new AdminPanelFragment_(), R.id.frame_attendance,
+                        bundle, AdminPanelFragment.class.getSimpleName());
             }
         }
     }
