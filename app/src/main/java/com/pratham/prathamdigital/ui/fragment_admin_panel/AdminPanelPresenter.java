@@ -48,16 +48,6 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
         }
     }
 
-    //    @Background
-    @Override
-    public void clearData() {
-        BaseActivity.villageDao.deleteAllVillages();
-        BaseActivity.groupDao.deleteAllGroups();
-        BaseActivity.studentDao.deleteAllStudents();
-        BaseActivity.crLdao.deleteAllCRLs();
-        adminPanelView.onDataClearToast();
-    }
-
     @Override
     public void pushData() {
         PrathamSmartSync.pushUsageToServer(true);

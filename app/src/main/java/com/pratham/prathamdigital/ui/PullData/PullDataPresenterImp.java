@@ -879,4 +879,20 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
             pullDataView.showErrorToast();
         }
     }
+
+    //    @Background
+    @Override
+    public void clearData() {
+        clearData_();
+        pullDataView.onDataClearToast();
+    }
+
+    @Background
+    public void clearData_() {
+        BaseActivity.villageDao.deleteAllVillages();
+        BaseActivity.groupDao.deleteAllGroups();
+        BaseActivity.studentDao.deleteAllStudents();
+        BaseActivity.crLdao.deleteAllCRLs();
+    }
+
 }

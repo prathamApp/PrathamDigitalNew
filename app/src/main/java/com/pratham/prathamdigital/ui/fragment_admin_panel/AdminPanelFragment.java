@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.ViewTreeObserver;
-import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -81,28 +79,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         passwordET.getText().clear();
     }
 
-    @Click(R.id.btn_clearData)
-    public void clearData() {
-        AlertDialog clearDataDialog = new AlertDialog.Builder(getActivity())
-                .setTitle("Clear Data")
-                .setMessage("Are you sure you want to clear everything ?")
-                .setIcon(R.drawable.ic_warning)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        adminPanelPresenter.clearData();
-                        dialog.dismiss();
-                    }
-                })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create();
-        clearDataDialog.show();
-        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
-    }
-
     @Click(R.id.btn_push_data)
     public void pushData() {
         adminPanelPresenter.pushData();
@@ -157,12 +133,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
                 getActivity().getSupportFragmentManager().popBackStack();
             }
         }
-    }
-
-    @UiThread
-    @Override
-    public void onDataClearToast() {
-        Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

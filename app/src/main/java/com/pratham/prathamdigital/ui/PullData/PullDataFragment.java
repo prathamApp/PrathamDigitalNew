@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -223,5 +224,33 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @Click(R.id.save_button)
     public void saveData() {
         pullDataPresenter.onSaveClick();
+    }
+
+    @Click(R.id.btn_clearData)
+    public void clearData() {
+        AlertDialog clearDataDialog = new AlertDialog.Builder(getActivity())
+                .setTitle("Clear Data")
+                .setMessage("Are you sure you want to clear everything ?")
+                .setIcon(R.drawable.ic_warning)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        pullDataPresenter.clearData();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        clearDataDialog.show();
+        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+    }
+
+    @UiThread
+    @Override
+    public void onDataClearToast() {
+        Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
     }
 }

@@ -11,14 +11,10 @@ public interface AdminPanelContract {
         void onLoginFail();
 
         void onLoginSuccess();
-
-        void onDataClearToast();
     }
 
     interface AdminPanelPresenter {
         void checkLogin(String userName, String password);
-
-        void clearData();
 
         void pushData();
 

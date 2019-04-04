@@ -42,7 +42,6 @@ import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
-import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -135,7 +134,7 @@ public class BaseActivity extends AppCompatActivity {
                             .onAccepted(new ResponsePermissionCallback() {
                                 @Override
                                 public void onResult(@NotNull List<String> permissionResult) {
-                                    new LocationService(BaseActivity.this).checkLocation();
+//                                    new LocationService(BaseActivity.this).checkLocation();
                                     mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                                 }
                             })

@@ -5,11 +5,8 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class FastSave {
 
@@ -103,23 +100,22 @@ public class FastSave {
         return defaultValue;
     }
 
-    public <T> void saveObject(String key, T object) {
-        String objectString = new Gson().toJson(object);
+    public <T> void saveSet(String key, Set<String> object) {
+//        String objectString = new Gson().toJson(object);
         SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putString(key, objectString);
+        editor.putStringSet(key, object);
         editor.apply();
     }
 
-    public <T> T getObject(String key, Class<T> classType) {
+    public Set<String> getSet(String key, Set<String> defaultvalue) {
         if (isKeyExists(key)) {
-            String objectString = mSharedPreferences.getString(key, null);
+            Set<String> objectString = mSharedPreferences.getStringSet(key, null);
             if (objectString != null) {
-                return new Gson().fromJson(objectString, classType);
-            }
+                return objectString;
+            } else return defaultvalue;
         }
-        return null;
+        return defaultvalue;
     }
-
 
 //    public <T> void saveObjectsList(String key, List<T> objectList) {
 //        String objectString = new Gson().toJson(objectList);

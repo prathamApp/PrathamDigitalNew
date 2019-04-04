@@ -33,7 +33,7 @@ public interface PullDataContract {
 
         public void openLoginActivity();
 
-
+        void onDataClearToast();
     }
 
     public interface PullDataPresenter {
@@ -52,5 +52,7 @@ public interface PullDataContract {
         public void onSaveClick();
 
         void setView(PullDataFragment pullDataFragment);
+
+        void clearData();
     }
 }

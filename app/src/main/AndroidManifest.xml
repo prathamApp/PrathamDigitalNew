@@ -272,7 +272,7 @@
         </service>
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.pratham.prathamdigital.provider"
+            android:authorities="com.pratham.prathamdigital"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
@@ -281,6 +281,19 @@
         </provider>
         <service
             android:name="com.novoda.merlin.MerlinService"
+            android:exported="false" />
+        <service
+            android:name=".gpsLogger.GpsLoggingService"
+            android:exported="true"
+            android:stopWithTask="false">
+            <intent-filter>
+                <action android:name="com.pratham.prathamdigital.gpsLogger.GpsLoggingService" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name=".gpsLogger.RestarterReceiver"
+            android:enabled="true"
             android:exported="false" />
     </application>
 </manifest>
