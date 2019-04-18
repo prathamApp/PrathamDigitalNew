@@ -45,13 +45,13 @@
             <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/content_item_bkgd">
+                android:layout_height="match_parent">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/file_content_image"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@color/oslo_grey"
                     app:actualImageScaleType="fitXY"
                     app:placeholderImage="@mipmap/ic_launcher_" />
                 <!--android:scaleType="fitXY"-->

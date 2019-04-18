@@ -38,6 +38,7 @@
         <item>தமிழ்</item>
         <item>অসমীয়</item>
         <item>ଓଡ଼ିଆ</item>
+        <item>उर्दू</item>
         <!--<item>മലയാളം</item>-->
     </string-array>
     <string-array name="main_languages">
@@ -52,6 +53,7 @@
         <item>Tamil</item>
         <item>Assamese</item>
         <item>Odiya</item>
+        <item>Urdu</item>
         <!--<item>Malayalam</item>-->
     </string-array>
     <string-array name="default_preview">
@@ -269,5 +271,15 @@
     <string name="seconds">&#160;s</string>
     <string name="minutes">&#160;min</string>
     <string name="hours">&#160;hrs</string>
-
+    <string name="getting_location">Please wait...</string>
+    <string-array name="programmes">
+        <item>HLearning</item>
+        <item>Second Chance</item>
+        <item>HAMARA GAON</item>
+        <item>H-Learning URBAN</item>
+        <item>KGBV</item>
+        <item>ECCE</item>
+        <item>Pratham Institute</item>
+        <item>Government Partnership</item>
+    </string-array>
 </resources>

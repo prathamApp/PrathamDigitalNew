@@ -14,6 +14,7 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.interfaces.ApiResult;
+import com.pratham.prathamdigital.models.ModalProgram;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.models.Modal_Groups;
@@ -21,6 +22,7 @@ import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.models.RaspCrl;
 import com.pratham.prathamdigital.models.RaspGroup;
+import com.pratham.prathamdigital.models.RaspProgram;
 import com.pratham.prathamdigital.models.RaspStudent;
 import com.pratham.prathamdigital.models.RaspVillage;
 import com.pratham.prathamdigital.models.Village;
@@ -33,9 +35,14 @@ import org.json.JSONArray;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static com.pratham.prathamdigital.util.APIs.ECCE;
+import static com.pratham.prathamdigital.util.APIs.GP;
+import static com.pratham.prathamdigital.util.APIs.HG;
+import static com.pratham.prathamdigital.util.APIs.KGBV;
 import static com.pratham.prathamdigital.util.APIs.PI;
 import static com.pratham.prathamdigital.util.APIs.RI;
 import static com.pratham.prathamdigital.util.APIs.SC;
@@ -57,6 +64,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     List<Modal_Student> studentList = new ArrayList();
     List<Modal_Groups> groupList = new ArrayList();
     List<String> villageIDList = new ArrayList();
+    List<ModalProgram> prgrmList = new ArrayList<>();
 
     public PullDataPresenterImp(Context context) {
         this.context = context;
@@ -73,15 +81,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         pullDataView.showStatesSpinner(states);
     }
 
-    //    @Background
     @Override
     public void proccessVillageData(String block) {
         ArrayList<Village> villageName = new ArrayList();
         for (Modal_Village vill : vilageList) {
-//            for (Modal_Village village : raspVillage.getData()) {
             if (block.equalsIgnoreCase(vill.getBlock().trim()))
                 villageName.add(new Village(vill.getVillageId(), vill.getVillageName()));
-//            }
         }
         if (!villageName.isEmpty()) {
             pullDataView.showVillageDialog(villageName);
@@ -106,31 +111,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                     url = APIs.HLpullVillagesKolibriURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-//                    downloadblock(false, url);
                     break;
                 case RI:
                     url = APIs.RIpullVillagesKolibriURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-//                    downloadblock(false, url);
                     break;
                 case SC:
                     url = APIs.SCpullVillagesKolibriURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-//                    downloadblock(false, url);
                     break;
                 case PI:
                     url = APIs.PIpullVillagesKolibriURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-//                    downloadblock(false, url);
                     break;
                 case UP:
                     url = APIs.UPpullVillagesKolibriURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-//                    downloadblock(false, url);
+                    break;
+                case HG:
+                    url = APIs.HGpullVillagesKolibriURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
+                    break;
+                case KGBV:
+                    url = APIs.KGBVpullVillagesKolibriURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
+                    break;
+                case ECCE:
+                    url = APIs.ECCEpullVillagesKolibriURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
+                    break;
+                case GP:
+                    url = APIs.GPpullVillagesKolibriURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
                     break;
             }
         else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
@@ -139,121 +159,48 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                     url = APIs.HLpullVillagesServerURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-//                    downloadblock(true, url);
                     break;
                 case RI:
                     url = APIs.RIpullVillagesServerURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-//                    downloadblock(true, url);
                     break;
                 case SC:
                     url = APIs.SCpullVillagesServerURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-//                    downloadblock(true, url);
                     break;
                 case PI:
                     url = APIs.PIpullVillagesServerURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-//                    downloadblock(true, url);
                     break;
                 case UP:
                     url = APIs.UPpullVillagesServerURL + selectedBlock;
                     new PD_ApiRequest(context, PullDataPresenterImp.this)
                             .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-//                    downloadblock(true, url);
+                    break;
+                case HG:
+                    url = APIs.HGpullVillagesServerURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
+                    break;
+                case KGBV:
+                    url = APIs.KGBVpullVillagesServerURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
+                    break;
+                case ECCE:
+                    url = APIs.ECCEpullVillagesServerURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
+                    break;
+                case GP:
+                    url = APIs.GPpullVillagesServerURL + selectedBlock;
+                    new PD_ApiRequest(context, PullDataPresenterImp.this)
+                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
                     break;
             }
-    }
-
-    public void downloadblock(boolean isInternet, String url) {
-        if (!isInternet) {
-            AndroidNetworking.get(url)
-                    .addHeaders("Content-Type", "application/json")
-                    .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
-                    .build()
-                    .getAsJSONArray(new JSONArrayRequestListener() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            List<String> blockList = new ArrayList<>();
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<List<RaspVillage>>() {
-                            }.getType();
-                            List<RaspVillage> raspvilageList = gson.fromJson(response.toString(), listType);
-                            if (raspvilageList != null) {
-                                if (raspvilageList.isEmpty()) {
-                                    blockList.add("NO BLOCKS");
-                                } else {
-                                    blockList.add("Select block");
-                                    for (RaspVillage raspVillage : raspvilageList) {
-                                        //                                    for (Modal_Village village : raspVillage.getData()) {
-                                        vilageList.add(raspVillage.getData());
-                                        blockList.add(raspVillage.getData().getBlock());
-                                        //                                    }
-                                    }
-                                }
-                                LinkedHashSet hs = new LinkedHashSet(blockList);
-                                blockList.clear();
-                                blockList.addAll(hs);
-                                LinkedHashSet hs1 = new LinkedHashSet(vilageList);
-                                vilageList.clear();
-                                vilageList.addAll(hs1);
-                                pullDataView.showBlocksSpinner(blockList);
-                            }
-                            pullDataView.closeProgressDialog();
-                        }
-
-                        @Override
-                        public void onError(ANError error) {
-                            // handle error
-                            pullDataView.closeProgressDialog();
-                            pullDataView.clearBlockSpinner();
-                            pullDataView.showErrorToast();
-                        }
-                    });
-        } else {
-            AndroidNetworking.get(url)
-                    .addHeaders("Content-Type", "application/json")
-                    .build()
-                    .getAsJSONArray(new JSONArrayRequestListener() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            List<String> blockList = new ArrayList<>();
-                            Gson gson = new Gson();
-
-                            Type listType = new TypeToken<List<Modal_Village>>() {
-                            }.getType();
-                            vilageList = gson.fromJson(response.toString(), listType);
-                            if (vilageList != null) {
-                                if (vilageList.isEmpty()) {
-                                    blockList.add("NO BLOCKS");
-                                } else {
-                                    blockList.add("Select block");
-                                    for (Modal_Village vill : vilageList) {
-                                        //                                    for (Modal_Village village : raspVillage.getData()) {
-                                        blockList.add(vill.getBlock());
-                                        //                                    }
-                                    }
-                                }
-                                LinkedHashSet hs = new LinkedHashSet(blockList);
-                                blockList.clear();
-                                blockList.addAll(hs);
-                                pullDataView.showBlocksSpinner(blockList);
-                            }
-                            pullDataView.closeProgressDialog();
-                        }
-
-                        @Override
-                        public void onError(ANError error) {
-                            // handle error
-                            pullDataView.closeProgressDialog();
-                            pullDataView.clearBlockSpinner();
-                            pullDataView.showErrorToast();
-                        }
-                    });
-        }
     }
 
     public String getAuthHeader(String ID, String pass) {
@@ -262,11 +209,9 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         return returnThis;
     }
 
-    //    @Background
     @Override
     public void downloadStudentAndGroup(ArrayList<String> villageIDList1) {
         //download Student groups and KOLIBRI_CRL
-        // 1 download crl
         pullDataView.showProgressDialog("loading..");
         getStudentUrlAndFetch(villageIDList1);
     }
@@ -285,31 +230,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                         url = APIs.HLpullStudentsKolibriURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-//                        loadStudent(false, url);
                         break;
                     case RI:
                         url = APIs.RIpullStudentsKolibriURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-//                        loadStudent(false, url);
                         break;
                     case SC:
                         url = APIs.SCpullStudentsKolibriURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-//                        loadStudent(false, url);
                         break;
                     case PI:
                         url = APIs.PIpullStudentsKolibriURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-//                        loadStudent(false, url);
                         break;
                     case UP:
                         url = APIs.UPpullStudentsKolibriURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-//                        loadStudent(false, url);
+                        break;
+                    case HG:
+                        url = APIs.HGpullStudentsKolibriURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
+                        break;
+                    case KGBV:
+                        url = APIs.KGBVpullStudentsKolibriURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
+                        break;
+                    case ECCE:
+                        url = APIs.ECCEpullStudentsKolibriURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
+                        break;
+                    case GP:
+                        url = APIs.GPpullStudentsKolibriURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
                         break;
                 }
             }
@@ -321,86 +281,49 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                         url = APIs.HLpullStudentsServerURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_STU, url);
-//                        loadStudent(true, url);
                         break;
                     case RI:
                         url = APIs.RIpullStudentsServerURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_STU, url);
-//                        loadStudent(true, url);
                         break;
                     case SC:
                         url = APIs.SCpullStudentsServerURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_STU, url);
-//                        loadStudent(true, url);
                         break;
                     case PI:
                         url = APIs.PIpullStudentsServerURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_STU, url);
-//                        loadStudent(true, url);
                         break;
                     case UP:
                         url = APIs.UPpullStudentsServerURL + id;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_STU, url);
-//                        loadStudent(true, url);
+                        break;
+                    case HG:
+                        url = APIs.HGpullStudentsServerURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_STU, url);
+                        break;
+                    case KGBV:
+                        url = APIs.KGBVpullStudentsServerURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_STU, url);
+                        break;
+                    case ECCE:
+                        url = APIs.ECCEpullStudentsServerURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_STU, url);
+                        break;
+                    case GP:
+                        url = APIs.GPpullStudentsServerURL + id;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_STU, url);
                         break;
                 }
             }
-    }
-
-    public void loadStudent(boolean isInternet, String url) {
-        if (!isInternet) {
-            AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
-                    .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
-                    .build().getAsJSONArray(new JSONArrayRequestListener() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    count++;
-                    String json = response.toString();
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<List<RaspStudent>>() {
-                    }.getType();
-                    List<RaspStudent> studentListTemp = gson.fromJson(json, listType);
-                    for (RaspStudent raspStudent : studentListTemp) {
-                        for (Modal_Student student : raspStudent.getData()) {
-                            studentList.add(student);
-                        }
-                    }
-                    loadGroups();
-                }
-
-                @Override
-                public void onError(ANError error) {
-                    studentList.clear();
-                    pullDataView.closeProgressDialog();
-                    pullDataView.showErrorToast();
-                }
-            });
-        } else {
-            AndroidNetworking.get(url).addHeaders("Content-Type", "application/json")
-                    .build().getAsJSONArray(new JSONArrayRequestListener() {
-                @Override
-                public void onResponse(JSONArray response) {
-                    count++;
-                    String json = response.toString();
-                    Gson gson = new Gson();
-                    Type listType = new TypeToken<List<Modal_Student>>() {
-                    }.getType();
-                    studentList = gson.fromJson(json, listType);
-                    loadGroups();
-                }
-
-                @Override
-                public void onError(ANError error) {
-                    studentList.clear();
-                    pullDataView.closeProgressDialog();
-                    pullDataView.showErrorToast();
-                }
-            });
-        }
     }
 
     public void loadGroups() {
@@ -415,31 +338,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                             urlgroup = APIs.HLpullGroupsKolibriURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-//                            downloadGroups(false, urlgroup);
                             break;
                         case RI:
                             urlgroup = APIs.RIpullGroupsKolibriURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-//                            downloadGroups(false, urlgroup);
                             break;
                         case SC:
                             urlgroup = APIs.SCpullGroupsKolibriURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-//                            downloadGroups(false, urlgroup);
                             break;
                         case PI:
                             urlgroup = APIs.PIpullGroupsKolibriURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-//                            downloadGroups(false, urlgroup);
                             break;
                         case UP:
                             urlgroup = APIs.UPpullGroupsKolibriURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-//                            downloadGroups(false, urlgroup);
+                            break;
+                        case HG:
+                            urlgroup = APIs.HGpullGroupsKolibriURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
+                            break;
+                        case KGBV:
+                            urlgroup = APIs.KGBVpullGroupsKolibriURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
+                            break;
+                        case ECCE:
+                            urlgroup = APIs.ECCEpullGroupsKolibriURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
+                            break;
+                        case GP:
+                            urlgroup = APIs.GPpullGroupsKolibriURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                             break;
                     }
                 }
@@ -450,93 +388,49 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                             urlgroup = APIs.HLpullGroupsServerURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-//                            downloadGroups(true, urlgroup);
                             break;
                         case RI:
                             urlgroup = APIs.RIpullGroupsServerURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-//                            downloadGroups(true, urlgroup);
                             break;
                         case SC:
                             urlgroup = APIs.SCpullGroupsServerURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-//                            downloadGroups(true, urlgroup);
                             break;
                         case PI:
                             urlgroup = APIs.PIpullGroupsServerURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-//                            downloadGroups(true, urlgroup);
                             break;
                         case UP:
                             urlgroup = APIs.UPpullGroupsServerURL + id;
                             new PD_ApiRequest(context, PullDataPresenterImp.this)
                                     .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-//                            downloadGroups(true, urlgroup);
+                            break;
+                        case HG:
+                            urlgroup = APIs.HGpullGroupsServerURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
+                            break;
+                        case KGBV:
+                            urlgroup = APIs.KGBVpullGroupsServerURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
+                            break;
+                        case ECCE:
+                            urlgroup = APIs.ECCEpullGroupsServerURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
+                            break;
+                        case GP:
+                            urlgroup = APIs.GPpullGroupsServerURL + id;
+                            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
                             break;
                     }
                 }
-        }
-    }
-
-    public void downloadGroups(boolean isInternet, String url) {
-        if (!isInternet) {
-            AndroidNetworking.get(url)
-                    .addHeaders("Content-Type", "application/json")
-                    .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
-                    .build()
-                    .getAsJSONArray(new JSONArrayRequestListener() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            groupCount++;
-                            String json = response.toString();
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<List<RaspGroup>>() {
-                            }.getType();
-                            List<RaspGroup> groupListTemp = gson.fromJson(json, listType);
-                            for (RaspGroup raspGroup : groupListTemp) {
-                                for (Modal_Groups modal_groups : raspGroup.getData()) {
-                                    groupList.add(modal_groups);
-                                }
-
-                            }
-                            loadCRL();
-                        }
-
-                        @Override
-                        public void onError(ANError error) {
-                            studentList.clear();
-                            pullDataView.closeProgressDialog();
-                            pullDataView.showErrorToast();
-                            // dismissDialog();
-                        }
-                    });
-        } else {
-            AndroidNetworking.get(url)
-                    .addHeaders("Content-Type", "application/json")
-                    .build()
-                    .getAsJSONArray(new JSONArrayRequestListener() {
-                        @Override
-                        public void onResponse(JSONArray response) {
-                            groupCount++;
-                            String json = response.toString();
-                            Gson gson = new Gson();
-                            Type listType = new TypeToken<List<Modal_Groups>>() {
-                            }.getType();
-                            groupList = gson.fromJson(json, listType);
-                            loadCRL();
-                        }
-
-                        @Override
-                        public void onError(ANError error) {
-                            studentList.clear();
-                            pullDataView.closeProgressDialog();
-                            pullDataView.showErrorToast();
-                            // dismissDialog();
-                        }
-                    });
         }
     }
 
@@ -552,31 +446,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                         crlURL = APIs.HLpullCrlsKolibriURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-//                        downloadCRL(false, crlURL);
                         break;
                     case RI:
                         crlURL = APIs.RIpullCrlsKolibriURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-//                        downloadCRL(false, crlURL);
                         break;
                     case SC:
                         crlURL = APIs.SCpullCrlsKolibriURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-//                        downloadCRL(false, crlURL);
                         break;
                     case PI:
                         crlURL = APIs.PIpullCrlsKolibriURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-//                        downloadCRL(false, crlURL);
                         break;
                     case UP:
                         crlURL = APIs.UPpullCrlsKolibriURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-//                        downloadCRL(false, crlURL);
+                        break;
+                    case HG:
+                        crlURL = APIs.HGpullCrlsKolibriURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
+                        break;
+                    case KGBV:
+                        crlURL = APIs.KGBVpullCrlsKolibriURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
+                        break;
+                    case ECCE:
+                        crlURL = APIs.ECCEpullCrlsKolibriURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
+                        break;
+                    case GP:
+                        crlURL = APIs.GPpullCrlsKolibriURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
                         break;
                 }
             else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
@@ -585,31 +494,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                         crlURL = APIs.HLpullCrlsServerURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-//                        downloadCRL(true, crlURL);
                         break;
                     case RI:
                         crlURL = APIs.RIpullCrlsServerURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-//                        downloadCRL(true, crlURL);
                         break;
                     case SC:
                         crlURL = APIs.SCpullCrlsServerURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-//                        downloadCRL(true, crlURL);
                         break;
                     case PI:
                         crlURL = APIs.PIpullCrlsServerURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-//                        downloadCRL(true, crlURL);
                         break;
                     case UP:
                         crlURL = APIs.UPpullCrlsServerURL + selectedBlock;
                         new PD_ApiRequest(context, PullDataPresenterImp.this)
                                 .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-//                        downloadCRL(true, crlURL);
+                        break;
+                    case HG:
+                        crlURL = APIs.HGpullCrlsServerURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
+                        break;
+                    case KGBV:
+                        crlURL = APIs.KGBVpullCrlsServerURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
+                        break;
+                    case ECCE:
+                        crlURL = APIs.ECCEpullCrlsServerURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
+                        break;
+                    case GP:
+                        crlURL = APIs.GPpullCrlsServerURL + selectedBlock;
+                        new PD_ApiRequest(context, PullDataPresenterImp.this)
+                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
                         break;
                 }
         }
@@ -676,7 +600,20 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     @Override
     public void saveData() {
         BaseActivity.crLdao.insertAllCRL(crlList);
+        //To safely remove from a collection while iterating over it, Iterator should be used.
+        Iterator<Modal_Student> i = studentList.iterator();
+        while (i.hasNext()) {
+            Modal_Student stu = i.next(); // must be called before you can call i.remove()
+            if (stu.getGender().equalsIgnoreCase("deleted"))
+                i.remove();
+        }
         BaseActivity.studentDao.insertAllStudents(studentList);
+        Iterator<Modal_Groups> gi = groupList.iterator();
+        while (gi.hasNext()) {
+            Modal_Groups stu = gi.next(); // must be called before you can call i.remove()
+            if (stu.getDeviceId().equalsIgnoreCase("deleted"))
+                gi.remove();
+        }
         BaseActivity.groupDao.insertAllGroups(groupList);
         saveDownloadedVillages();
 
@@ -691,10 +628,22 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 BaseActivity.statusDao.updateValue("programId", "3");
                 break;
             case PI:
-                BaseActivity.statusDao.updateValue("programId", "4");
+                BaseActivity.statusDao.updateValue("programId", "10");
                 break;
             case UP:
                 BaseActivity.statusDao.updateValue("programId", "6");
+                break;
+            case HG:
+                BaseActivity.statusDao.updateValue("programId", "13");
+                break;
+            case KGBV:
+                BaseActivity.statusDao.updateValue("programId", "5");
+                break;
+            case ECCE:
+                BaseActivity.statusDao.updateValue("programId", "8");
+                break;
+            case GP:
+                BaseActivity.statusDao.updateValue("programId", "14");
                 break;
             default:
                 BaseActivity.statusDao.updateValue("programId", "1");
@@ -860,6 +809,38 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 pullDataView.showBlocksSpinner(blockList);
             }
             pullDataView.closeProgressDialog();
+        } else if (header.equalsIgnoreCase(PD_Constant.KOLIBRI_PROGRAM)) {
+            prgrmList.clear();
+            Type listType = new TypeToken<List<RaspProgram>>() {
+            }.getType();
+            List<RaspProgram> prgm = gson.fromJson(response.toString(), listType);
+            if (prgm != null) {
+                List<String> progrm_names = new ArrayList<>();
+                for (RaspProgram prg : prgm) {
+                    progrm_names.add(prg.getData().getKolibriProgramName());
+                }
+                LinkedHashSet hs = new LinkedHashSet(progrm_names);//to remove redundant values
+                progrm_names.clear();
+                progrm_names.addAll(hs);
+                progrm_names.add(0, "Select Program");
+                pullDataView.showProgram(progrm_names);
+            }
+        } else if (header.equalsIgnoreCase(PD_Constant.SERVER_PROGRAM)) {
+            prgrmList.clear();
+            Type listType = new TypeToken<List<ModalProgram>>() {
+            }.getType();
+            prgrmList = gson.fromJson(response.toString(), listType);
+            if (prgrmList != null) {
+                ModalProgram modalProgram = new ModalProgram();
+                modalProgram.setProgramId("-1");
+                modalProgram.setProgramName("Select Program");
+                prgrmList.add(0, modalProgram);
+                List<String> programs = new ArrayList<>();
+                for (ModalProgram prg : prgrmList) {
+                    programs.add(prg.getProgramName());
+                }
+                pullDataView.showProgram(programs);
+            }
         }
     }
 
@@ -895,4 +876,13 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         BaseActivity.crLdao.deleteAllCRLs();
     }
 
+    @Override
+    public void loadProgrammes() {
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                    .pullFromKolibri(PD_Constant.KOLIBRI_PROGRAM, PD_Constant.URL.DATASTORE_RASPBERY_PROGRAM_STATE_URL.toString());
+        else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+            new PD_ApiRequest(context, PullDataPresenterImp.this)
+                    .pullFromInternet(PD_Constant.SERVER_PROGRAM, PD_Constant.URL.PULL_PROGRAMS.toString());
+    }
 }

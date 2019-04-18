@@ -83,6 +83,9 @@ public class PD_Constant {
     public static final String GPS_LOGGER_GPS_ON_BETWEEN_FIX = "GPS_LOGGER_GPS_ON_BETWEEN_FIX";
     public static final String GPS_LOGGER_DISTANCE_BEFORE_LOGGING = "GPS_LOGGER_DISTANCE_BEFORE_LOGGING";
     public static final String GPS_LOGGER_TIME_BEFORE_LOGGING = "GPS_LOGGER_TIME_BEFORE_LOGGING";
+    public static final String LOCATION_CHANGED = "LOCATION_CHANGED";
+    public static final String KOLIBRI_PROGRAM = "KOLIBRI_PROGRAM";
+    public static final String SERVER_PROGRAM = "SERVER_PROGRAM";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";
@@ -150,6 +153,7 @@ public class PD_Constant {
     public static String ODIYA = "Odiya";
     public static String MALAYALAM = "Malayalam";
     public static String ASSAMESE = "Assamese";
+    public static String URDU = "Urdu";
 
     //wifi constants
     public static final int ApScanResult = 201;
@@ -167,12 +171,14 @@ public class PD_Constant {
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
+        DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
         //        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/channel/"),
         POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         AAJ_KA_SAWAL_URL("http://rpi.prathamskills.org/aajkasawaal/"),
+        PULL_PROGRAMS("http://swap.prathamcms.org/api/program"),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;
@@ -190,59 +196,4 @@ public class PD_Constant {
         }
 
     }
-
-    public static final String TempDLContent = "{\n" +
-            "  \"nodelist\": [\n" +
-            "    {\n" +
-            "      \"nodeid\": 1299,\n" +
-            "      \"nodetype\": \"KksMainTopic\",\n" +
-            "      \"nodetitle\": \"KKS Listing\",\n" +
-            "      \"nodekeywords\": \"KKS\",\n" +
-            "      \"nodeeage\": \" 08-14\",\n" +
-            "      \"nodedesc\": \"\",\n" +
-            "      \"nodeimage\": \"\",\n" +
-            "      \"nodeserverimage\": \"\",\n" +
-            "      \"resourceid\": \"\",\n" +
-            "      \"resourcetype\": \"Topic\",\n" +
-            "      \"resourcepath\": \"\",\n" +
-            "      \"nodeserverpath\": \"\",\n" +
-            "      \"level\": 4,\n" +
-            "      \"parentid\": null\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"nodeid\": 1302,\n" +
-            "      \"nodetype\": \"Topic\",\n" +
-            "      \"nodetitle\": \"Test\",\n" +
-            "      \"nodekeywords\": \"KKS Test\",\n" +
-            "      \"nodeeage\": \" 08-14\",\n" +
-            "      \"nodedesc\": \"\",\n" +
-            "      \"nodeimage\": \"\",\n" +
-            "      \"nodeserverimage\": \"\",\n" +
-            "      \"resourceid\": \"\",\n" +
-            "      \"resourcetype\": \"Topic\",\n" +
-            "      \"resourcepath\": \"\",\n" +
-            "      \"nodeserverpath\": \"\",\n" +
-            "      \"level\": 3,\n" +
-            "      \"parentid\": 1299\n" +
-            "    },\n" +
-            "    {\n" +
-            "      \"nodeid\": 1312,\n" +
-            "      \"nodetype\": \"Resource\",\n" +
-            "      \"nodetitle\": \"Expert\",\n" +
-            "      \"nodekeywords\": \"Test Level 2\",\n" +
-            "      \"nodeeage\": \" 08-14\",\n" +
-            "      \"nodedesc\": \"\",\n" +
-            "      \"nodeimage\": \"assessL3.png\",\n" +
-            "      \"nodeserverimage\": \"http://www.prodigi.openiscool.org/repository/KKSImages/assessL3.png\",\n" +
-            "      \"resourceid\": \"\",\n" +
-            "      \"resourcetype\": \"Game\",\n" +
-            "      \"resourcepath\": \"TestLevel2/index.html\",\n" +
-            "      \"nodeserverpath\": \"\",\n" +
-            "      \"level\": 2,\n" +
-            "      \"parentid\": 1302\n" +
-            "    }\n" +
-            "  ],\n" +
-            "  \"downloadurl\": \"http://www.prodigi.openiscool.org/repository/KKSGames/A_flipItAssmnt.zip\",\n" +
-            "  \"foldername\": \"Game\"\n" +
-            "}";
 }

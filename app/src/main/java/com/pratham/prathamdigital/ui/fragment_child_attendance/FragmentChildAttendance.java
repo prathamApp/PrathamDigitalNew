@@ -149,30 +149,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         bundle.putBoolean(PD_Constant.SHOW_BACK, true);
         PD_Utility.addFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
                 bundle, Fragment_SelectAvatar_.class.getSimpleName());
-//        Intent serviceIntent = new Intent(getActivity(), GpsLoggingService.class);
-//        serviceIntent.putExtra(PD_Constant.GPS_LOGGER_IMMEDIATE_START, true);
-//// Start the service in case it isn't already running
-//        ContextCompat.startForegroundService(PrathamApplication.getInstance().getApplicationContext(), serviceIntent);
-//        // Now bind to service
-//        getActivity().bindService(serviceIntent, gpsServiceConnection, Context.BIND_AUTO_CREATE);
-//        Session.getInstance().setBoundToService(true);
     }
 
-    /**
-     * Provides a connection to the GPS Logging Service
-     */
-//    private final ServiceConnection gpsServiceConnection = new ServiceConnection() {
-//
-//        public void onServiceDisconnected(ComponentName name) {
-//            Log.d(TAG, "onServiceDisconnected: \"Disconnected from GPSLoggingService from MainActivity\"");
-//            //loggingService = null;
-//        }
-//
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            Log.d(TAG, "onServiceConnected: Connected to GPSLoggingService from MainActivity");
-//            //loggingService = ((GpsLoggingService.GpsLoggingBinder) service).getService();
-//        }
-//    };
     @Override
     public void moveToDashboardOnChildClick(Modal_Student student, int position, View v) {
         PrathamApplication.bubble_mp.start();

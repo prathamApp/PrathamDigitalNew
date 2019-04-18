@@ -1730,6 +1730,8 @@ public class PD_Utility {
             langcode = PD_Constant.MALAYALAM;
         else if (langcode.equalsIgnoreCase("as"))
             langcode = PD_Constant.ASSAMESE;
+        else if (langcode.equalsIgnoreCase("ur"))
+            langcode = PD_Constant.URDU;
         return langcode;
     }
 

@@ -2,11 +2,7 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -15,26 +11,17 @@ import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
-import com.airbnb.lottie.LottieAnimationView;
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.elastic_view.ElasticView;
-import com.pratham.prathamdigital.custom.swipe_reveal_layout.SwipeRevealLayout;
 import com.pratham.prathamdigital.custom.swipe_reveal_layout.ViewBinderHelper;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.pratham.prathamdigital.util.PD_Utility;
+import com.pratham.prathamdigital.view_holders.EmptyHolder;
+import com.pratham.prathamdigital.view_holders.FileViewHolder;
+import com.pratham.prathamdigital.view_holders.FolderViewHolder;
 
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class ContentAdapter extends RecyclerView.Adapter {
 
@@ -201,176 +188,6 @@ public class ContentAdapter extends RecyclerView.Adapter {
         } catch (Exception e) {
             e.printStackTrace();
             view.setVisibility(View.GONE);
-        }
-    }
-
-    class EmptyHolder extends RecyclerView.ViewHolder {
-        public EmptyHolder(@NonNull View itemView) {
-            super(itemView);
-        }
-    }
-
-    class FolderViewHolder extends RecyclerView.ViewHolder {
-        @Nullable
-        @BindView(R.id.folder_content_image)
-        SimpleDraweeView folder_content_image;
-        @Nullable
-        @BindView(R.id.folder_title)
-        TextView folder_title;
-        @Nullable
-        @BindView(R.id.folder_content_desc)
-        TextView folder_content_desc;
-        @Nullable
-        @BindView(R.id.content_card)
-        RelativeLayout content_card;
-
-        Modal_ContentDetail contentItem;
-        ContentContract.contentClick contentClick;
-
-        public FolderViewHolder(View itemView, final ContentContract.contentClick contentClick) {
-            super(itemView);
-            ButterKnife.bind(this, itemView);
-            this.contentClick = contentClick;
-        }
-
-        public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
-            this.contentItem = contentItem;
-            if (contentItem.getNodeserverimage() != null || !contentItem.getNodeserverimage().isEmpty()) {
-                if (contentItem.isDownloaded())
-                    if (contentItem.isOnSDCard())
-                        folder_content_image.setImageURI(Uri.fromFile(new File(
-                                PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage())));
-                    else
-                        folder_content_image.setImageURI(Uri.fromFile(new File(
-                                PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage())));
-                else {
-                    if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty())
-                        folder_content_image.setImageURI(Uri.parse(contentItem.getKolibriNodeImageUrl()));
-                    else
-                        folder_content_image.setImageURI(Uri.parse(contentItem.getNodeserverimage()));
-                }
-            }
-            content_card.setBackgroundColor(PD_Utility.getRandomColorGradient());
-            folder_title.setText(contentItem.getNodetitle());
-            if (contentItem.getNodedesc() == null || contentItem.getNodedesc().isEmpty())
-                folder_content_desc.setText("No description");
-            else
-                folder_content_desc.setText(contentItem.getNodedesc());
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    contentClick.onfolderClicked(pos, contentItem);
-                }
-            });
-        }
-    }
-
-    class FileViewHolder extends RecyclerView.ViewHolder {
-        @Nullable
-        @BindView(R.id.file_content_image)
-        SimpleDraweeView file_content_image;
-        @Nullable
-        @BindView(R.id.rl_reveal)
-        RelativeLayout rl_reveal;
-        @Nullable
-        @BindView(R.id.file_item_lottieview)
-        LottieAnimationView file_item_lottieview;
-        @Nullable
-        @BindView(R.id.rl_download)
-        RelativeLayout rl_download;
-        @Nullable
-        @BindView(R.id.rl_play_content)
-        RelativeLayout rl_play_content;
-        @Nullable
-        @BindView(R.id.txt_resource_title)
-        TextView txt_resource_title;
-        @Nullable
-        @BindView(R.id.file_content_desc)
-        TextView file_content_desc;
-        @Nullable
-        @BindView(R.id.delete_layout)
-        View delete_layout;
-        @Nullable
-        @BindView(R.id.file_swipe_layout)
-        SwipeRevealLayout file_swipe_layout;
-        @Nullable
-        @BindView(R.id.content_card_file)
-        ElasticView content_card_file;
-        Modal_ContentDetail contentItem;
-        ContentContract.contentClick contentClick;
-
-        public FileViewHolder(View view, final ContentContract.contentClick contentClick) {
-            super(view);
-            ButterKnife.bind(this, view);
-            this.contentClick = contentClick;
-        }
-
-        public void setContentItem(Modal_ContentDetail contentItem, int pos) {
-            this.contentItem = contentItem;
-            if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
-                if (contentItem.isDownloaded())
-                    if (contentItem.isOnSDCard()) {
-                        file_swipe_layout.setLockDrag(true);
-                        file_content_image.setImageURI(Uri.fromFile(new File(
-                                PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage())));
-                    } else {
-                        file_swipe_layout.setLockDrag(false);
-                        file_content_image.setImageURI(Uri.fromFile(new File(
-                                PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage())));
-                    }
-                else {
-                    file_swipe_layout.setLockDrag(true);
-                    if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty())
-                        file_content_image.setImageURI(Uri.parse(contentItem.getKolibriNodeImageUrl()));
-                    else
-                        file_content_image.setImageURI(Uri.parse(contentItem.getNodeserverimage()));
-                }
-            }
-            if (rl_reveal.getVisibility() == View.VISIBLE)
-                unreveal(rl_reveal);
-            if (contentItem.isDownloaded()) {
-                rl_download.setVisibility(View.GONE);
-                rl_download.setOnClickListener(null);
-                rl_play_content.setVisibility(View.VISIBLE);
-                file_content_desc.setText(contentItem.getNodetitle());
-                if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-                    file_item_lottieview.setAnimation("gaming_pad.json");
-                else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-                    file_item_lottieview.setAnimation("play_button.json");
-                else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-                    file_item_lottieview.setAnimation("book.json");
-                content_card_file.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        contentClick.openContent(pos, contentItem);
-                    }
-                });
-                delete_layout.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        file_swipe_layout.close(true);
-                        contentClick.deleteContent(pos, contentItem);
-                    }
-                });
-            } else {
-                rl_play_content.setVisibility(View.GONE);
-                rl_reveal.setVisibility(View.INVISIBLE);
-                rl_download.setVisibility(View.VISIBLE);
-                txt_resource_title.setText(contentItem.getNodetitle());
-                Drawable background = rl_download.getBackground();
-                if (background instanceof GradientDrawable) {
-                    int color = PD_Utility.getRandomColorGradient();
-                    ((GradientDrawable) background).setColor(color);
-                    rl_reveal.setBackgroundColor(color);
-                }
-                rl_download.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        contentClick.onDownloadClicked(pos, contentItem, rl_reveal);
-                    }
-                });
-                content_card_file.setOnClickListener(null);
-            }
         }
     }
 }

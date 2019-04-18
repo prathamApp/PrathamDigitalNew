@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.support.annotation.NonNull;
@@ -37,6 +38,12 @@ import org.androidannotations.annotations.EBean;
 import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @EBean
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
@@ -47,6 +54,8 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private String appname;
+    private Timer gpsFixTimer;
+    private int gpsFixCount = 0;
 
     public SplashPresenterImpl(Context context) {
         this.context = context;
@@ -222,29 +231,9 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = "";
             BaseActivity.statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("Latitude") == null) {
-            statusObj.statusKey = "Latitude";
-            statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
-        }
-        if (BaseActivity.statusDao.getKey("Longitude") == null) {
-            statusObj.statusKey = "Longitude";
-            statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
-        }
-        if (BaseActivity.statusDao.getKey("GPSDateTime") == null) {
-            statusObj.statusKey = "GPSDateTime";
-            statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
-        }
         if (BaseActivity.statusDao.getKey("SerialID") == null) {
             statusObj.statusKey = "SerialID";
             statusObj.value = PD_Utility.getDeviceSerialID();
-            BaseActivity.statusDao.insert(statusObj);
-        }
-        if (BaseActivity.statusDao.getKey("gpsFixDuration") == null) {
-            statusObj.statusKey = "gpsFixDuration";
-            statusObj.value = "";
             BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("prathamCode") == null) {
@@ -266,40 +255,19 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("apkType") == null) {
-            if (PrathamApplication.isTablet) {
-                statusObj.statusKey = "apkType";
-                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Tablet Apk";
-                BaseActivity.statusDao.insert(statusObj);
-            } else {
-                statusObj.statusKey = "apkType";
-                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Smartphone Apk";
-                BaseActivity.statusDao.insert(statusObj);
-            }
-        } else {
-            if (PrathamApplication.isTablet) {
-                statusObj.statusKey = "apkType";
-                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Tablet Apk";
-                BaseActivity.statusDao.insert(statusObj);
-            } else {
-                statusObj.statusKey = "apkType";
-                statusObj.value = "Pratham Digital with New UI, Kolibri, New POS, Raspberry Pie, Smartphone Apk";
-                BaseActivity.statusDao.insert(statusObj);
-            }
+            statusObj.statusKey = "apkType";
+            if (PrathamApplication.isTablet)
+                statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Tablet Apk";
+            else
+                statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Smartphone Apk";
+            BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("appName") == null) {
             statusObj.statusKey = "appName";
             statusObj.value = PD_Utility.getApplicationName(context);
             BaseActivity.statusDao.insert(statusObj);
-        } else {
-            statusObj.statusKey = "appName";
-            statusObj.value = PD_Utility.getApplicationName(context);
-            BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("apkVersion") == null) {
-            statusObj.statusKey = "apkVersion";
-            statusObj.value = PD_Utility.getCurrentVersion(context);
-            BaseActivity.statusDao.insert(statusObj);
-        } else {
             statusObj.statusKey = "apkVersion";
             statusObj.value = PD_Utility.getCurrentVersion(context);
             BaseActivity.statusDao.insert(statusObj);
@@ -372,6 +340,69 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             fileOrDirectory.delete();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        gpsFixTimer.cancel();
+        Modal_Status statusObj = new Modal_Status();
+        statusObj.setStatusKey("Latitude");
+        statusObj.setValue(String.valueOf(location.getLatitude()));
+        BaseActivity.statusDao.insert(statusObj);
+
+        statusObj.setStatusKey("Longitude");
+        statusObj.setValue(String.valueOf(location.getLongitude()));
+        BaseActivity.statusDao.insert(statusObj);
+
+        statusObj.setStatusKey("GPSDateTime");
+        DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+        Date gdate = new Date(location.getTime());
+        String gpsDateTime = format.format(gdate);
+        statusObj.setValue(gpsDateTime);
+        BaseActivity.statusDao.insert(statusObj);
+
+        statusObj.setStatusKey("GPSFixDuration");
+        if (BaseActivity.statusDao.getKey("GPSFixDuration") == null) {
+            statusObj.setValue(String.valueOf(gpsFixCount));
+        } else {
+            String value = BaseActivity.statusDao.getValue("GPSFixDuration");
+            value += "," + gpsFixCount;
+            statusObj.setValue(value);
+        }
+        BaseActivity.statusDao.insert(statusObj);
+        checkIfContentinSDCard();
+    }
+
+    @Override
+    public void startGpsTimer() {
+        gpsFixTimer = new Timer();
+        gpsFixTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                gpsFixCount += 1;
+            }
+        }, 1000, 1000);
+    }
+
+    @Background
+    @Override
+    public void savePrathamCode(String code) {
+        Modal_Status statusObj = new Modal_Status();
+        statusObj.setStatusKey("PrathamCode");
+        statusObj.setValue(code);
+        BaseActivity.statusDao.insert(statusObj);
+    }
+
+    @Override
+    public void checkPrathamCode() {
+        if (PrathamApplication.isTablet) {
+            if (BaseActivity.statusDao.getKey("PrathamCode") == null)
+                splashview.showEnterPrathamCodeDialog();
+            else
+                splashview.loadSplash();
+        } else {
+            splashview.loadSplash();
         }
     }
 }

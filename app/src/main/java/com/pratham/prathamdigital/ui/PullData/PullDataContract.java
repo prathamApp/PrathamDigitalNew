@@ -34,6 +34,8 @@ public interface PullDataContract {
         public void openLoginActivity();
 
         void onDataClearToast();
+
+        void showProgram(List<String> prgrmList);
     }
 
     public interface PullDataPresenter {
@@ -54,5 +56,7 @@ public interface PullDataContract {
         void setView(PullDataFragment pullDataFragment);
 
         void clearData();
+
+        void loadProgrammes();
     }
 }

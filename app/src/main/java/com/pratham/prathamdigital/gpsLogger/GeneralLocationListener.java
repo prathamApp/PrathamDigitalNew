@@ -19,6 +19,7 @@
 
 package com.pratham.prathamdigital.gpsLogger;
 
+import android.annotation.SuppressLint;
 import android.location.GpsSatellite;
 import android.location.GpsStatus;
 import android.location.Location;
@@ -113,7 +114,7 @@ class GeneralLocationListener implements LocationListener, GpsStatus.Listener, G
 
             case GpsStatus.GPS_EVENT_SATELLITE_STATUS:
 
-                GpsStatus status = loggingService.gpsLocationManager.getGpsStatus(null);
+                @SuppressLint("MissingPermission") GpsStatus status = loggingService.gpsLocationManager.getGpsStatus(null);
 
                 int maxSatellites = status.getMaxSatellites();
 

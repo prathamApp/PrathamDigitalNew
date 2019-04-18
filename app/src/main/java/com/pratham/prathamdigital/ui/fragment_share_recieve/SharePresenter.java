@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -67,7 +68,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     }
 
     @Override
-    public void setView(FragmentShareRecieve fragmentShareRecieve) {
+    public void setView(Fragment fragmentShareRecieve) {
         this.shareView = (ContractShare.shareView) fragmentShareRecieve;
     }
 

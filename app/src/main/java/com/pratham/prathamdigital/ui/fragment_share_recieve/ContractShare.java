@@ -1,5 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
+import android.support.v4.app.Fragment;
+
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
@@ -45,7 +47,7 @@ public interface ContractShare {
 
         void showFilesRecieving(File filePath);
 
-        void setView(FragmentShareRecieve fragmentShareRecieve);
+        void setView(Fragment fragmentShareRecieve);
 
         void startTimer();
 

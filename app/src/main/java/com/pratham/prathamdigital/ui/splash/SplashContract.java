@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.splash;
 
 import android.content.Intent;
+import android.location.Location;
 
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -17,6 +18,10 @@ public interface SplashContract {
         void signInUsingGoogle();
 
         void googleSignInFailed();
+
+        void loadSplash();
+
+        void showEnterPrathamCodeDialog();
     }
 
     interface splashPresenter {
@@ -35,5 +40,13 @@ public interface SplashContract {
         void clearPreviousBuildData();
 
         GoogleApiClient configureSignIn();
+
+        void onLocationChanged(Location location);
+
+        void startGpsTimer();
+
+        void savePrathamCode(String code);
+
+        void checkPrathamCode();
     }
 }

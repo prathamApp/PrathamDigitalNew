@@ -19,25 +19,21 @@
 
 package com.pratham.prathamdigital.gpsLogger;
 
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Binder;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.util.Log;
@@ -47,6 +43,7 @@ import com.google.android.gms.location.ActivityRecognitionClient;
 import com.google.android.gms.location.ActivityRecognitionResult;
 import com.google.android.gms.location.DetectedActivity;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.splash.ActivitySplash_;
 import com.pratham.prathamdigital.util.PD_Constant;
 
@@ -55,13 +52,13 @@ import org.greenrobot.eventbus.Subscribe;
 
 public class GpsLoggingService extends Service {
     private static final String TAG = GpsLoggingService.class.getSimpleName();
-    private static NotificationManager notificationManager;
-    private static int NOTIFICATION_ID = 8675309;
+    //    private static NotificationManager notificationManager;
+//    private static int NOTIFICATION_ID = 8675309;
     private final IBinder binder = new GpsLoggingBinder();
     protected LocationManager gpsLocationManager;
     AlarmManager nextPointAlarmManager;
     PendingIntent activityRecognitionPendingIntent;
-    private NotificationCompat.Builder nfc;
+    //    private NotificationCompat.Builder nfc;
     // ---------------------------------------------------
     // Helpers and managers
     // ---------------------------------------------------
@@ -133,7 +130,7 @@ public class GpsLoggingService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
-        startForeground(NOTIFICATION_ID, getNotification());
+//        startForeground(NOTIFICATION_ID, getNotification());
         handleIntent(intent);
         return START_STICKY;
     }
@@ -141,7 +138,7 @@ public class GpsLoggingService extends Service {
     @Override
     public void onDestroy() {
         unregisterEventBus();
-        removeNotification();
+//        removeNotification();
         super.onDestroy();
 
         if (session.isStarted()) {
@@ -339,14 +336,14 @@ public class GpsLoggingService extends Service {
      */
     protected void startLogging() {
         session.setAddNewTrackSegment(true);
-        try {
-            startForeground(NOTIFICATION_ID, getNotification());
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+//        try {
+//            startForeground(NOTIFICATION_ID, getNotification());
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
         session.setStarted(true);
 //        resetAutoSendTimersIfNecessary();
-        showNotification();
+//        showNotification();
 //        setupAutoSendTimers();
 //        resetCurrentFileName(true);
         notifyClientsStarted(true);
@@ -413,8 +410,8 @@ public class GpsLoggingService extends Service {
      * Hides the notification icon in the status bar if it's visible.
      */
     private void removeNotification() {
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.cancelAll();
+//        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        notificationManager.cancelAll();
     }
 
     /**
@@ -456,7 +453,7 @@ public class GpsLoggingService extends Service {
             notificationTime = session.getCurrentLocationInfo().getTime();
         }
 
-        if (nfc == null) {
+        /*if (nfc == null) {
 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
@@ -496,19 +493,20 @@ public class GpsLoggingService extends Service {
         nfc.setContentTitle(contentTitle);
         nfc.setContentText(contentText);
         nfc.setStyle(new NotificationCompat.BigTextStyle().bigText(contentText).setBigContentTitle(contentTitle));
-        nfc.setWhen(notificationTime);
+        nfc.setWhen(notificationTime);*/
 
         //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         //notificationManager.notify(NOTIFICATION_ID, nfc.build());
-        return nfc.build();
+        return /*nfc.build()*/null;
     }
 
     private void showNotification() {
         Notification notif = getNotification();
-        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(NOTIFICATION_ID, notif);
+//        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//        notificationManager.notify(NOTIFICATION_ID, notif);
     }
 
+    @SuppressLint("MissingPermission")
     private void startPassiveManager() {
         if (preferenceHelper.shouldLogPassiveLocations()) {
             if (passiveLocationListener == null) {
@@ -650,11 +648,14 @@ public class GpsLoggingService extends Service {
      */
     void onLocationChanged(Location loc) {
         Log.d(TAG, "onLocationChanged: lat:" + loc.getLatitude() + "Long:" + loc.getLongitude());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.LOCATION_CHANGED);
+        message.setLocation(loc);
+        EventBus.getDefault().post(message);
         if (!session.isStarted()) {
             stopLogging();
             return;
         }
-
         boolean isPassiveLocation = loc.getExtras().getBoolean(PD_Constant.GPS_PASSIVE);
         long currentTimeStamp = System.currentTimeMillis();
 
@@ -678,7 +679,6 @@ public class GpsLoggingService extends Service {
         if (session.getCurrentLocationInfo() != null) {
             double distanceTravelled = Maths.calculateDistance(loc.getLatitude(), loc.getLongitude(), session.getCurrentLocationInfo().getLatitude(), session.getCurrentLocationInfo().getLongitude());
             long timeDifference = (int) Math.abs(loc.getTime() - session.getCurrentLocationInfo().getTime()) / 1000;
-
             if (timeDifference > 0 && (distanceTravelled / timeDifference) > 357) { //357 m/s ~=  1285 km/h
                 Log.d(TAG, "onLocationChanged: " + "Very large jump detected - %d meters in %d sec - discarding point" + (long) distanceTravelled);
                 return;
@@ -734,7 +734,7 @@ public class GpsLoggingService extends Service {
         session.setFirstRetryTimeStamp(0);
         session.setCurrentLocationInfo(loc);
         setDistanceTraveled(loc);
-        showNotification();
+//        showNotification();
         stopManagerAndResetAlarm();
 
         EventBus.getDefault().post(new ServiceEvents.LocationUpdate(loc));

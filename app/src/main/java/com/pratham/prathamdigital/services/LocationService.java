@@ -1,13 +1,18 @@
 package com.pratham.prathamdigital.services;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.IntentSender;
+import android.content.ServiceConnection;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -22,7 +27,11 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.gpsLogger.GpsLoggingService;
+import com.pratham.prathamdigital.gpsLogger.Session;
 import com.pratham.prathamdigital.models.Modal_Status;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -80,10 +89,23 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                 });
     }
 
+    /**
+     * Provides a connection to the GPS Logging Service
+     */
+    private final ServiceConnection gpsServiceConnection = new ServiceConnection() {
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected: \"Disconnected from GPSLoggingService from MainActivity\"");
+        }
+
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            Log.d(TAG, "onServiceConnected: Connected to GPSLoggingService from MainActivity");
+        }
+    };
+
     public void checkLocation() {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            startLocationListener();
+            startLocationListenerServiceAccordingToDevice();
         } else {
             mGoogleApiClient = new GoogleApiClient.Builder(context)
                     .addApi(LocationServices.API).addConnectionCallbacks(LocationService.this)
@@ -92,6 +114,19 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
             mGoogleApiClient.connect();
             showSettingDialog();
         }
+    }
+
+    private void startLocationListenerServiceAccordingToDevice() {
+        if (PrathamApplication.useSatelliteGPS) {
+            Intent serviceIntent = new Intent(context, GpsLoggingService.class);
+            serviceIntent.putExtra(PD_Constant.GPS_LOGGER_IMMEDIATE_START, true);
+            // Start the service in case it isn't already running
+            ContextCompat.startForegroundService(PrathamApplication.getInstance().getApplicationContext(), serviceIntent);
+            // Now bind to service
+            context.bindService(serviceIntent, gpsServiceConnection, Context.BIND_AUTO_CREATE);
+            Session.getInstance().setBoundToService(true);
+        } else
+            startLocationListener();
     }
 
     private void showSettingDialog() {
@@ -114,7 +149,7 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can initialize location
                         // requests here.
-                        startLocationListener();
+                        startLocationListenerServiceAccordingToDevice();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied. But could be fixed by showing the user
@@ -139,7 +174,7 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
 
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        startLocationListener();
+        startLocationListenerServiceAccordingToDevice();
     }
 
     @Override

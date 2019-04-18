@@ -102,6 +102,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     rv_content.setHasFixedSize(true);
                     rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
                     gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
+                    gridLayoutManager.setAutoMeasureEnabled(false);
                     gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
                         @Override
                         public int getSpanSize(int pos) {

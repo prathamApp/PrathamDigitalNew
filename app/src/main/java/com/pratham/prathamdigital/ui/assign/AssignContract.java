@@ -18,6 +18,10 @@ public interface AssignContract {
         void populateGroups(int vilID);
 
         void assignGroups(String group1, String group2, String group3, String group4, String group5, int vilID);
+
+        void removeDeletedGroups();
+
+        void clearData();
     }
 
     interface assignView {
@@ -34,5 +38,7 @@ public interface AssignContract {
         void showDialog();
 
         void groupsAssignedSuccessfully();
+
+        void onDataCleared();
     }
 }

@@ -95,15 +95,36 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     }
 
     // Delete Groups with Students
+    @Background
     public void deleteGroupsWithStudents() {
         // Delete Records of Deleted Students
         List<Modal_Groups> deletedGroupsList = BaseActivity.groupDao.GetAllDeletedGroups();
         // Delete students for all deleted groups
-        for (int i = 0; i < deletedGroupsList.size(); i++) {
+        for (Modal_Groups grps : deletedGroupsList) {
             //Delete Group
-            BaseActivity.groupDao.deleteGroupByGrpID(deletedGroupsList.get(i).GroupId);
+            BaseActivity.groupDao.deleteGroupByGrpID(grps.getGroupId());
             // Delete Student
-            BaseActivity.studentDao.deleteDeletedGrpsStdRecords(deletedGroupsList.get(i).GroupId);
+            BaseActivity.studentDao.deleteDeletedGrpsStdRecords(grps.getGroupId());
         }
+    }
+
+    @Override
+    public void removeDeletedGroups() {
+        // Delete Groups where Device ID is deleted & also delete associated students & update status table
+        deleteGroupsWithStudents();
+    }
+
+    @Override
+    public void clearData() {
+        clearData_();
+        assignView.onDataCleared();
+    }
+
+    @Background
+    public void clearData_() {
+        BaseActivity.villageDao.deleteAllVillages();
+        BaseActivity.groupDao.deleteAllGroups();
+        BaseActivity.studentDao.deleteAllStudents();
+        BaseActivity.crLdao.deleteAllCRLs();
     }
 }

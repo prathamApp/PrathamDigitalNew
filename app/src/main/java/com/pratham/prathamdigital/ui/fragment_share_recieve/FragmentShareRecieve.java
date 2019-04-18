@@ -93,7 +93,7 @@ import static android.content.Context.WIFI_SERVICE;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
-@EFragment(R.layout.fragment_share)
+@EFragment(R.layout.fragment_share_receive)
 public class FragmentShareRecieve extends Fragment implements ContractShare.shareView,
         CircularRevelLayout.CallBacks, ZXingScannerView.ResultHandler {
 
@@ -151,11 +151,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
     ContractShare.sharePresenter sharePresenter;
 
     private List<String> mList = new ArrayList<>();
-    private boolean share = false;
     private boolean isHotspotEnabled = false;
-    //    private Timer connectTimer;
-    private String localIPaddress;
-    private String serverIPaddres;
     FileListAdapter fileListAdapter;
     ReceivedFileListAdapter receivedFileListAdapter;
     HashMap<String, File_Model> filesSent = new HashMap<>();
@@ -182,13 +178,15 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
                         rl_share.setVisibility(View.GONE);
                         rl_recieve.setClickable(false);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (Settings.System.canWrite(getActivity())) initCamera();
+                            if (Settings.System.canWrite(getActivity()))
+                                initCamera();
                             else {
                                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                                 intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
                                 startActivityForResult(intent, JOIN_HOTSPOT);
                             }
-                        } else initCamera();
+                        } else
+                            initCamera();
                     } else new LocationService(getActivity()).checkLocation();
                     break;
                 case PD_Constant.ApCreateApSuccess:
@@ -265,6 +263,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         return false;
     }
 
+    //
     @Override
     public void onPause() {
         super.onPause();
@@ -319,8 +318,8 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         if (startCameraScan != null) startCameraScan.stopCamera();
         super.onDestroy();
         sharePresenter.viewDestroyed();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-            PrathamApplication.getInstance().unregisterReceiver();
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+//            PrathamApplication.getInstance().unregisterReceiver();
     }
 
     @Override
@@ -360,7 +359,6 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
 
     @Click(R.id.rl_share)
     public void setRl_share() {
-        share = true;
         if (PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.disableWifi();
         KotlinPermissions.with(getActivity())
@@ -372,8 +370,6 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
                             ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
                             if (sdPath.size() > 0) {
                                 if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
-                                    showSdCardDialog();
-                                else
                                     mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
                             } else
                                 mHandler.sendEmptyMessage(CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION);
@@ -400,14 +396,13 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
             public void run() {
                 hotspotUtils.enableConfigured("pratham", null);
             }
-        }, 2000);
+        }, 800);
     }
 
     @Click(R.id.rl_recieve)
     public void setRl_recieve() {
         WifiUtils.closeWifiAp();
         if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();
-        share = false;
         KotlinPermissions.with(getActivity())
                 .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
                 .onAccepted(new ResponsePermissionCallback() {
@@ -491,12 +486,13 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         rl_recieve.setClickable(true);
     }
 
+    //
     private void createHotspotQrCode() {
         try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                PrathamApplication.getInstance().registerFtpReceiver();
+//                PrathamApplication.getInstance().registerFtpReceiver();
             }
-            getActivity().sendBroadcast(new Intent(FsService.ACTION_START_FTPSERVER));
+            startServer();
             JSONObject jsonObject = new JSONObject();
             jsonObject.put(PD_Constant.FTP_HOTSPOT_SSID, PD_Constant.HOTSPOT_SSID);
             jsonObject.put(PD_Constant.FTP_HOTSPOT_PASS, PD_Constant.HOTSPOT_PASSWORD);
@@ -515,6 +511,13 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    //
+    private void startServer() {
+        Intent intent = new Intent(FsService.ACTION_START_FTPSERVER);
+        intent.setPackage(getActivity().getPackageName());
+        getActivity().sendBroadcast(intent);
     }
 
     public Bitmap createBitmap(BitMatrix matrix) {
@@ -570,7 +573,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
                 connectAp(wifi.SSID);
             }
         }, 1500);
-*/
+     */
         initCamera();
     }
 
@@ -604,7 +607,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         }
     }
 
-    private void startAvatarClickAnim(final View v) {
+    /*private void startAvatarClickAnim(final View v) {
         int[] mAvatarLocation = new int[2];
         v.getLocationOnScreen(mAvatarLocation);
 
@@ -628,7 +631,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
             }
         }, 300);
         searchView.setTextColor(v, BLACK);
-    }
+    }*/
 
     private void startJoinAnim() {
         shareCircle.setVisibility(View.GONE);
@@ -691,8 +694,8 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         filesSentPosition.clear();
         if (rv_files.getVisibility() == View.GONE)
             rv_files.setVisibility(View.VISIBLE);
-        if (rv_files_receiving.getVisibility() == View.VISIBLE)
-            rv_files_receiving.setVisibility(View.GONE);
+//        if (rv_files_receiving.getVisibility() == View.VISIBLE)
+//            rv_files_receiving.setVisibility(View.GONE);
         if (fileListAdapter == null) {
             //initialize adapter
             fileListAdapter = new FileListAdapter(getActivity(), FragmentShareRecieve.this);
@@ -781,6 +784,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
                 });
             }
         }
+
     }
 
     @Subscribe

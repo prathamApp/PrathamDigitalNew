@@ -55,7 +55,7 @@ public class PreferenceHelper {
      * The minimum seconds interval between logging points
      */
     public int getMinimumLoggingInterval() {
-        return Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_MINIMUM_INTERVAL, "60"), 60);
+        return Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_MINIMUM_INTERVAL, "600"), 600);
     }
 
     /**
@@ -126,7 +126,7 @@ public class PreferenceHelper {
      */
 //    @ProfilePreference(name = PreferenceNames.LOGGING_RETRY_TIME)
     public int getLoggingRetryPeriod() {
-        return (Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_LOGGING_RETRY_TIME, "60"), 60));
+        return (Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_LOGGING_RETRY_TIME, "600"), 600));
     }
 
 
@@ -145,7 +145,7 @@ public class PreferenceHelper {
      */
 //    //@ProfilePreference(name = PreferenceNames.ABSOLUTE_TIMEOUT)
     public int getAbsoluteTimeoutForAcquiringPosition() {
-        return (Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_ABSOLUTE_TIMEOUT, "120"), 120));
+        return (Strings.toInt(FastSave.getInstance().getString(PD_Constant.GPS_ABSOLUTE_TIMEOUT, "600"), 600));
     }
 
     /**

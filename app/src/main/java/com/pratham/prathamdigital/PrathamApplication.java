@@ -2,7 +2,6 @@ package com.pratham.prathamdigital;
 
 import android.app.Application;
 import android.content.Context;
-import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
@@ -12,7 +11,6 @@ import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsNotification;
-import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.ftpSettings.RequestStartStopReceiver;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -37,6 +35,7 @@ public class PrathamApplication extends Application {
      * check version
      */
     public static boolean isTablet = true;
+    public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
     OkHttpClient okHttpClient;
@@ -94,7 +93,7 @@ public class PrathamApplication extends Application {
         contentSDPath = path;
     }
 
-    public void registerFtpReceiver() {
+    /*public void registerFtpReceiver() {
         //registering receivers in case of android version above Oreo
         requestStartStopReceiver = new RequestStartStopReceiver();
         IntentFilter intentFilter = new IntentFilter();
@@ -115,6 +114,6 @@ public class PrathamApplication extends Application {
             unregisterReceiver(requestStartStopReceiver);
         if (fsNotification != null)
             unregisterReceiver(fsNotification);
-    }
+    }*/
 }
 

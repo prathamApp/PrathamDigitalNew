@@ -1,82 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_btn_bg_pressed_color">
 
-    <ScrollView
-        android:id="@+id/scrollView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_weight="4"
-        android:padding="8dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+    <!--<ScrollView-->
+    <!--android:id="@+id/scrollView"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_weight="4"-->
+    <!--android:padding="8dp"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/linearLayout"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent">-->
 
-        <RelativeLayout
-            android:id="@+id/constraintLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+    <!--<RelativeLayout-->
+    <!--android:id="@+id/constraintLayout"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content">-->
 
-            <RadioGroup
-                android:id="@+id/rg_programs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentLeft="true"
-                android:layout_marginTop="16dp"
-                android:orientation="horizontal">
+    <!--<RadioGroup-->
+    <!--android:id="@+id/rg_programs"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_alignParentStart="true"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:orientation="horizontal">-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_hybrid_learning"
-                    style="@style/CustomRadioButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:checked="true"
-                    android:text="@string/hybrid_learning" />
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_hybrid_learning"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:checked="true"-->
+    <!--android:text="@string/hybrid_learning" />-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_readindia"
-                    style="@style/CustomRadioButton"
-                    android:enabled="false"
-                    android:text="@string/read_india" />
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_readindia"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:enabled="false"-->
+    <!--android:text="@string/read_india" />-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_second_chance"
-                    style="@style/CustomRadioButton"
-                    android:enabled="true"
-                    android:text="@string/second_chance" />
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_second_chance"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:enabled="true"-->
+    <!--android:text="@string/second_chance" />-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_ece"
-                    style="@style/CustomRadioButton"
-                    android:enabled="true"
-                    android:text="@string/ECE" />
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_ece"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:enabled="true"-->
+    <!--android:text="@string/ECE" />-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_pratham_institute"
-                    style="@style/CustomRadioButton"
-                    android:enabled="false"
-                    android:text="@string/pratham_institute" />
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_pratham_institute"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:enabled="false"-->
+    <!--android:text="@string/pratham_institute" />-->
 
-                <RadioButton
-                    android:id="@+id/rbtn_urbanProgram"
-                    style="@style/CustomRadioButton"
-                    android:text="@string/urbon_program" />
-            </RadioGroup>
-        </RelativeLayout>
-    </ScrollView>
+    <!--<RadioButton-->
+    <!--android:id="@+id/rbtn_urbanProgram"-->
+    <!--style="@style/CustomRadioButton"-->
+    <!--android:text="@string/urbon_program" />-->
+    <!--</RadioGroup>-->
+    <!--</RelativeLayout>-->
+    <!--</ScrollView>-->
+
+    <Spinner
+        android:id="@+id/programSpinner"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="10dp"
+        android:autofillHints="Select Program"
+        android:background="@drawable/gradient_spinner"
+        android:visibility="visible"
+        tools:targetApi="o" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="130dp"
-        android:layout_below="@+id/scrollView"
+        android:layout_below="@+id/programSpinner"
         android:orientation="horizontal"
         android:padding="20dp">
 

@@ -42,11 +42,10 @@ import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-
-import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -134,7 +133,7 @@ public class BaseActivity extends AppCompatActivity {
                             .onAccepted(new ResponsePermissionCallback() {
                                 @Override
                                 public void onResult(@NotNull List<String> permissionResult) {
-//                                    new LocationService(BaseActivity.this).checkLocation();
+                                    new LocationService(BaseActivity.this).checkLocation();
                                     mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                                 }
                             })
@@ -159,6 +158,7 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     };
+
     Connectable connectable = new Connectable() {
         @Override
         public void onConnect() {
@@ -183,9 +183,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
-                .build();
+//        Catcho.Builder(this)
+//                .activity(CatchoTransparentActivity.class)
+//                .build();
         initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();

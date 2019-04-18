@@ -1,7 +1,9 @@
 package com.pratham.prathamdigital.ui.assign;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
@@ -61,6 +63,7 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
 
     @AfterViews
     public void initialize() {
+//        assignPresenter.removeDeletedGroups();
         assignPresenter.getStates();
         assignPresenter.getProgramId(SPINNER);
     }
@@ -257,5 +260,33 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Click(R.id.assign_clear_data)
+    public void clearData() {
+        AlertDialog clearDataDialog = new AlertDialog.Builder(Activity_AssignGroups.this)
+                .setTitle("Clear Data")
+                .setMessage("Are you sure you want to clear everything ?")
+                .setIcon(R.drawable.ic_warning)
+                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        assignPresenter.clearData();
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                })
+                .create();
+        clearDataDialog.show();
+        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+    }
+
+    @Override
+    public void onDataCleared() {
+        isAssigned = false;
+        super.onBackPressed();
     }
 }

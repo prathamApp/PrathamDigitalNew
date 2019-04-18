@@ -4,8 +4,6 @@
     android:layout_width="@dimen/_130sdp"
     android:layout_height="@dimen/_130sdp"
     android:background="?android:attr/selectableItemBackground"
-    android:clickable="true"
-    android:focusable="true"
     android:stateListAnimator="@animator/lift_on_touch"
     app:cardCornerRadius="@dimen/_10sdp"
     app:cardElevation="@dimen/_5sdp"
@@ -25,61 +23,57 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/folder_content_image"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="@dimen/_60sdp"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                app:actualImageScaleType="centerInside"
+                app:placeholderImageScaleType="centerInside"
+                app:roundedCornerRadius="@dimen/_30sdp"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="@dimen/_1sdp" />
 
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/folder_content_image"
-                    android:layout_width="@dimen/_60sdp"
-                    android:layout_height="@dimen/_60sdp"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    app:actualImageScaleType="centerInside"
-                    app:placeholderImageScaleType="centerInside"
-                    app:roundedCornerRadius="@dimen/_30sdp"
-                    app:roundingBorderColor="@color/white"
-                    app:roundingBorderWidth="@dimen/_1sdp" />
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/lottie_folder"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
+                app:lottie_autoPlay="true"
+                app:lottie_fileName="eye.json"
+                app:lottie_loop="true"
+                app:lottie_scale=".7" />
 
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/lottie_folder"
-                    android:layout_width="@dimen/_40sdp"
-                    android:layout_height="@dimen/_40sdp"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:layout_marginRight="@dimen/_5sdp"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="eye.json"
-                    app:lottie_loop="true"
-                    app:lottie_scale=".7" />
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/folder_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/folder_content_image"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:enabled="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical"
+                android:inputType="textMultiLine"
+                android:maxLines="2"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp" />
 
-                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                    android:id="@+id/folder_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/folder_content_image"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    android:focusableInTouchMode="false"
-                    android:gravity="center_vertical"
-                    android:inputType="textMultiLine"
-                    android:maxLines="2"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/_15sdp" />
-
-                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                    android:id="@+id/folder_content_desc"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/folder_title"
-                    android:layout_marginLeft="@dimen/_5sdp"
-                    android:focusableInTouchMode="false"
-                    android:gravity="center_vertical"
-                    android:inputType="textMultiLine"
-                    android:maxLines="2"
-                    android:textColor="@color/white" />
-            </RelativeLayout>
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/folder_content_desc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/folder_title"
+                android:layout_marginLeft="@dimen/_5sdp"
+                android:enabled="false"
+                android:focusableInTouchMode="false"
+                android:gravity="center_vertical"
+                android:inputType="textMultiLine"
+                android:maxLines="2"
+                android:textColor="@color/white" />
         </RelativeLayout>
     </android.support.design.card.MaterialCardView>
 </com.pratham.prathamdigital.custom.elastic_view.ElasticView>
