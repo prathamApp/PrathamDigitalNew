@@ -30,7 +30,7 @@ public class ServiceEvents {
      * New location
      */
     public static class LocationUpdate {
-        public Location location;
+        final Location location;
 
         public LocationUpdate(Location loc) {
             this.location = loc;
@@ -41,7 +41,7 @@ public class ServiceEvents {
      * Number of visible satellites
      */
     public static class SatellitesVisible {
-        public int satelliteCount;
+        final int satelliteCount;
 
         public SatellitesVisible(int count) {
             this.satelliteCount = count;
@@ -52,7 +52,7 @@ public class ServiceEvents {
      * Whether the logging service is still waiting for a location fix
      */
     public static class WaitingForLocation {
-        public boolean waiting;
+        final boolean waiting;
 
         public WaitingForLocation(boolean waiting) {
             this.waiting = waiting;
@@ -69,7 +69,7 @@ public class ServiceEvents {
      * Status of the user's annotation, whether it has been written or is pending
      */
     public static class AnnotationStatus {
-        public boolean annotationWritten;
+        final boolean annotationWritten;
 
         public AnnotationStatus(boolean written) {
             this.annotationWritten = written;
@@ -80,7 +80,7 @@ public class ServiceEvents {
      * Whether GPS logging has started; raised after the start/stop button is pressed
      */
     public static class LoggingStatus {
-        public boolean loggingStarted;
+        final boolean loggingStarted;
 
         public LoggingStatus(boolean loggingStarted) {
             this.loggingStarted = loggingStarted;
@@ -90,8 +90,8 @@ public class ServiceEvents {
     /**
      * The file name has been set
      */
-    public static class FileNamed {
-        public String newFileName;
+    static class FileNamed {
+        final String newFileName;
 
         public FileNamed(String newFileName) {
             this.newFileName = newFileName;
@@ -99,7 +99,7 @@ public class ServiceEvents {
     }
 
     public static class ActivityRecognitionEvent {
-        public ActivityRecognitionResult result;
+        public final ActivityRecognitionResult result;
 
         public ActivityRecognitionEvent(ActivityRecognitionResult arr) {
             this.result = arr;

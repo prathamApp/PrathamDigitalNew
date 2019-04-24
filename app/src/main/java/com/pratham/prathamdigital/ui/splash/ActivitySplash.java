@@ -1,7 +1,5 @@
 package com.pratham.prathamdigital.ui.splash;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -15,10 +13,9 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.Auth;
@@ -54,8 +51,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private static final int REDIRECT_TO_AVATAR = 5;
     private static final int REDIRECT_TO_ATTENDANCE = 6;
     private static final int ENTER_CODE_QR_DIALOG = 7;
-    @ViewById(R.id.img_splash_light)
-    ImageView img_splash_light;
+    //    @ViewById(R.id.img_splash_light)
+//    ImageView img_splash_light;
+    @ViewById(R.id.splash_video)
+    VideoView splash_video;
     @ViewById(R.id.avatar_view)
     LottieAnimationView pingpong_view;
     @ViewById(R.id.rich)
@@ -64,10 +63,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
     private Context mContext;
-    GoogleApiClient mGoogleApiClient;
-    BlurPopupWindow dialog_code;
-    EditText et_qr_code;
-    TextWatcher codeTextWatcher = new TextWatcher() {
+    private GoogleApiClient mGoogleApiClient;
+    private BlurPopupWindow dialog_code;
+    private EditText et_qr_code;
+    private final TextWatcher codeTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 
@@ -86,18 +85,27 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         }
     };
     @SuppressLint("HandlerLeak")
-    private Handler mhandler = new Handler() {
+    private final Handler mhandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case LIGHT_ANIMATION:
-                    ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(img_splash_light, "rotation", 0f, 360f);
-                    objectAnimator.setInterpolator(new LinearInterpolator());
-                    objectAnimator.setDuration(7600);
-                    objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-                    img_splash_light.setLayerType(View.LAYER_TYPE_NONE, null);
-                    objectAnimator.start();
+//                    ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(img_splash_light, "rotation", 0f, 360f);
+//                    objectAnimator.setInterpolator(new LinearInterpolator());
+//                    objectAnimator.setDuration(7600);
+//                    objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
+//                    img_splash_light.setLayerType(View.LAYER_TYPE_NONE, null);
+//                    objectAnimator.start();
+                    Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pratham);
+                    splash_video.setVideoURI(video);
+                    splash_video.setOnPreparedListener(mp -> mp.setLooping(true));
+//                    splash_video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                        public void onCompletion(MediaPlayer mp) {
+//                            startNextActivity();
+//                        }
+//                    });
+                    splash_video.start();
                     rich.setVisibility(View.VISIBLE);
                     final RichPath[] allPaths = rich.findAllRichPaths();
                     RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
@@ -106,12 +114,9 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                 case UPDATE_DIALOG:
                     new BlurPopupWindow.Builder(mContext)
                             .setContentView(R.layout.app_update_dialog)
-                            .bindClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.pratham.prathamdigital"));
-                                    startActivity(intent);
-                                }
+                            .bindClickListener(v -> {
+                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.pratham.prathamdigital"));
+                                startActivity(intent);
                             }, R.id.btn_update)
                             .setGravity(Gravity.CENTER)
                             .setDismissOnTouchBackground(false)
@@ -125,21 +130,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                 case ENTER_CODE_QR_DIALOG:
                     dialog_code = new BlurPopupWindow.Builder(mContext)
                             .setContentView(R.layout.dialog_enter_tab_qr_code)
-                            .bindClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    if (!et_qr_code.getText().toString().isEmpty()) {
-                                        splashPresenter.savePrathamCode(et_qr_code.getText().toString().trim());
-                                        dialog_code.dismiss();
-                                        new Handler().postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                loadSplash();
-                                            }
-                                        }, 1000);
-                                    } else {
-                                        et_qr_code.setError("Please enter Tablet QR Code here");
-                                    }
+                            .bindClickListener(v -> {
+                                if (!et_qr_code.getText().toString().isEmpty()) {
+                                    splashPresenter.savePrathamCode(et_qr_code.getText().toString().trim());
+                                    dialog_code.dismiss();
+                                    new Handler().postDelayed(() -> loadSplash(), 1000);
+                                } else {
+                                    et_qr_code.setError("Please enter Tablet QR Code here");
                                 }
                             }, R.id.dialog_qr_submit)
                             .setGravity(Gravity.CENTER)
@@ -149,7 +146,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                             .setBlurRadius(10)
                             .setTintColor(0x30000000)
                             .build();
-                    et_qr_code = (EditText) dialog_code.findViewById(R.id.et_tab_qr_code);
+                    et_qr_code = dialog_code.findViewById(R.id.et_tab_qr_code);
                     et_qr_code.addTextChangedListener(codeTextWatcher);
                     dialog_code.show();
                     break;
@@ -161,7 +158,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     }
                     intent.putExtra(PD_Constant.STUDENT_ADDED, true);
                     startActivity(intent);
-                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
                 case REDIRECT_TO_AVATAR:
@@ -172,13 +169,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     }
                     intent2.putExtra(PD_Constant.STUDENT_ADDED, false);
                     startActivity(intent2);
-                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
                 case REDIRECT_TO_ATTENDANCE:
                     Intent intent3 = new Intent(ActivitySplash.this, AttendanceActivity_.class);
                     startActivity(intent3);
-                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
             }
@@ -191,17 +188,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         splashPresenter.clearPreviousBuildData();
         splashPresenter.populateDefaultDB();
         mhandler.sendEmptyMessage(LIGHT_ANIMATION);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                splashPresenter.checkPrathamCode();
-            }
-        }, 2200);
+        new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
     }
 
     @Override
     public void showEnterPrathamCodeDialog() {
-        mhandler.sendEmptyMessage(ENTER_CODE_QR_DIALOG);
+        new Handler().postDelayed(() -> mhandler.sendEmptyMessage(ENTER_CODE_QR_DIALOG), 1200);
     }
 
     @Override

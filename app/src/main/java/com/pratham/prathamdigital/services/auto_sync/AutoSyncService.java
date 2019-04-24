@@ -80,19 +80,19 @@ public class AutoSyncService extends IntentService {
         context.startService(getPowerChangedIntent(context, connected));
     }
 
-    static Intent getStartIntent(Context context) {
+    private static Intent getStartIntent(Context context) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.putExtra(TYPE, TYPE_START);
         return intent;
     }
 
-    static Intent getStopIntent(Context context) {
+    private static Intent getStopIntent(Context context) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.putExtra(TYPE, TYPE_STOP);
         return intent;
     }
 
-    static Intent getSyncIntent(Context context, String name) {
+    private static Intent getSyncIntent(Context context, String name) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.setData(Uri.parse("AutoSync://" + name));
         intent.putExtra(TYPE, TYPE_SYNC);
@@ -100,7 +100,7 @@ public class AutoSyncService extends IntentService {
         return intent;
     }
 
-    static Intent getSyncInexactIntent(Context context, String name) {
+    private static Intent getSyncInexactIntent(Context context, String name) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.setData(Uri.parse("AutoSync://" + name));
         intent.putExtra(TYPE, TYPE_SYNC_INEXACT);
@@ -108,14 +108,14 @@ public class AutoSyncService extends IntentService {
         return intent;
     }
 
-    static Intent getUpdateIntent(Context context, String name) {
+    private static Intent getUpdateIntent(Context context, String name) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.putExtra(TYPE, TYPE_UPDATE);
         intent.putExtra(NAME, name);
         return intent;
     }
 
-    static Intent getNetworkBackIntent(Context context) {
+    private static Intent getNetworkBackIntent(Context context) {
         Intent intent = new Intent(context, AutoSyncService.class);
         intent.putExtra(TYPE, TYPE_NETWORK_BACK);
         return intent;

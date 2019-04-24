@@ -29,6 +29,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
 
@@ -42,7 +43,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     @ViewById(R.id.rv_language)
     RecyclerView rv_language;
 
-    LanguageAdapter adapter;
+    private LanguageAdapter adapter;
     private int revealX;
     private int revealY;
 
@@ -79,7 +80,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
 
     private ArrayList<Modal_Language> getLanguageList(String selectedLanguage) {
         ArrayList<Modal_Language> tempLang = new ArrayList<>();
-        String[] languages = getActivity().getResources().getStringArray(R.array.languages);
+        String[] languages = Objects.requireNonNull(getActivity()).getResources().getStringArray(R.array.languages);
         String[] main_languages = getActivity().getResources().getStringArray(R.array.main_languages);
         for (int i = 0; i < main_languages.length; i++) {
             Modal_Language modal_language = new Modal_Language();
@@ -122,7 +123,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         bundle.putInt(PD_Constant.REVEALY, 0);
         PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
                 bundle, FragmentContent_.class.getSimpleName());
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
@@ -146,7 +147,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
             if (circular_language_reveal != null)
                 circular_language_reveal.unReveal();
             else
-                getActivity().getSupportFragmentManager().popBackStack();
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         }
     }
 

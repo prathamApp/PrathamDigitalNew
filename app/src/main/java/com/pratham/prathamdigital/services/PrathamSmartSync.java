@@ -25,7 +25,6 @@ import java.util.List;
 
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
-    private static Context context;
 
     @Override
     protected void onCreate(Context context) {
@@ -70,7 +69,7 @@ public class PrathamSmartSync extends AutoSync {
                 sessionArray.put(sessionJson);
             }
             // send if new records found
-            if (newSessions != null && newSessions.size() > 0) {
+            if (newSessions.size() > 0) {
                 //fetch Students & convert to Json Array
                 JSONArray studentArray = new JSONArray();
                 if (!PrathamApplication.isTablet) {
@@ -92,16 +91,16 @@ public class PrathamSmartSync extends AutoSync {
                 rootJson.put(PD_Constant.SESSION, sessionArray);
                 rootJson.put(PD_Constant.METADATA, metadataJson);
                 if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-                    new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                            .pushDataToRaspberry(PD_Constant.USAGEDATA, PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
+                    new PD_ApiRequest(PrathamApplication.getInstance())
+                            .pushDataToRaspberry(/*PD_Constant.USAGEDATA,*/ PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
                                     rootJson.toString(), programID, PD_Constant.USAGEDATA);
                 else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
                     if (PrathamApplication.isTablet)
-                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                                .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
+                        new PD_ApiRequest(PrathamApplication.getInstance())
+                                .pushDataToInternet(/*PD_Constant.USAGEDATA, */PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
                     else
-                        new PD_ApiRequest(PrathamApplication.getInstance(), null)
-                                .pushDataToInternet(PD_Constant.USAGEDATA, PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
+                        new PD_ApiRequest(PrathamApplication.getInstance())
+                                .pushDataToInternet(/*PD_Constant.USAGEDATA, */PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
                 }
             } else {
                 if (isPressed) {
@@ -116,8 +115,7 @@ public class PrathamSmartSync extends AutoSync {
     }
 
     @Override
-    public void onSync(Context context) throws Exception {
-        this.context = context;
+    public void onSync(Context context) {
         Log.d(TAG, "onSync: ");
         // Push Tab related Jsons
         pushUsageToServer(false);

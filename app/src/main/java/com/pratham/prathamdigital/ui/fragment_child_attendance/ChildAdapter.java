@@ -23,10 +23,10 @@ import butterknife.ButterKnife;
 public class ChildAdapter extends RecyclerView.Adapter {
     private static final int ADD_CHILD = 1;
     private static final int CHILD = 2;
-    private ArrayList<Modal_Student> datalist;
-    private ArrayList<String> child_avatar;
-    private Context context;
-    private ContractChildAttendance.attendanceView attendanceView;
+    private final ArrayList<Modal_Student> datalist;
+    private final ArrayList<String> child_avatar;
+    private final Context context;
+    private final ContractChildAttendance.attendanceView attendanceView;
 
     public ChildAdapter(Context context, ArrayList<Modal_Student> datalist,
                         ArrayList<String> child_avatar, ContractChildAttendance.attendanceView attendanceView) {
@@ -47,7 +47,7 @@ public class ChildAdapter extends RecyclerView.Adapter {
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = null;
+        View v;
         switch (viewType) {
             case ADD_CHILD:
                 LayoutInflater header = LayoutInflater.from(parent.getContext());
@@ -67,12 +67,7 @@ public class ChildAdapter extends RecyclerView.Adapter {
         switch (viewHolder.getItemViewType()) {
             case ADD_CHILD:
                 AddChildHolder addChildHolder = (AddChildHolder) viewHolder;
-                addChildHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        attendanceView.addChild(addChildHolder.itemView);
-                    }
-                });
+                addChildHolder.itemView.setOnClickListener(v -> attendanceView.addChild(addChildHolder.itemView));
                 break;
             case CHILD:
                 ChildHolder childHolder = (ChildHolder) viewHolder;
@@ -84,14 +79,11 @@ public class ChildAdapter extends RecyclerView.Adapter {
                     childHolder.child_name.setTextColor(context.getResources().getColor(R.color.white));
                 }
                 int finalPos = position;
-                childHolder.child_view.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (PrathamApplication.isTablet)
-                            attendanceView.childItemClicked(datalist.get(finalPos), finalPos);
-                        else
-                            attendanceView.moveToDashboardOnChildClick(datalist.get(finalPos), finalPos, childHolder.itemView);
-                    }
+                childHolder.child_view.setOnClickListener(v -> {
+                    if (PrathamApplication.isTablet)
+                        attendanceView.childItemClicked(datalist.get(finalPos), finalPos);
+                    else
+                        attendanceView.moveToDashboardOnChildClick(datalist.get(finalPos), finalPos, childHolder.itemView);
                 });
                 break;
         }
@@ -105,12 +97,7 @@ public class ChildAdapter extends RecyclerView.Adapter {
             switch (holder.getItemViewType()) {
                 case ADD_CHILD:
                     AddChildHolder addChildHolder = (AddChildHolder) holder;
-                    addChildHolder.itemView.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            attendanceView.addChild(addChildHolder.itemView);
-                        }
-                    });
+                    addChildHolder.itemView.setOnClickListener(v -> attendanceView.addChild(addChildHolder.itemView));
                     break;
                 case CHILD:
                     ChildHolder childHolder = (ChildHolder) holder;
@@ -122,14 +109,11 @@ public class ChildAdapter extends RecyclerView.Adapter {
                     } else {
                         childHolder.child_name.setTextColor(context.getResources().getColor(R.color.white));
                     }
-                    childHolder.child_view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            if (PrathamApplication.isTablet)
-                                attendanceView.childItemClicked(student, holder.getAdapterPosition());
-                            else
-                                attendanceView.moveToDashboardOnChildClick(student, holder.getAdapterPosition(), childHolder.itemView);
-                        }
+                    childHolder.child_view.setOnClickListener(v -> {
+                        if (PrathamApplication.isTablet)
+                            attendanceView.childItemClicked(student, holder.getAdapterPosition());
+                        else
+                            attendanceView.moveToDashboardOnChildClick(student, holder.getAdapterPosition(), childHolder.itemView);
                     });
             }
         }
@@ -148,14 +132,14 @@ public class ChildAdapter extends RecyclerView.Adapter {
         @BindView(R.id.child_avatar)
         LottieAnimationView child_avatar;
 
-        public ChildHolder(@NonNull View itemView) {
+        ChildHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
     }
 
-    public class AddChildHolder extends RecyclerView.ViewHolder {
-        public AddChildHolder(@NonNull View itemView) {
+    class AddChildHolder extends RecyclerView.ViewHolder {
+        AddChildHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

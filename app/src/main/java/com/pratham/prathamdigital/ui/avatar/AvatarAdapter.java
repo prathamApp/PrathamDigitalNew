@@ -17,11 +17,10 @@ import butterknife.ButterKnife;
 
 public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder> {
 
-    ArrayList<String> datalist;
-    Context context;
+    private final ArrayList<String> datalist;
 
     public AvatarAdapter(Context context, ArrayList<String> datalist) {
-        this.context = context;
+        Context context1 = context;
         this.datalist = datalist;
     }
 
@@ -47,7 +46,7 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
         @BindView(R.id.lottie_avatar)
         LottieAnimationView lottie_avatar;
 
-        public ViewHolder(View itemView) {
+        ViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

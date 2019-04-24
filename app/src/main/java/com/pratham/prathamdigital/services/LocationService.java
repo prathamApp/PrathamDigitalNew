@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.ServiceConnection;
-import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -18,7 +17,6 @@ import android.util.Log;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -38,15 +36,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
 
 public class LocationService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LocationService.class.getSimpleName();
-    Context context;
-    GoogleApiClient mGoogleApiClient;
+    private final Context context;
+    private GoogleApiClient mGoogleApiClient;
 
     public LocationService(Context context) {
         this.context = context;
@@ -64,28 +61,24 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                 .location()
                 .continuous()
                 .config(builder.build())
-                .start(new OnLocationUpdatedListener() {
-                    @Override
-                    public void onLocationUpdated(Location location) {
-                        Modal_Status statusObj = new Modal_Status();
+                .start(location -> {
+                    Modal_Status statusObj = new Modal_Status();
 
-                        statusObj.statusKey = "Latitude";
-                        statusObj.value = String.valueOf(location.getLatitude());
-                        BaseActivity.statusDao.insert(statusObj);
+                    statusObj.statusKey = "Latitude";
+                    statusObj.value = String.valueOf(location.getLatitude());
+                    BaseActivity.statusDao.insert(statusObj);
 
-                        statusObj.statusKey = "Longitude";
-                        statusObj.value = String.valueOf(location.getLongitude());
-                        BaseActivity.statusDao.insert(statusObj);
+                    statusObj.statusKey = "Longitude";
+                    statusObj.value = String.valueOf(location.getLongitude());
+                    BaseActivity.statusDao.insert(statusObj);
 
-                        statusObj.statusKey = "GPSDateTime";
-                        DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
-                        Date gdate = new Date(location.getTime());
-                        String gpsDateTime = format.format(gdate);
-                        statusObj.value = gpsDateTime;
-                        BaseActivity.statusDao.insert(statusObj);
+                    statusObj.statusKey = "GPSDateTime";
+                    DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
+                    Date gdate = new Date(location.getTime());
+                    statusObj.value = format.format(gdate);
+                    BaseActivity.statusDao.insert(statusObj);
 
-                        Log.d(TAG, "onLocationUpdated:" + location.getLatitude() + ":::" + location.getLongitude());
-                    }
+                    Log.d(TAG, "onLocationUpdated:" + location.getLatitude() + ":::" + location.getLongitude());
                 });
     }
 
@@ -140,34 +133,31 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
 
         PendingResult<LocationSettingsResult> result =
                 LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient, builder.build());
-        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
-            @Override
-            public void onResult(LocationSettingsResult result) {
-                final Status status = result.getStatus();
-                final LocationSettingsStates state = result.getLocationSettingsStates();
-                switch (status.getStatusCode()) {
-                    case LocationSettingsStatusCodes.SUCCESS:
-                        // All location settings are satisfied. The client can initialize location
-                        // requests here.
-                        startLocationListenerServiceAccordingToDevice();
-                        break;
-                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
-                        // Location settings are not satisfied. But could be fixed by showing the user
-                        // a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),
-                            // and check the result in onActivityResult().
-                            status.startResolutionForResult((Activity) context, 10);
-                        } catch (IntentSender.SendIntentException e) {
-                            e.printStackTrace();
-                            // Ignore the error.
-                        }
-                        break;
-                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
-                        // Location settings are not satisfied. However, we have no way to fix the
-                        // settings so we won't show the dialog.
-                        break;
-                }
+        result.setResultCallback(result1 -> {
+            final Status status = result1.getStatus();
+            final LocationSettingsStates state = result1.getLocationSettingsStates();
+            switch (status.getStatusCode()) {
+                case LocationSettingsStatusCodes.SUCCESS:
+                    // All location settings are satisfied. The client can initialize location
+                    // requests here.
+                    startLocationListenerServiceAccordingToDevice();
+                    break;
+                case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                    // Location settings are not satisfied. But could be fixed by showing the user
+                    // a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),
+                        // and check the result in onActivityResult().
+                        status.startResolutionForResult((Activity) context, 10);
+                    } catch (IntentSender.SendIntentException e) {
+                        e.printStackTrace();
+                        // Ignore the error.
+                    }
+                    break;
+                case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                    // Location settings are not satisfied. However, we have no way to fix the
+                    // settings so we won't show the dialog.
+                    break;
             }
         });
     }
@@ -189,8 +179,6 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
 
     public boolean checkLocationEnabled() {
         LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-        if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            return true;
-        } else return false;
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
     }
 }

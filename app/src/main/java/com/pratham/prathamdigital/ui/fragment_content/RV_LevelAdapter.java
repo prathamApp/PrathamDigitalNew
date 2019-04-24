@@ -25,33 +25,31 @@ import butterknife.ButterKnife;
 
 public class RV_LevelAdapter extends RecyclerView.Adapter {
 
-    public static final int LAST_ITEM = 1;
-    public static final int NORMAL_ITEM = 2;
-    private final Context context;
-    private LevelContract levelContract;
-    private AsyncListDiffer<Modal_ContentDetail> mDiffer;
-    private DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
-            return Objects.equals(detail.getNodeid(), t1.getNodeid());
-        }
+    private static final int LAST_ITEM = 1;
+    private static final int NORMAL_ITEM = 2;
+    private final LevelContract levelContract;
+    private final AsyncListDiffer<Modal_ContentDetail> mDiffer;
 
-        @Override
-        public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
+    public RV_LevelAdapter(Context context, LevelContract levelContract) {
+        DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+                return Objects.equals(detail.getNodeid(), t1.getNodeid());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
+        Context context1 = context;
+        this.levelContract = levelContract;
+    }
 
     public void submitList(List<Modal_ContentDetail> data) {
         mDiffer.submitList(data);
-    }
-
-    public RV_LevelAdapter(Context context, LevelContract levelContract) {
-        mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
-        this.context = context;
-        this.levelContract = levelContract;
     }
 
     @Override
@@ -92,12 +90,7 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
                 last.last_level_name.setText(detail.getNodetitle());
                 break;
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                levelContract.levelClicked(detail);
-            }
-        });
+        viewHolder.itemView.setOnClickListener(v -> levelContract.levelClicked(detail));
     }
 
     @Override
@@ -116,12 +109,7 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
                     last.last_level_name.setText(contentDetail.getNodetitle());
                     break;
             }
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    levelContract.levelClicked(contentDetail);
-                }
-            });
+            holder.itemView.setOnClickListener(v -> levelContract.levelClicked(contentDetail));
         }
     }
 
@@ -134,7 +122,7 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
         @BindView(R.id.level_name)
         TextView l_name;
 
-        public NormalItemViewHolder(View itemView) {
+        NormalItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
@@ -144,7 +132,7 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
         @BindView(R.id.last_level_name)
         TextView last_level_name;
 
-        public LastItemViewHolder(View itemView) {
+        LastItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

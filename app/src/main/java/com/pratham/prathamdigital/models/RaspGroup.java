@@ -9,26 +9,15 @@ import java.util.ArrayList;
  */
 public class RaspGroup {
     @SerializedName("id")
-    public String id;
+    private String id;
     @SerializedName("data")
-    public ArrayList<Modal_Groups> data;
+    private ArrayList<Modal_Groups> data;
     @SerializedName("filter_name")
-    public String filter_name;
+    private String filter_name;
     @SerializedName("table_name")
-    public String table_name;
+    private String table_name;
     @SerializedName("facility")
-    public String facility;
-
-    @Override
-    public String toString() {
-        return "RaspGroup{" +
-                "id='" + id + '\'' +
-                ", data=" + data +
-                ", filter_name='" + filter_name + '\'' +
-                ", table_name='" + table_name + '\'' +
-                ", facility='" + facility + '\'' +
-                '}';
-    }
+    private String facility;
 
     public String getId() {
         return id;

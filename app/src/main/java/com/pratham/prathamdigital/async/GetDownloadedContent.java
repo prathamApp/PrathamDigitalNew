@@ -8,8 +8,8 @@ import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 public class GetDownloadedContent extends AsyncTask {
-    String parentId;
-    DownloadedContents downloadedContents;
+    private final String parentId;
+    private final DownloadedContents downloadedContents;
 
     public GetDownloadedContent(DownloadedContents downloadedContents, String parentId) {
         this.parentId = parentId;

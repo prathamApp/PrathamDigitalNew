@@ -22,25 +22,24 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
-    private Context context;
-    private ContractGroup contractGroup;
-    private AsyncListDiffer<Modal_Groups> mDiffer;
-    private DiffUtil.ItemCallback<Modal_Groups> diffcallback = new DiffUtil.ItemCallback<Modal_Groups>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
-            return Objects.equals(detail.getGroupId(), t1.getGroupId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
+    private final Context context;
+    private final ContractGroup contractGroup;
+    private final AsyncListDiffer<Modal_Groups> mDiffer;
 
     public GroupAdapter(Context context/*, ArrayList<Modal_Groups> datalist*/, ContractGroup contractGroup) {
-        mDiffer = new AsyncListDiffer<Modal_Groups>(this, diffcallback);
+        DiffUtil.ItemCallback<Modal_Groups> diffcallback = new DiffUtil.ItemCallback<Modal_Groups>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
+                return Objects.equals(detail.getGroupId(), t1.getGroupId());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
         this.context = context;
 //        this.datalist = datalist;
         this.contractGroup = contractGroup;
@@ -65,13 +64,8 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
             viewHolder.group_card.setCardBackgroundColor(context.getResources().getColor(R.color.att_unselected));
             viewHolder.img_grp_selected.setVisibility(View.GONE);
         }
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contractGroup.groupItemClicked(viewHolder.itemView,
-                        mDiffer.getCurrentList().get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
-            }
-        });
+        viewHolder.itemView.setOnClickListener(v -> contractGroup.groupItemClicked(viewHolder.itemView,
+                mDiffer.getCurrentList().get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition()));
     }
 
     @Override
@@ -95,7 +89,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         @BindView(R.id.img_grp_selected)
         ImageView img_grp_selected;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -1,9 +1,9 @@
 package com.pratham.prathamdigital.ui.assign;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.view.View;
@@ -31,8 +31,10 @@ import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.util.ArrayList;
 import java.util.List;
 
+@SuppressLint("Registered")
 @EActivity(R.layout.activity_assign_groups)
 public class Activity_AssignGroups extends BaseActivity implements AssignContract.assignView {
 
@@ -53,10 +55,10 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
 
     @Bean(AssignPresenterImpl.class)
     AssignContract.assignPresenter assignPresenter;
-    Boolean isAssigned = false;
+    private Boolean isAssigned = false;
 
-    private int vilID, cnt = 0;
-    public String checkBoxIds[], group1 = "0", group2 = "0", group3 = "0", group4 = "0", group5 = "0";
+    private int vilID;
+    private String[] checkBoxIds;
     private ProgressDialog progress;
 
     private final String SPINNER = "spinner";
@@ -87,7 +89,7 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
     @Override
     public void setStates(List<String> states) {
         //Creating the ArrayAdapter instance having the Villages list
-        ArrayAdapter<String> StateAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, states);
+        ArrayAdapter<String> StateAdapter = new ArrayAdapter<>(this, R.layout.custom_spinner, states);
         // Hint for AllSpinners
         spinner_SelectState.setPrompt("Select State");
         spinner_SelectState.setAdapter(StateAdapter);
@@ -111,7 +113,7 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
     public void populateBlock(List<String> blocks) {
         //Get Villages Data for Blocks AllSpinners
         //Creating the ArrayAdapter instance having the Villages list
-        ArrayAdapter<String> BlockAdapter = new ArrayAdapter<String>(this, R.layout.custom_spinner, blocks);
+        ArrayAdapter<String> BlockAdapter = new ArrayAdapter<>(this, R.layout.custom_spinner, blocks);
         // Hint for AllSpinners
         spinner_SelectBlock.setPrompt("Select Block");
         spinner_SelectBlock.setAdapter(BlockAdapter);
@@ -126,20 +128,23 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-
     }
 
     @UiThread
     @Override
     public void populateVillage(List<Modal_Village> villages) {
-        ArrayAdapter<Modal_Village> VillagesAdapter = new ArrayAdapter<Modal_Village>(this, R.layout.custom_spinner, villages);
+        List<String> vill_list = new ArrayList<>();
+        for (Modal_Village vill : villages)
+            vill_list.add(vill.getVillageName());
+        ArrayAdapter<String> VillagesAdapter = new ArrayAdapter<>(this, R.layout.custom_spinner, vill_list);
         // Hint for AllSpinners
-        spinner_selectVillage.setPrompt("Select Village");
+//        spinner_selectVillage.setPrompt("Select Village");
         spinner_selectVillage.setAdapter(VillagesAdapter);
         spinner_selectVillage.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                Modal_Village village = (Modal_Village) parent.getItemAtPosition(position);
+//                Modal_Village village = (Modal_Village) parent.getItemAtPosition(position);
+                Modal_Village village = villages.get(position);
                 vilID = village.getVillageId();
                 try {
                     assignPresenter.populateGroups(vilID);  //Populate groups According to JSON & DB in Checklist instead of using spinner
@@ -198,10 +203,14 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
     @Click(R.id.allocateGroups)
     public void assignButtonClick() {
         try {
-            group1 = group2 = group3 = group4 = group5 = "0";
-            cnt = 0;
+            String group1 = "0";
+            String group2 = "0";
+            String group3 = "0";
+            String group4 = "0";
+            String group5 = "0";
+            int cnt = 0;
             for (int i = 0; i < checkBoxIds.length; i++) {
-                CheckBox checkBox = (CheckBox) findViewById(i);
+                CheckBox checkBox = findViewById(i);
                 if (checkBox.isChecked() && group1.equals("0")) {
                     group1 = (String) checkBox.getTag();
                     cnt++;
@@ -223,7 +232,7 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
             }
             if (cnt < 1) {
                 Toast.makeText(Activity_AssignGroups.this, "Please Select atleast one Group !!!", Toast.LENGTH_SHORT).show();
-            } else if (cnt >= 1 && cnt <= 5) {
+            } else if (cnt <= 5) {
                 assignPresenter.assignGroups(group1, group2, group3, group4, group5, vilID);
             } else {
                 Toast.makeText(Activity_AssignGroups.this, " You can select Maximum 5 Groups !!! ", Toast.LENGTH_SHORT).show();
@@ -268,17 +277,11 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
                 .setTitle("Clear Data")
                 .setMessage("Are you sure you want to clear everything ?")
                 .setIcon(R.drawable.ic_warning)
-                .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        assignPresenter.clearData();
-                        dialog.dismiss();
-                    }
+                .setPositiveButton("Delete", (dialog, whichButton) -> {
+                    assignPresenter.clearData();
+                    dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
+                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
                 .create();
         clearDataDialog.show();
         clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);

@@ -8,8 +8,8 @@ import com.pratham.prathamdigital.models.Modal_Language;
 import java.util.ArrayList;
 
 public class LanguageDiffCallback extends DiffUtil.Callback {
-    private ArrayList<Modal_Language> oldLanguageList = new ArrayList<>();
-    private ArrayList<Modal_Language> newLanguageList = new ArrayList<>();
+    private final ArrayList<Modal_Language> oldLanguageList;
+    private final ArrayList<Modal_Language> newLanguageList;
 
     public LanguageDiffCallback(ArrayList<Modal_Language> oldLanguageList, ArrayList<Modal_Language> newLanguageList) {
         this.oldLanguageList = oldLanguageList;
@@ -34,16 +34,12 @@ public class LanguageDiffCallback extends DiffUtil.Callback {
     @Override
     public boolean areContentsTheSame(int oldItemPosition, int newItemPosition) {
         int result = newLanguageList.get(newItemPosition).compareTo(oldLanguageList.get(oldItemPosition));
-        if (result == 0) {
-            return true;
-        }
-        return false;
+        return result == 0;
     }
 
     @Nullable
     @Override
     public Object getChangePayload(int oldItemPosition, int newItemPosition) {
-        Modal_Language newLanguage = newLanguageList.get(newItemPosition);
-        return newLanguage;
+        return newLanguageList.get(newItemPosition);
     }
 }

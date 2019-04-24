@@ -11,23 +11,21 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @EBean
 public class AssignPresenterImpl implements AssignContract.assignPresenter {
-    Context context;
-    AssignContract.assignView assignView;
+    private final AssignContract.assignView assignView;
 
     public AssignPresenterImpl(Context context) {
-        this.context = context;
+        Context context1 = context;
         this.assignView = (AssignContract.assignView) context;
     }
 
     @Background
     @Override
     public void getStates() {
-        List<String> states = new ArrayList<>();
+        List<String> states;
 //        States.add("Select State");
         states = BaseActivity.villageDao.getAllStates();
         assignView.setStates(states);
@@ -43,7 +41,7 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     @Background
     @Override
     public void getBlocks(String selectedState) {
-        List<String> blocks = new ArrayList<>();
+        List<String> blocks;
         blocks = BaseActivity.villageDao.GetStatewiseBlock(selectedState);
         assignView.populateBlock(blocks);
     }
@@ -52,7 +50,7 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     @Override
     public void getVillages(String selectedBlock) {
         String programID = BaseActivity.statusDao.getValue("programId");
-        List<Modal_Village> BlocksVillages = new ArrayList<Modal_Village>();
+        List<Modal_Village> BlocksVillages;
         if (programID.equals("1") || programID.equals("3") || programID.equals("10")) { // H Learning
             BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
             assignView.populateVillage(BlocksVillages);

@@ -43,10 +43,4 @@ public class Activity_VPlayer extends BaseActivity {
         this.finish();
         overridePendingTransition(R.anim.nothing, R.anim.pop_out);
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
 }

@@ -2,6 +2,8 @@ package com.pratham.prathamdigital.view_holders;
 
 import android.animation.Animator;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.graphics.Palette;
@@ -19,7 +21,6 @@ import com.facebook.datasource.DataSource;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.Priority;
 import com.facebook.imagepipeline.common.ResizeOptions;
 import com.facebook.imagepipeline.datasource.BaseBitmapDataSubscriber;
 import com.facebook.imagepipeline.image.CloseableImage;
@@ -32,8 +33,10 @@ import com.pratham.prathamdigital.custom.swipe_reveal_layout.SwipeRevealLayout;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -69,9 +72,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     @Nullable
     @BindView(R.id.content_card_file)
     ElasticView content_card_file;
-    Modal_ContentDetail contentItem;
-    ContentContract.contentClick contentClick;
-    ImageRequest request = null;
+    private final ContentContract.contentClick contentClick;
 
     public FileViewHolder(View view, final ContentContract.contentClick contentClick) {
         super(view);
@@ -80,28 +81,28 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void setContentItem(Modal_ContentDetail contentItem, int pos) {
-        this.contentItem = contentItem;
         if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
+            ImageRequest request;
             if (contentItem.isDownloaded()) {
                 Uri imgUri;
                 if (contentItem.isOnSDCard()) {
                     imgUri = Uri.fromFile(new File(
                             PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()));
-                    file_swipe_layout.setLockDrag(true);
-                    file_content_image.setImageURI(imgUri);
+                    Objects.requireNonNull(file_swipe_layout).setLockDrag(true);
+                    Objects.requireNonNull(file_content_image).setImageURI(imgUri);
                 } else {
                     imgUri = Uri.fromFile(new File(
                             PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()));
-                    file_swipe_layout.setLockDrag(false);
-                    file_content_image.setImageURI(imgUri);
+                    Objects.requireNonNull(file_swipe_layout).setLockDrag(false);
+                    Objects.requireNonNull(file_content_image).setImageURI(imgUri);
                 }
-                request = ImageRequestBuilder
-                        .newBuilderWithSource(imgUri)
-                        .setRequestPriority(Priority.HIGH)
-                        .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-                        .build();
+//                request = ImageRequestBuilder
+//                        .newBuilderWithSource(imgUri)
+//                        .setRequestPriority(Priority.HIGH)
+//                        .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
+//                        .build();
             } else {
-                file_swipe_layout.setLockDrag(true);
+                Objects.requireNonNull(file_swipe_layout).setLockDrag(true);
                 if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {
                     request = ImageRequestBuilder
                             .newBuilderWithSource(Uri.parse(contentItem.getKolibriNodeImageUrl()))
@@ -116,58 +117,45 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                 if (request != null) {
                     DraweeController controller = Fresco.newDraweeControllerBuilder()
                             .setImageRequest(request)
-                            .setOldController(file_content_image.getController())
+                            .setOldController(Objects.requireNonNull(file_content_image).getController())
                             .build();
                     file_content_image.setController(controller);
                 }
             }
         }
-        if (rl_reveal.getVisibility() == View.VISIBLE)
+        if (Objects.requireNonNull(rl_reveal).getVisibility() == View.VISIBLE)
             unreveal(rl_reveal);
         if (contentItem.isDownloaded()) {
-            rl_download.setVisibility(View.GONE);
+            Objects.requireNonNull(rl_download).setVisibility(View.GONE);
             rl_download.setOnClickListener(null);
-            rl_play_content.setVisibility(View.VISIBLE);
-            file_content_desc.setText(contentItem.getNodetitle());
+            Objects.requireNonNull(rl_play_content).setVisibility(View.VISIBLE);
+            Objects.requireNonNull(file_content_desc).setText(contentItem.getNodetitle());
             if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-                file_item_lottieview.setAnimation("gaming_pad.json");
+                Objects.requireNonNull(file_item_lottieview).setAnimation("gaming_pad.json");
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-                file_item_lottieview.setAnimation("play_button.json");
+                Objects.requireNonNull(file_item_lottieview).setAnimation("play_button.json");
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-                file_item_lottieview.setAnimation("book.json");
-            content_card_file.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    contentClick.openContent(pos, contentItem);
-                }
-            });
-            delete_layout.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    file_swipe_layout.close(true);
-                    contentClick.deleteContent(pos, contentItem);
-                }
+                Objects.requireNonNull(file_item_lottieview).setAnimation("book.json");
+            Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
+            Objects.requireNonNull(delete_layout).setOnClickListener(v -> {
+                Objects.requireNonNull(file_swipe_layout).close(true);
+                contentClick.deleteContent(pos, contentItem);
             });
         } else {
-            rl_play_content.setVisibility(View.GONE);
+            Objects.requireNonNull(rl_play_content).setVisibility(View.GONE);
             rl_reveal.setVisibility(View.INVISIBLE);
-            rl_download.setVisibility(View.VISIBLE);
-            txt_resource_title.setText(contentItem.getNodetitle());
-            if (request != null)
-                processImageWithPaletteApi(request);
-//            Drawable background = rl_download.getBackground();
-//            if (background instanceof GradientDrawable) {
-//                int color = PD_Utility.getRandomColorGradient();
-//                ((GradientDrawable) background).setColor(color);
-//                rl_reveal.setBackgroundColor(color);
-//            }
-            rl_download.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    contentClick.onDownloadClicked(pos, contentItem, rl_reveal);
-                }
-            });
-            content_card_file.setOnClickListener(null);
+            Objects.requireNonNull(rl_download).setVisibility(View.VISIBLE);
+            Objects.requireNonNull(txt_resource_title).setText(contentItem.getNodetitle());
+//            if (request != null)
+//                processImageWithPaletteApi(request);
+            Drawable background = rl_download.getBackground();
+            if (background instanceof GradientDrawable) {
+                int color = PD_Utility.getRandomColorGradient();
+                ((GradientDrawable) background).setColor(color);
+                rl_reveal.setBackgroundColor(color);
+            }
+            rl_download.setOnClickListener(v -> contentClick.onDownloadClicked(pos, contentItem, rl_reveal));
+            Objects.requireNonNull(content_card_file).setOnClickListener(null);
         }
     }
 
@@ -177,7 +165,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             int centerX = view.getWidth();
             int centerY = view.getHeight();
             int startRadius = 0;
-            int endRadius = (int) Math.max(view.getWidth(), view.getHeight());
+            int endRadius = Math.max(view.getWidth(), view.getHeight());
             Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, endRadius, startRadius);
             anim.setInterpolator(new AccelerateDecelerateInterpolator());
             anim.setDuration(300);
@@ -208,7 +196,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
 
     private void processImageWithPaletteApi(ImageRequest request) {
         DataSource<CloseableReference<CloseableImage>> dataSource =
-                Fresco.getImagePipeline().fetchDecodedImage(request, file_content_image.getContext());
+                Fresco.getImagePipeline().fetchDecodedImage(request, Objects.requireNonNull(file_content_image).getContext());
         dataSource.subscribe(new BaseBitmapDataSubscriber() {
             @Override
             protected void onFailureImpl(DataSource<CloseableReference<CloseableImage>> dataSource) {
@@ -217,13 +205,10 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
 
             @Override
             protected void onNewResultImpl(@Nullable Bitmap bitmap) {
-                Palette.from(bitmap).maximumColorCount(5).generate(new Palette.PaletteAsyncListener() {
-                    @Override
-                    public void onGenerated(Palette palette) {
-                        Palette.Swatch textSwatch = palette.getVibrantSwatch();
-                        if (textSwatch != null && rl_reveal != null)
-                            rl_reveal.setBackgroundColor(textSwatch.getRgb());
-                    }
+                Palette.from(Objects.requireNonNull(bitmap)).maximumColorCount(5).generate(palette -> {
+                    Palette.Swatch textSwatch = Objects.requireNonNull(palette).getVibrantSwatch();
+                    if (textSwatch != null && rl_reveal != null)
+                        rl_reveal.setBackgroundColor(textSwatch.getRgb());
                 });
             }
         }, CallerThreadExecutor.getInstance());

@@ -38,7 +38,7 @@ public class Modal_Rasp_Header {
         this.author = author;
     }
 
-    public String getDescription() {
+    private String getDescription() {
         return description;
     }
 
@@ -46,7 +46,7 @@ public class Modal_Rasp_Header {
         this.description = description;
     }
 
-    public String getId() {
+    private String getId() {
         return id;
     }
 
@@ -70,7 +70,7 @@ public class Modal_Rasp_Header {
         this.lang_code = lang_code;
     }
 
-    public String getLang_name() {
+    private String getLang_name() {
         return lang_name;
     }
 
@@ -78,7 +78,7 @@ public class Modal_Rasp_Header {
         this.lang_name = lang_name;
     }
 
-    public String getName() {
+    private String getName() {
         return name;
     }
 
@@ -86,7 +86,7 @@ public class Modal_Rasp_Header {
         this.name = name;
     }
 
-    public String getRoot() {
+    private String getRoot() {
         return root;
     }
 
@@ -102,7 +102,7 @@ public class Modal_Rasp_Header {
         this.thumbnail = thumbnail;
     }
 
-    public int getVersion() {
+    private int getVersion() {
         return version;
     }
 

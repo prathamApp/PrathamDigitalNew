@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -26,7 +27,7 @@ import java.util.Set;
 
 public class TTSService implements TextToSpeech.OnInitListener {
 
-    final static String TAG = TTSService.class.getSimpleName();
+    private final static String TAG = TTSService.class.getSimpleName();
 
     /**
      * Pitch when we have focus
@@ -39,7 +40,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
     /**
      * ID for when no text is spoken
      */
-    public static final String UTTERANCE_ID_NONE = "-1";
+    private static final String UTTERANCE_ID_NONE = "-1";
 
     private final TextToSpeech textToSpeech;
 
@@ -63,14 +64,14 @@ public class TTSService implements TextToSpeech.OnInitListener {
     private String playOnInit = null;
     private int queueMode = TextToSpeech.QUEUE_FLUSH;
 
-    private final LinkedHashMap<String, String> samples = new LinkedHashMap<String, String>();
-    private final ArrayList<String> unwantedPhrases = new ArrayList<String>();
+    private final LinkedHashMap<String, String> samples = new LinkedHashMap<>();
+    private final ArrayList<String> unwantedPhrases = new ArrayList<>();
 
-    private HashMap<String, Runnable> onStartRunnables = new HashMap<String, Runnable>();
-    private HashMap<String, Runnable> onDoneRunnables = new HashMap<String, Runnable>();
-    private HashMap<String, Runnable> onErrorRunnables = new HashMap<String, Runnable>();
+    private final HashMap<String, Runnable> onStartRunnables = new HashMap<>();
+    private final HashMap<String, Runnable> onDoneRunnables = new HashMap<>();
+    private final HashMap<String, Runnable> onErrorRunnables = new HashMap<>();
 
-    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+    private final AudioManager.OnAudioFocusChangeListener audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
         public void onAudioFocusChange(int focusChange) {
             switch (focusChange) {
                 case AudioManager.AUDIOFOCUS_GAIN:
@@ -83,7 +84,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
         }
     };
 
-    UtteranceProgressListener utteranceProgressListener = new UtteranceProgressListener() {
+    private final UtteranceProgressListener utteranceProgressListener = new UtteranceProgressListener() {
         @Override
         public void onStart(String utteranceId) {
             detectAndRun(utteranceId, onStartRunnables);
@@ -93,9 +94,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
         public void onDone(String utteranceId) {
             if (detectAndRun(utteranceId, onDoneRunnables)) {
                 // because either onDone or onError will be called for an utteranceId, cleanup other
-                if (onErrorRunnables.containsKey(utteranceId)) {
-                    onErrorRunnables.remove(utteranceId);
-                }
+                onErrorRunnables.remove(utteranceId);
             }
         }
 
@@ -103,9 +102,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
         public void onError(String utteranceId) {
             if (detectAndRun(utteranceId, onErrorRunnables)) {
                 // because either onDone or onError will be called for an utteranceId, cleanup other
-                if (onDoneRunnables.containsKey(utteranceId)) {
-                    onDoneRunnables.remove(utteranceId);
-                }
+                onDoneRunnables.remove(utteranceId);
             }
         }
     };
@@ -218,7 +215,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
      * @param text
      * @param onStart
      */
-    public void play(String text, Runnable onStart, Runnable onDone, Runnable onError) {
+    private void play(String text, Runnable onStart, Runnable onDone, Runnable onError) {
         if (doesNotContainUnwantedPhrase(text)) {
             text = applyRemixes(text);
             if (initialized) {
@@ -246,7 +243,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
     private String applyRemixes(String text) {
         for (String key : samples.keySet()) {
             if (text.contains(key)) {
-                text = text.replace(key, samples.get(key));
+                text = text.replace(key, Objects.requireNonNull(samples.get(key)));
             }
         }
         return text;
@@ -313,7 +310,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
         am.abandonAudioFocus(audioFocusChangeListener);
     }
 
-    public void enableVolumeControl(Activity activity) {
+    private void enableVolumeControl(Activity activity) {
         if (activity != null) {
             activity.setVolumeControlStream(AudioManager.STREAM_MUSIC);
         }
@@ -345,7 +342,7 @@ public class TTSService implements TextToSpeech.OnInitListener {
     /**
      * Shutdown the {@link TextToSpeech} object and unregister activity lifecycle callbacks
      */
-    public void shutdown() {
+    private void shutdown() {
         textToSpeech.shutdown();
         application.unregisterActivityLifecycleCallbacks(callbacks);
     }

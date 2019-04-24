@@ -25,33 +25,32 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileViewHolder> {
-    Context context;
-    ContractShare.shareView shareView;
-    private AsyncListDiffer<File_Model> mDiffer;
-    private DiffUtil.ItemCallback<File_Model> diffcallback = new DiffUtil.ItemCallback<File_Model>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull File_Model detail, @NonNull File_Model t1) {
-            return Objects.equals(detail.getDetail().getNodeid(), t1.getDetail().getNodeid());
-        }
+    private final ContractShare.shareView shareView;
+    private final AsyncListDiffer<File_Model> mDiffer;
 
-        @Override
-        public boolean areContentsTheSame(@NonNull File_Model detail, @NonNull File_Model t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
+    public FileListAdapter(Context context, ContractShare.shareView shareView) {
+        DiffUtil.ItemCallback<File_Model> diffcallback = new DiffUtil.ItemCallback<File_Model>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull File_Model detail, @NonNull File_Model t1) {
+                return Objects.equals(detail.getDetail().getNodeid(), t1.getDetail().getNodeid());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull File_Model detail, @NonNull File_Model t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
+        Context context1 = context;
+        this.shareView = shareView;
+    }
 
     public void submitList(List<File_Model> data) {
         mDiffer.submitList(data);
     }
 
-    public FileListAdapter(Context context, ContractShare.shareView shareView) {
-        mDiffer = new AsyncListDiffer<File_Model>(this, diffcallback);
-        this.context = context;
-        this.shareView = shareView;
-    }
-
+    @NonNull
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater header = LayoutInflater.from(parent.getContext());
@@ -88,12 +87,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
 
         File_Model file_model;
 
-        public FileViewHolder(View itemView) {
+        FileViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void setFile_model(File_Model file_model, int pos) {
+        void setFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
                 share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
@@ -103,24 +102,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                         + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
                 share_title.setText(file_model.getDetail().getNodetitle());
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        shareView.fileItemClicked(file_model.getDetail(), pos);
-                    }
-                });
+                itemView.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
             } else {
                 share_title.setText("Share");
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        shareView.sendItemChecked(file_model, pos);
-                    }
-                });
+                itemView.setOnClickListener(v -> shareView.sendItemChecked(file_model, pos));
             }
         }
 
-        public void updateFile_model(File_Model file_model, int pos) {
+        void updateFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
                 share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
@@ -130,19 +119,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                         "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
                 share_title.setText(file_model.getDetail().getNodetitle());
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        shareView.fileItemClicked(file_model.getDetail(), pos);
-                    }
-                });
+                itemView.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
             } else {
-                itemView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        shareView.sendItemChecked(file_model, getAdapterPosition());
-                    }
-                });
+                itemView.setOnClickListener(v -> shareView.sendItemChecked(file_model, getAdapterPosition()));
             }
         }
     }

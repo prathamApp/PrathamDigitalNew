@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.fragment_receive;
 
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -52,6 +51,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
@@ -86,7 +86,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     private ReceivedFileListAdapter receivedFileListAdapter;
 
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -116,12 +116,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 //                    ss.setSpan(new RelativeSizeSpan(1.2f), 0, 4, SpannableString.SPAN_INCLUSIVE_EXCLUSIVE);
 //                    status.setText(ss);
                     circleProgress.finishAnim();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            createHotspotQrCode();
-                        }
-                    }, 1500);
+                    new Handler().postDelayed(() -> createHotspotQrCode(), 1500);
                     break;
             }
         }
@@ -186,17 +181,14 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 
     @Override
     public void disconnectFTP() {
-        new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("PraDigi")
                 .setMessage("Do you want to Disconnect?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        WifiUtils.closeWifiAp();
-                        getActivity().sendBroadcast(new Intent(FsService.ACTION_STOP_FTPSERVER));
-                        //circular_share_reveal.unReveal();
-                    }
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    WifiUtils.closeWifiAp();
+                    getActivity().sendBroadcast(new Intent(FsService.ACTION_STOP_FTPSERVER));
+                    //circular_share_reveal.unReveal();
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -220,15 +212,10 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     @UiThread
     public void animateHotspotCreation() {
         startCreateAnim();
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                hotspotUtils.enableConfigured("pratham", null);
-            }
-        }, 2000);
+        mHandler.postDelayed(() -> hotspotUtils.enableConfigured("pratham", null), 2000);
     }
 
-    public void startCreateAnim() {
+    private void startCreateAnim() {
         shareCircle.animate().scaleX(1).scaleY(1).translationX(0).translationY(0).
                 setDuration(1000).setInterpolator(new DecelerateInterpolator()).start();
         shareCircle.setVisibility(View.VISIBLE);
@@ -264,11 +251,11 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 
     private void startServer() {
         Intent intent = new Intent(FsService.ACTION_START_FTPSERVER);
-        intent.setPackage(getActivity().getPackageName());
+        intent.setPackage(Objects.requireNonNull(getActivity()).getPackageName());
         getActivity().sendBroadcast(intent);
     }
 
-    public Bitmap createBitmap(BitMatrix matrix) {
+    private Bitmap createBitmap(BitMatrix matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
         int[] pixels = new int[width * height];
@@ -287,13 +274,10 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.FTP_CLIENT_CONNECTED)) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        rl_hotspot_qr.setVisibility(View.GONE);
-                        ll_receive_files.setVisibility(View.VISIBLE);
-                        Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
-                    }
+                Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    rl_hotspot_qr.setVisibility(View.GONE);
+                    ll_receive_files.setVisibility(View.VISIBLE);
+                    Toast.makeText(getActivity(), "Client Connected", Toast.LENGTH_SHORT).show();
                 });
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_RECEIVE_COMPLETE)) {
                 List<Modal_ReceivingFilesThroughFTP> list = receivedFileListAdapter.getList();

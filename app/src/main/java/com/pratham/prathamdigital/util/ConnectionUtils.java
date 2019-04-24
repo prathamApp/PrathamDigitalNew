@@ -16,18 +16,17 @@ import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 public class ConnectionUtils {
     public static final String TAG = ConnectionUtils.class.getSimpleName();
 
-    private Context mContext;
-    private WifiManager mWifiManager;
-    private HotspotUtils mHotspotUtils;
-    private LocationManager mLocationManager;
-    private ConnectivityManager mConnectivityManager;
+    private final Context mContext;
+    private final WifiManager mWifiManager;
+    private final LocationManager mLocationManager;
+    private final ConnectivityManager mConnectivityManager;
 
-    ConnectionUtils(Context context) {
+    private ConnectionUtils(Context context) {
         mContext = context;
 
         mWifiManager = (WifiManager) getContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         mLocationManager = (LocationManager) getContext().getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-        mHotspotUtils = HotspotUtils.getInstance(getContext(), null);
+        HotspotUtils mHotspotUtils = HotspotUtils.getInstance(getContext(), null);
         mConnectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
@@ -42,7 +41,7 @@ public class ConnectionUtils {
         return networkName.replace("\"", "");
     }
 
-    public boolean canAccessLocation() {
+    private boolean canAccessLocation() {
         return hasLocationPermission(getContext()) && isLocationServiceEnabled();
     }
 
@@ -50,12 +49,12 @@ public class ConnectionUtils {
         return getWifiManager().isWifiEnabled() && (Build.VERSION.SDK_INT < 23 || canAccessLocation());
     }
 
-    public boolean disableCurrentNetwork() {
+    private void disableCurrentNetwork() {
         // This is because we are only allowed to manipulate the connections that we added.
         // And if it is the case, then the return value of disableNetwork will be false.
-        return isConnectedToAnyNetwork()
-                && getWifiManager().disconnect()
-                && getWifiManager().disableNetwork(getWifiManager().getConnectionInfo().getNetworkId());
+        if (isConnectedToAnyNetwork() && getWifiManager().disconnect()) {
+            getWifiManager().disableNetwork(getWifiManager().getConnectionInfo().getNetworkId());
+        }
     }
 /*
     @WorkerThread
@@ -126,23 +125,23 @@ public class ConnectionUtils {
         return remoteAddress;
     }*/
 
-    public boolean hasLocationPermission(Context context) {
+    private boolean hasLocationPermission(Context context) {
         return ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED;
     }
 
-    public Context getContext() {
+    private Context getContext() {
         return mContext;
     }
 
-    public ConnectivityManager getConnectivityManager() {
+    private ConnectivityManager getConnectivityManager() {
         return mConnectivityManager;
     }
 
-    public WifiManager getWifiManager() {
+    private WifiManager getWifiManager() {
         return mWifiManager;
     }
 
-    public boolean isConnectedToAnyNetwork() {
+    private boolean isConnectedToAnyNetwork() {
         NetworkInfo info = getConnectivityManager().getActiveNetworkInfo();
 
         return info != null
@@ -160,7 +159,7 @@ public class ConnectionUtils {
         return hotspotNetwork.SSID.equals(getCleanNetworkName(getWifiManager().getConnectionInfo().getSSID()));
     }*/
 
-    public boolean isLocationServiceEnabled() {
+    private boolean isLocationServiceEnabled() {
         return mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
@@ -188,9 +187,8 @@ public class ConnectionUtils {
 
                 if (password != null && password.matches("[0-9A-Fa-f]*")) {
                     config.wepKeys[0] = password;
-                } else {
-                    //fail("Please type hex pair for the password");
-                }
+                }  //fail("Please type hex pair for the password");
+
                 break;
             case 2: // WEP128
                 config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.NONE);
@@ -201,9 +199,8 @@ public class ConnectionUtils {
                 if (password != null
                         && password.matches("[0-9A-Fa-f]*")) {
                     config.wepKeys[0] = password;
-                } else {
-                    //fail("Please type hex pair for the password");
-                }
+                }  //fail("Please type hex pair for the password");
+
                 break;
             case 3: // WPA_TKIP
                 config.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);

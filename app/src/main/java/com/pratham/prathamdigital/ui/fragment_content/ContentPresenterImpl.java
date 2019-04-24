@@ -44,19 +44,22 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @EBean
 public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents, ApiResult {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
-    Context context;
-    ContentContract.contentView contentView;
-    ArrayList<Modal_ContentDetail> levelContents;
-    Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
-    Map<String, AsyncTask> currentDownloadTasks = new HashMap<>();
+    private final Context context;
+    private final Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
+    private final Map<String, AsyncTask> currentDownloadTasks = new HashMap<>();
+    @Bean(PD_ApiRequest.class)
+    PD_ApiRequest pd_apiRequest;
+    private ContentContract.contentView contentView;
     ArrayList<String> dlContentIDs = new ArrayList<>();
 
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
+    private ArrayList<Modal_ContentDetail> levelContents;
 
     public ContentPresenterImpl(Context context) {
         this.context = context;
@@ -64,7 +67,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Override
     public void setView(FragmentContent context) {
-        this.contentView = (ContentContract.contentView) context;
+        this.contentView = context;
+        pd_apiRequest.setApiResult(ContentPresenterImpl.this);
     }
 
     @Override
@@ -121,8 +125,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     JSONObject object = new JSONObject();
                     object.put("username", "pratham");
                     object.put("password", "pratham");
-                    new PD_ApiRequest(context, ContentPresenterImpl.this)
-                            .getacilityIdfromRaspberry(PD_Constant.FACILITY_ID, PD_Constant.RASP_IP + "/api/session/", object);
+                    pd_apiRequest.getacilityIdfromRaspberry(PD_Constant.FACILITY_ID, PD_Constant.RASP_IP + "/api/session/", object);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -158,26 +161,22 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Background
     public void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
-            new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
+            pd_apiRequest.getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
         } else {
-            new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
-                            + parentId, contentList);
+            pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
+                    + parentId, contentList);
         }
     }
 
     @Background
     public void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
-            new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromInternet(PD_Constant.INTERNET_HEADER,
-                            PD_Constant.URL.GET_TOP_LEVEL_NODE
-                                    + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"), contentList);
+            pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
+                    PD_Constant.URL.GET_TOP_LEVEL_NODE
+                            + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"), contentList);
         } else {
-            new PD_ApiRequest(context, ContentPresenterImpl.this)
-                    .getContentFromInternet(PD_Constant.BROWSE_INTERNET,
-                            PD_Constant.URL.BROWSE_BY_ID + parentId, contentList);
+            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                    PD_Constant.URL.BROWSE_BY_ID + parentId, contentList);
         }
     }
 
@@ -185,7 +184,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void downloadContent(Modal_ContentDetail contentDetail) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
+            pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
                     PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
@@ -200,7 +199,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     e.printStackTrace();
                 }
             } else {
-                new PD_ApiRequest(context, ContentPresenterImpl.this).getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
+                pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
                         PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
             }
         }
@@ -314,7 +313,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    public ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
+    private ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
             , final ArrayList<Modal_ContentDetail> onlineContents) {
         if (!totalContents.isEmpty()) {
             for (Modal_ContentDetail total : totalContents) {
@@ -363,7 +362,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 contentView.showNoConnectivity();
         } else {
 //            Collections.shuffle(totalContents);
-            contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
+            Objects.requireNonNull(contentList).add(0, new Modal_ContentDetail());//null modal for displaying header
             if (contentView != null)
                 contentView.displayContents(contentList);
         }
@@ -386,16 +385,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         filesDownloading.remove(downloadID);
         postAllDownloadsCompletedMessage();
         postSingleFileDownloadCompleteMessage(content);
-        if (currentDownloadTasks.containsKey(downloadID))
-            currentDownloadTasks.remove(downloadID);
+        currentDownloadTasks.remove(downloadID);
     }
 
     @Override
     public void ondownloadError(String downloadId) {
-        Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
+        Modal_ContentDetail content = Objects.requireNonNull(filesDownloading.get(downloadId)).getContentDetail();
         postSingleFileDownloadErrorMessage(content);
         filesDownloading.remove(downloadId);
-        EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
         cancelDownload(downloadId);
     }
 
@@ -462,7 +460,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             modal_fileDownloading.setDownloadId(String.valueOf(downloadId));
             modal_fileDownloading.setFilename(filename);
             modal_fileDownloading.setProgress(progress);
-            modal_fileDownloading.setContentDetail(filesDownloading.get(downloadId).getContentDetail());
+            modal_fileDownloading.setContentDetail(Objects.requireNonNull(filesDownloading.get(downloadId)).getContentDetail());
             filesDownloading.put(String.valueOf(downloadId), modal_fileDownloading);
             postProgressMessage();
         }
@@ -470,7 +468,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @UiThread
     public void postProgressMessage() {
-        EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
     }
 
     @Override
@@ -486,9 +484,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void eventOnDownloadCompleted_(EventMessage message) {
         String downloadId = message.getDownloadId();
         Log.d(TAG, "updateFileProgress: " + downloadId);
-        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-        temp.addAll(levelContents);
-        Modal_ContentDetail content = filesDownloading.get(downloadId).getContentDetail();
+        ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levelContents);
+        Modal_ContentDetail content = Objects.requireNonNull(filesDownloading.get(downloadId)).getContentDetail();
         content.setContentType("file");
         content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
         temp.add(content);
@@ -519,7 +516,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @UiThread
     public void postAllDownloadsCompletedMessage() {
 //        if (filesDownloading.size() == 0) {
-        EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
 //        }
     }
 
@@ -528,10 +525,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void eventOnDownloadFailed(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
-                Modal_ContentDetail content = filesDownloading.get(message.getDownloadId()).getContentDetail();
+                Modal_ContentDetail content = Objects.requireNonNull(filesDownloading.get(message.getDownloadId())).getContentDetail();
                 postSingleFileDownloadErrorMessage(content);
                 filesDownloading.remove(message.getDownloadId());
-                EventBus.getDefault().post(new ArrayList<Modal_FileDownloading>(filesDownloading.values()));
+                EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
             }
         }
     }
@@ -593,20 +590,20 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         final int takeFlags = data.getFlags()
                 & (Intent.FLAG_GRANT_READ_URI_PERMISSION
                 | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-        PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+        PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(Objects.requireNonNull(treeUri), takeFlags);
         //check if folder exist on sdcard
         DocumentFile documentFile = DocumentFile.fromTreeUri(PrathamApplication.getInstance(), treeUri);
-        if (documentFile.findFile(PD_Constant.PRADIGI_FOLDER) != null)
+        if (Objects.requireNonNull(documentFile).findFile(PD_Constant.PRADIGI_FOLDER) != null)
             documentFile = documentFile.findFile(PD_Constant.PRADIGI_FOLDER);
         else
             documentFile = documentFile.createDirectory(PD_Constant.PRADIGI_FOLDER);
         //check for language folder
-        if (documentFile.findFile(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)) != null)
+        if (Objects.requireNonNull(documentFile).findFile(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)) != null)
             documentFile = documentFile.findFile(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
         else
             documentFile = documentFile.createDirectory(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
 
-        String path = FileUtils.getPath(PrathamApplication.getInstance(), documentFile.getUri());
+        String path = FileUtils.getPath(PrathamApplication.getInstance(), Objects.requireNonNull(documentFile).getUri());
         FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
         FastSave.getInstance().saveString(PD_Constant.SDCARD_PATH, path);
         PrathamApplication.getInstance().setExistingSDContentPath(path);
@@ -642,7 +639,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void cancelDownload(String downloadId) {
         if (downloadId != null && !downloadId.isEmpty()) {
             if (currentDownloadTasks.containsKey(downloadId))
-                currentDownloadTasks.get(downloadId).cancel(true);
+                Objects.requireNonNull(currentDownloadTasks.get(downloadId)).cancel(true);
             postProgressMessage();
         }
     }

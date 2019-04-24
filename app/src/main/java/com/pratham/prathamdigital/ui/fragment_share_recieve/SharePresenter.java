@@ -55,24 +55,11 @@ import java.util.TimerTask;
 @EBean
 public class SharePresenter implements DownloadedContents, ContractShare.sharePresenter, FTPConnected {
     private static final String TAG = SharePresenter.class.getSimpleName();
-    Context context;
-    ContractShare.shareView shareView;
-    FTPClient ftpClient;
-    ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
-    HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
-    Timer ftpTimer = new Timer();
-    int ftpConnectionTry = 0;
-
-    public SharePresenter(Context context) {
-        this.context = context;
-    }
-
-    @Override
-    public void setView(Fragment fragmentShareRecieve) {
-        this.shareView = (ContractShare.shareView) fragmentShareRecieve;
-    }
-
-    AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
+    private final Context context;
+    private final ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
+    private final HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
+    private ContractShare.shareView shareView;
+    private final AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
         @Override
         public void failureAddingNetwork(int i) {
             Log.d(TAG, "failureAddingNetwork: ");
@@ -88,6 +75,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             Log.d(TAG, "wisefyFailure: ");
         }
     };
+    private FTPClient ftpClient;
+    private Timer ftpTimer = new Timer();
+
+    public SharePresenter(Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public void setView(Fragment fragmentShareRecieve) {
+        this.shareView = (ContractShare.shareView) fragmentShareRecieve;
+    }
+
+    private int ftpConnectionTry = 0;
 
     @Override
     public void viewDestroyed() {
@@ -122,7 +122,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         });
     }
 
-    public void connectToNetwork(String ssid) {
+    private void connectToNetwork(String ssid) {
         PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
@@ -195,7 +195,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             shareView.showFilesList(downloads, parentId);
     }
 
-    public ArrayList<File_Model> addProfileAndUsage() {
+    private ArrayList<File_Model> addProfileAndUsage() {
         ArrayList<File_Model> downloads = new ArrayList<>();
         //Add Profile Item
         Modal_ContentDetail profile_detail = new Modal_ContentDetail();
@@ -239,15 +239,12 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 shareView.ftpConnected_showFolders();
         } else {
             Log.d(TAG, "onFTPConnected: trying to connect again");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (ftpConnectionTry < 5) {     //not more than 5 tries, otherwise infinite loop until success
-                        ftpConnectionTry += 1;
-                        connectFTP();
-                    } else {
-                        if (shareView != null) shareView.ftpConnectionFailed();
-                    }
+            new Handler().postDelayed(() -> {
+                if (ftpConnectionTry < 5) {     //not more than 5 tries, otherwise infinite loop until success
+                    ftpConnectionTry += 1;
+                    connectFTP();
+                } else {
+                    if (shareView != null) shareView.ftpConnectionFailed();
                 }
             }, 1000);
         }
@@ -288,8 +285,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         if (ftpClient != null) {
             if (ftpTimer != null)
                 ftpTimer.cancel();
-            String dirPath = "";
-            String imgDirPath = "";
+            String dirPath;
+            String imgDirPath;
             if (detail.isOnSDCard()) {
                 dirPath = PrathamApplication.contentSDPath;
                 imgDirPath = PrathamApplication.contentSDPath;
@@ -311,15 +308,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 File contentJson = createJsonFileForContent(detail);
                 if (contentJson != null) {
 //                    for Content Transfer
-                    FTPContentUploadTask contentTask = new FTPContentUploadTask(context, ftpClient, dirPath,
+                    FTPContentUploadTask contentTask = new FTPContentUploadTask(/*context, */ftpClient, dirPath,
                             detail.getResourcetype(), detail.getNodeid());
                     contentTask.execute();
 //                    for content thumbnail Image Transfer
-                    imgDirPath += "/PrathamImages/" + detail.getNodeimage();
-                    FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient, imgDirPath, true);
+//                    imgDirPath += "/PrathamImages/" + detail.getNodeimage();
+                    ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levels);
+                    temp.add(detail);
+                    FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient,
+                            imgDirPath, true, temp);
                     imgtask.execute();
 //                    for file Json Transfer
-                    FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, contentJson.getAbsolutePath(), false);
+                    FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient,
+                            contentJson.getAbsolutePath(), false, null);
                     jsontask.execute();
                 }
             } else {
@@ -330,8 +331,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
 
     private File createJsonFileForContent(Modal_ContentDetail detail) {
         try {
-            ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-            temp.addAll(levels);
+            ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levels);
             temp.add(detail);
             Gson gson = new GsonBuilder().create();
             JsonArray array = gson.toJsonTree(temp).getAsJsonArray();
@@ -363,7 +363,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void readRecievedFiles(File filePath) {
         //read recieved jsons and insert to DB
-        new CopyExistingJSONS(context, filePath).execute();
+        new CopyExistingJSONS(/*context, */filePath).execute();
     }
 
     @Background
@@ -380,7 +380,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setReceived(false);
             filesRecieving.put(game_name, modal);
             if (shareView != null)
-                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                shareView.showRecieving(new ArrayList<>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamVideo")) {
             String[] sub = filePath.getAbsolutePath().split("PrathamVideo/");
             String vid_name = filePath.getName();
@@ -391,7 +391,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setReceived(false);
             filesRecieving.put(vid_name, modal);
             if (shareView != null)
-                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                shareView.showRecieving(new ArrayList<>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().contains("PrathamPDF")) {
             String[] sub = filePath.getAbsolutePath().split("PrathamPDF/");
             String pdf_name = filePath.getName();
@@ -402,7 +402,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             modal.setReceived(false);
             filesRecieving.put(pdf_name, modal);
             if (shareView != null)
-                shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                shareView.showRecieving(new ArrayList<>(filesRecieving.values()));
         } else if (filePath.getAbsolutePath().endsWith(".json")) {
             if (PD_Utility.isProfile(filePath.getName())) {
                 modal.setGameName("Receiving Profiles");
@@ -411,7 +411,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 modal.setReceived(false);
                 filesRecieving.put("Receiving Profiles", modal);
                 if (shareView != null)
-                    shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                    shareView.showRecieving(new ArrayList<>(filesRecieving.values()));
             } else if (PD_Utility.isUsages(filePath.getName())) {
                 modal.setGameName("Receiving Usages");
                 modal.setGamePart(filePath.getName());
@@ -419,7 +419,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 modal.setReceived(false);
                 filesRecieving.put("Receiving Usages", modal);
                 if (shareView != null)
-                    shareView.showRecieving(new ArrayList<Modal_ReceivingFilesThroughFTP>(filesRecieving.values()));
+                    shareView.showRecieving(new ArrayList<>(filesRecieving.values()));
             }
             readRecievedFiles(filePath);
         }
@@ -449,7 +449,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray stu_array = gson.toJsonTree(students).getAsJsonArray();
             createJsonFileOnInternal(stu_array, path.getAbsolutePath() + "/students");
 //            for file Json Transfer
-            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false);
+            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false, null);
             jsontask.execute();
         } catch (Exception e) {
             e.printStackTrace();
@@ -484,7 +484,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray meta_array = gson.toJsonTree(metadata).getAsJsonArray();
             createJsonFileOnInternal(meta_array, path.getAbsolutePath() + "/status");
             // for file Json Transfer
-            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false);
+            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false, null);
             jsontask.execute();
         } catch (Exception e) {
             e.printStackTrace();

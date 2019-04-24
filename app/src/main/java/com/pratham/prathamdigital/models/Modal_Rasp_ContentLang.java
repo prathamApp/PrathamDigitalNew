@@ -19,17 +19,6 @@ public class Modal_Rasp_ContentLang {
 	@SerializedName("lang_direction")
 	private String langDirection;
 
-	@Override
-	public String toString() {
-		return "Modal_Rasp_ContentLang{" +
-				"langName='" + langName + '\'' +
-				", langCode='" + langCode + '\'' +
-				", id='" + id + '\'' +
-				", langSubcode=" + langSubcode +
-				", langDirection='" + langDirection + '\'' +
-				'}';
-	}
-
 	public void setLangName(String langName){
 		this.langName = langName;
 	}

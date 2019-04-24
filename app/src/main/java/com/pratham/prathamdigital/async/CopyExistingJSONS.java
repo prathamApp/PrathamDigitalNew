@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 
 import com.google.gson.Gson;
@@ -8,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -32,12 +30,12 @@ import java.util.List;
 
 public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
 
-    Context context;
-    File filePath;
-    Interface_copying interface_copying;
+    //    Context context;
+    private final File filePath;
+//    Interface_copying interface_copying;
 
-    public CopyExistingJSONS(Context context, File filePath) {
-        this.context = context;
+    public CopyExistingJSONS(/*Context context, */File filePath) {
+//        this.context = context;
         this.filePath = filePath;
     }
 

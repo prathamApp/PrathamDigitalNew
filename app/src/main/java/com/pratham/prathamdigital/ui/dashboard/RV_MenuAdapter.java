@@ -23,12 +23,11 @@ import butterknife.ButterKnife;
 
 public class RV_MenuAdapter extends RecyclerView.Adapter<RV_MenuAdapter.NormalItemViewHolder> {
 
-    private Context context;
-    private ArrayList<Modal_NavigationMenu> menus;
-    private ContractMenu contractMenu;
+    private final ArrayList<Modal_NavigationMenu> menus;
+    private final ContractMenu contractMenu;
 
     public RV_MenuAdapter(Context context, ArrayList<Modal_NavigationMenu> menus, ContractMenu contractMenu) {
-        this.context = context;
+        Context context1 = context;
         this.menus = menus;
         this.contractMenu = contractMenu;
     }
@@ -50,12 +49,7 @@ public class RV_MenuAdapter extends RecyclerView.Adapter<RV_MenuAdapter.NormalIt
 //            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_selected_round_bkgd));
 //        else
 //            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_unselected_round_bkgd));
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contractMenu.menuClicked(holder.getAdapterPosition(), menus.get(holder.getAdapterPosition()));
-            }
-        });
+        holder.itemView.setOnClickListener(v -> contractMenu.menuClicked(holder.getAdapterPosition(), menus.get(holder.getAdapterPosition())));
     }
 
     @Override
@@ -73,7 +67,7 @@ public class RV_MenuAdapter extends RecyclerView.Adapter<RV_MenuAdapter.NormalIt
         @BindView(R.id.img_nav_menu)
         ImageView img_nav_menu;
 
-        public NormalItemViewHolder(View itemView) {
+        NormalItemViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

@@ -6,17 +6,26 @@ import android.location.Location;
 import java.util.ArrayList;
 
 public class EventMessage {
-    String message;
-    int downlaodContentSize;
-    Modal_ContentDetail contentDetail;
-    ArrayList<Modal_ContentDetail> content;
-    Drawable connection_resource;
-    String connection_name;
-    String pushData;
-    String downloadId;
-    String file_name;
-    long progress;
-    Location location;
+    private String message;
+    private int downlaodContentSize;
+    private Modal_ContentDetail contentDetail;
+    private ArrayList<Modal_ContentDetail> content;
+    private Drawable connection_resource;
+    private String connection_name;
+    private String pushData;
+    private String downloadId;
+    private String file_name;
+    private long progress;
+    private Location location;
+    private Modal_FileDownloading modal_fileDownloading;
+
+    public Modal_FileDownloading getModal_fileDownloading() {
+        return modal_fileDownloading;
+    }
+
+    public void setModal_fileDownloading(Modal_FileDownloading modal_fileDownloading) {
+        this.modal_fileDownloading = modal_fileDownloading;
+    }
 
     public Location getLocation() {
         return location;

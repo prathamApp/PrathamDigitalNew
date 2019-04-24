@@ -22,7 +22,6 @@ import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -49,10 +48,9 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BaseActivity extends AppCompatActivity {
@@ -74,10 +72,10 @@ public class BaseActivity extends AppCompatActivity {
     public static VillageDao villageDao;
     public static LogDao logDao;
     public static String language = "";
+    @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
-    Merlin merlin;
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @SuppressLint("MissingPermission")
         @Override
         public void handleMessage(Message msg) {
@@ -91,7 +89,7 @@ public class BaseActivity extends AppCompatActivity {
                     message.setMessage(PD_Constant.CONNECTION_STATUS);
                     if (wifi != null && wifi.isConnected()) {
                         message.setConnection_resource(getResources().getDrawable(R.drawable.ic_dialog_connect_wifi_item));
-                        message.setConnection_name(PrathamApplication.wiseF.getCurrentNetwork().getSSID());
+                        message.setConnection_name(Objects.requireNonNull(PrathamApplication.wiseF.getCurrentNetwork()).getSSID());
                     } else if (mobile != null && mobile.isConnected()) {
                         TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
                         String carrierName = manager.getNetworkOperatorName();
@@ -118,11 +116,8 @@ public class BaseActivity extends AppCompatActivity {
                 case REQUEST_WRITE_PERMISSION:
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                            .onAccepted(new ResponsePermissionCallback() {
-                                @Override
-                                public void onResult(@NotNull List<String> permissionResult) {
-                                    BackupDatabase.backup(BaseActivity.this);
-                                }
+                            .onAccepted(permissionResult -> {
+                                BackupDatabase.backup(BaseActivity.this);
                             })
                             .ask();
                     break;
@@ -130,27 +125,21 @@ public class BaseActivity extends AppCompatActivity {
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
                                     Manifest.permission.ACCESS_FINE_LOCATION)
-                            .onAccepted(new ResponsePermissionCallback() {
-                                @Override
-                                public void onResult(@NotNull List<String> permissionResult) {
-                                    new LocationService(BaseActivity.this).checkLocation();
-                                    mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
-                                }
+                            .onAccepted(permissionResult -> {
+                                new LocationService(BaseActivity.this).checkLocation();
+                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .ask();
                     break;
                 case GET_READ_PHONE_STATE:
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.READ_PHONE_STATE)
-                            .onAccepted(new ResponsePermissionCallback() {
-                                @Override
-                                public void onResult(@NotNull List<String> permissionResult) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        Modal_Status statusObj = new Modal_Status();
-                                        statusObj.setStatusKey("SerialID");
-                                        statusObj.setValue(Build.getSerial());
-                                        BaseActivity.statusDao.insert(statusObj);
-                                    }
+                            .onAccepted(permissionResult -> {
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                    Modal_Status statusObj = new Modal_Status();
+                                    statusObj.setStatusKey("SerialID");
+                                    statusObj.setValue(Build.getSerial());
+                                    BaseActivity.statusDao.insert(statusObj);
                                 }
                             })
                             .ask();
@@ -158,19 +147,9 @@ public class BaseActivity extends AppCompatActivity {
             }
         }
     };
-
-    Connectable connectable = new Connectable() {
-        @Override
-        public void onConnect() {
-            mHandler.sendEmptyMessage(UPDATE_CONNECTION);
-        }
-    };
-    Disconnectable disconnectable = new Disconnectable() {
-        @Override
-        public void onDisconnect() {
-            mHandler.sendEmptyMessage(UPDATE_CONNECTION);
-        }
-    };
+    private final Connectable connectable = () -> mHandler.sendEmptyMessage(UPDATE_CONNECTION);
+    private final Disconnectable disconnectable = () -> mHandler.sendEmptyMessage(UPDATE_CONNECTION);
+    private Merlin merlin;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -237,8 +216,8 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
         merlin.bind();
+        mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
         BackupDatabase.backup(this);
     }
 

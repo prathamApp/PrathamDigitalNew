@@ -18,15 +18,7 @@ public class Modal_Status {
     @ColumnInfo(name = "description")
     public String description;
 
-    @Override
-    public String toString() {
-        return "Modal_Status{" +
-                "statusKey='" + statusKey + '\'' +
-                ", value='" + value + '\'' +
-                ", description='" + description + '\'' +
-                '}';
-    }
-
+    @NonNull
     public String getStatusKey() {
         return statusKey;
     }

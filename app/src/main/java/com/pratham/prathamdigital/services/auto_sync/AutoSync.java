@@ -121,7 +121,7 @@ public abstract class AutoSync {
                     break;
             }
         }
-        editor.commit();
+        editor.apply();
     }
 
     /**
@@ -170,19 +170,19 @@ public abstract class AutoSync {
         public static final long DAYS = HOURS * 24;
         public static final long WEEKS = DAYS * 7;
 
-        public static final boolean DEFAULT_ENABLED = true;
-        public static final long DEFAULT_EVERY = 0;
-        public static final long DEFAULT_RANGE = 5 * MINUTES;
+        static final boolean DEFAULT_ENABLED = true;
+        static final long DEFAULT_EVERY = 0;
+        static final long DEFAULT_RANGE = 5 * MINUTES;
 
         private static final String CONFIG_ENABLED = "config_enabled";
         private static final String CONFIG_EVERY = "config_every";
         private static final String CONFIG_RANGE = "config_range";
 
-        private String name;
+        private final String name;
         private boolean defaultEnabled = DEFAULT_ENABLED;
         private long defaultEvery = DEFAULT_EVERY;
         private long defaultRange = DEFAULT_RANGE;
-        private SharedPreferences prefs;
+        private final SharedPreferences prefs;
 
         private Config(Context context, String name) {
             this.name = name;
@@ -206,12 +206,12 @@ public abstract class AutoSync {
      * Class for modifying the {@link AutoSync} configuration.
      */
     public static class Edit {
-        private static enum Type {
+        private final Type type;
+        private final Object value;
+
+        private enum Type {
             ENABLED, EVERY, RANGE
         }
-
-        private Type type;
-        private Object value;
 
         private Edit(Type type, Object value) {
             this.type = type;

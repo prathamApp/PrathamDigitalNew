@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -31,10 +30,8 @@ import java.util.ArrayList;
 @EActivity(R.layout.activity_pdf_viewer)
 public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_View {
 
-    private boolean backpressedFlag = false;
-    public static MediaPlayer page_flip_mp;
-    public static ArrayList<Bitmap> bitmaps;
-    PDFPagerAdapter pagerAdapter;
+    private static MediaPlayer page_flip_mp;
+    private static ArrayList<Bitmap> bitmaps;
 
     @Bean(PDF_PresenterImpl.class)
     PDFContract.pdfPresenter pdf_presenter;
@@ -55,7 +52,7 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
 
     @Override
     public void onBackPressed() {
-        backpressedFlag = true;
+        boolean backpressedFlag = true;
         addScoreToDB();
         setResult(RESULT_CANCELED);
         finish();
@@ -90,8 +87,8 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
     @UiThread
     @Override
     public void recievedBitmaps(ArrayList<Bitmap> bits) {
-        this.bitmaps = bits;
-        pagerAdapter = new PDFPagerAdapter(Activity_PdfViewer.this, bitmaps);
+        bitmaps = bits;
+        PDFPagerAdapter pagerAdapter = new PDFPagerAdapter(Activity_PdfViewer.this, bitmaps);
         pdf_curl_view.setAdapter(pagerAdapter);
         pdf_curl_view.setClipToPadding(false);
         BookFlipPageTransformer transformer = new BookFlipPageTransformer();
@@ -108,12 +105,7 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
                 Log.d("onPageSelected:::", "" + i);
                 if (i == (bitmaps.size() - 1)) {
 //                    addScoreToDB();
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            onBackPressed();
-                        }
-                    }, 1200);
+                    new Handler().postDelayed(() -> onBackPressed(), 1200);
                 }
             }
 
@@ -130,12 +122,9 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
                 .setContentView(R.layout.dialog_next_content)
                 .setGravity(Gravity.CENTER)
                 .setScaleRatio(0.2f)
-                .bindClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        nextDialog.dismiss();
-                        finish();
-                    }
+                .bindClickListener(v -> {
+                    nextDialog.dismiss();
+                    finish();
                 }, R.id.txt_close)
                 .setScaleRatio(0.2f)
                 .setBlurRadius(8)

@@ -15,7 +15,7 @@ import java.util.ArrayList;
 
 @EBean
 public class PDF_PresenterImpl implements PDFContract.pdfPresenter {
-    private Context context;
+    private final Context context;
     private PDFContract.pdf_View pdf_view;
 
     public PDF_PresenterImpl(Context context) {
@@ -24,7 +24,7 @@ public class PDF_PresenterImpl implements PDFContract.pdfPresenter {
 
     @Override
     public void setView(Activity_PdfViewer activity_pdfViewer) {
-        pdf_view = (PDFContract.pdf_View) activity_pdfViewer;
+        pdf_view = activity_pdfViewer;
     }
 
     @Background
@@ -45,7 +45,7 @@ public class PDF_PresenterImpl implements PDFContract.pdfPresenter {
                 // close the page
                 page.close();
             }
-            if (renderer != null) renderer.close();
+            renderer.close();
             pdf_view.recievedBitmaps(pdf);
         } catch (IOException e) {
             e.printStackTrace();

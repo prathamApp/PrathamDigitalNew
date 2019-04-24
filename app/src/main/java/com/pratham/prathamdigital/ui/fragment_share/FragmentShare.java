@@ -19,7 +19,6 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.progress_layout.ProgressLayout;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
@@ -37,20 +36,18 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.Objects;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 @EFragment(R.layout.fragment_share)
 public class FragmentShare extends Fragment implements ZXingScannerView.ResultHandler, ContractShare.shareView {
     private static final int INIT_CAMERA = 1;
-    public ZXingScannerView startCameraScan;
+    private ZXingScannerView startCameraScan;
     @ViewById(R.id.rl_scan_qr)
     RelativeLayout rl_scan_qr;
     @ViewById(R.id.qr_frame)
@@ -63,14 +60,8 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
     RecyclerView rv_share_files;
     @Bean(SharePresenter.class)
     ContractShare.sharePresenter sharePresenter;
-    HashMap<String, File_Model> filesSent = new HashMap<>();
-    HashMap<String, Integer> filesSentPosition = new HashMap<>();
-    FileListAdapter fileListAdapter;
-    BlurPopupWindow sending_builder;
-    private TextView dialog_tv;
-    private ProgressLayout dialog_progressLayout;
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
@@ -83,6 +74,12 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
             }
         }
     };
+    //    private final HashMap<String, File_Model> filesSent = new HashMap<>();
+//    private final HashMap<String, Integer> filesSentPosition = new HashMap<>();
+    private FileListAdapter fileListAdapter;
+    private TextView dialog_tv;
+    private ProgressLayout dialog_progressLayout;
+    private BlurPopupWindow sending_builder;
 
     @AfterViews
     public void initialize() {
@@ -131,12 +128,9 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
                 dialog_progressLayout.setCurProgress((int) message.getProgress());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_SHARE_COMPLETE)) {
                 sharePresenter.startTimer();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (sending_builder != null)
-                            sending_builder.dismiss();
-                    }
+                new Handler().postDelayed(() -> {
+                    if (sending_builder != null)
+                        sending_builder.dismiss();
                 }, 4000);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHARE_BACK))
                 sharePresenter.traverseFolderBackward();
@@ -180,13 +174,10 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     private void initCamera() {
         connecting_progress.setVisibility(View.GONE);
-        KotlinPermissions.with(getActivity())
+        KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.CAMERA)
-                .onAccepted(new ResponsePermissionCallback() {
-                    @Override
-                    public void onResult(@NotNull List<String> permissionResult) {
-                        _initCamera();
-                    }
+                .onAccepted(permissionResult -> {
+                    _initCamera();
                 })
                 .ask();
     }
@@ -232,13 +223,14 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void sendItemChecked(File_Model model, int position) {
-        filesSent.put(model.getDetail().getNodeid(), model);
-        filesSentPosition.put(model.getDetail().getNodeid(), position);
+//        filesSent.put(model.getDetail().getNodeid(), model);
+//        filesSentPosition.put(model.getDetail().getNodeid(), position);
         sharePresenter.sendFiles(model.getDetail());
         showSendingDialog();
     }
 
-    public void showSendingDialog() {
+    @SuppressLint("SetTextI18n")
+    private void showSendingDialog() {
         sending_builder = new BlurPopupWindow.Builder(getContext())
                 .setContentView(R.layout.dialog_file_sending)
                 .setGravity(Gravity.CENTER)
@@ -249,16 +241,16 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
                 .setBlurRadius(8)
                 .setTintColor(0x30000000)
                 .build();
-        dialog_tv = (TextView) sending_builder.findViewById(R.id.dialog_file_name);
-        dialog_progressLayout = (ProgressLayout) sending_builder.findViewById(R.id.dialog_progressLayout);
+        dialog_tv = sending_builder.findViewById(R.id.dialog_file_name);
+        dialog_progressLayout = sending_builder.findViewById(R.id.dialog_progressLayout);
         dialog_tv.setText("Please Wait...");
         sending_builder.show();
     }
 
     @Override
     public void showFilesList(ArrayList<File_Model> contents, String parentId) {
-        filesSent.clear();
-        filesSentPosition.clear();
+//        filesSent.clear();
+//        filesSentPosition.clear();
         if (rv_share_files.getVisibility() == View.GONE)
             rv_share_files.setVisibility(View.VISIBLE);
 //        if (rv_share_files_receiving.getVisibility() == View.VISIBLE)

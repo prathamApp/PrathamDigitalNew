@@ -12,10 +12,10 @@ import java.util.List;
 @Dao
 public interface ModalContentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void addContentList(List<Modal_ContentDetail> contentList);
+    void addContentList(List<Modal_ContentDetail> contentList);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void addContent(Modal_ContentDetail content);
+    void addContent(Modal_ContentDetail content);
 
     @Query("Delete from TableContent WHERE nodeid=:nodeId")
     void deleteContent(String nodeId);
@@ -25,12 +25,12 @@ public interface ModalContentDao {
 
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
             "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
-    public List<Modal_ContentDetail> getParentsHeaders(String language);
+    List<Modal_ContentDetail> getParentsHeaders(String language);
 
     @Query("SELECT * FROM TableContent WHERE parentid=:id and content_language=:language")
-    public List<Modal_ContentDetail> getChildsOfParent(String id, String language);
+    List<Modal_ContentDetail> getChildsOfParent(String id, String language);
 
     @Query("SELECT * FROM TableContent WHERE nodeid=:id and content_language=:language")
-    public Modal_ContentDetail getContent(String id, String language);
+    Modal_ContentDetail getContent(String id, String language);
 }
 

@@ -66,38 +66,20 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
     private String ssid;
     private String password;
     private ArrayList<String> wifi_result;
-    private WifiAdapter adapter;
 
     public ConnectDialog(@NonNull Context context) {
         super(context);
     }
 
-    @SuppressLint("MissingPermission")
-    @Nullable
-    @Override
-    protected View createContentView(ViewGroup parent) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connecction, parent, false);
-        ButterKnife.bind(this, view);
-        mHandler = new Handler();
-        this.isDismissOnTouchBackground();
-        this.isDismissOnClickBack();
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mHandler.sendEmptyMessage(2);
-            }
-        }, 300);
-        return view;
-    }
-
     @SuppressLint("HandlerLeak")
+    private
     Handler mHandler = new Handler() {
-        @SuppressLint("MissingPermission")
+        @SuppressLint({"MissingPermission", "SetTextI18n"})
         @Override
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case 0:
-                    adapter = new WifiAdapter(getContext(), wifi_result, ConnectDialog.this);
+                    WifiAdapter adapter = new WifiAdapter(getContext(), wifi_result, ConnectDialog.this);
                     wifi_list.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
                     wifi_list.setHasFixedSize(true);
                     wifi_list.setAdapter(adapter);
@@ -126,7 +108,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
                     try {
                         @SuppressLint("WrongConstant")
                         Object sbservice = getContext().getSystemService("statusbar");
-                        Class<?> statusbarManager = Class.forName("android.app.StatusBarManager");
+                        @SuppressLint("PrivateApi") Class<?> statusbarManager = Class.forName("android.app.StatusBarManager");
                         Method showsb = statusbarManager.getMethod("expand");
                         showsb.invoke(sbservice);
                     } catch (ClassNotFoundException e) {
@@ -145,7 +127,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             }
         }
     };
-    GetNearbyAccessPointsCallbacks nearbyAccessPointsCallbacks = new GetNearbyAccessPointsCallbacks() {
+    private final GetNearbyAccessPointsCallbacks nearbyAccessPointsCallbacks = new GetNearbyAccessPointsCallbacks() {
         @Override
         public void retrievedNearbyAccessPoints(@NotNull List<ScanResult> scanResults) {
             wifi_result = new ArrayList<>();
@@ -159,8 +141,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             Log.d("response:::", "not found nearby networks");
         }
     };
-
-    GetSavedNetworkCallbacks savedNetworkCallbacks = new GetSavedNetworkCallbacks() {
+    private final GetSavedNetworkCallbacks savedNetworkCallbacks = new GetSavedNetworkCallbacks() {
         @Override
         public void savedNetworkNotFound() {
             if (!password.isEmpty())
@@ -180,6 +161,19 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             mHandler.sendEmptyMessage(1);
         }
     };
+
+    @SuppressLint("MissingPermission")
+    @Nullable
+    @Override
+    protected View createContentView(ViewGroup parent) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connecction, parent, false);
+        ButterKnife.bind(this, view);
+        mHandler = new Handler();
+        this.isDismissOnTouchBackground();
+        this.isDismissOnClickBack();
+        new Handler().postDelayed(() -> mHandler.sendEmptyMessage(2), 300);
+        return view;
+    }
 
     private void addOpenNetwork(String ssid) {
         PrathamApplication.wiseF.addOpenNetwork(ssid, new AddNetworkCallbacks() {
@@ -250,6 +244,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         });
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void wifiClicked(String wifi_name) {
         PrathamApplication.bubble_mp.start();

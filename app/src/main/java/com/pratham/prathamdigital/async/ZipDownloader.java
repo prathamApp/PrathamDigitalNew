@@ -1,18 +1,15 @@
 package com.pratham.prathamdigital.async;
 
 import android.content.Context;
-import android.os.AsyncTask;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.pratham.prathamdigital.PrathamApplication;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
-import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
@@ -24,12 +21,12 @@ import java.util.ArrayList;
 @EBean
 public class ZipDownloader {
 
-    private static final String TAG = ZipDownloader.class.getSimpleName();
-    String filename;
-    Context context;
+    @Bean(PD_ApiRequest.class)
+    PD_ApiRequest pd_apiRequest;
+    private String filename;
 
     public ZipDownloader(Context context) {
-        this.context = context;
+        Context context1 = context;
     }
 
     public void initialize(ContentContract.contentPresenter contentPresenter, String url,
@@ -46,7 +43,7 @@ public class ZipDownloader {
                                               Modal_ContentDetail contentDetail,
                                               ContentContract.contentPresenter contentPresenter,
                                               ArrayList<Modal_ContentDetail> levelContents) {
-        File mydir = null;
+        File mydir;
         mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
         if (!mydir.exists()) mydir.mkdirs();
         if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
@@ -67,12 +64,13 @@ public class ZipDownloader {
         modal_download.setContent(contentDetail);
         modal_download.setContentPresenter(contentPresenter);
         modal_download.setLevelContents(levelContents);
-        AsyncTask task = new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
-        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
+        pd_apiRequest.downloadContentFromServer(modal_download);
+//        AsyncTask task = new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
+        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), null);
     }
 
 
-    private void createOverSdCardAndStartDownload(String url, String foldername, String f_name,
+    /*private void createOverSdCardAndStartDownload(String url, String foldername, String f_name,
                                                   Modal_ContentDetail contentDetail,
                                                   ContentContract.contentPresenter contentPresenter,
                                                   ArrayList<Modal_ContentDetail> levelContents) {
@@ -87,22 +85,24 @@ public class ZipDownloader {
         if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
                 f_name = f_name.substring(0, f_name.lastIndexOf("."));
-                if (documentFile.findFile(f_name) != null)
-                    documentFile = documentFile.findFile(f_name);
-                else
-                    documentFile = documentFile.createDirectory(f_name);
+                if (documentFile != null) {
+                    if (documentFile.findFile(f_name) != null)
+                        documentFile = documentFile.findFile(f_name);
+                    else
+                        documentFile = documentFile.createDirectory(f_name);
+                }
             }
         }
         Modal_Download modal_download = new Modal_Download();
         modal_download.setUrl(url);
-        modal_download.setDir_path(FileUtils.getPath(PrathamApplication.getInstance(), documentFile.getUri()));
+        modal_download.setDir_path(FileUtils.getPath(PrathamApplication.getInstance(), documentFile != null ? documentFile.getUri() : null));
         modal_download.setF_name(filename);
         modal_download.setFolder_name(foldername);
         modal_download.setContent(contentDetail);
         modal_download.setContentPresenter(contentPresenter);
         modal_download.setLevelContents(levelContents);
         new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
-    }
+    }*/
 
 }
 

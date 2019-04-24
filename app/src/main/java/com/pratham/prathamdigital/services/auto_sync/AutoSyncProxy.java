@@ -5,9 +5,9 @@ import android.content.Context;
 import java.util.Arrays;
 
 public final class AutoSyncProxy {
-    private Context context;
-    private String name;
-    private AutoSync listener;
+    private final Context context;
+    private final String name;
+    private final AutoSync listener;
 
     AutoSyncProxy(Context context, String name) {
         this.context = context;
@@ -48,7 +48,7 @@ public final class AutoSyncProxy {
      * @param edits the edits
      * @see AutoSync#edit(AutoSync.Edit...)
      */
-    public void edit(Iterable<AutoSync.Edit> edits) {
+    private void edit(Iterable<AutoSync.Edit> edits) {
         listener.edit(edits);
         AutoSyncService.update(context, name);
     }

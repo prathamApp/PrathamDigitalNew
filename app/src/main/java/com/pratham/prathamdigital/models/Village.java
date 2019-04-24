@@ -2,13 +2,11 @@ package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity
 public class Village {
-    @NonNull
     @PrimaryKey
     @SerializedName("VillageId")
     private int VillageId;
@@ -25,24 +23,10 @@ public class Village {
     @SerializedName("CRLId")
     private String CRLId;
 
-    @Override
-    public String toString() {
-        return "Village{" +
-                "VillageId=" + VillageId +
-                ", VillageCode='" + VillageCode + '\'' +
-                ", VillageName='" + VillageName + '\'' +
-                ", Block='" + Block + '\'' +
-                ", District='" + District + '\'' +
-                ", State='" + State + '\'' +
-                ", CRLId='" + CRLId + '\'' +
-                '}';
-    }
-
     public Village(int villageId, String villageName) {
         this.VillageId = villageId;
         this.VillageName = villageName;
     }
-
 
     public int getVillageId() {
         return VillageId;

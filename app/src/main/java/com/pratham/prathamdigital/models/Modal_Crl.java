@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.models;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
@@ -12,53 +11,45 @@ public class Modal_Crl {
     @NonNull
     @PrimaryKey
     @SerializedName("CRLId")
+    private
     String CRLId;
     @SerializedName("RoleId")
+    private
     String RoleId;
     @SerializedName("RoleName")
+    private
     String RoleName;
     @SerializedName("ProgramId")
+    private
     String ProgramId;
     @SerializedName("ProgramName")
+    private
     String ProgramName;
     @SerializedName("State")
+    private
     String State;
     @SerializedName("FirstName")
+    private
     String FirstName;
     @SerializedName("LastName")
+    private
     String LastName;
     @SerializedName("Mobile")
+    private
     String Mobile;
     @SerializedName("Email")
+    private
     String Email;
     @SerializedName("Block")
+    private
     String Block;
     @SerializedName("District")
+    private
     String District;
     @SerializedName("UserName")
     String UserName;
     @SerializedName("Password")
     String Password;
-
-    @Override
-    public String toString() {
-        return "Modal_Crl{" +
-                "CRLId='" + CRLId + '\'' +
-                ", RoleId='" + RoleId + '\'' +
-                ", RoleName='" + RoleName + '\'' +
-                ", ProgramId='" + ProgramId + '\'' +
-                ", ProgramName='" + ProgramName + '\'' +
-                ", State='" + State + '\'' +
-                ", FirstName='" + FirstName + '\'' +
-                ", LastName='" + LastName + '\'' +
-                ", Mobile='" + Mobile + '\'' +
-                ", Email='" + Email + '\'' +
-                ", Block='" + Block + '\'' +
-                ", District='" + District + '\'' +
-                ", UserName='" + UserName + '\'' +
-                ", Password='" + Password + '\'' +
-                '}';
-    }
 
     @NonNull
     public String getCRLId() {

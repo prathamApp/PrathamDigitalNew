@@ -13,25 +13,25 @@ import java.util.List;
 @Dao
 public interface StudentDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAllStudents(List<Modal_Student> studentsList);
+    void insertAllStudents(List<Modal_Student> studentsList);
 
     @Query("DELETE FROM Students")
-    public void deleteAllStudents();
+    void deleteAllStudents();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertStudent(Modal_Student studentsList);
+    void insertStudent(Modal_Student studentsList);
 
     @Update
-    public int updateAllStudent(List<Modal_Student> studList);
+    int updateAllStudent(List<Modal_Student> studList);
 
     @Query("DELETE FROM Students WHERE Gender='Deleted'")
-    public void deleteDeletedStdRecords();
+    void deleteDeletedStdRecords();
 
     @Query("DELETE FROM Students WHERE GroupID=:grpID")
-    public void deleteDeletedGrpsStdRecords(String grpID);
+    void deleteDeletedGrpsStdRecords(String grpID);
 
     @Query("SELECT * FROM Students")
-    public List<Modal_Student> getAllStudents();
+    List<Modal_Student> getAllStudents();
 
     @Query("select * from Students where sentFlag = 0")
     List<Modal_Student> getAllNewStudents();
@@ -43,10 +43,10 @@ public interface StudentDao {
     String getStudentName(String studentID);
 
     @Query("SELECT * FROM Students WHERE GroupId=:gID")
-    public List<Modal_Student> getGroupwiseStudents(String gID);
+    List<Modal_Student> getGroupwiseStudents(String gID);
 
     @Query("DELETE FROM Students Where StudentId=:stdID")
-    public void deleteStudentByID(String stdID);
+    void deleteStudentByID(String stdID);
 
  //   void deleteAllStudents();
 }

@@ -15,13 +15,12 @@ import com.pratham.prathamdigital.R;
 import java.util.ArrayList;
 
 public class PDFPagerAdapter extends PagerAdapter {
-    ArrayList<Bitmap> bitmaps;
-    Context context;
-    LayoutInflater mLayoutInflater;
+    private final ArrayList<Bitmap> bitmaps;
+    private final LayoutInflater mLayoutInflater;
 
     public PDFPagerAdapter(Context context, ArrayList<Bitmap> bitmaps) {
         this.bitmaps = bitmaps;
-        this.context = context;
+        Context context1 = context;
         mLayoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
     }
@@ -33,21 +32,21 @@ public class PDFPagerAdapter extends PagerAdapter {
 
     @Override
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
-        return view == ((LinearLayout) o);
+        return view == o;
     }
 
     @NonNull
     @Override
     public Object instantiateItem(@NonNull ViewGroup container, int position) {
         View itemView = mLayoutInflater.inflate(R.layout.pdf_pager_item, container, false);
-        ImageView imageView = (ImageView) itemView.findViewById(R.id.pdf_page);
+        ImageView imageView = itemView.findViewById(R.id.pdf_page);
         imageView.setImageBitmap(bitmaps.get(position));
         container.addView(itemView);
         return itemView;
     }
 
     @Override
-    public void destroyItem(ViewGroup container, int position, Object object) {
+    public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((LinearLayout) object);
     }
 }

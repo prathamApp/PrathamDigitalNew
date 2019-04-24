@@ -1,10 +1,12 @@
 package com.pratham.prathamdigital.services.auto_sync;
 
+import android.annotation.SuppressLint;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
 public class AutoSyncBootReceiver extends BroadcastReceiver {
+    @SuppressLint("UnsafeProtectedBroadcastReceiver")
     @Override
     public void onReceive(Context context, Intent intent) {
         AutoSyncService.start(context);

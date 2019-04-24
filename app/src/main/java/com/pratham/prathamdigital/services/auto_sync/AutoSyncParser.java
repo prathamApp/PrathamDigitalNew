@@ -110,7 +110,7 @@ public class AutoSyncParser {
 
     private static long parseUnitTimeSpan(String input) throws IllegalArgumentException {
         if (input == null) {
-            throw new IllegalArgumentException("For input string: " + input);
+            throw new IllegalArgumentException("For input string: " + null);
         }
 
         Matcher matcher = timeSpanRegex.matcher(input);

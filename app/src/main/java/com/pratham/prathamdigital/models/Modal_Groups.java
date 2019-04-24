@@ -28,12 +28,8 @@ public class Modal_Groups implements Comparable {
     @SerializedName("DeviceId")
     public String DeviceId;
     @Ignore
+    private
     boolean isSelected = false;
-
-    @Override
-    public String toString() {
-        return this.GroupName;
-    }
 
     public Modal_Groups() {
     }
@@ -119,12 +115,9 @@ public class Modal_Groups implements Comparable {
     @Override
     public int compareTo(Object o) {
         Modal_Groups compare = (Modal_Groups) o;
-        if (compare.getGroupId() != null) {
-            if (compare.getGroupId() == (this.GroupId) && compare.isSelected() == this.isSelected)
-                return 0;
-            else return 1;
-        } else
+        if (compare.getGroupId().equals(this.GroupId) && compare.isSelected() == this.isSelected)
             return 0;
+        else return 1;
     }
 }
 

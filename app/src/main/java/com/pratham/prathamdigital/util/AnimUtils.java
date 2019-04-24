@@ -85,7 +85,7 @@ public class AnimUtils {
      */
     public static abstract class IntProp<T> {
 
-        public final String name;
+        final String name;
 
         public IntProp(String name) {
             this.name = name;
@@ -133,7 +133,7 @@ public class AnimUtils {
      */
     public static abstract class FloatProp<T> {
 
-        public final String name;
+        final String name;
 
         protected FloatProp(String name) {
             this.name = name;
@@ -182,7 +182,7 @@ public class AnimUtils {
      * Interrupting Activity transitions can yield an OperationNotSupportedException when the
      * transition tries to pause the animator. Yikes! We can fix this by wrapping the Animator:
      */
-    public static class NoPauseAnimator extends Animator {
+    static class NoPauseAnimator extends Animator {
         private final Animator mAnimator;
         private final ArrayMap<AnimatorListener, AnimatorListener> mListeners = new ArrayMap<>();
 

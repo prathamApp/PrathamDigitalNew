@@ -23,21 +23,25 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileListAdapter.FileViewHolder> {
-    Context context;
-    private AsyncListDiffer<Modal_ReceivingFilesThroughFTP> mDiffer;
-    private DiffUtil.ItemCallback<Modal_ReceivingFilesThroughFTP> diffcallback = new DiffUtil.ItemCallback<Modal_ReceivingFilesThroughFTP>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Modal_ReceivingFilesThroughFTP detail, @NonNull Modal_ReceivingFilesThroughFTP t1) {
-            return Objects.equals(detail.getGameName(), t1.getGameName());
-        }
+    private final Context context;
+    private final AsyncListDiffer<Modal_ReceivingFilesThroughFTP> mDiffer;
 
-        @Override
-        public boolean areContentsTheSame(@NonNull Modal_ReceivingFilesThroughFTP detail, @NonNull Modal_ReceivingFilesThroughFTP t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
+    public ReceivedFileListAdapter(Context context) {
+        DiffUtil.ItemCallback<Modal_ReceivingFilesThroughFTP> diffcallback = new DiffUtil.ItemCallback<Modal_ReceivingFilesThroughFTP>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Modal_ReceivingFilesThroughFTP detail, @NonNull Modal_ReceivingFilesThroughFTP t1) {
+                return Objects.equals(detail.getGameName(), t1.getGameName());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Modal_ReceivingFilesThroughFTP detail, @NonNull Modal_ReceivingFilesThroughFTP t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
+        this.context = context;
+    }
 
     public void submitList(List<Modal_ReceivingFilesThroughFTP> data) {
         mDiffer.submitList(data);
@@ -47,11 +51,7 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
         return mDiffer.getCurrentList();
     }
 
-    public ReceivedFileListAdapter(Context context) {
-        mDiffer = new AsyncListDiffer<Modal_ReceivingFilesThroughFTP>(this, diffcallback);
-        this.context = context;
-    }
-
+    @NonNull
     @Override
     public FileViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater header = LayoutInflater.from(parent.getContext());
@@ -91,12 +91,12 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
         ImageView img_recieve_file;
         Modal_ReceivingFilesThroughFTP files;
 
-        public FileViewHolder(View itemView) {
+        FileViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }
 
-        public void setFiles(Modal_ReceivingFilesThroughFTP files) {
+        void setFiles(Modal_ReceivingFilesThroughFTP files) {
             this.files = files;
             switch (files.getGameType()) {
                 case PD_Constant.GAME:
@@ -125,7 +125,7 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
                 receive_lottie_view.setVisibility(View.GONE);
         }
 
-        public void updateFileItem(Modal_ReceivingFilesThroughFTP files) {
+        void updateFileItem(Modal_ReceivingFilesThroughFTP files) {
             receive_content_parts.setText(files.getGamePart());
             if (files.isReceived()) {
                 receive_lottie_view.setVisibility(View.VISIBLE);

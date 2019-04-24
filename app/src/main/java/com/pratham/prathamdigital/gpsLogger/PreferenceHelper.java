@@ -26,7 +26,6 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -171,9 +170,6 @@ public class PreferenceHelper {
         return FastSave.getInstance().getBoolean(PD_Constant.GPS_HIDE_NOTIFICATION_FROM_STATUS_BAR, false);
     }
 
-    /**
-     * Whether to display certain values using imperial units
-     */
     //@ProfilePreference(name = PD_Constant.DISPLAY_IMPERIAL)
 //    public boolean shouldDisplayImperialUnits() {
 //        return FastSave.getInstance().getBoolean(PD_Constant.DISPLAY_IMPERIAL, false);
@@ -206,7 +202,7 @@ public class PreferenceHelper {
      * Sets the list of location providers that the app will listen to given their array positions in {@link #getAvailableListeners()}.
      */
     public void setChosenListeners(Integer... listenerIndices) {
-        List<Integer> selectedItems = Arrays.asList(listenerIndices);
+        Integer[] selectedItems = listenerIndices;
         final Set<String> chosenListeners = new HashSet<>();
 
         for (Integer selectedItem : selectedItems) {
@@ -215,7 +211,6 @@ public class PreferenceHelper {
 
         if (chosenListeners.size() > 0) {
             setChosenListeners(chosenListeners);
-
         }
     }
 
@@ -224,14 +219,14 @@ public class PreferenceHelper {
      *
      * @param chosenListeners a Set of listener names
      */
-    public void setChosenListeners(Set<String> chosenListeners) {
+    private void setChosenListeners(Set<String> chosenListeners) {
         FastSave.getInstance().saveSet(PD_Constant.GPS_LOCATION_LISTENERS, chosenListeners);
     }
 
     /**
      * Default set of listeners
      */
-    public List<String> getDefaultListeners() {
+    private List<String> getDefaultListeners() {
         List<String> listeners = new ArrayList<>();
         listeners.add(LocationManager.GPS_PROVIDER);
         listeners.add(LocationManager.NETWORK_PROVIDER);
@@ -243,7 +238,7 @@ public class PreferenceHelper {
      *
      * @return
      */
-    public List<String> getAvailableListeners() {
+    private List<String> getAvailableListeners() {
         List<String> listeners = new ArrayList<>();
         listeners.add(LocationManager.GPS_PROVIDER);
         listeners.add(LocationManager.NETWORK_PROVIDER);

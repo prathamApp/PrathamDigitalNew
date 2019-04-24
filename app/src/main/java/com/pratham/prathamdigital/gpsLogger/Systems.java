@@ -142,8 +142,7 @@ public class Systems {
                 && hasUserGrantedPermission(Manifest.permission.GET_ACCOUNTS, context);
     }
 
-    static boolean hasUserGrantedPermission(String permissionName, Context context) {
-        boolean granted = ContextCompat.checkSelfPermission(context, permissionName) == PackageManager.PERMISSION_GRANTED;
-        return granted;
+    private static boolean hasUserGrantedPermission(String permissionName, Context context) {
+        return ContextCompat.checkSelfPermission(context, permissionName) == PackageManager.PERMISSION_GRANTED;
     }
 }

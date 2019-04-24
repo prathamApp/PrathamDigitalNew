@@ -4,15 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
+import java.util.Objects;
+
 public class AutoSyncPowerReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         boolean connected = false;
-        if (intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)) {
+        if (Objects.requireNonNull(intent.getAction()).equals(Intent.ACTION_POWER_CONNECTED)) {
             connected = true;
-        } else if (intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)) {
+        } /*else if (intent.getAction().equals(Intent.ACTION_POWER_DISCONNECTED)) {
             connected = false;
-        }
+        }*/
         startWakefulService(context, AutoSyncService.getPowerChangedIntent(context, connected));
     }
 

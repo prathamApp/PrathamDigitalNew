@@ -1,20 +1,15 @@
 package com.pratham.prathamdigital.async
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.AsyncTask
 import android.util.Log
 import com.pratham.prathamdigital.ui.splash.SplashContract
 import org.jsoup.Jsoup
 
-public class GetLatestVersion : AsyncTask<Void, Void, Void> {
-    var latestVersion: String = ""
-    var context: Context? = null
-    var splash_presenter: SplashContract.splashPresenter? = null
-
-    constructor(context: Context?, splash_presenter: SplashContract.splashPresenter?) : super() {
-        this.context = context
-        this.splash_presenter = splash_presenter
-    }
+class GetLatestVersion(@SuppressLint("StaticFieldLeak") var context: Context?,
+                       private var splash_presenter: SplashContract.splashPresenter?) : AsyncTask<Void, Void, Void>() {
+    private var latestVersion: String = ""
 
     override fun doInBackground(vararg params: Void): Void? {
         try {
@@ -28,7 +23,7 @@ public class GetLatestVersion : AsyncTask<Void, Void, Void> {
                     .get()
                     .select("div.hAyfc:nth-child(4) > span:nth-child(2) > div:nth-child(1) > span:nth-child(1)")
                     .first()
-                    .ownText();
+                    .ownText()
             Log.d("latest::", latestVersion)
             //latestVersion = doc.getElementsByTagName("softwareVersion").first().text();
             //latestVersion = "1.5";
@@ -40,7 +35,7 @@ public class GetLatestVersion : AsyncTask<Void, Void, Void> {
 
     override fun onPostExecute(result: Void?) {
         super.onPostExecute(result)
-        Log.d("version::", "Latest version = " + latestVersion)
+        Log.d("version::", "Latest version = $latestVersion")
         splash_presenter!!.checkVersion(latestVersion)
     }
 }

@@ -4,27 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/splash_bg"
     android:clipChildren="false"
     android:fitsSystemWindows="true"
     tools:context=".ui.splash.ActivitySplash">
+    <!--android:background="@drawable/splash_bg"-->
 
-    <ImageView
-        android:id="@+id/img_splash_light"
+    <com.pratham.prathamdigital.custom.FullScreenVideoView
+        android:id="@+id/splash_video"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:rotation="@android:integer/config_mediumAnimTime"
-        android:scaleType="centerCrop"
-        android:src="@drawable/splash_light"
-        tools:ignore="ContentDescription" />
-
+        android:clickable="false"
+        android:focusable="false" />
     <!--<ImageView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_alignParentRight="true"-->
-    <!--android:layout_alignParentBottom="true"-->
-    <!--android:layout_marginRight="@dimen/_30sdp"-->
-    <!--android:src="@drawable/splash_boy" />-->
+    <!--android:id="@+id/img_splash_light"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:rotation="@android:integer/config_mediumAnimTime"-->
+    <!--android:scaleType="centerCrop"-->
+    <!--android:src="@drawable/splash_light"-->
+    <!--tools:ignore="ContentDescription" />-->
 
     <ImageView
         android:id="@+id/iv_pradigi"
@@ -43,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:visibility="invisible"
-        app:vector="@drawable/ic_splash" />
+        app:vector="@drawable/ic_splash_two" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -67,7 +65,7 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/avatar_view"
             android:text="@string/getting_location"
-            android:textColor="@color/dark_blue"
+            android:textColor="@color/white"
             android:textSize="@dimen/_15sdp" />
     </RelativeLayout>
 </RelativeLayout>

@@ -20,7 +20,6 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Score;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -32,6 +31,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+import java.util.Objects;
 
 @EFragment(R.layout.frag_aaj_ka_sawal)
 public class Fragment_AAJ_KA_SAWAL extends Fragment {
@@ -62,18 +63,12 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
     private String selectedAnswer = "";
     private Modal_AajKaSawal selectedAajKaSawal;
     private String startTime;
-    private boolean hintVideoViewed = false;
     private Modal_ContentDetail vidContent = null;
-    MediaPlayer.OnCompletionListener applauseCompletionListener = new MediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(MediaPlayer mp) {
-            ((Activity_VPlayer) getActivity()).onBackPressed();
-        }
-    };
+    private final MediaPlayer.OnCompletionListener applauseCompletionListener = mp -> Objects.requireNonNull(getActivity()).onBackPressed();
     private MediaPlayer wrong_mp;
     private MediaPlayer correct_mp;
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -114,7 +109,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         startTime = PD_Utility.getCurrentDateTime();
         if (getArguments() != null)
             showQuestion(getArguments().getParcelable(PD_Constant.AKS_QUESTION));
-        else ((Activity_VPlayer) getActivity()).onBackPressed();
+        else Objects.requireNonNull(getActivity()).onBackPressed();
         aks_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -146,7 +141,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
     public void setskip() {
         PrathamApplication.bubble_mp.start();
         addScoreToDB(0, true, false);
-        ((Activity_VPlayer) getActivity()).onBackPressed();
+        Objects.requireNonNull(getActivity()).onBackPressed();
     }
 
     @Click(R.id.aaj_okay)
@@ -163,7 +158,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
 
     @Click(R.id.aaj_play_video)
     public void setPlayVideo() {
-        getActivity().getSupportFragmentManager().popBackStack();
+        Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -183,7 +178,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.VIDEO_PLAYER_BACK_PRESS)) {
                 addScoreToDB(0, true, true);
-                ((Activity_VPlayer) getActivity()).onBackPressed();
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
         }
     }
@@ -240,11 +235,12 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         modalScore.setTotalMarks(10);
         modalScore.setStartDateTime(startTime);
         modalScore.setEndDateTime(endTime);
-        modalScore.setLevel((hintVideoViewed) ? 991 : 990);
+        boolean hintVideoViewed = false;
+        modalScore.setLevel(990);
         if (isClosed)
             modalScore.setLabel("Video Closed. Sawal was not attempted");
         else
-            modalScore.setLabel((isSkipped) ? "Skipped" : ((hintVideoViewed) ? "Video Viewed" : "Video not Viewed"));
+            modalScore.setLabel(isSkipped ? "Skipped" : "Video not Viewed");
         modalScore.setSentFlag(0);
         BaseActivity.scoreDao.insert(modalScore);
     }

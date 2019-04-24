@@ -19,34 +19,30 @@ import java.io.File;
 import java.util.Locale;
 
 public class JSInterface {
-    Context mContext;
-    String path;
-    Audio recordAudio;
     //    MediaRecorder myAudioRecorder;
-    public static MediaPlayer mp;
-    WebView w;
+    private static MediaPlayer mp;
     //    RadioGroup radioGroup;
-    public static Boolean MediaFlag = false;
+    private static Boolean MediaFlag = false;
+    private final WebView w;
     //    static Boolean pdfFlag = false;
     //    static Boolean audioFlag = false;
 //    static Boolean trailerFlag = false;
 //    static Boolean completeFlag = false;
-    public String gamePath;
-    TTSService ttspeech;
+    private final String gamePath;
+    private final TTSService ttspeech;
     //    static TextToSp textToSp;
     //    private TextToSpeech textToSp;
-    private String resId;
+    private final String resId;
+    private final VideoListener videoListener;
+    private final Activity activity;
     private String audio_directory_path = "";
-    private boolean isOnSdCard;
-    VideoListener videoListener;
-    Activity activity;
+    private String path;
+    private Audio recordAudio;
 
     JSInterface(Context c, WebView w, String gamePath, String resId, boolean isOnSdCard, VideoListener videoListener, Activity activity) {
-        mContext = c;
         ttspeech = BaseActivity.ttsService;
         this.resId = resId;
         this.gamePath = gamePath;
-        this.isOnSdCard = isOnSdCard;
         createRecordingFolder();
         mp = new MediaPlayer();
         this.w = w;
@@ -107,11 +103,9 @@ public class JSInterface {
     @JavascriptInterface
     public void getPath(String gameFolder) {
         path = gamePath + "/";
-        w.post(new Runnable() {
-            public void run() {
-                String jsString = "javascript:Utils.setPath('" + path + "')";
-                w.loadUrl(jsString);
-            }
+        w.post(() -> {
+            String jsString = "javascript:Utils.setPath('" + path + "')";
+            w.loadUrl(jsString);
         });
     }
 
@@ -143,20 +137,12 @@ public class JSInterface {
             mp.setDataSource(file.getAbsolutePath());
             mp.prepare();
             mp.start();
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mediaPlayer) {
-                    //audioFlag = false;
-                    try {
-                        w.post(new Runnable() {
-                            @Override
-                            public void run() {
-                                w.loadUrl("javascript:temp()");
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+            mp.setOnCompletionListener(mediaPlayer -> {
+                //audioFlag = false;
+                try {
+                    w.post(() -> w.loadUrl("javascript:temp()"));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             });
         } catch (Exception e) {
@@ -167,7 +153,7 @@ public class JSInterface {
     @JavascriptInterface
     public void audioPlayer(String filename) {
         try {
-            String path = null;
+            String path;
             if (filename.charAt(0) == '/') {
                 path = filename;//check for recording game and then change
             } else {
@@ -182,11 +168,7 @@ public class JSInterface {
                 mp.prepare();
                 mp.start();
 
-                mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    public void onCompletion(MediaPlayer mp) {
-                        mp.stop();
-                    }
-                });
+                mp.setOnCompletionListener(MediaPlayer::stop);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -197,7 +179,7 @@ public class JSInterface {
 
     @JavascriptInterface
     public void audioPause() {
-        if (MediaFlag == true) {
+        if (MediaFlag) {
             mp.pause();
             MediaFlag = false;
         }
@@ -205,17 +187,15 @@ public class JSInterface {
 
     @JavascriptInterface
     public void audioResume() {
-        if (MediaFlag == false) {
+        if (!MediaFlag) {
             mp.start();
             MediaFlag = true;
         }
         try {
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                public void onCompletion(MediaPlayer mp) {
-                    mp.stop();
-                    mp.reset();
-                    MediaFlag = false;
-                }
+            mp.setOnCompletionListener(mp -> {
+                mp.stop();
+                mp.reset();
+                MediaFlag = false;
             });
         } catch (Exception e) {
             e.printStackTrace();
@@ -244,12 +224,7 @@ public class JSInterface {
 //            intent.putExtra("resId", resId);
 //            intent.putExtra("hint", true);
             MediaFlag = true;
-            activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    videoListener.showVideo(vidPath);
-                }
-            });
+            activity.runOnUiThread(() -> videoListener.showVideo(vidPath));
 //            ((Activity) mContext).startActivityForResult(intent, 1);
         } catch (Exception e) {
             e.printStackTrace();

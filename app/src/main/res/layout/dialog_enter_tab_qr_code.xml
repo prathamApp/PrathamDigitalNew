@@ -35,6 +35,7 @@
             android:background="@drawable/qr_code_etxt_bkgd"
             android:gravity="center"
             android:hint="Code"
+            android:focusable="true"
             android:inputType="textCapCharacters"
             android:textColorHint="@color/dark_grey" />
 

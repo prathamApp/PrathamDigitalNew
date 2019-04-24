@@ -37,23 +37,6 @@ public class Modal_Rasp_ContentFilesItem {
     @SerializedName("file_size")
     private int fileSize;
 
-    @Override
-    public String toString() {
-        return "Modal_Rasp_ContentFilesItem{" +
-                "extension='" + extension + '\'' +
-                ", thumbnail=" + thumbnail +
-                ", available=" + available +
-                ", downloadUrl='" + downloadUrl + '\'' +
-                ", supplementary=" + supplementary +
-                ", storageUrl=" + storageUrl +
-                ", id='" + id + '\'' +
-                ", preset='" + preset + '\'' +
-                ", priority=" + priority +
-                ", lang=" + lang +
-                ", fileSize=" + fileSize +
-                '}';
-    }
-
     public String getExtension() {
         return extension;
     }

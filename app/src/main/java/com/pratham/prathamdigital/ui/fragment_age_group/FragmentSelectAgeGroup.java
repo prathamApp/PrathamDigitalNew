@@ -10,9 +10,7 @@ import android.widget.ImageView;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.ui.QRLogin.QRLogin_;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
@@ -25,9 +23,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
-import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
+import java.util.Objects;
 
 @EFragment(R.layout.fragment_age_group)
 public class FragmentSelectAgeGroup extends Fragment {
@@ -38,15 +35,12 @@ public class FragmentSelectAgeGroup extends Fragment {
 
     @Click(R.id.scan_qr)
     public void setScanQR() {
-        KotlinPermissions.with(getActivity())
+        KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.CAMERA)
-                .onAccepted(new ResponsePermissionCallback() {
-                    @Override
-                    public void onResult(@NotNull List<String> permissionResult) {
-                        Intent intent = new Intent(getActivity(), QRLogin_.class);
-                        startActivity(intent);
-                        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                    }
+                .onAccepted(permissionResult -> {
+                    Intent intent = new Intent(getActivity(), QRLogin_.class);
+                    startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                 })
                 .ask();
     }
@@ -87,12 +81,7 @@ public class FragmentSelectAgeGroup extends Fragment {
             ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity()).build();
             connectDialog.isDismissOnClickBack();
             connectDialog.isDismissOnTouchBackground();
-            connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
-                @Override
-                public void onDismiss(BlurPopupWindow popupWindow) {
-                    onActivityResult(3, Activity.RESULT_OK, null);
-                }
-            });
+            connectDialog.setOnDismissListener(popupWindow -> onActivityResult(3, Activity.RESULT_OK, null));
             connectDialog.show();
         } else {
             onActivityResult(3, Activity.RESULT_OK, null);

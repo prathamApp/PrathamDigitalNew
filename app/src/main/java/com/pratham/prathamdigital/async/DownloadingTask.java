@@ -25,15 +25,14 @@ import java.util.ArrayList;
 
 public class DownloadingTask extends AsyncTask {
     private static final String TAG = DownloadingTask.class.getSimpleName();
-    String url;
-    String dir_path;
-    String f_name;
-    String folder_name;
-    Modal_ContentDetail content;
-    String downloadID;
-    //    DownloadService downloadService;
-    ContentContract.contentPresenter contentPresenter;
-    ArrayList<Modal_ContentDetail> levelContents;
+    private String url;
+    private String dir_path;
+    private String f_name;
+    private String folder_name;
+    private Modal_ContentDetail content;
+    private String downloadID;
+    private ContentContract.contentPresenter contentPresenter;
+    private ArrayList<Modal_ContentDetail> levelContents;
 
     private void initialize(Modal_Download download) {
         this.url = download.getUrl();
@@ -46,7 +45,7 @@ public class DownloadingTask extends AsyncTask {
         this.levelContents = download.getLevelContents();
     }
 
-    protected void afterInit() {
+    private void afterInit() {
         Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
         modal_fileDownloading.setDownloadId(downloadID);
         modal_fileDownloading.setFilename(content.getNodetitle());
@@ -61,13 +60,9 @@ public class DownloadingTask extends AsyncTask {
         Modal_Download download = (Modal_Download) params[0];
         initialize(download);
         afterInit();
-        InputStream input = null;
-        OutputStream output = null;
-        HttpURLConnection connection = null;
         try {
-            // String root = Environment.getExternalStorageDirectory().toString();
             URL urlFormed = new URL(url);
-            connection = (HttpURLConnection) urlFormed.openConnection();
+            HttpURLConnection connection = (HttpURLConnection) urlFormed.openConnection();
             connection.setConnectTimeout(15000);
             connection.connect();
             // expect HTTP 200 OK, so we don't mistakenly save error report
@@ -82,10 +77,10 @@ public class DownloadingTask extends AsyncTask {
             if (lenghtOfFile < 0)
                 lenghtOfFile = (content.getLevel() > 0) ? content.getLevel() : 1;
             // input stream to read file - with 8k buffer
-            input = connection.getInputStream();
+            InputStream input = connection.getInputStream();
             // Output stream to write file
-            output = new FileOutputStream(dir_path + "/" + f_name);
-            byte data[] = new byte[4096];
+            OutputStream output = new FileOutputStream(dir_path + "/" + f_name);
+            byte[] data = new byte[4096];
             long total = 0;
 //                long download_percentage_old = 00;
             int count;
@@ -101,11 +96,9 @@ public class DownloadingTask extends AsyncTask {
                 updateProgress(download_percentage_new, SpeedMonitor.compute(count));
             }
             // flushing output
-            if (output != null)
-                output.close();
-            // closing streams/**/
-            if (input != null)
-                input.close();
+            output.close();
+            // closing streams
+            input.close();
             if (folder_name.equalsIgnoreCase(PD_Constant.GAME)) {
                 unzipFile(dir_path + "/" + f_name, dir_path);
             }
@@ -120,8 +113,7 @@ public class DownloadingTask extends AsyncTask {
     private void downloadCompleted() {
         Log.d(TAG, "updateFileProgress: " + downloadID);
         content.setContentType("file");
-        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-        temp.addAll(levelContents);
+        ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levelContents);
         temp.add(content);
         for (Modal_ContentDetail d : temp) {
             if (d.getNodeimage() != null) {
@@ -164,7 +156,7 @@ public class DownloadingTask extends AsyncTask {
     }
 
     private void unzipFile(String source, String destination) {
-        ZipFile zipFile = null;
+        ZipFile zipFile;
         try {
             zipFile = new ZipFile(source);
             zipFile.extractAll(destination);

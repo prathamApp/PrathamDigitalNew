@@ -14,16 +14,15 @@ import org.androidannotations.annotations.EBean;
  */
 @EBean
 public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresenter {
-    AdminPanelContract.AdminPanelView adminPanelView;
-    Context context;
+    private AdminPanelContract.AdminPanelView adminPanelView;
 
     public AdminPanelPresenter(Context context) {
-        this.context = context;
+        Context context1 = context;
     }
 
     @Override
     public void setView(AdminPanelFragment adminPanelFragment) {
-        this.adminPanelView = (AdminPanelContract.AdminPanelView) adminPanelFragment;
+        this.adminPanelView = adminPanelFragment;
     }
 
     @Override

@@ -3,18 +3,9 @@ package com.pratham.prathamdigital.models;
 import android.support.annotation.NonNull;
 
 public class Modal_Language implements Comparable {
-    String language;
-    String main_language;
-    boolean isselected;
-
-    @Override
-    public String toString() {
-        return "Modal_Language{" +
-                "language='" + language + '\'' +
-                ", main_language='" + main_language + '\'' +
-                ", isselected=" + isselected +
-                '}';
-    }
+    private String language;
+    private String main_language;
+    private boolean isselected;
 
     public String getMain_language() {
         return main_language;

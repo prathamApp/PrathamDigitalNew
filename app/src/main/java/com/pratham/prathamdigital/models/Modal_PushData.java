@@ -6,8 +6,10 @@ import java.util.List;
 
 public class Modal_PushData {
     @SerializedName("session")
+    private
     List<Modal_PushSessionData> pushSession;
     @SerializedName("students")
+    private
     List<Modal_Student> students;
 
     public List<Modal_PushSessionData> getPushSession() {

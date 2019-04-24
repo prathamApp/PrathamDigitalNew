@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.services;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -20,6 +21,7 @@ import java.util.Locale;
  */
 
 public class STTService {
+    @SuppressLint("StaticFieldLeak")
     private static STTService instance = null;
     private SpeechRecognizer mSpeechRecognizer;
     private SpeechResult mSpeechResult;
@@ -27,7 +29,6 @@ public class STTService {
     private final List<String> mPartialData = new ArrayList<>();
     private String mUnstableData;
     private Context mContext;
-    private Locale mLocale = Locale.getDefault();
     private long mStopListeningDelayInMs = 4000;
     private long mTransitionMinimumDelay = 1200;
     private List<String> mLastPartialResults = null;
@@ -223,7 +224,7 @@ public class STTService {
     }
 
     private String getPartialResultsAsString() {
-        final StringBuilder out = new StringBuilder("");
+        final StringBuilder out = new StringBuilder();
         for (final String partial : mPartialData) {
             out.append(partial).append(" ");
         }
@@ -255,7 +256,7 @@ public class STTService {
      * @return speech instance
      */
     public STTService setLocale(final Locale locale) {
-        mLocale = locale;
+        Locale mLocale = locale;
         return this;
     }
 }

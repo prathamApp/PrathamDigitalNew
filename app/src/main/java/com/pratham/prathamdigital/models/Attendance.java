@@ -26,20 +26,6 @@ public class Attendance {
     @SerializedName("sentFlag")
     public int sentFlag;
 
-    @Override
-    public String toString() {
-        return "Attendance{" +
-                "AttendanceID=" + AttendanceID +
-                ", VillageID='" + VillageID + '\'' +
-                ", GroupID='" + GroupID + '\'' +
-                ", SessionID='" + SessionID + '\'' +
-                ", StudentID='" + StudentID + '\'' +
-                ", Date='" + Date + '\'' +
-                ", Present=" + Present +
-                ", sentFlag=" + sentFlag +
-                '}';
-    }
-
     public int getAttendanceID() {
         return AttendanceID;
     }

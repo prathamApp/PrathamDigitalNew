@@ -9,41 +9,41 @@ import java.util.List;
 
 public class Modal_AajKaSawal implements Parcelable {
     @SerializedName("aksVersion")
-    public String aksVersion;
+    private String aksVersion;
     @SerializedName("nodeId")
-    public String nodeId;
+    private String nodeId;
     @SerializedName("nodeType")
-    public String nodeType;
+    private String nodeType;
     @SerializedName("nodeTitle")
-    public String nodeTitle;
+    private String nodeTitle;
     @SerializedName("QueId")
-    public String QueId;
+    private String QueId;
     @SerializedName("Question")
-    public String Question;
+    private String Question;
     @SerializedName("QuestionType")
-    public String QuestionType;
+    private String QuestionType;
     @SerializedName("Option1")
-    public String Option1;
+    private String Option1;
     @SerializedName("Option2")
-    public String Option2;
+    private String Option2;
     @SerializedName("Option3")
-    public String Option3;
+    private String Option3;
     @SerializedName("Option4")
-    public String Option4;
+    private String Option4;
     @SerializedName("Answer")
-    public String Answer;
+    private String Answer;
     @SerializedName("resourceName")
-    public String resourceName;
+    private String resourceName;
     @SerializedName("resourceType")
-    public String resourceType;
+    private String resourceType;
     @SerializedName("resourceId")
-    public String resourceId;
+    private String resourceId;
     @SerializedName("resourcePath")
-    public String resourcePath;
+    private String resourcePath;
     @SerializedName("programLanguage")
-    public String programLanguage;
+    private String programLanguage;
     @SerializedName("nodelist")
-    public List<Modal_AajKaSawal> nodelist;
+    private List<Modal_AajKaSawal> nodelist;
 
     public static final Creator<Modal_AajKaSawal> CREATOR = new Creator<Modal_AajKaSawal>() {
         @Override
@@ -57,7 +57,7 @@ public class Modal_AajKaSawal implements Parcelable {
         }
     };
 
-    protected Modal_AajKaSawal(Parcel in) {
+    private Modal_AajKaSawal(Parcel in) {
         aksVersion = in.readString();
         nodeId = in.readString();
         nodeType = in.readString();

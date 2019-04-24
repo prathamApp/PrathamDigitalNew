@@ -2,18 +2,24 @@ package com.pratham.prathamdigital.models;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Modal_ProgramState {
+class Modal_ProgramState {
     @SerializedName("id")
+    private
     String state_id;
     @SerializedName("data")
+    private
     Modal_ProgramData data;
     @SerializedName("filter_name")
+    private
     String filter_name;
     @SerializedName("table_name")
+    private
     String table_name;
     @SerializedName("facility")
+    private
     String facility;
     @SerializedName("created_at")
+    private
     String created_at;
 
     public String getState_id() {

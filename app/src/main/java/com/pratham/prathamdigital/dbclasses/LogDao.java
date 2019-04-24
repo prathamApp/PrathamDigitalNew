@@ -12,17 +12,17 @@ import java.util.List;
 @Dao
 public interface LogDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertLog(Modal_Log log);
+    void insertLog(Modal_Log log);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAllLogs(List<Modal_Log> log);
+    void insertAllLogs(List<Modal_Log> log);
 
     @Query("DELETE FROM Logs")
-    public void deleteLogs();
+    void deleteLogs();
 
     @Query("select * from Logs where sentFlag=0 AND sessionId=:s_id")
-    public List<Modal_Log> getAllLogs(String s_id);
+    List<Modal_Log> getAllLogs(String s_id);
 
     @Query("select * from Logs where sentFlag=0")
-    public List<Modal_Log> getAllLogs();
+    List<Modal_Log> getAllLogs();
 }

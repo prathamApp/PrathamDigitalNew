@@ -17,9 +17,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
-    private ArrayList<String> datalist;
-    Context context;
-    private ConnectInterface connectInterface;
+    private final ArrayList<String> datalist;
+    private final Context context;
+    private final ConnectInterface connectInterface;
 
     public WifiAdapter(Context context, ArrayList<String> datalist, ConnectInterface connectInterface) {
         this.datalist = datalist;
@@ -42,12 +42,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
         else
             viewHolder.itemView.setBackgroundColor(context.getResources().getColor(R.color.white));
         viewHolder.txt_wifi_name.setText(datalist.get(viewHolder.getAdapterPosition()));
-        viewHolder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                connectInterface.wifiClicked(datalist.get(viewHolder.getAdapterPosition()));
-            }
-        });
+        viewHolder.itemView.setOnClickListener(v -> connectInterface.wifiClicked(datalist.get(viewHolder.getAdapterPosition())));
     }
 
     @Override
@@ -59,7 +54,7 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
         @BindView(R.id.txt_wifi_name)
         TextView txt_wifi_name;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

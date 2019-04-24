@@ -34,7 +34,7 @@ public class CommandEvents {
      * Requests starting the logging service
      */
     public static class RequestStartStop {
-        public boolean start;
+        public final boolean start;
 
         public RequestStartStop(boolean start) {
             this.start = start;
@@ -51,8 +51,8 @@ public class CommandEvents {
     /**
      * Requests auto sending to targets
      */
-    public static class AutoSend {
-        public String formattedFileName;
+    static class AutoSend {
+        final String formattedFileName;
 
         public AutoSend(@Nullable String formattedFileName) {
             this.formattedFileName = formattedFileName;
@@ -63,7 +63,7 @@ public class CommandEvents {
      * Set a description for the next point
      */
     public static class Annotate {
-        public String annotation;
+        public final String annotation;
 
         public Annotate(String annotation) {
             this.annotation = annotation;

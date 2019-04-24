@@ -12,26 +12,26 @@ import java.util.List;
 @Dao
 public interface VillageDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAllVillages(List<Modal_Village> villagesList);
+    void insertAllVillages(List<Modal_Village> villagesList);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertVillage(Modal_Village modal_village);
+    void insertVillage(Modal_Village modal_village);
 
     @Query("DELETE FROM Village")
-    public void deleteAllVillages();
+    void deleteAllVillages();
 
     @Query("SELECT * FROM Village")
-    public List<Modal_Village> getAllVillages();
+    List<Modal_Village> getAllVillages();
 
     @Query("SELECT DISTINCT State FROM Village ORDER BY State ASC")
-    public List<String> getAllStates();
+    List<String> getAllStates();
 
     @Query("SELECT DISTINCT Block FROM Village WHERE State=:st ORDER BY Block ASC")
-    public List<String> GetStatewiseBlock(String st);
+    List<String> GetStatewiseBlock(String st);
 
     @Query("SELECT * FROM Village WHERE Block=:block  ORDER BY VillageName ASC")
-    public List<Modal_Village> GetVillages(String block);
+    List<Modal_Village> GetVillages(String block);
 
     @Query("select VillageID from Village where Block=:block")
-    public int GetVillageIDByBlock(String block);
+    int GetVillageIDByBlock(String block);
 }

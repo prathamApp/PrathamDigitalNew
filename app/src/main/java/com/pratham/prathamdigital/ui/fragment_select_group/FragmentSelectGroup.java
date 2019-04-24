@@ -31,6 +31,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @EFragment(R.layout.fragment_select_group)
 public class FragmentSelectGroup extends Fragment implements ContractGroup, CircularRevelLayout.CallBacks {
@@ -42,7 +43,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @ViewById(R.id.btn_group_next)
     Button btn_group_next;
 
-    GroupAdapter groupAdapter;
+    private GroupAdapter groupAdapter;
     private int revealX;
     private int revealY;
     private BlurPopupWindow noGrpDialog;
@@ -84,7 +85,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
         if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
         List<Modal_Groups> groups;
-        if (getArguments().getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
+        if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
             groups = get3to6Groups(present_groups);
         } else {
             groups = get8to14Groups(present_groups);
@@ -100,12 +101,9 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     public void showNoGroupsDialog() {
         noGrpDialog = new BlurPopupWindow.Builder(getActivity())
                 .setContentView(R.layout.no_grp_dialog)
-                .bindClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        noGrpDialog.dismiss();
-                        getActivity().getSupportFragmentManager().popBackStack();
-                    }
+                .bindClickListener(v -> {
+                    noGrpDialog.dismiss();
+                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
                 }, R.id.dialog_no_grp_btn_exit)
                 .setGravity(Gravity.CENTER)
                 .setDismissOnTouchBackground(false)
@@ -183,7 +181,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Click(R.id.img_att_back)
     public void setAttBack() {
         try {
-            getActivity().getSupportFragmentManager().popBackStack();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,8 +190,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @UiThread
     public void setNext(View v, Modal_Groups modal_groups) {
         PrathamApplication.bubble_mp.start();
-        ArrayList<Modal_Student> students = new ArrayList<>();
-        students.addAll(BaseActivity.studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
+        ArrayList<Modal_Student> students = new ArrayList<>(BaseActivity.studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
         int[] outLocation = new int[2];
         v.getLocationOnScreen(outLocation);
         outLocation[0] += v.getWidth() / 2;

@@ -16,12 +16,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.isupatches.wisefy.callbacks.EnableWifiCallbacks;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -35,13 +31,13 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
-import org.androidannotations.annotations.UiThread;
 
 import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -49,20 +45,19 @@ import java.util.TimerTask;
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
         GoogleApiClient.OnConnectionFailedListener, Interface_copying {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
-    Context context;
-    SplashContract.splashview splashview;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private String appname;
+    private final Context context;
+    private final SplashContract.splashview splashview;
+    //    private FirebaseAuth.AuthStateListener mAuthListener;
+//    private String appname;
     private Timer gpsFixTimer;
     private int gpsFixCount = 0;
 
-    public SplashPresenterImpl(Context context) {
+    SplashPresenterImpl(Context context) {
         this.context = context;
         splashview = (SplashContract.splashview) context;
     }
 
-    public void getVersion() {
+    private void getVersion() {
         new GetLatestVersion(context, SplashPresenterImpl.this).execute();
     }
 
@@ -88,29 +83,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 .requestEmail()
                 .build();
         // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
-        GoogleApiClient mGoogleApiClient = new GoogleApiClient.Builder(context)
+        return new GoogleApiClient.Builder(context)
                 .enableAutoManage((ActivitySplash) context, this /* OnConnectionFailedListener */)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
-        return mGoogleApiClient;
     }
-
-    EnableWifiCallbacks enableWifiCallbacks = new EnableWifiCallbacks() {
-        @Override
-        public void failureEnablingWifi() {
-            Log.d(TAG, "failureEnablingWifi: wifi enable failure");
-        }
-
-        @Override
-        public void wifiEnabled() {
-            getVersion();
-        }
-
-        @Override
-        public void wisefyFailure(int i) {
-            Log.d(TAG, "wisefyFailure: wisefy failure");
-        }
-    };
 
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
@@ -125,15 +102,15 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             Log.d(TAG, "validateSignIn: " + result.toString());
             // Google Sign In was successful, save Token and a state then authenticate with Firebase
             GoogleSignInAccount account = result.getSignInAccount();
-            String token = account.getIdToken();
-            String name = account.getDisplayName();
+            String token = Objects.requireNonNull(account).getIdToken();
+//            String name = account.getDisplayName();
             String email = account.getEmail();
             // Save Data to Database and sharedPreference
             FastSave.getInstance().saveBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, true);
             FastSave.getInstance().saveString(PD_Constant.GOOGLE_TOKEN, token);
             Modal_Status status = new Modal_Status();
             status.setStatusKey(PD_Constant.GOOGLE_ID);
-            status.setValue(email);
+            status.setValue(Objects.requireNonNull(email));
             status.setDescription("");
             BaseActivity.statusDao.insert(status);
 //            AuthCredential credential = GoogleAuthProvider.getCredential(token, null);
@@ -147,22 +124,19 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Background
     public void firebaseAuthWithGoogle(AuthCredential credential) {
-        mAuth = FirebaseAuth.getInstance();
+        FirebaseAuth mAuth = FirebaseAuth.getInstance();
         mAuth.signInWithCredential(credential)
-                .addOnCompleteListener((ActivitySplash) context, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "signInWithCredential");
-                            checkStudentList();
-                        } else {
-                            Log.d(TAG, "signInWithCredential" + task.getException().getMessage());
-                        }
+                .addOnCompleteListener((ActivitySplash) context, task -> {
+                    if (task.isSuccessful()) {
+                        Log.d(TAG, "signInWithCredential");
+                        checkStudentList();
+                    } else {
+                        Log.d(TAG, "signInWithCredential" + Objects.requireNonNull(task.getException()).getMessage());
                     }
                 });
     }
 
-    @UiThread
+    @Background
     @Override
     public void checkStudentList() {
         if (!BaseActivity.studentDao.getAllStudents().isEmpty()) {
@@ -248,10 +222,9 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
         if (BaseActivity.statusDao.getKey("wifiMAC") == null) {
             statusObj.statusKey = "wifiMAC";
-            WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+            WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             WifiInfo wInfo = wifiManager.getConnectionInfo();
-            String macAddress = wInfo.getMacAddress();
-            statusObj.value = macAddress;
+            statusObj.value = wInfo.getMacAddress();
             BaseActivity.statusDao.insert(statusObj);
         }
         if (BaseActivity.statusDao.getKey("apkType") == null) {
@@ -331,7 +304,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
-    void deleteRecursive(File fileOrDirectory) {
+    private void deleteRecursive(File fileOrDirectory) {
         try {
             if (fileOrDirectory.isDirectory())
                 for (File child : fileOrDirectory.listFiles())
@@ -343,6 +316,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+    @Background
     @Override
     public void onLocationChanged(Location location) {
         gpsFixTimer.cancel();

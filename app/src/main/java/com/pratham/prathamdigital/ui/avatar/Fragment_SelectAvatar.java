@@ -40,6 +40,7 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static com.pratham.prathamdigital.BaseActivity.studentDao;
 
@@ -62,16 +63,33 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @ViewById(R.id.img_add_child_back)
     ImageView img_add_child_back;
 
-    ArrayList<String> avatarList = new ArrayList<>();
+    private final ArrayList<String> avatarList = new ArrayList<>();
     private Context context;
     private String avatar_selected = "";
-    int revealX;
-    int revealY;
+    private final DiscreteScrollView.OnItemChangedListener onItemChangedListener = new DiscreteScrollView.OnItemChangedListener() {
+        @Override
+        public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
+            if (viewHolder != null) {
+                ((LottieAnimationView) (Objects.requireNonNull(viewHolder.itemView))).playAnimation();
+                ((LottieAnimationView) (Objects.requireNonNull(viewHolder.itemView))).loop(true);
+                avatar_selected = avatarList.get(avatar_rv.getCurrentItem());
+            }
+        }
+    };
+    private int revealX;
+    private int revealY;
+
+    @Background
+    public void initializeAvatars() {
+        String[] avatars = getResources().getStringArray(R.array.avatars);
+        avatarList.addAll(Arrays.asList(avatars));
+        initializeAdapter();
+    }
 
     @AfterViews
     public void initialize() {
         avatar_circular_reveal.setListener(this);
-        if (getArguments().getBoolean(PD_Constant.SHOW_BACK))
+        if (getArguments() != null && getArguments().getBoolean(PD_Constant.SHOW_BACK))
             img_add_child_back.setVisibility(View.VISIBLE);
         else img_add_child_back.setVisibility(View.GONE);
         if (getArguments() != null) {
@@ -89,16 +107,9 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         initializeAvatars();
     }
 
-    @Background
-    public void initializeAvatars() {
-        String[] avatars = getResources().getStringArray(R.array.avatars);
-        avatarList.addAll(Arrays.asList(avatars));
-        initializeAdapter();
-    }
-
     @UiThread
     public void initializeAdapter() {
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(), R.array.student_class, R.layout.simple_spinner_item);
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.student_class, R.layout.simple_spinner_item);
         spinner_class.setAdapter(adapter);
         ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
         spinner_age.setAdapter(adapter2);
@@ -111,15 +122,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                 .setMaxScale(1.05f)
                 .build());
     }
-
-    DiscreteScrollView.OnItemChangedListener onItemChangedListener = new DiscreteScrollView.OnItemChangedListener() {
-        @Override
-        public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
-            ((LottieAnimationView) viewHolder.itemView).playAnimation();
-            ((LottieAnimationView) viewHolder.itemView).loop(true);
-            avatar_selected = avatarList.get(avatar_rv.getCurrentItem());
-        }
-    };
 
     @Click(R.id.btn_avatar_next)
     public void setNext() {
@@ -155,10 +157,10 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     @UiThread
     public void presentActivity() {
-        getActivity().startService(new Intent(getActivity(), AppKillService.class));
+        Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), AppKillService.class));
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
-        if (getArguments().getBoolean(PD_Constant.DEEP_LINK, false)) {
+        if (getArguments() != null && getArguments().getBoolean(PD_Constant.DEEP_LINK, false)) {
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
         }
@@ -167,7 +169,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         getActivity().finishAfterTransition();
     }
 
-    public void markAttendance(Modal_Student stud) {
+    private void markAttendance(Modal_Student stud) {
         FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
         ArrayList<Attendance> attendances = new ArrayList<>();
         Attendance attendance = new Attendance();
@@ -189,7 +191,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     @Click(R.id.img_add_child_back)
     public void setAttBack() {
         try {
-            getActivity().getSupportFragmentManager().popBackStack();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -38,7 +38,6 @@ public class PrathamApplication extends Application {
     public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
-    OkHttpClient okHttpClient;
     RequestStartStopReceiver requestStartStopReceiver;
     FsNotification fsNotification;
 
@@ -64,7 +63,7 @@ public class PrathamApplication extends Application {
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         setPradigiPath();
         wiseF = new WiseFy.Brains(getApplicationContext()).logging(true).getSmarts();
-        okHttpClient = new OkHttpClient().newBuilder()
+        OkHttpClient okHttpClient = new OkHttpClient().newBuilder()
                 .connectTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(10, TimeUnit.SECONDS)
                 .writeTimeout(10, TimeUnit.SECONDS)

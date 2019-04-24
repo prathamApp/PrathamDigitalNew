@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.net.wifi.ScanResult;
@@ -31,7 +30,6 @@ import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.SearchView;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -57,10 +55,10 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @EFragment(R.layout.fragment_share_receive)
 public class FragmentShareRecieveTwo extends Fragment implements ContractShare.shareView,
@@ -110,12 +108,9 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
 
     @Bean(SharePresenter.class)
     ContractShare.sharePresenter sharePresenter;
-    BlurPopupWindow sd_builder;
-    private List<String> mList = new ArrayList<>();
-    private int revealX;
-    private int revealY;
+    private final List<String> mList = new ArrayList<>();
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -135,7 +130,7 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
                                         null, FragmentShare.class.getSimpleName());
                             else {
                                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                                intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                intent.setData(Uri.parse("package:" + Objects.requireNonNull(getActivity()).getPackageName()));
                                 startActivityForResult(intent, JOIN_HOTSPOT);
                             }
                         } else
@@ -157,6 +152,9 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
             }
         }
     };
+    private int revealX;
+    private int revealY;
+    private BlurPopupWindow sd_builder;
 
     @AfterViews
     public void initialize() {
@@ -206,19 +204,13 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
                 .setContentView(R.layout.dialog_alert_sd_card)
                 .setGravity(Gravity.CENTER)
                 .setScaleRatio(0.2f)
-                .bindClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                                intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                                startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
-                            }
-                        }, 1500);
-                        sd_builder.dismiss();
-                    }
+                .bindClickListener(v -> {
+                    new Handler().postDelayed(() -> {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
+                    }, 1500);
+                    sd_builder.dismiss();
                 }, R.id.txt_choose_sd_card)
                 .setDismissOnClickBack(true)
                 .setDismissOnTouchBackground(true)
@@ -233,28 +225,25 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
     public void setRl_share() {
         if (PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.disableWifi();
-        KotlinPermissions.with(getActivity())
+        KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
-                .onAccepted(new ResponsePermissionCallback() {
-                    @Override
-                    public void onResult(@NotNull List<String> permissionResult) {
-                        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
-                        if (sdPath.size() > 0) {
-                            if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
-                                showSdCardDialog();
-                            else if (new LocationService(getActivity()).checkLocationEnabled()) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                    if (Settings.System.canWrite(getActivity())) {
-                                        animateHotspotCreation();
-                                    } else {
-                                        Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                                        intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
-                                        startActivityForResult(intent, CREATE_HOTSPOT);
-                                    }
+                .onAccepted(permissionResult -> {
+                    ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                    if (sdPath.size() > 0) {
+                        if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                            showSdCardDialog();
+                        else if (new LocationService(getActivity()).checkLocationEnabled()) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                if (Settings.System.canWrite(getActivity())) {
+                                    animateHotspotCreation();
+                                } else {
+                                    Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                                    intent.setData(Uri.parse("package:" + getActivity().getPackageName()));
+                                    startActivityForResult(intent, CREATE_HOTSPOT);
                                 }
-                            } else
-                                new LocationService(getActivity()).checkLocation();
-                        }
+                            }
+                        } else
+                            new LocationService(getActivity()).checkLocation();
                     }
                 })
                 .ask();
@@ -270,26 +259,18 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
         rl_recieve.setVisibility(View.GONE);
         rl_share.setClickable(false);
         rl_share_block.setVisibility(View.GONE);
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                PD_Utility.addFragment(getActivity(), new FragmentReceive_(), R.id.main_frame
-                        , null, FragmentReceive.class.getSimpleName());
-            }
-        }, 800);
+        mHandler.postDelayed(() -> PD_Utility.addFragment(getActivity(), new FragmentReceive_(), R.id.main_frame
+                , null, FragmentReceive.class.getSimpleName()), 800);
     }
 
     @Click(R.id.rl_recieve)
     public void setRl_recieve() {
         WifiUtils.closeWifiAp();
         if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();
-        KotlinPermissions.with(getActivity())
+        KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
-                .onAccepted(new ResponsePermissionCallback() {
-                    @Override
-                    public void onResult(@NotNull List<String> permissionResult) {
-                        mHandler.sendEmptyMessage(ANIMATE_RECIEVE_AND_INIT_CAMERA);
-                    }
+                .onAccepted(permissionResult -> {
+                    mHandler.sendEmptyMessage(ANIMATE_RECIEVE_AND_INIT_CAMERA);
                 })
                 .ask();
     }
@@ -367,17 +348,14 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
     @UiThread
     @Override
     public void disconnectFTP() {
-        new AlertDialog.Builder(getActivity())
+        new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .setTitle("PraDigi")
                 .setMessage("Do you want to Disconnect?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        WifiUtils.closeWifiAp();
-                        getActivity().sendBroadcast(new Intent(FsService.ACTION_STOP_FTPSERVER));
-                        circular_share_reveal.unReveal();
-                    }
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    WifiUtils.closeWifiAp();
+                    getActivity().sendBroadcast(new Intent(FsService.ACTION_STOP_FTPSERVER));
+                    circular_share_reveal.unReveal();
                 })
                 .setNegativeButton("No", null)
                 .show();
@@ -402,7 +380,7 @@ public class FragmentShareRecieveTwo extends Fragment implements ContractShare.s
         bundle.putInt(PD_Constant.REVEALY, 0);
         PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
                 bundle, FragmentContent_.class.getSimpleName());
-        Fragment fragment = getActivity().getSupportFragmentManager().findFragmentByTag(TAG);
+        Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }

@@ -68,32 +68,6 @@ public class Modal_Rasp_Content {
     @SerializedName("sort_order")
     private int sortOrder;
 
-    @Override
-    public String toString() {
-        return "Modal_Rasp_Content{" +
-                "coachContent=" + coachContent +
-                ", numCoachContents=" + numCoachContents +
-                ", parent='" + parent + '\'' +
-                ", contentId='" + contentId + '\'' +
-                ", author='" + author + '\'' +
-                ", kind='" + kind + '\'' +
-                ", available=" + available +
-                ", description='" + description + '\'' +
-                ", title='" + title + '\'' +
-                ", licenseDescription=" + licenseDescription +
-                ", licenseName=" + licenseName +
-                ", progressFraction=" + progressFraction +
-                ", assessmentmetadata=" + assessmentmetadata +
-                ", licenseOwner='" + licenseOwner + '\'' +
-                ", files=" + files +
-                ", id='" + id + '\'' +
-                ", pk='" + pk + '\'' +
-                ", lang=" + lang +
-                ", channelId='" + channelId + '\'' +
-                ", sortOrder=" + sortOrder +
-                '}';
-    }
-
     public void setCoachContent(boolean coachContent) {
         this.coachContent = coachContent;
     }
@@ -114,7 +88,7 @@ public class Modal_Rasp_Content {
         this.parent = parent;
     }
 
-    public String getParent() {
+    private String getParent() {
         return parent;
     }
 
@@ -122,7 +96,7 @@ public class Modal_Rasp_Content {
         this.contentId = contentId;
     }
 
-    public String getContentId() {
+    private String getContentId() {
         return contentId;
     }
 
@@ -138,7 +112,7 @@ public class Modal_Rasp_Content {
         this.kind = kind;
     }
 
-    public String getKind() {
+    private String getKind() {
         return kind;
     }
 
@@ -154,7 +128,7 @@ public class Modal_Rasp_Content {
         this.description = description;
     }
 
-    public String getDescription() {
+    private String getDescription() {
         return description;
     }
 
@@ -162,7 +136,7 @@ public class Modal_Rasp_Content {
         this.title = title;
     }
 
-    public String getTitle() {
+    private String getTitle() {
         return title;
     }
 
@@ -210,7 +184,7 @@ public class Modal_Rasp_Content {
         this.files = files;
     }
 
-    public List<Modal_Rasp_ContentFilesItem> getFiles() {
+    private List<Modal_Rasp_ContentFilesItem> getFiles() {
         return files;
     }
 
@@ -218,7 +192,7 @@ public class Modal_Rasp_Content {
         this.id = id;
     }
 
-    public String getId() {
+    private String getId() {
         return id;
     }
 
@@ -299,15 +273,15 @@ public class Modal_Rasp_Content {
                         modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + /*URLDecoder.decode(*/filesItem.getDownloadUrl()/*, "UTF-8")*/);
                         modal_contentDetail.setResourcepath(filename + "/index.html");
                     } else if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Video")) {
-                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
-                        filename = filesItem.getStorageUrl().toString()
-                                .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl());
+                        filename = filesItem.getStorageUrl()
+                                .substring(filesItem.getStorageUrl().lastIndexOf('/') + 1);
                         filename = filename.substring(0, filename.lastIndexOf("."));
                         modal_contentDetail.setResourcepath(filename + ".mp4");
                     } else if (modal_contentDetail.getResourcetype().equalsIgnoreCase("Pdf")) {
-                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl().toString());
-                        filename = filesItem.getStorageUrl().toString()
-                                .substring(filesItem.getStorageUrl().toString().lastIndexOf('/') + 1);
+                        modal_contentDetail.setNodekeywords(PD_Constant.RASP_IP + filesItem.getStorageUrl());
+                        filename = filesItem.getStorageUrl()
+                                .substring(filesItem.getStorageUrl().lastIndexOf('/') + 1);
                         filename = filename.substring(0, filename.lastIndexOf("."));
                         modal_contentDetail.setResourcepath(filename + ".pdf");
                     }

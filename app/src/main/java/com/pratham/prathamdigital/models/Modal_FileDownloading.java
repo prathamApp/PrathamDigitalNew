@@ -3,21 +3,11 @@ package com.pratham.prathamdigital.models;
 import android.support.annotation.NonNull;
 
 public class Modal_FileDownloading implements Comparable {
-    String downloadId;
-    String filename;
-    int progress;
-    Modal_ContentDetail contentDetail;
-    String remaining_time;
-
-    @Override
-    public String toString() {
-        return "Modal_FileDownloading{" +
-                "downloadId=" + downloadId +
-                ", filename='" + filename + '\'' +
-                ", progress=" + progress +
-                ", contentDetail=" + contentDetail +
-                '}';
-    }
+    private String downloadId;
+    private String filename;
+    private int progress;
+    private Modal_ContentDetail contentDetail;
+    private String remaining_time;
 
     public Modal_ContentDetail getContentDetail() {
         return contentDetail;
@@ -63,7 +53,7 @@ public class Modal_FileDownloading implements Comparable {
     public int compareTo(@NonNull Object o) {
         Modal_FileDownloading compare = (Modal_FileDownloading) o;
         if (compare.getContentDetail().getNodeid() != null) {
-            if (compare.getDownloadId() == (this.downloadId) && compare.getProgress() == this.progress)
+            if (compare.getDownloadId().equals(this.downloadId) && compare.getProgress() == this.progress)
                 return 0;
             else return 1;
         } else

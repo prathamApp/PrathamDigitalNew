@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.models;
 
-import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
@@ -19,16 +18,6 @@ public class Modal_Session {
     public String toDate;
     @SerializedName("sentFlag")
     public int sentFlag;
-
-    @Override
-    public String toString() {
-        return "Modal_Session{" +
-                "SessionID='" + SessionID + '\'' +
-                ", fromDate='" + fromDate + '\'' +
-                ", toDate='" + toDate + '\'' +
-                ", sentFlag=" + sentFlag +
-                '}';
-    }
 
     @NonNull
     public String getSessionID() {

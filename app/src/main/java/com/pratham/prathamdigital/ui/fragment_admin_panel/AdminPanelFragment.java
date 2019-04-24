@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
@@ -12,9 +11,9 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.models.EventMessage;
-import com.pratham.prathamdigital.ui.PullData.PullDataFragment;
-import com.pratham.prathamdigital.ui.PullData.PullDataFragment_;
 import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups_;
+import com.pratham.prathamdigital.ui.pullData.PullDataFragment;
+import com.pratham.prathamdigital.ui.pullData.PullDataFragment_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -27,6 +26,8 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.Objects;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -75,8 +76,8 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Click(R.id.btn_login)
     public void loginCheck() {
         adminPanelPresenter.checkLogin(getUserName(), getPassword());
-        userNameET.getText().clear();
-        passwordET.getText().clear();
+        Objects.requireNonNull(userNameET.getText()).clear();
+        Objects.requireNonNull(passwordET.getText()).clear();
     }
 
     @Click(R.id.btn_push_data)
@@ -84,13 +85,13 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         adminPanelPresenter.pushData();
     }
 
-    public String getUserName() {
-        String userName = userNameET.getText().toString();
+    private String getUserName() {
+        String userName = Objects.requireNonNull(userNameET.getText()).toString();
         return userName.trim();
     }
 
-    public String getPassword() {
-        String password = passwordET.getText().toString();
+    private String getPassword() {
+        String password = Objects.requireNonNull(passwordET.getText()).toString();
         return password.trim();
     }
 
@@ -107,13 +108,10 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         AlertDialog alertDialog = new AlertDialog.Builder(getActivity()).create();
         alertDialog.setTitle("Invalid Credentials");
         alertDialog.setIcon(R.drawable.ic_error_outline_black_24dp);
-        alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(android.content.DialogInterface dialog, int which) {
-                userNameET.setText("");
-                passwordET.setText("");
-                userNameET.requestFocus();
-            }
+        alertDialog.setButton("OK", (dialog, which) -> {
+            userNameET.setText("");
+            passwordET.setText("");
+            userNameET.requestFocus();
         });
         alertDialog.show();
     }
@@ -130,7 +128,7 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                getActivity().getSupportFragmentManager().popBackStack();
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
             }
         }
     }
@@ -166,6 +164,6 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
 
     @Click(R.id.img_admin_back)
     public void setAdminBack() {
-        getActivity().getSupportFragmentManager().popBackStack();
+        Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 }

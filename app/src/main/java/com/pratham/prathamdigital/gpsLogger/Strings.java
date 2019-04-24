@@ -191,13 +191,13 @@ public class Strings {
      * @return The ISO 8601 formatted string.
      */
     public static String getIsoDateTime(Date dateToFormat) {
-        /**
-         * This function is used in gpslogger.loggers.* and for most of them the
-         * default locale should be fine, but in the case of HttpUrlLogger we
-         * want machine-readable output, thus  Locale.US.
-         *
-         * Be wary of the default locale
-         * http://developer.android.com/reference/java/util/Locale.html#default_locale
+        /*
+          This function is used in gpslogger.loggers.* and for most of them the
+          default locale should be fine, but in the case of HttpUrlLogger we
+          want machine-readable output, thus  Locale.US.
+
+          Be wary of the default locale
+          http://developer.android.com/reference/java/util/Locale.html#default_locale
          */
 
         // GPX specs say that time given should be in UTC, no local time.
@@ -208,14 +208,14 @@ public class Strings {
         return sdf.format(dateToFormat);
     }
 
-    public static String getIsoDateTimeFormat() {
+    private static String getIsoDateTimeFormat() {
         return "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     }
 
     public static String getReadableDateTime(Date dateToFormat) {
-        /**
-         * Similar to getIsoDateTime(), this function is used in
-         * AutoEmailManager, and we want machine-readable output.
+        /*
+          Similar to getIsoDateTime(), this function is used in
+          AutoEmailManager, and we want machine-readable output.
          */
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMM yyyy HH:mm",
                 Locale.US);
@@ -240,7 +240,7 @@ public class Strings {
         return text.replace("&amp;", "&").replace("&quot;", "\"");
     }
 
-    public static String getBuildSerial() {
+    private static String getBuildSerial() {
         try {
             return Build.SERIAL;
         } catch (Throwable t) {
@@ -252,7 +252,7 @@ public class Strings {
         return getFormattedFileName(Session.getInstance(), PreferenceHelper.getInstance());
     }
 
-    public static String getFormattedFileName(Session session, PreferenceHelper ph) {
+    private static String getFormattedFileName(Session session, PreferenceHelper ph) {
         String currentFileName = session.getCurrentFileName();
 //        if (ph.shouldCreateCustomFile() && !Strings.isNullOrEmpty(currentFileName)) {
 //            return getFormattedCustomFileName(currentFileName, GregorianCalendar.getInstance(), ph);
@@ -268,7 +268,7 @@ public class Strings {
 
         String finalFileName = baseName;
         finalFileName = finalFileName.replaceAll("(?i)%ser", String.valueOf(getBuildSerial()));
-        finalFileName = finalFileName.replaceAll("(?i)%ver", String.valueOf(BuildConfig.VERSION_NAME));
+        finalFileName = finalFileName.replaceAll("(?i)%ver", BuildConfig.VERSION_NAME);
         finalFileName = finalFileName.replaceAll("(?i)%hour", String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)));
         finalFileName = finalFileName.replaceAll("(?i)%min", String.format("%02d", calendar.get(Calendar.MINUTE)));
         finalFileName = finalFileName.replaceAll("(?i)%year", String.valueOf(calendar.get(Calendar.YEAR)));
@@ -399,7 +399,7 @@ public class Strings {
         return getFormattedDegrees(decimaldegrees, false, PreferenceHelper.getInstance());
     }
 
-    static String getFormattedDegrees(double decimaldegrees, boolean isLatitude, PreferenceHelper ph) {
+    private static String getFormattedDegrees(double decimaldegrees, boolean isLatitude, PreferenceHelper ph) {
 //        switch(ph.getDisplayLatLongFormat()){
 //
 //            case DEGREES_MINUTES_SECONDS:

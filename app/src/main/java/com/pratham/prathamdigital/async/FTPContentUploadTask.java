@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.async;
 
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,29 +15,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 public class FTPContentUploadTask extends AsyncTask {
-    FTPClient client;
-    long lenghtOfFile;
-    Context context;
-    String localPath;
-    String remoteDirPath;
-    String contentType;
-    String downloadId;
-
-    public FTPContentUploadTask(Context context, FTPClient client, String localPath, String contentType, String downloadId) {
-        this.context = context;
-        this.client = client;
-        this.localPath = localPath;
-        this.downloadId = downloadId;
-        this.contentType = "Pratham" + contentType;
-        File f = new File(localPath);
-        lenghtOfFile = (f.isFile()) ? f.length() : PD_Utility.folderSize(f);
-        if (contentType.equalsIgnoreCase(PD_Constant.GAME))
-            remoteDirPath = "/PrathamGame/";
-        else if (contentType.equalsIgnoreCase(PD_Constant.VIDEO))
-            remoteDirPath = "/PrathamVideo/";
-        else if (contentType.equalsIgnoreCase(PD_Constant.PDF))
-            remoteDirPath = "/PrathamPDF/";
-    }
+    private final FTPClient client;
+    private final long lenghtOfFile;
+    //    private Context context;
+    private final String localPath;
+    private final String contentType;
+    private final String downloadId;
+    private String remoteDirPath;
+    private long total = 0;
 
     @Override
     protected Object doInBackground(Object[] objects) {
@@ -61,8 +45,24 @@ public class FTPContentUploadTask extends AsyncTask {
         }
     }
 
-    public void uploadDirectory(FTPClient ftpClient, String remoteDirPath, String localParentDir,
-                                String remoteParentDir) {
+    public FTPContentUploadTask(/*Context context, */FTPClient client, String localPath, String contentType, String downloadId) {
+//        this.context = context;
+        this.client = client;
+        this.localPath = localPath;
+        this.downloadId = downloadId;
+        this.contentType = "Pratham" + contentType;
+        File f = new File(localPath);
+        lenghtOfFile = (f.isFile()) ? f.length() : PD_Utility.folderSize(f);
+        if (contentType.equalsIgnoreCase(PD_Constant.GAME))
+            remoteDirPath = "/PrathamGame/";
+        else if (contentType.equalsIgnoreCase(PD_Constant.VIDEO))
+            remoteDirPath = "/PrathamVideo/";
+        else if (contentType.equalsIgnoreCase(PD_Constant.PDF))
+            remoteDirPath = "/PrathamPDF/";
+    }
+
+    private void uploadDirectory(FTPClient ftpClient, String remoteDirPath, String localParentDir,
+                                 String remoteParentDir) {
         try {
             File localDir = new File(localParentDir);
             for (File subFile : localDir.listFiles()) {
@@ -89,9 +89,7 @@ public class FTPContentUploadTask extends AsyncTask {
         }
     }
 
-    long total = 0;
-
-    public void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath) {
+    private void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath) {
         try {
             File localFile = new File(localFilePath);
             total += localFile.length();

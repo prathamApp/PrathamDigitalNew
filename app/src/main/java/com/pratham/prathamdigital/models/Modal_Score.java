@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -39,26 +38,6 @@ public class Modal_Score {
     @SerializedName("sentFlag")
     public int sentFlag;
 
-    @Override
-    public String toString() {
-        return "Modal_Score{" +
-                "ScoreId=" + ScoreId +
-                ", SessionID='" + SessionID + '\'' +
-                ", StudentID='" + StudentID + '\'' +
-                ", GroupID='" + GroupID + '\'' +
-                ", DeviceID='" + DeviceID + '\'' +
-                ", ResourceID='" + ResourceID + '\'' +
-                ", QuestionId=" + QuestionId +
-                ", ScoredMarks=" + ScoredMarks +
-                ", TotalMarks=" + TotalMarks +
-                ", StartDateTime='" + StartDateTime + '\'' +
-                ", EndDateTime='" + EndDateTime + '\'' +
-                ", Level=" + Level +
-                ", Label='" + Label + '\'' +
-                ", sentFlag=" + sentFlag +
-                '}';
-    }
-
     public int getSentFlag() {
         return sentFlag;
     }
@@ -67,12 +46,11 @@ public class Modal_Score {
         this.sentFlag = sentFlag;
     }
 
-    @NonNull
     public int getScoreId() {
         return ScoreId;
     }
 
-    public void setScoreId(@NonNull int scoreId) {
+    public void setScoreId(int scoreId) {
         ScoreId = scoreId;
     }
 

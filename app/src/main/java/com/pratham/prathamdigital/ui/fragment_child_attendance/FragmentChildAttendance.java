@@ -40,6 +40,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 @EFragment(R.layout.fragment_child_attendance)
 public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView,
@@ -56,27 +57,27 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
 
-    ChildAdapter childAdapter;
-    ArrayList<Modal_Student> students = new ArrayList<>();
-    ArrayList<String> avatars = new ArrayList<>();
+    private final ArrayList<String> avatars = new ArrayList<>();
+    private ChildAdapter childAdapter;
+    private ArrayList<Modal_Student> students = new ArrayList<>();
     private int revealX;
     private int revealY;
     private String groupID = "";
-
     @SuppressLint("HandlerLeak")
+    private final
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIALIZE_STUDENTS:
-                    students = getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST);
+                    students = getArguments() != null ? getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST) : null;
                     if (PrathamApplication.isTablet) {
                         img_child_back.setVisibility(View.VISIBLE);
                         btn_attendance_next.setVisibility(View.VISIBLE);
                         groupID = getArguments().getString(PD_Constant.GROUPID);
                         for (Modal_Student stu : students)
-                            avatars.add(PD_Utility.getRandomAvatar(getActivity()));
+                            avatars.add(PD_Utility.getRandomAvatar(Objects.requireNonNull(getActivity())));
                     } else {
                         img_child_back.setVisibility(View.GONE);
                         btn_attendance_next.setVisibility(View.GONE);
@@ -170,14 +171,14 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public boolean setNextAvatar(View view, MotionEvent event) {
         revealX = (int) event.getRawX();
         revealY = (int) event.getY();
-        return getActivity().onTouchEvent(event);
+        return Objects.requireNonNull(getActivity()).onTouchEvent(event);
     }
 
     @Touch(R.id.rv_child)
     public boolean getRecyclerTouch(View view, MotionEvent event) {
         revealX = (int) event.getRawX();
         revealY = (int) event.getY();
-        return getActivity().onTouchEvent(event);
+        return Objects.requireNonNull(getActivity()).onTouchEvent(event);
     }
 
     @Click(R.id.btn_attendance_next)
@@ -190,7 +191,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         if (checkedStds.size() > 0) {
             PrathamApplication.bubble_mp.start();
             FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
-            FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, getArguments().getString(PD_Constant.GROUP_NAME));
+            FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, Objects.requireNonNull(getArguments()).getString(PD_Constant.GROUP_NAME));
             markAttendance(checkedStds);
             presentActivity(v);
         } else {
@@ -223,9 +224,9 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @UiThread
     public void presentActivity(View view) {
         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
-        getActivity().startService(new Intent(getActivity(), AppKillService.class));
+        Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), AppKillService.class));
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
-        if (getArguments().getBoolean(PD_Constant.DEEP_LINK, false)) {
+        if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.DEEP_LINK, false)) {
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
         }
@@ -237,7 +238,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Click(R.id.img_child_back)
     public void setAttBack() {
         try {
-            getActivity().getSupportFragmentManager().popBackStack();
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         } catch (Exception e) {
             e.printStackTrace();
         }

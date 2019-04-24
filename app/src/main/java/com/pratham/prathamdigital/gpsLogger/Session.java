@@ -184,11 +184,11 @@ public class Session {
         set("totalTravelled", String.valueOf(totalTravelled));
     }
 
-    public int getNumLegs() {
+    private int getNumLegs() {
         return Integer.parseInt(get("numLegs", "0"));
     }
 
-    public void setNumLegs(int numLegs) {
+    private void setNumLegs(int numLegs) {
         set("numLegs", String.valueOf(numLegs));
     }
 
@@ -301,7 +301,7 @@ public class Session {
         return !(getDescription().length() == 0);
     }
 
-    public String getDescription() {
+    private String getDescription() {
         return get("description", "");
     }
 

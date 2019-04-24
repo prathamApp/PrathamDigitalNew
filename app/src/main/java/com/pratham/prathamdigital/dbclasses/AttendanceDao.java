@@ -12,33 +12,33 @@ import java.util.List;
 @Dao
 public interface AttendanceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAttendance(List<Attendance> attendancesList);
+    void insertAttendance(List<Attendance> attendancesList);
 
     @Query("DELETE FROM Attendance")
-    public void deleteAllAttendances();
+    void deleteAllAttendances();
 
     @Query("SELECT * FROM Attendance")
-    public List<Attendance> getAllAttendances();
+    List<Attendance> getAllAttendances();
 
     @Query("UPDATE Attendance SET sentFlag=1 WHERE SessionID=:s_id")
     void updateSentFlag(String s_id);
 
     @Query("SELECT * FROM Attendance WHERE sentFlag=0 AND SessionID=:s_id")
-    public List<Attendance> getNewAttendances(String s_id);
+    List<Attendance> getNewAttendances(String s_id);
 
     @Query("SELECT * FROM Attendance WHERE sentFlag=0")
-    public List<Attendance> getNewAttendances();
+    List<Attendance> getNewAttendances();
 
     @Query("UPDATE Attendance SET sentFlag=:pushStatus")
     void updateAllSentFlag(int pushStatus);
 
     @Query("SELECT DISTINCT SessionID FROM Attendance")
-    public List<String> getAllDistinctSessions();
+    List<String> getAllDistinctSessions();
 
     @Query("select GroupID from Attendance where SessionID=:SessID")
-    public String GetGrpIDBySessionID(String SessID);
+    String GetGrpIDBySessionID(String SessID);
 
     @Query("select Present from Attendance where SessionID=:SessID")
-    public List<Integer> GetAllPresentStdBySessionId(String SessID);
+    List<Integer> GetAllPresentStdBySessionId(String SessID);
 
 }

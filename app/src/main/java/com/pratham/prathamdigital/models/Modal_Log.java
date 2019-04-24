@@ -29,21 +29,6 @@ public class Modal_Log {
     @SerializedName("sentFlag")
     public int sentFlag;
 
-    @Override
-    public String toString() {
-        return "Modal_Log{" +
-                "logId=" + logId +
-                ", currentDateTime='" + currentDateTime + '\'' +
-                ", exceptionMessage='" + exceptionMessage + '\'' +
-                ", exceptionStackTrace='" + exceptionStackTrace + '\'' +
-                ", methodName='" + methodName + '\'' +
-                ", errorType='" + errorType + '\'' +
-                ", sessionId='" + sessionId + '\'' +
-                ", deviceId='" + deviceId + '\'' +
-                ", LogDetail='" + LogDetail + '\'' +
-                '}';
-    }
-
     public int getLogId() {
         return logId;
     }

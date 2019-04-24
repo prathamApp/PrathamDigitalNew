@@ -22,7 +22,7 @@ package com.pratham.prathamdigital.gpsLogger;
 
 public class NmeaSentence {
 
-    String[] nmeaParts;
+    private final String[] nmeaParts;
 
     public NmeaSentence(String nmeaSentence) {
         if (Strings.isNullOrEmpty(nmeaSentence)) {

@@ -5,8 +5,8 @@ import android.util.Log;
 
 public class Audio extends Thread {
     private boolean stopped = false;
-    MediaRecorder mediaRecorder;
-    String recFilePath;
+    private final String recFilePath;
+    private MediaRecorder mediaRecorder;
     private boolean isRecording = false;
 
     /**

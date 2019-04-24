@@ -2,13 +2,11 @@ package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "Village")
 public class Modal_Village {
-    @NonNull
     @PrimaryKey
     @SerializedName("VillageId")
     public int VillageId;
@@ -24,11 +22,6 @@ public class Modal_Village {
     public String State;
     @SerializedName("CRLId")
     public String CRLId;
-
-    @Override
-    public String toString() {
-        return this.VillageName;
-    }
 
     public Modal_Village() {
     }

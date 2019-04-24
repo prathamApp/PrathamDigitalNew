@@ -24,29 +24,28 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
-    private Context context;
-    private DowloadContract dowloadContract;
-    private AsyncListDiffer<Modal_FileDownloading> mDiffer;
-    private DiffUtil.ItemCallback<Modal_FileDownloading> diffcallback = new DiffUtil.ItemCallback<Modal_FileDownloading>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
-            return Objects.equals(detail.getDownloadId(), t1.getDownloadId());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
+    private final DowloadContract dowloadContract;
+    private final AsyncListDiffer<Modal_FileDownloading> mDiffer;
 
     public DownloadListAdapter(Context context, DowloadContract dowloadContract) {
-        mDiffer = new AsyncListDiffer<Modal_FileDownloading>(this, diffcallback);
-        this.context = context;
+        DiffUtil.ItemCallback<Modal_FileDownloading> diffcallback = new DiffUtil.ItemCallback<Modal_FileDownloading>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
+                return Objects.equals(detail.getDownloadId(), t1.getDownloadId());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Modal_FileDownloading detail, @NonNull Modal_FileDownloading t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
+        Context context1 = context;
         this.dowloadContract = dowloadContract;
     }
 
+    @NonNull
     @Override
     public DownloadViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int i) {
         LayoutInflater header = LayoutInflater.from(parent.getContext());
@@ -58,25 +57,20 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
     public void onBindViewHolder(@NonNull DownloadViewHolder holder, int i) {
         if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
                 .equalsIgnoreCase(PD_Constant.GAME))
-            holder.download_file_view.setImageResource(R.drawable.ic_joystick);
+            Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_joystick);
         else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
                 .equalsIgnoreCase(PD_Constant.VIDEO))
-            holder.download_file_view.setImageResource(R.drawable.ic_video);
+            Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_video);
         else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
                 .equalsIgnoreCase(PD_Constant.PDF))
-            holder.download_file_view.setImageResource(R.drawable.ic_book);
+            Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_book);
         else
-            holder.download_file_view.setImageResource(R.drawable.ic_joystick);
-        holder.download_remaining_time.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());
-        holder.content_title.setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getFilename());
-        holder.number_progress.setProgress(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getProgress());
-        holder.download_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dowloadContract.deleteDownload(holder.getAdapterPosition(),
-                        mDiffer.getCurrentList().get(holder.getAdapterPosition()).getDownloadId());
-            }
-        });
+            Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_joystick);
+        Objects.requireNonNull(holder.download_remaining_time).setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());
+        Objects.requireNonNull(holder.content_title).setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getFilename());
+        Objects.requireNonNull(holder.number_progress).setProgress(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getProgress());
+        Objects.requireNonNull(holder.download_delete).setOnClickListener(v -> dowloadContract.deleteDownload(holder.getAdapterPosition(),
+                mDiffer.getCurrentList().get(holder.getAdapterPosition()).getDownloadId()));
     }
 
     @Override
@@ -110,7 +104,7 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         @BindView(R.id.download_delete)
         ImageView download_delete;
 
-        public DownloadViewHolder(View itemView) {
+        DownloadViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

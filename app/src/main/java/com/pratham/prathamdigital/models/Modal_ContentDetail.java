@@ -85,26 +85,6 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         }
     };
 
-    @Override
-    public String toString() {
-        return "Modal_ContentDetail{" +
-                "nodeid='" + nodeid + '\'' +
-                ", nodetype='" + nodetype + '\'' +
-                ", nodetitle='" + nodetitle + '\'' +
-                ", nodekeywords='" + nodekeywords + '\'' +
-                ", nodeeage='" + nodeeage + '\'' +
-                ", nodedesc='" + nodedesc + '\'' +
-                ", nodeimage='" + nodeimage + '\'' +
-                ", nodeserverimage='" + nodeserverimage + '\'' +
-                ", resourceid='" + resourceid + '\'' +
-                ", resourcetype='" + resourcetype + '\'' +
-                ", resourcepath='" + resourcepath + '\'' +
-                ", level='" + level + '\'' +
-                ", content_language='" + content_language + '\'' +
-                ", parentid='" + parentid + '\'' +
-                '}';
-    }
-
     public String getNodeid() {
         return nodeid;
     }

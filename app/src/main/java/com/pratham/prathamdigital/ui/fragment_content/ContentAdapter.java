@@ -25,33 +25,30 @@ import java.util.Objects;
 
 public class ContentAdapter extends RecyclerView.Adapter {
 
-    public static final int FOLDER_TYPE = 1;
-    public static final int FILE_TYPE = 2;
-    public static final int HEADER_TYPE = 3;
-    Context context;
-    ContentContract.contentClick contentInterface;
-    private AsyncListDiffer<Modal_ContentDetail> mDiffer;
+    static final int FOLDER_TYPE = 1;
+    static final int FILE_TYPE = 2;
+    static final int HEADER_TYPE = 3;
+    private final ContentContract.contentClick contentInterface;
+    private final AsyncListDiffer<Modal_ContentDetail> mDiffer;
     private final ViewBinderHelper binderHelper = new ViewBinderHelper();
 
-    public ContentAdapter(Context context, ContentContract.contentClick contentClick) {
-        mDiffer = new AsyncListDiffer<Modal_ContentDetail>(this, diffcallback);
-        this.context = context;
+    ContentAdapter(Context context, ContentContract.contentClick contentClick) {
+        DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
+            @Override
+            public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+                return Objects.equals(detail.getNodeid(), t1.getNodeid());
+            }
+
+            @Override
+            public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
+                int result = detail.compareTo(t1);
+                return result == 0;
+            }
+        };
+        mDiffer = new AsyncListDiffer<>(this, diffcallback);
+        Context context1 = context;
         this.contentInterface = contentClick;
     }
-
-    private DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
-        @Override
-        public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
-            return Objects.equals(detail.getNodeid(), t1.getNodeid());
-        }
-
-        @Override
-        public boolean areContentsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
-            int result = detail.compareTo(t1);
-            if (result == 0) return true;
-            return false;
-        }
-    };
 
     public void submitList(List<Modal_ContentDetail> data) {
         mDiffer.submitList(data);
@@ -156,13 +153,13 @@ public class ContentAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public void unreveal(View view) {
+    private void unreveal(View view) {
         // previously visible view
         try {
             int centerX = view.getWidth();
             int centerY = view.getHeight();
             int startRadius = 0;
-            int endRadius = (int) Math.max(view.getWidth(), view.getHeight());
+            int endRadius = Math.max(view.getWidth(), view.getHeight());
             Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, endRadius, startRadius);
             anim.setInterpolator(new AccelerateDecelerateInterpolator());
             anim.setDuration(300);

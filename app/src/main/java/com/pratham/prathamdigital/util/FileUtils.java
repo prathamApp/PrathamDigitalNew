@@ -56,15 +56,13 @@ public class FileUtils {
         return file;
     }
 
-    public static void delFolder(String folderPath) {
+    private static void delFolder(String folderPath) {
         delAllFile(folderPath);
-        String filePath = folderPath;
-        filePath = filePath.toString();
-        java.io.File myFilePath = new java.io.File(filePath);
+        java.io.File myFilePath = new java.io.File(folderPath);
         myFilePath.delete();
     }
 
-    public static void delAllFile(String path) {
+    private static void delAllFile(String path) {
         File file = new File(path);
         if (!file.exists()) {
             return;
@@ -73,20 +71,20 @@ public class FileUtils {
             return;
         }
         String[] tempList = file.list();
-        File temp = null;
+        File temp;
         int mLength = tempList.length;
-        for (int i = 0; i < mLength; i++) {
+        for (String s : tempList) {
             if (path.endsWith(File.separator)) {
-                temp = new File(path + tempList[i]);
+                temp = new File(path + s);
             } else {
-                temp = new File(path + File.separator + tempList[i]);
+                temp = new File(path + File.separator + s);
             }
             if (temp.isFile()) {
                 temp.delete();
             }
             if (temp.isDirectory()) {
-                delAllFile(path + "/" + tempList[i]);
-                delFolder(path + "/" + tempList[i]);
+                delAllFile(path + "/" + s);
+                delFolder(path + "/" + s);
             }
         }
     }
@@ -98,7 +96,7 @@ public class FileUtils {
 
     public static String formatFileSize(long size) {
         DecimalFormat df = new DecimalFormat("#.00");
-        String fileSizeString = "Unknown size";
+        String fileSizeString;
         if (size < 1024) {
             fileSizeString = df.format((double) size) + "B";
         } else if (size < 1048576) {
@@ -134,7 +132,7 @@ public class FileUtils {
     }
 
     public static ArrayList<String> getExtSdCardPaths(Context con) {
-        ArrayList<String> paths = new ArrayList<String>();
+        ArrayList<String> paths = new ArrayList<>();
         File[] files = ContextCompat.getExternalFilesDirs(con, "external");
         File firstFile = files[0];
         for (File file : files) {
@@ -165,11 +163,11 @@ public class FileUtils {
         return outFile;
     }
 
-    public static void copy(InputStream inputStream, File output) throws IOException {
+    private static void copy(InputStream inputStream, File output) throws IOException {
         OutputStream outputStream = null;
         try {
             outputStream = new FileOutputStream(output);
-            int read = 0;
+            int read;
             byte[] bytes = new byte[1024];
             while ((read = inputStream.read(bytes)) != -1) {
                 outputStream.write(bytes, 0, read);
@@ -209,8 +207,6 @@ public class FileUtils {
     }
 
     private static String getVolumePath(final String volumeId, Context con) {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP)
-            return null;
 
         try {
             StorageManager mStorageManager = (StorageManager) con.getSystemService(Context.STORAGE_SERVICE);
@@ -264,9 +260,9 @@ public class FileUtils {
 
     @SuppressLint("NewApi")
     public static String getPath(final Context context, final Uri uri) {
-        final boolean isKitKat = Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT;
+        final boolean isKitKat = true;
         // DocumentProvider
-        if (isKitKat && DocumentsContract.isDocumentUri(context, uri)) {
+        if (DocumentsContract.isDocumentUri(context, uri)) {
             // ExternalStorageProvider
             if (isExternalStorageDocument(uri)) {
                 final String docId = DocumentsContract.getDocumentId(uri);
@@ -321,25 +317,19 @@ public class FileUtils {
      * @param selectionArgs (Optional) Selection arguments used in the query.
      * @return The value of the _data column, which is typically a file path.
      */
-    public static String getDataColumn(Context context, Uri uri, String selection,
-                                       String[] selectionArgs) {
+    private static String getDataColumn(Context context, Uri uri, String selection,
+                                        String[] selectionArgs) {
 
-        Cursor cursor = null;
         final String column = "_data";
         final String[] projection = {
                 column
         };
-
-        try {
-            cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
-                    null);
+        try (Cursor cursor = context.getContentResolver().query(uri, projection, selection, selectionArgs,
+                null)) {
             if (cursor != null && cursor.moveToFirst()) {
                 final int column_index = cursor.getColumnIndexOrThrow(column);
                 return cursor.getString(column_index);
             }
-        } finally {
-            if (cursor != null)
-                cursor.close();
         }
         return null;
     }
@@ -348,7 +338,7 @@ public class FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is ExternalStorageProvider.
      */
-    public static boolean isExternalStorageDocument(Uri uri) {
+    private static boolean isExternalStorageDocument(Uri uri) {
         return "com.android.externalstorage.documents".equals(uri.getAuthority());
     }
 
@@ -356,7 +346,7 @@ public class FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is DownloadsProvider.
      */
-    public static boolean isDownloadsDocument(Uri uri) {
+    private static boolean isDownloadsDocument(Uri uri) {
         return "com.android.providers.downloads.documents".equals(uri.getAuthority());
     }
 
@@ -364,7 +354,7 @@ public class FileUtils {
      * @param uri The Uri to check.
      * @return Whether the Uri authority is MediaProvider.
      */
-    public static boolean isMediaDocument(Uri uri) {
+    private static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 /*

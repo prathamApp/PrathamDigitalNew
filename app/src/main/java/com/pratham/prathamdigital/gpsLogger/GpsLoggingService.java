@@ -56,28 +56,23 @@ public class GpsLoggingService extends Service {
 //    private static int NOTIFICATION_ID = 8675309;
     private final IBinder binder = new GpsLoggingBinder();
     protected LocationManager gpsLocationManager;
-    AlarmManager nextPointAlarmManager;
-    PendingIntent activityRecognitionPendingIntent;
     //    private NotificationCompat.Builder nfc;
     // ---------------------------------------------------
     // Helpers and managers
     // ---------------------------------------------------
-    private PreferenceHelper preferenceHelper = PreferenceHelper.getInstance();
-    private Session session = Session.getInstance();
+    private final PreferenceHelper preferenceHelper = PreferenceHelper.getInstance();
+    private final Session session = Session.getInstance();
+    private final Handler handler = new Handler();
+    private AlarmManager nextPointAlarmManager;
     private LocationManager passiveLocationManager;
     private LocationManager towerLocationManager;
     private GeneralLocationListener gpsLocationListener;
     private GeneralLocationListener towerLocationListener;
     private GeneralLocationListener passiveLocationListener;
     private Intent alarmIntent;
-    private Handler handler = new Handler();
     // ---------------------------------------------------
-    private Runnable stopManagerRunnable = new Runnable() {
-        @Override
-        public void run() {
-            stopManagerAndResetAlarm();
-        }
-    };
+    private final Runnable stopManagerRunnable = this::stopManagerAndResetAlarm;
+    private PendingIntent activityRecognitionPendingIntent;
 
     @Override
     public IBinder onBind(Intent arg0) {
@@ -285,7 +280,7 @@ public class GpsLoggingService extends Service {
      */
 
 
-    public void logOnce() {
+    private void logOnce() {
         session.setSinglePointMode(true);
         if (session.isStarted()) {
             startGpsManager();
@@ -293,16 +288,6 @@ public class GpsLoggingService extends Service {
             startLogging();
         }
     }
-
-    /**
-     * Method to be called if user has chosen to auto email log files when he
-     * stops logging
-     private void autoSendLogFileOnStop() {
-     if (preferenceHelper.isAutoSendEnabled() && preferenceHelper.shouldAutoSendOnStopLogging()) {
-     autoSendLogFile(null);
-     }
-     }
-     */
 
     /**
      * Calls the Auto Senders which process the files and send it.
@@ -334,7 +319,7 @@ public class GpsLoggingService extends Service {
     /**
      * Resets the form, resets file name if required, reobtains preferences
      */
-    protected void startLogging() {
+    private void startLogging() {
         session.setAddNewTrackSegment(true);
 //        try {
 //            startForeground(NOTIFICATION_ID, getNotification());
@@ -380,7 +365,7 @@ public class GpsLoggingService extends Service {
     /**
      * Stops logging, removes notification, stops GPS manager, stops email timer
      */
-    public void stopLogging() {
+    private void stopLogging() {
         session.setAddNewTrackSegment(true);
         session.setTotalTravelled(0);
         session.setPreviousLocationInfo(null);
@@ -627,7 +612,7 @@ public class GpsLoggingService extends Service {
         }
     }
 
-    void setLocationServiceUnavailable() {
+    private void setLocationServiceUnavailable() {
         EventBus.getDefault().post(new ServiceEvents.LocationServicesUnavailable());
     }
 
@@ -692,12 +677,12 @@ public class GpsLoggingService extends Service {
                 return;
             }
             //Don't apply the retry interval to passive locations
-            if (!isPassiveLocation && preferenceHelper.getMinimumAccuracy() < Math.abs(loc.getAccuracy())) {
+            if (preferenceHelper.getMinimumAccuracy() < Math.abs(loc.getAccuracy())) {
                 if (session.getFirstRetryTimeStamp() == 0) {
                     session.setFirstRetryTimeStamp(System.currentTimeMillis());
                 }
                 if (currentTimeStamp - session.getFirstRetryTimeStamp() <= preferenceHelper.getLoggingRetryPeriod() * 1000) {
-                    Log.d("onLocationChanged: ", "Only accuracy of " + String.valueOf(loc.getAccuracy()) + " m. Point discarded. Inaccurate_point_discarded");
+                    Log.d("onLocationChanged: ", "Only accuracy of " + loc.getAccuracy() + " m. Point discarded. Inaccurate_point_discarded");
                     //return and keep trying
                     return;
                 }
@@ -899,7 +884,7 @@ public class GpsLoggingService extends Service {
      * Can be used from calling classes as the go-between for methods and
      * properties.
      */
-    public class GpsLoggingBinder extends Binder {
+    class GpsLoggingBinder extends Binder {
         public GpsLoggingService getService() {
             return GpsLoggingService.this;
         }

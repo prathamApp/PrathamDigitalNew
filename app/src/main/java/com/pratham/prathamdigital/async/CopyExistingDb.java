@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.async;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,10 +24,10 @@ import java.util.List;
 
 public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
 
-    File db_file;
-    File folder_file;
-    Context context;
-    Interface_copying interface_copying;
+    @SuppressLint("StaticFieldLeak")
+    private final Context context;
+    private final Interface_copying interface_copying;
+    private File folder_file;
 
     public CopyExistingDb(Context context, Interface_copying interface_copying) {
         this.context = context;
@@ -47,13 +48,12 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                 folder_file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER + "/" +
                         FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                 if (folder_file.exists()) {
-                    db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
+                    File db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
                     if (db_file.exists()) {
                         SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
                         if (db == null) return false;
-                        Cursor content_cursor = null;
                         try {
-                            content_cursor = db.rawQuery("SELECT * FROM TableContent", null);
+                            Cursor content_cursor = db.rawQuery("SELECT * FROM TableContent", null);
                             //populate contents
                             List<Modal_ContentDetail> contents = new ArrayList<>();
                             if (content_cursor.moveToFirst()) {
@@ -86,9 +86,8 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                             e.printStackTrace();
                         }
                         //populate villages
-                        Cursor village_cursor = null;
                         try {
-                            village_cursor = db.rawQuery("SELECT * FROM Village", null);
+                            Cursor village_cursor = db.rawQuery("SELECT * FROM Village", null);
                             List<Modal_Village> villages = new ArrayList<>();
                             if (village_cursor.moveToFirst()) {
                                 while (!village_cursor.isAfterLast()) {
@@ -110,9 +109,8 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                             e.printStackTrace();
                         }
                         //populate crls
-                        Cursor crl_cursor = null;
                         try {
-                            crl_cursor = db.rawQuery("SELECT * FROM CRL", null);
+                            Cursor crl_cursor = db.rawQuery("SELECT * FROM CRL", null);
                             List<Modal_Crl> crls = new ArrayList<>();
                             if (crl_cursor.moveToFirst()) {
                                 while (!crl_cursor.isAfterLast()) {
@@ -141,9 +139,8 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                             e.printStackTrace();
                         }
                         //populate groups
-                        Cursor grp_cursor = null;
                         try {
-                            grp_cursor = db.rawQuery("SELECT * FROM Groups", null);
+                            Cursor grp_cursor = db.rawQuery("SELECT * FROM Groups", null);
                             List<Modal_Groups> groups = new ArrayList<>();
                             if (grp_cursor.moveToFirst()) {
                                 while (!grp_cursor.isAfterLast()) {
@@ -166,9 +163,8 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                             e.printStackTrace();
                         }
                         //populate students
-                        Cursor stu_cursor = null;
                         try {
-                            stu_cursor = db.rawQuery("SELECT * FROM Students", null);
+                            Cursor stu_cursor = db.rawQuery("SELECT * FROM Students", null);
                             List<Modal_Student> students = new ArrayList<>();
                             if (stu_cursor.moveToFirst()) {
                                 while (!stu_cursor.isAfterLast()) {

@@ -12,24 +12,24 @@ import java.util.List;
 @Dao
 public interface GroupDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAllGroups(List<Modal_Groups> groupsList);
+    void insertAllGroups(List<Modal_Groups> groupsList);
 
     @Query("DELETE FROM Groups")
-    public void deleteAllGroups();
+    void deleteAllGroups();
 
     @Query("SELECT * FROM Groups ")
-    public List<Modal_Groups> getAllGroups();
+    List<Modal_Groups> getAllGroups();
 
     @Query("SELECT * FROM Groups WHERE VillageID=:vID ORDER BY GroupName ASC")
-    public List<Modal_Groups> GetGroups(int vID);
+    List<Modal_Groups> GetGroups(int vID);
 
     @Query("DELETE FROM Groups WHERE GroupID=:grpID")
-    public void deleteGroupByGrpID(String grpID);
+    void deleteGroupByGrpID(String grpID);
 
     @Query("SELECT * FROM Groups WHERE GroupID=:grpID")
-    public Modal_Groups getGroupByGrpID(String grpID);
+    Modal_Groups getGroupByGrpID(String grpID);
 
     @Query("select * from Groups WHERE DeviceID = 'deleted'")
-    public List<Modal_Groups> GetAllDeletedGroups();
+    List<Modal_Groups> GetAllDeletedGroups();
 
 }

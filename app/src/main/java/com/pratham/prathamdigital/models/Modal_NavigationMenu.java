@@ -1,9 +1,9 @@
 package com.pratham.prathamdigital.models;
 
 public class Modal_NavigationMenu {
-    String menu_name;
-    boolean isselected;
-    int menuImage;
+    private String menu_name;
+    private boolean isselected;
+    private int menuImage;
 
     public int getMenuImage() {
         return menuImage;

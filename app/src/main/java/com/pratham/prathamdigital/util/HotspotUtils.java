@@ -49,8 +49,15 @@ abstract public class HotspotUtils {
         return Build.VERSION.SDK_INT >= 26 || HackAPI.supported();
     }
 
-    public WifiManager getWifiManager() {
-        return mWifiManager;
+    public static int getAllowedKeyManagement(WifiConfiguration wifiConfiguration) {
+        String keyManagement = wifiConfiguration.allowedKeyManagement.toString();
+
+        try {
+            return Integer.valueOf(keyManagement.substring(1, keyManagement.length() - 1));
+        } catch (Exception ignored) {
+        }
+
+        return -1;
     }
 
     abstract public boolean disable();
@@ -68,6 +75,10 @@ abstract public class HotspotUtils {
     abstract public boolean isStarted();
 
     abstract public boolean unloadPreviousConfig();
+
+    WifiManager getWifiManager() {
+        return mWifiManager;
+    }
 
     @RequiresApi(26)
     public static class OreoAPI extends HotspotUtils {
@@ -127,7 +138,7 @@ abstract public class HotspotUtils {
                 }, new Handler(Looper.myLooper()));
 
                 return true;
-            } catch (Throwable e) {
+            } catch (Throwable ignored) {
             }
 
             return false;
@@ -148,8 +159,7 @@ abstract public class HotspotUtils {
 
         @Override
         public boolean enableConfigured(String apName, String passKeyWPA2) {
-            boolean result = enable();
-            return result;
+            return enable();
         }
 
         @Override
@@ -207,7 +217,7 @@ abstract public class HotspotUtils {
             super(context);
         }
 
-        public static boolean enabled(WifiManager wifiManager) {
+        static boolean enabled(WifiManager wifiManager) {
             Object result = invokeSilently(isWifiApEnabled, wifiManager);
 
             if (result == null)
@@ -216,7 +226,7 @@ abstract public class HotspotUtils {
             return (Boolean) result;
         }
 
-        public static boolean supported() {
+        static boolean supported() {
             return getWifiApState != null
                     && isWifiApEnabled != null
                     && setWifiApEnabled != null
@@ -271,13 +281,12 @@ abstract public class HotspotUtils {
             return mPreviousConfig;
         }
 
-        private boolean setHotspotConfig(WifiConfiguration config) {
+        private void setHotspotConfig(WifiConfiguration config) {
             Object result = invokeSilently(setWifiApConfiguration, getWifiManager(), config);
 
-            if (result == null)
-                return false;
+            if (result == null) {
+            }
 
-            return (Boolean) result;
         }
 
         private boolean setHotspotEnabled(WifiConfiguration config, boolean enabled) {
@@ -301,16 +310,5 @@ abstract public class HotspotUtils {
 
             return true;
         }
-    }
-
-    public static int getAllowedKeyManagement(WifiConfiguration wifiConfiguration) {
-        String keyManagement = wifiConfiguration.allowedKeyManagement.toString();
-
-        try {
-            return Integer.valueOf(keyManagement.substring(1, keyManagement.length() - 1));
-        } catch (Exception e) {
-        }
-
-        return -1;
     }
 }

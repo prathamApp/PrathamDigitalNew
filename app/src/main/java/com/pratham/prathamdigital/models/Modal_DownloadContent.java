@@ -6,20 +6,14 @@ import java.util.List;
 
 public class Modal_DownloadContent {
     @SerializedName("nodelist")
+    private
     List<Modal_ContentDetail> nodelist;
     @SerializedName("downloadurl")
+    private
     String downloadurl;
     @SerializedName("foldername")
+    private
     String foldername;
-
-    @Override
-    public String toString() {
-        return "Modal_DownloadContent{" +
-                "nodelist=" + nodelist +
-                ", downloadurl='" + downloadurl + '\'' +
-                ", foldername='" + foldername + '\'' +
-                '}';
-    }
 
     public List<Modal_ContentDetail> getNodelist() {
         return nodelist;

@@ -18,8 +18,16 @@ import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_Download;
+import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.SpeedMonitor;
 
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -30,27 +38,32 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 
 /**
  * Created by HP on 30-12-2016.
  */
 
+@EBean
 public class PD_ApiRequest {
-    Context mContext;
-    ApiResult apiResult;
+    private final Context mContext;
+    private ApiResult apiResult = null;
 //    OkHttpClient okHttpClient;
 
-    public PD_ApiRequest(Context context, ApiResult apiResult) {
-        this.mContext = context;
-        this.apiResult = apiResult;
+    public PD_ApiRequest(Context mContext) {
+        this.mContext = mContext;
+    }
+
+    public void setApiResult(ApiResult result) {
+        this.apiResult = result;
     }
 
     public void getContentFromRaspberry(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
         try {
             AndroidNetworking.get(url)
                     .addHeaders("Content-Type", "application/json")
-                    .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                    .addHeaders("Authorization", getAuthHeader())
                     .build()
                     .getAsString(new StringRequestListener() {
                         @Override
@@ -97,11 +110,11 @@ public class PD_ApiRequest {
         }
     }
 
-    public void pushDataToRaspberry(final String requestType, String url, String data,
-                                    String filter_name, String table_name) {
+    public void pushDataToRaspberry(/*final String requestType, */String url, String data,
+                                                                  String filter_name, String table_name) {
         AndroidNetworking.post(url)
                 .addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .addHeaders("Authorization", getAuthHeader())
                 .addBodyParameter("filter_name", filter_name)
                 .addBodyParameter("table_name", table_name)
                 .addBodyParameter("facility", FastSave.getInstance().getString(PD_Constant.FACILITY_ID, ""))
@@ -114,7 +127,7 @@ public class PD_ApiRequest {
                     public void onResponse(String response) {
 //                        apiResult.notifySuccess(requestType, "success");
                         BaseActivity.logDao.deleteLogs();
-                        BackupDatabase.backup(mContext);
+                        BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         msg.setPushData(data);
@@ -133,7 +146,7 @@ public class PD_ApiRequest {
                 });
     }
 
-    public void pushDataToInternet(final String requestType, String url, JSONObject data) {
+    public void pushDataToInternet(/*final String requestType, */String url, JSONObject data) {
         AndroidNetworking.post(url)
 //                .addHeaders("Content-Type", "application/json")
                 .addJSONObjectBody(data)
@@ -143,7 +156,7 @@ public class PD_ApiRequest {
                     @Override
                     public void onResponse(JSONObject response) {
                         BaseActivity.logDao.deleteLogs();
-                        BackupDatabase.backup(mContext);
+                        BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         msg.setPushData(data.toString());
@@ -184,10 +197,9 @@ public class PD_ApiRequest {
                 });
     }
 
-    private String getAuthHeader(String ID, String pass) {
-        String encoded = Base64.encodeToString((ID + ":" + pass).getBytes(), Base64.NO_WRAP);
-        String returnThis = "Basic " + encoded;
-        return returnThis;
+    private String getAuthHeader() {
+        String encoded = Base64.encodeToString(("pratham" + ":" + "pratham").getBytes(), Base64.NO_WRAP);
+        return "Basic " + encoded;
     }
 
     public static void downloadImage(String url, String filename) {
@@ -213,7 +225,7 @@ public class PD_ApiRequest {
     public void pullFromKolibri(String header, String url) {
         AndroidNetworking.get(url)
                 .addHeaders("Content-Type", "application/json")
-                .addHeaders("Authorization", getAuthHeader("pratham", "pratham"))
+                .addHeaders("Authorization", getAuthHeader())
                 .build()
                 .getAsJSONArray(new JSONArrayRequestListener() {
                     @Override
@@ -275,5 +287,114 @@ public class PD_ApiRequest {
 
                     }
                 });
+    }
+
+    public void downloadContentFromServer(Modal_Download modal_download) {
+        notifyAdapter(modal_download);
+        dowloadImages(modal_download, modal_download.getLevelContents());
+        AndroidNetworking.download(modal_download.getUrl(), modal_download.getDir_path(), modal_download.getF_name())
+                .setTag(modal_download.getContent().getNodeid())
+                .setPriority(Priority.MEDIUM)
+                .setExecutor(Executors.newSingleThreadExecutor())
+                .build()
+                .setDownloadProgressListener((bytesDownloaded, totalBytes) -> {
+                    if (totalBytes < 0)
+                        totalBytes = (modal_download.getContent().getLevel() > 0) ? modal_download.getContent().getLevel() : 1;
+                    updateProgress(modal_download, totalBytes, bytesDownloaded);
+                })
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        notifyDownloadSuccess(modal_download);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.FAST_DOWNLOAD_ERROR);
+                        msg.setDownloadId(modal_download.getContent().getNodeid());
+                        EventBus.getDefault().post(msg);
+                    }
+                });
+    }
+
+    @Background
+    public void notifyDownloadSuccess(Modal_Download modal_download) {
+        if (Objects.requireNonNull(modal_download).getFolder_name().equalsIgnoreCase(PD_Constant.GAME))
+            unzipFile(modal_download.getDir_path() + "/" + modal_download.getF_name(), modal_download.getDir_path());
+        modal_download.getContent().setContentType("file");
+        ArrayList<Modal_ContentDetail> temp = new ArrayList<>(modal_download.getLevelContents());
+        temp.add(modal_download.getContent());
+        for (Modal_ContentDetail d : temp) {
+            if (d.getNodeimage() != null) {
+                String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
+                d.setNodeimage(img_name);
+            }
+            d.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            d.setDownloaded(true);
+            d.setOnSDCard(false);
+        }
+        BaseActivity.modalContentDao.addContentList(temp);
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.FAST_DOWNLOAD_COMPLETE);
+        message.setDownloadId(modal_download.getContent().getNodeid());
+        message.setContentDetail(modal_download.getContent());
+        EventBus.getDefault().post(message);
+    }
+
+    @Background
+    public void updateProgress(Modal_Download modal_download, long totalBytes, long bytesDownloaded) {
+        Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+        modal_fileDownloading.setDownloadId(Objects.requireNonNull(modal_download).getContent().getNodeid());
+        modal_fileDownloading.setFilename(modal_download.getContent().getNodetitle());
+        modal_fileDownloading.setProgress((int) ((100 * bytesDownloaded) / totalBytes));
+        modal_fileDownloading.setContentDetail(modal_download.getContent());
+        modal_fileDownloading.setRemaining_time(SpeedMonitor.compute((int) (totalBytes - bytesDownloaded)));
+        EventMessage eventMessage = new EventMessage();
+        eventMessage.setMessage(PD_Constant.FAST_DOWNLOAD_UPDATE);
+        eventMessage.setDownloadId(modal_download.getContent().getNodeid());
+        eventMessage.setModal_fileDownloading(modal_fileDownloading);
+        EventBus.getDefault().post(eventMessage);
+    }
+
+    @Background
+    public void notifyAdapter(Modal_Download modal_download) {
+        Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
+        modal_fileDownloading.setDownloadId(modal_download.getContent().getNodeid());
+        modal_fileDownloading.setFilename(modal_download.getContent().getNodetitle());
+        modal_fileDownloading.setProgress(0);
+        modal_fileDownloading.setContentDetail(modal_download.getContent());
+        EventMessage msg = new EventMessage();
+        msg.setMessage(PD_Constant.FAST_DOWNLOAD_STARTED);
+        msg.setDownloadId(modal_download.getContent().getNodeid());
+        msg.setModal_fileDownloading(modal_fileDownloading);
+        EventBus.getDefault().post(msg);
+    }
+
+    @Background
+    public void dowloadImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
+        for (Modal_ContentDetail detail : levelContents) {
+            if (detail.getNodeserverimage() != null) {
+                String f_name = detail.getNodeserverimage()
+                        .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
+                downloadImage(detail.getNodeserverimage(), f_name);
+            }
+        }
+        if (modal_download.getContent().getNodeserverimage() != null) {
+            String f_name = modal_download.getContent().getNodeserverimage()
+                    .substring(modal_download.getContent().getNodeserverimage().lastIndexOf('/') + 1);
+            downloadImage(modal_download.getContent().getNodeserverimage(), f_name);
+        }
+    }
+
+    private void unzipFile(String source, String destination) {
+        ZipFile zipFile;
+        try {
+            zipFile = new ZipFile(source);
+            zipFile.extractAll(destination);
+            new File(source).delete();
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
     }
 }

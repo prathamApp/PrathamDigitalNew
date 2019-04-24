@@ -36,15 +36,15 @@ class GeneralLocationListener implements LocationListener, GpsStatus.Listener, G
 
     private static final String TAG = GeneralLocationListener.class.getSimpleName();
     private static GpsLoggingService loggingService;
-    protected String latestHdop;
-    protected String latestPdop;
-    protected String latestVdop;
-    protected String geoIdHeight;
-    protected String ageOfDgpsData;
-    protected String dgpsId;
-    protected int satellitesUsedInFix;
-    private String listenerName;
-    private Session session = Session.getInstance();
+    private final String listenerName;
+    private final Session session = Session.getInstance();
+    private String latestHdop;
+    private String latestPdop;
+    private String latestVdop;
+    private String geoIdHeight;
+    private String ageOfDgpsData;
+    private String dgpsId;
+    private int satellitesUsedInFix;
 
     GeneralLocationListener(GpsLoggingService activity, String name) {
         loggingService = activity;
@@ -129,7 +129,7 @@ class GeneralLocationListener implements LocationListener, GpsStatus.Listener, G
                     }
                     satellitesVisible++;
                 }
-                Log.d(TAG, "onGpsStatusChanged: " + String.valueOf(satellitesVisible) + " satellites");
+                Log.d(TAG, "onGpsStatusChanged: " + satellitesVisible + " satellites");
                 loggingService.setSatelliteInfo(satellitesVisible);
                 break;
 

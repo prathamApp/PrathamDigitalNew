@@ -169,9 +169,7 @@
         <service
             android:name=".services.auto_sync.AutoSyncService"
             android:exported="false" />
-        <!--<service-->
-        <!--android:name=".services.BackgroundSoundService"-->
-        <!--android:enabled="true" />-->
+
         <receiver
             android:name=".services.auto_sync.AutoSyncNetworkReceiver"
             android:enabled="false"
@@ -279,6 +277,7 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/provider_paths" />
         </provider>
+
         <service
             android:name="com.novoda.merlin.MerlinService"
             android:exported="false" />

@@ -6,9 +6,9 @@ package com.pratham.prathamdigital.models;
  */
 
 public class File_Model implements Comparable {
-    int progress = 0;
-    Modal_ContentDetail detail;
-    boolean sent;
+    private int progress = 0;
+    private Modal_ContentDetail detail;
+    private boolean sent;
 
     public boolean isSent() {
         return sent;

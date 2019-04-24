@@ -12,16 +12,16 @@ import java.util.List;
 @Dao
 public interface CRLdao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public void insertAllCRL(List<Modal_Crl> crlList);
+    void insertAllCRL(List<Modal_Crl> crlList);
 
     @Query("DELETE FROM CRL")
-    public void deleteAllCRLs();
+    void deleteAllCRLs();
 
     @Query("SELECT * FROM CRL WHERE UserName=:user AND Password=:pass")
-    public Modal_Crl checkUserValidation(String user, String pass);
+    Modal_Crl checkUserValidation(String user, String pass);
 
     @Query("SELECT * FROM CRL")
-    public List<Modal_Crl> getAllCRLs();
+    List<Modal_Crl> getAllCRLs();
 
    /*  @Query("SELECT count(*) FROM KOLIBRI_CRL")
     public int getCRLsCount();

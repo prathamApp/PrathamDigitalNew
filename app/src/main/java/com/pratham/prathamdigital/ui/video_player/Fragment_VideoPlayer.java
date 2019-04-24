@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.video_player;
 
 import android.annotation.SuppressLint;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -30,6 +29,7 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
+import java.util.Objects;
 
 @EFragment(R.layout.fragment_generic_vplayer)
 public class Fragment_VideoPlayer extends Fragment {
@@ -48,6 +48,7 @@ public class Fragment_VideoPlayer extends Fragment {
     private boolean isHint = false;
     private Modal_AajKaSawal videoSawal = null;
     @SuppressLint("HandlerLeak")
+    private final
     Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -87,7 +88,7 @@ public class Fragment_VideoPlayer extends Fragment {
 
     @AfterViews
     public void initialize() {
-        videoPath = getArguments().getString("videoPath");
+        videoPath = Objects.requireNonNull(getArguments()).getString("videoPath");
         resId = getArguments().getString("resId");
         isHint = getArguments().getBoolean("hint", false);
         mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
@@ -103,23 +104,17 @@ public class Fragment_VideoPlayer extends Fragment {
         videoView.setVideoPath(videoPath);
         videoView.setMediaController(player_control_view.getMediaControllerWrapper());
         videoView.start();
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                startTime = PD_Utility.getCurrentDateTime();
-                player_control_view.show();
-                videoDuration = videoView.getDuration();
-            }
+        videoView.setOnPreparedListener(mp -> {
+            startTime = PD_Utility.getCurrentDateTime();
+            player_control_view.show();
+            videoDuration = videoView.getDuration();
         });
-        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                if (!isHint) addScoreToDB();
-                if (videoSawal == null)
-                    ((Activity_VPlayer) getActivity()).onBackPressed();
-                else
-                    mHandler.sendEmptyMessage(SHOW_SAWAL);
-            }
+        videoView.setOnCompletionListener(mp -> {
+            if (!isHint) addScoreToDB();
+            if (videoSawal == null)
+                Objects.requireNonNull(getActivity()).onBackPressed();
+            else
+                mHandler.sendEmptyMessage(SHOW_SAWAL);
         });
     }
 
@@ -140,7 +135,7 @@ public class Fragment_VideoPlayer extends Fragment {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.VIDEO_PLAYER_BACK_PRESS)) {
                 if (!isHint) addScoreToDB();
-                ((Activity_VPlayer) getActivity()).onBackPressed();
+                Objects.requireNonNull(getActivity()).onBackPressed();
             }
         }
     }

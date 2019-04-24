@@ -7,26 +7,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class RaspVillage {
     @SerializedName("id")
-    public String id;
+    private String id;
     @SerializedName("data")
-    public Modal_Village data;
+    private Modal_Village data;
     @SerializedName("filter_name")
-    public String filter_name;
+    private String filter_name;
     @SerializedName("table_name")
-    public String table_name;
+    private String table_name;
     @SerializedName("facility")
-    public String facility;
-
-    @Override
-    public String toString() {
-        return "RaspVillage{" +
-                "id='" + id + '\'' +
-                ", data=" + data +
-                ", filter_name='" + filter_name + '\'' +
-                ", table_name='" + table_name + '\'' +
-                ", facility='" + facility + '\'' +
-                '}';
-    }
+    private String facility;
 
     public String getId() {
         return id;
@@ -35,14 +24,6 @@ public class RaspVillage {
     public void setId(String id) {
         this.id = id;
     }
-//
-//    public ArrayList<Modal_Village> getData() {
-//        return data;
-//    }
-//
-//    public void setData(ArrayList<Modal_Village> data) {
-//        this.data = data;
-//    }
 
     public Modal_Village getData() {
         return data;

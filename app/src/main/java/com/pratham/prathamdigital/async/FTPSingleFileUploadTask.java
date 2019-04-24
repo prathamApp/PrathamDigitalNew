@@ -1,10 +1,12 @@
 package com.pratham.prathamdigital.async;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -14,31 +16,39 @@ import org.greenrobot.eventbus.EventBus;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class FTPSingleFileUploadTask extends AsyncTask {
-    FTPClient client;
-    Context context;
-    long lenghtOfFile;
-    String localFilePath;
-    boolean isImage;
-    boolean isProfileSharing = false;
+    private final FTPClient client;
+    @SuppressLint("StaticFieldLeak")
+    private final Context context;
+    private final String localFilePath;
+    private final boolean isImage;
+    private final ArrayList<Modal_ContentDetail> levels;
+    private long lenghtOfFile;
+    private boolean isProfileSharing = false;
+    private long total = 0;
 
-    public FTPSingleFileUploadTask(Context context, FTPClient client, String localFilePath, boolean isImage) {
+    public FTPSingleFileUploadTask(Context context, FTPClient client, String localFilePath, boolean isImage, ArrayList<Modal_ContentDetail> levels) {
         this.context = context;
         this.client = client;
         this.localFilePath = localFilePath;
         this.isImage = isImage;
+        this.levels = levels;
     }
 
     @Override
     protected Object doInBackground(Object[] objects) {
         try {
             client.enterLocalPassiveMode();
-            String remoteFilePath = null;
+            String remoteFilePath;
             if (isImage) {
                 client.makeDirectory("PrathamImages");
-                remoteFilePath = "/PrathamImages/" + new File(localFilePath).getName();
-                uploadSingleFile(client, localFilePath, remoteFilePath, false);
+                for (Modal_ContentDetail detail : levels) {
+                    String imgDirPath = localFilePath + "/PrathamImages/" + detail.getNodeimage();
+                    String remoteFPath = "/PrathamImages/" + new File(imgDirPath).getName();
+                    uploadSingleFile(client, imgDirPath, remoteFPath, false);
+                }
             } else {
                 if (localFilePath.endsWith(".json")) {
                     //means contents are being send i.e video/pdf/games
@@ -63,9 +73,7 @@ public class FTPSingleFileUploadTask extends AsyncTask {
         }
     }
 
-    long total = 0;
-
-    public void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath, boolean isProfileSharing) {
+    private void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath, boolean isProfileSharing) {
         try {
             File localFile = new File(localFilePath);
             total += localFile.length();

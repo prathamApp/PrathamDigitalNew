@@ -25,7 +25,7 @@ public class DownloadListFragment extends SuperBottomSheetFragment implements Do
     @ViewById(R.id.rv_download)
     RecyclerView rv_download;
 
-    DownloadListAdapter adapter;
+    private DownloadListAdapter adapter;
 
     @UiThread
     public void initializeAdapter(List<Modal_FileDownloading> downloadings) {

@@ -1,8 +1,18 @@
 package com.pratham.prathamdigital.util;
 
+import android.support.annotation.NonNull;
+
 public class PD_Constant {
 
-    public static final String BASE_URL = "http://prodigi.openiscool.org/api/pos/";
+    public static final String FAST_DOWNLOAD_STARTED = "fast_download_started";
+    public static final String FAST_DOWNLOAD_UPDATE = "fast_download_update";
+    public static final String FAST_DOWNLOAD_COMPLETE = "fast_download_complete";
+    public static final String FAST_DOWNLOAD_ERROR = "fast_download_error";
+    public static final String MODAL_DOWNLOAD = "modal_download";
+    public static final String MSG_HANDLER_KEY = "msg_handler_key";
+    public static final String DOWNLOAD_PROGRESS = "download_progress";
+    public static final String DOWNLOAD_SPEED_RATE = "download_speed_rate";
+    public static final String RASP_IP = "http://192.168.4.1:8080";
     //    public static final String BASE_URL = "http://devprodigi.openiscool.org/api/pos/";
     public static final String AVATAR = "avatar";
     public static final String INTERNET_HEADER = "INTERNET_HEADER";
@@ -136,24 +146,24 @@ public class PD_Constant {
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
-    public static String RASP_IP = "http://192.168.4.1:8080";
+    private static final String BASE_URL = "http://prodigi.openiscool.org/api/pos/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
     public static String RASPBERRY_HEADER = "RASPBERRY_HEADER";
     //languages
     public static String HINDI = "Hindi";
-    public static String ENGLISH = "English";
-    public static String MARATHI = "Marathi";
-    public static String KANNADA = "Kannada";
-    public static String TELUGU = "Telugu";
-    public static String BENGALI = "Bengali";
-    public static String GUJARATI = "Gujarati";
-    public static String PUNJABI = "Punjabi";
-    public static String TAMIL = "Tamil";
-    public static String ODIYA = "Odiya";
-    public static String MALAYALAM = "Malayalam";
-    public static String ASSAMESE = "Assamese";
-    public static String URDU = "Urdu";
+    static String ENGLISH = "English";
+    static String MARATHI = "Marathi";
+    static String KANNADA = "Kannada";
+    static String TELUGU = "Telugu";
+    static String BENGALI = "Bengali";
+    static String GUJARATI = "Gujarati";
+    static String PUNJABI = "Punjabi";
+    static String TAMIL = "Tamil";
+    static String ODIYA = "Odiya";
+    static String MALAYALAM = "Malayalam";
+    static String ASSAMESE = "Assamese";
+    static String URDU = "Urdu";
 
     //wifi constants
     public static final int ApScanResult = 201;
@@ -164,7 +174,7 @@ public class PD_Constant {
     public static final String LANGUAGE = "language";
     public static final String GOOGLE_ID = "google_id";
 
-    public static enum URL {
+    public enum URL {
 
         BROWSE_BY_ID(BASE_URL + "get?id="),
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
@@ -183,14 +193,15 @@ public class PD_Constant {
 
         private final String name;
 
-        private URL(String s) {
+        URL(String s) {
             name = s;
         }
 
         public boolean equalsName(String otherName) {
-            return (otherName == null) ? false : name.equals(otherName);
+            return name.equals(otherName);
         }
 
+        @NonNull
         public String toString() {
             return name;
         }

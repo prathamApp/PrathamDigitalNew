@@ -19,13 +19,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
-    private ArrayList<Modal_Language> datalist;
-    Context context;
-    ContractLanguage contractLanguage;
+    private final ArrayList<Modal_Language> datalist;
+    private final ContractLanguage contractLanguage;
 
     public LanguageAdapter(Context context, ArrayList<Modal_Language> datalist, ContractLanguage contractLanguage) {
         this.datalist = datalist;
-        this.context = context;
+        Context context1 = context;
         this.contractLanguage = contractLanguage;
     }
 
@@ -45,12 +44,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
             viewHolder.tv_language.setSelected(true);
         else
             viewHolder.tv_language.setSelected(false);
-        viewHolder.tv_language.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                contractLanguage.languageSelected(viewHolder.getAdapterPosition());
-            }
-        });
+        viewHolder.tv_language.setOnClickListener(v -> contractLanguage.languageSelected(viewHolder.getAdapterPosition()));
     }
 
     @Override
@@ -89,7 +83,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
         @BindView(R.id.tv_language)
         TextView tv_language;
 
-        public ViewHolder(@NonNull View itemView) {
+        ViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

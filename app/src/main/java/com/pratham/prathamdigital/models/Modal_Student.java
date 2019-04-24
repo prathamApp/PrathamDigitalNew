@@ -37,9 +37,9 @@ public class Modal_Student implements Comparable, Parcelable {
     public String StudentId;
     public String avatarName;
     @Ignore
-    transient boolean isChecked = false;
+    private transient boolean isChecked = false;
 
-    protected Modal_Student(Parcel in) {
+    private Modal_Student(Parcel in) {
         GroupId = in.readString();
         GroupName = in.readString();
         FullName = in.readString();
@@ -67,29 +67,10 @@ public class Modal_Student implements Comparable, Parcelable {
         }
     };
 
-    @Override
-    public String toString() {
-        return "Modal_Student{" +
-                "GroupId='" + GroupId + '\'' +
-                ", GroupName='" + GroupName + '\'' +
-                ", FullName='" + FullName + '\'' +
-                ", FirstName='" + FirstName + '\'' +
-                ", MiddleName='" + MiddleName + '\'' +
-                ", LastName='" + LastName + '\'' +
-                ", Stud_Class='" + Stud_Class + '\'' +
-                ", Age='" + Age + '\'' +
-                ", Gender='" + Gender + '\'' +
-                ", sentFlag=" + sentFlag +
-                ", StudentId='" + StudentId + '\'' +
-                ", isChecked=" + isChecked +
-                '}';
-    }
-
     public Modal_Student() {
-
     }
 
-    public Modal_Student(String sid, String sname, String qrGroupID) {
+    public Modal_Student(@NonNull String sid, String sname, String qrGroupID) {
         this.StudentId = sid;
         this.FirstName = sname;
         this.GroupId = qrGroupID;
@@ -203,13 +184,9 @@ public class Modal_Student implements Comparable, Parcelable {
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_Student compare = (Modal_Student) o;
-        if (compare.getStudentId() != null) {
-            if (compare.isChecked() == this.isChecked())
-                return 0;
-            else return 1;
-        } else {
+        if (compare.isChecked() == this.isChecked())
             return 0;
-        }
+        else return 1;
     }
 
     @Override

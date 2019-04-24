@@ -36,7 +36,6 @@ import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.permissions.ResponsePermissionCallback;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
 import com.pratham.prathamdigital.ftpSettings.FsService;
@@ -49,7 +48,8 @@ import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
-import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
+import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieveTwo;
+import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieveTwo_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -62,11 +62,9 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
 
@@ -104,13 +102,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @ViewById(R.id.main_nav)
     MaterialCardView main_nav;
 
-    DownloadListFragment_ downloadListFragment_;
-    RV_MenuAdapter rv_menuAdapter;
-    private boolean isChecked;
-    private BlurPopupWindow exitDialog;
-
     @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -121,12 +114,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         bundle.putBoolean(PD_Constant.DEEP_LINK, true);
                         bundle.putString(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
                     } else {
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                showIntro();
-                            }
-                        }, 2000);
+                        new Handler().postDelayed(() -> showIntro(), 2000);
                     }
                     bundle.putInt(PD_Constant.REVEALX, 0);
                     bundle.putInt(PD_Constant.REVEALY, 0);
@@ -160,15 +148,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     ConnectDialog connectDialog = new ConnectDialog.Builder(ActivityMain.this).build();
                     connectDialog.isDismissOnTouchBackground();
                     connectDialog.isDismissOnClickBack();
-                    connectDialog.setOnDismissListener(new BlurPopupWindow.OnDismissListener() {
-                        @Override
-                        public void onDismiss(BlurPopupWindow popupWindow) {
-                            Bundle bundle = new Bundle();
-                            bundle.putInt(PD_Constant.REVEALX, 0);
-                            bundle.putInt(PD_Constant.REVEALY, 0);
-                            PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
-                                    bundle, FragmentContent_.class.getSimpleName());
-                        }
+                    connectDialog.setOnDismissListener(popupWindow -> {
+                        Bundle bundle1 = new Bundle();
+                        bundle1.putInt(PD_Constant.REVEALX, 0);
+                        bundle1.putInt(PD_Constant.REVEALY, 0);
+                        PD_Utility.showFragment(ActivityMain.this, new FragmentContent_(), R.id.main_frame,
+                                bundle1, FragmentContent_.class.getSimpleName());
                     });
                     connectDialog.show();
                     break;
@@ -178,32 +163,29 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     Bundle bundle3 = new Bundle();
                     bundle3.putInt(PD_Constant.REVEALX, 0);
                     bundle3.putInt(PD_Constant.REVEALY, 0);
-                    PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve_(), R.id.main_frame,
-                            bundle3, FragmentShareRecieve.class.getSimpleName());
+                    PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieveTwo_(), R.id.main_frame,
+                            bundle3, FragmentShareRecieveTwo.class.getSimpleName());
                     break;
                 case MENU_SHARE_APP:
                     KotlinPermissions.with(ActivityMain.this)
                             .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                                     Manifest.permission.READ_EXTERNAL_STORAGE)
-                            .onAccepted(new ResponsePermissionCallback() {
-                                @Override
-                                public void onResult(@NotNull List<String> permissionResult) {
-                                    try {
-                                        Intent intentShareFile = new Intent(Intent.ACTION_SEND);
-                                        PackageManager pm = PrathamApplication.getInstance().getPackageManager();
-                                        ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
-                                        File localFile = new File(ai.publicSourceDir);
-                                        Uri uri = FileProvider.getUriForFile(ActivityMain.this,
-                                                BuildConfig.APPLICATION_ID + ".provider", localFile);
-                                        intentShareFile.setType("*/*");
-                                        intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
-                                        intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
-                                        intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
-                                        intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                        startActivity(Intent.createChooser(intentShareFile, "Share through"));
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
+                            .onAccepted(permissionResult -> {
+                                try {
+                                    Intent intentShareFile = new Intent(Intent.ACTION_SEND);
+                                    PackageManager pm = PrathamApplication.getInstance().getPackageManager();
+                                    ApplicationInfo ai = pm.getApplicationInfo(PrathamApplication.getInstance().getPackageName(), 0);
+                                    File localFile = new File(ai.publicSourceDir);
+                                    Uri uri = FileProvider.getUriForFile(ActivityMain.this,
+                                            BuildConfig.APPLICATION_ID + ".provider", localFile);
+                                    intentShareFile.setType("*/*");
+                                    intentShareFile.putExtra(Intent.EXTRA_STREAM, uri);
+                                    intentShareFile.putExtra(Intent.EXTRA_SUBJECT, "Please download apk from here...");
+                                    intentShareFile.putExtra(Intent.EXTRA_TEXT, "https://play.google.com/store/apps/details?id=com.pratham.prathamdigital");
+                                    intentShareFile.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    startActivity(Intent.createChooser(intentShareFile, "Share through"));
+                                } catch (Exception e) {
+                                    e.printStackTrace();
                                 }
                             })
                             .ask();
@@ -234,6 +216,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             }
         }
     };
+    private boolean isChecked;
+    private BlurPopupWindow exitDialog;
+    private DownloadListFragment_ downloadListFragment_;
 
     @AfterViews
     public void initialize() {
@@ -319,7 +304,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             nav.setIsselected(false);
             navigationMenus.add(nav);
         }
-        rv_menuAdapter = new RV_MenuAdapter(this, navigationMenus, this);
+        RV_MenuAdapter rv_menuAdapter = new RV_MenuAdapter(this, navigationMenus, this);
         rv_drawer.setHasFixedSize(true);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(this, FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
@@ -345,22 +330,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    public void exitApp() {
+    private void exitApp() {
         if (!FsService.isRunning()) {
             exitDialog = new BlurPopupWindow.Builder(ActivityMain.this)
                     .setContentView(R.layout.app_exit_dialog)
-                    .bindClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            finishAffinity();
-                        }
-                    }, R.id.dialog_btn_exit)
-                    .bindClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            exitDialog.dismiss();
-                        }
-                    }, R.id.btn_cancel)
+                    .bindClickListener(v -> finishAffinity(), R.id.dialog_btn_exit)
+                    .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
                     .setGravity(Gravity.CENTER)
                     .setDismissOnTouchBackground(true)
                     .setDismissOnClickBack(true)

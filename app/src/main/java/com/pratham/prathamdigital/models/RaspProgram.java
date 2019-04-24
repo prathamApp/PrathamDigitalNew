@@ -7,15 +7,15 @@ import com.google.gson.annotations.SerializedName;
  */
 public class RaspProgram {
     @SerializedName("id")
-    public String id;
+    private String id;
     @SerializedName("data")
-    public ModalProgram data;
+    private ModalProgram data;
     @SerializedName("filter_name")
-    public String filter_name;
+    private String filter_name;
     @SerializedName("table_name")
-    public String table_name;
+    private String table_name;
     @SerializedName("facility")
-    public String facility;
+    private String facility;
 
     public String getId() {
         return id;

@@ -4,10 +4,13 @@ import com.google.gson.annotations.SerializedName;
 
 public class Modal_ProgramData {
     @SerializedName("programId")
+    private
     String programId;
     @SerializedName("State")
+    private
     String State;
     @SerializedName("programName")
+    private
     String programName;
 
     public String getProgramId() {
