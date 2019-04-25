@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
@@ -30,6 +29,8 @@ import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
 @EFragment(R.layout.fragment_generic_vplayer)
 public class Fragment_VideoPlayer extends Fragment {
@@ -159,6 +160,6 @@ public class Fragment_VideoPlayer extends Fragment {
         modalScore.setLevel(0);
         modalScore.setLabel("_");
         modalScore.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modalScore);
+        scoreDao.insert(modalScore);
     }
 }

@@ -11,6 +11,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import net.alhazmy13.catcho.library.Catcho;
 import net.alhazmy13.catcho.library.error.CatchoError;
 
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+
 public class CatchoTransparentActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,7 +26,7 @@ public class CatchoTransparentActivity extends BaseActivity {
         log.setMethodName("NO_METHOD");
         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         log.setDeviceId(PD_Utility.getDeviceSerialID());
-        BaseActivity.logDao.insertLog(log);
+        logDao.insertLog(log);
         finish();
     }
 }

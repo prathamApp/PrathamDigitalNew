@@ -10,6 +10,17 @@ import com.androidnetworking.AndroidNetworking;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.AttendanceDao;
+import com.pratham.prathamdigital.dbclasses.CRLdao;
+import com.pratham.prathamdigital.dbclasses.GroupDao;
+import com.pratham.prathamdigital.dbclasses.LogDao;
+import com.pratham.prathamdigital.dbclasses.ModalContentDao;
+import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
+import com.pratham.prathamdigital.dbclasses.ScoreDao;
+import com.pratham.prathamdigital.dbclasses.SessionDao;
+import com.pratham.prathamdigital.dbclasses.StatusDao;
+import com.pratham.prathamdigital.dbclasses.StudentDao;
+import com.pratham.prathamdigital.dbclasses.VillageDao;
 import com.pratham.prathamdigital.ftpSettings.FsNotification;
 import com.pratham.prathamdigital.ftpSettings.RequestStartStopReceiver;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -40,6 +51,16 @@ public class PrathamApplication extends Application {
     public static String contentSDPath = "";
     RequestStartStopReceiver requestStartStopReceiver;
     FsNotification fsNotification;
+    public static AttendanceDao attendanceDao;
+    public static CRLdao crLdao;
+    public static GroupDao groupDao;
+    public static ModalContentDao modalContentDao;
+    public static ScoreDao scoreDao;
+    public static SessionDao sessionDao;
+    public static StatusDao statusDao;
+    public static StudentDao studentDao;
+    public static VillageDao villageDao;
+    public static LogDao logDao;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -58,6 +79,7 @@ public class PrathamApplication extends Application {
 //        }
 //        LeakCanary.install(this);
 //        isTablet = PD_Utility.isTablet(this);
+        initializeDatabaseDaos();
         Fresco.initialize(this);
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
@@ -92,6 +114,19 @@ public class PrathamApplication extends Application {
         contentSDPath = path;
     }
 
+    private void initializeDatabaseDaos() {
+        PrathamDatabase db = PrathamDatabase.getDatabaseInstance(this);
+        attendanceDao = db.getAttendanceDao();
+        crLdao = db.getCrLdao();
+        groupDao = db.getGroupDao();
+        modalContentDao = db.getModalContentDao();
+        scoreDao = db.getScoreDao();
+        sessionDao = db.getSessionDao();
+        statusDao = db.getStatusDao();
+        studentDao = db.getStudentDao();
+        villageDao = db.getVillageDao();
+        logDao = db.getLogDao();
+    }
     /*public void registerFtpReceiver() {
         //registering receivers in case of android version above Oreo
         requestStartStopReceiver = new RequestStartStopReceiver();

@@ -27,6 +27,8 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+
 @EActivity(R.layout.activity_pdf_viewer)
 public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_View {
 
@@ -76,7 +78,7 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
         modalScore.setLevel(0);
         modalScore.setLabel("_");
         modalScore.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modalScore);
+        scoreDao.insert(modalScore);
     }
 
     @Click(R.id.close_pdf)

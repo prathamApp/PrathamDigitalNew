@@ -2,12 +2,13 @@ package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 import android.content.Context;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
+
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -37,7 +38,7 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
             adminPanelView.openPullDataFragment();
         } else {
             // assign push logic
-            Modal_Crl loggedCrl = BaseActivity.crLdao.checkUserValidation(userName, password);
+            Modal_Crl loggedCrl = crLdao.checkUserValidation(userName, password);
             if (loggedCrl != null) {
                 adminPanelView.onLoginSuccess();
             } else {

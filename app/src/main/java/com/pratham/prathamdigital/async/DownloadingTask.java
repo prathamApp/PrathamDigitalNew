@@ -3,7 +3,6 @@ package com.pratham.prathamdigital.async;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
@@ -22,6 +21,8 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 
 public class DownloadingTask extends AsyncTask {
     private static final String TAG = DownloadingTask.class.getSimpleName();
@@ -124,7 +125,7 @@ public class DownloadingTask extends AsyncTask {
             d.setDownloaded(true);
             d.setOnSDCard(false);
         }
-        BaseActivity.modalContentDao.addContentList(temp);
+        modalContentDao.addContentList(temp);
     }
 
     private void updateProgress(long download_percentage_new, String total) {

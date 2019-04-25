@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.assign;
 
 import android.content.Context;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -12,6 +11,12 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 
 import java.util.List;
+
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
 @EBean
 public class AssignPresenterImpl implements AssignContract.assignPresenter {
@@ -27,14 +32,14 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     public void getStates() {
         List<String> states;
 //        States.add("Select State");
-        states = BaseActivity.villageDao.getAllStates();
+        states = villageDao.getAllStates();
         assignView.setStates(states);
     }
 
     @Background
     @Override
     public void getProgramId(String header) {
-        String programID = BaseActivity.statusDao.getValue("programId");
+        String programID = statusDao.getValue("programId");
         assignView.setProgramId(header, programID);
     }
 
@@ -42,32 +47,32 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     @Override
     public void getBlocks(String selectedState) {
         List<String> blocks;
-        blocks = BaseActivity.villageDao.GetStatewiseBlock(selectedState);
+        blocks = villageDao.GetStatewiseBlock(selectedState);
         assignView.populateBlock(blocks);
     }
 
     @Background
     @Override
     public void getVillages(String selectedBlock) {
-        String programID = BaseActivity.statusDao.getValue("programId");
+        String programID = statusDao.getValue("programId");
         List<Modal_Village> BlocksVillages;
         if (programID.equals("1") || programID.equals("3") || programID.equals("10")) { // H Learning
-            BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
+            BlocksVillages = villageDao.GetVillages(selectedBlock);
             assignView.populateVillage(BlocksVillages);
         } else if (programID.equals("2")) {// RI
-            int vilID = BaseActivity.villageDao.GetVillageIDByBlock(selectedBlock);
-            List<Modal_Groups> dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
+            int vilID = villageDao.GetVillageIDByBlock(selectedBlock);
+            List<Modal_Groups> dbgroupList = groupDao.GetGroups(vilID);
             assignView.populateGroups(dbgroupList);
         } else {
-            BlocksVillages = BaseActivity.villageDao.GetVillages(selectedBlock);
+            BlocksVillages = villageDao.GetVillages(selectedBlock);
             assignView.populateVillage(BlocksVillages);
         }
     }
 
     @Override
     public void populateGroups(int vilID) {
-        String programID = BaseActivity.statusDao.getValue("programId");
-        List<Modal_Groups> dbgroupList = BaseActivity.groupDao.GetGroups(vilID);
+        String programID = statusDao.getValue("programId");
+        List<Modal_Groups> dbgroupList = groupDao.GetGroups(vilID);
         assignView.populateGroups(dbgroupList);
     }
 
@@ -78,17 +83,17 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
         // Delete Groups where Device ID is deleted & also delete associated students & update status table
         deleteGroupsWithStudents();
         // delete deleted Students
-        BaseActivity.studentDao.deleteDeletedStdRecords();
+        studentDao.deleteDeletedStdRecords();
         // Update Groups in Status
-        BaseActivity.statusDao.updateValue(PD_Constant.GROUPID1, group1);
-        BaseActivity.statusDao.updateValue(PD_Constant.GROUPID2, group2);
-        BaseActivity.statusDao.updateValue(PD_Constant.GROUPID3, group3);
-        BaseActivity.statusDao.updateValue(PD_Constant.GROUPID4, group4);
-        BaseActivity.statusDao.updateValue(PD_Constant.GROUPID5, group5);
-        BaseActivity.statusDao.updateValue("village", Integer.toString(vilID));
-        BaseActivity.statusDao.updateValue("DeviceId", PD_Utility.getDeviceID());
-        BaseActivity.statusDao.updateValue("ActivatedDate", PD_Utility.getCurrentDateTime());
-        BaseActivity.statusDao.updateValue("ActivatedForGroups", group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5);
+        statusDao.updateValue(PD_Constant.GROUPID1, group1);
+        statusDao.updateValue(PD_Constant.GROUPID2, group2);
+        statusDao.updateValue(PD_Constant.GROUPID3, group3);
+        statusDao.updateValue(PD_Constant.GROUPID4, group4);
+        statusDao.updateValue(PD_Constant.GROUPID5, group5);
+        statusDao.updateValue("village", Integer.toString(vilID));
+        statusDao.updateValue("DeviceId", PD_Utility.getDeviceID());
+        statusDao.updateValue("ActivatedDate", PD_Utility.getCurrentDateTime());
+        statusDao.updateValue("ActivatedForGroups", group1 + "," + group2 + "," + group3 + "," + group4 + "," + group5);
         assignView.groupsAssignedSuccessfully();
     }
 
@@ -96,13 +101,13 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
     @Background
     public void deleteGroupsWithStudents() {
         // Delete Records of Deleted Students
-        List<Modal_Groups> deletedGroupsList = BaseActivity.groupDao.GetAllDeletedGroups();
+        List<Modal_Groups> deletedGroupsList = groupDao.GetAllDeletedGroups();
         // Delete students for all deleted groups
         for (Modal_Groups grps : deletedGroupsList) {
             //Delete Group
-            BaseActivity.groupDao.deleteGroupByGrpID(grps.getGroupId());
+            groupDao.deleteGroupByGrpID(grps.getGroupId());
             // Delete Student
-            BaseActivity.studentDao.deleteDeletedGrpsStdRecords(grps.getGroupId());
+            studentDao.deleteDeletedGrpsStdRecords(grps.getGroupId());
         }
     }
 
@@ -120,9 +125,9 @@ public class AssignPresenterImpl implements AssignContract.assignPresenter {
 
     @Background
     public void clearData_() {
-        BaseActivity.villageDao.deleteAllVillages();
-        BaseActivity.groupDao.deleteAllGroups();
-        BaseActivity.studentDao.deleteAllStudents();
-        BaseActivity.crLdao.deleteAllCRLs();
+        villageDao.deleteAllVillages();
+        groupDao.deleteAllGroups();
+        studentDao.deleteAllStudents();
+        crLdao.deleteAllCRLs();
     }
 }

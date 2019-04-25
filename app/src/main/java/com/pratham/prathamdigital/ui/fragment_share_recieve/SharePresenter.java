@@ -13,7 +13,6 @@ import com.google.gson.JsonArray;
 import com.isupatches.wisefy.callbacks.AddNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.ConnectToNetworkCallbacks;
 import com.isupatches.wisefy.callbacks.GetSavedNetworkCallbacks;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.CopyExistingJSONS;
 import com.pratham.prathamdigital.async.FTPContentUploadTask;
@@ -51,6 +50,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
 @EBean
 public class SharePresenter implements DownloadedContents, ContractShare.sharePresenter, FTPConnected {
@@ -433,19 +442,19 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
             if (!path.exists()) path.mkdir();
             //create village JSON file
-            List<Modal_Village> villages = BaseActivity.villageDao.getAllVillages();
+            List<Modal_Village> villages = villageDao.getAllVillages();
             JsonArray vill_array = gson.toJsonTree(villages).getAsJsonArray();
             createJsonFileOnInternal(vill_array, path.getAbsolutePath() + "/villages");
             //create crl JSON file
-            List<Modal_Crl> crLs = BaseActivity.crLdao.getAllCRLs();
+            List<Modal_Crl> crLs = crLdao.getAllCRLs();
             JsonArray crl_array = gson.toJsonTree(crLs).getAsJsonArray();
             createJsonFileOnInternal(crl_array, path.getAbsolutePath() + "/crls");
             //create groups JSON file
-            List<Modal_Groups> groups = BaseActivity.groupDao.getAllGroups();
+            List<Modal_Groups> groups = groupDao.getAllGroups();
             JsonArray grp_array = gson.toJsonTree(groups).getAsJsonArray();
             createJsonFileOnInternal(grp_array, path.getAbsolutePath() + "/groups");
             //create students JSON file
-            List<Modal_Student> students = BaseActivity.studentDao.getAllStudents();
+            List<Modal_Student> students = studentDao.getAllStudents();
             JsonArray stu_array = gson.toJsonTree(students).getAsJsonArray();
             createJsonFileOnInternal(stu_array, path.getAbsolutePath() + "/students");
 //            for file Json Transfer
@@ -464,23 +473,23 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
             if (!path.exists()) path.mkdir();
             //create session JSON file
-            List<Modal_Session> newSessions = BaseActivity.sessionDao.getAllNewSessions();
+            List<Modal_Session> newSessions = sessionDao.getAllNewSessions();
             JsonArray session_array = gson.toJsonTree(newSessions).getAsJsonArray();
             createJsonFileOnInternal(session_array, path.getAbsolutePath() + "/sessions");
             //create logs JSON file
-            List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs();
+            List<Modal_Log> allLogs = logDao.getAllLogs();
             JsonArray log_array = gson.toJsonTree(allLogs).getAsJsonArray();
             createJsonFileOnInternal(log_array, path.getAbsolutePath() + "/logs");
             //create attendance JSON file
-            List<Attendance> attendance = BaseActivity.attendanceDao.getNewAttendances();
+            List<Attendance> attendance = attendanceDao.getNewAttendances();
             JsonArray att_array = gson.toJsonTree(attendance).getAsJsonArray();
             createJsonFileOnInternal(att_array, path.getAbsolutePath() + "/attendance");
             //create score JSON file
-            List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores();
+            List<Modal_Score> newScores = scoreDao.getAllNewScores();
             JsonArray score_array = gson.toJsonTree(newScores).getAsJsonArray();
             createJsonFileOnInternal(score_array, path.getAbsolutePath() + "/scores");
             //create status JSON file
-            List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
+            List<Modal_Status> metadata = statusDao.getAllStatuses();
             JsonArray meta_array = gson.toJsonTree(metadata).getAsJsonArray();
             createJsonFileOnInternal(meta_array, path.getAbsolutePath() + "/status");
             // for file Json Transfer

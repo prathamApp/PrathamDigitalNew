@@ -14,7 +14,6 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -41,6 +40,9 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.ArrayList;
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 
 @EFragment(R.layout.fragment_child_attendance)
 public class FragmentChildAttendance extends Fragment implements ContractChildAttendance.attendanceView,
@@ -213,12 +215,12 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
             attendances.add(attendance);
         }
-        BaseActivity.attendanceDao.insertAttendance(attendances);
+        attendanceDao.insertAttendance(attendances);
         Modal_Session s = new Modal_Session();
         s.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
         s.setFromDate(PD_Utility.getCurrentDateTime());
         s.setToDate("NA");
-        BaseActivity.sessionDao.insert(s);
+        sessionDao.insert(s);
     }
 
     @UiThread

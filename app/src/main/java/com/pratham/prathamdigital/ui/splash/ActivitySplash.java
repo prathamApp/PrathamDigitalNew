@@ -11,8 +11,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.VideoView;
@@ -29,9 +27,6 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.richpath.RichPath;
-import com.richpath.RichPathView;
-import com.richpathanimator.RichPathAnimator;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -57,8 +52,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     VideoView splash_video;
     @ViewById(R.id.avatar_view)
     LottieAnimationView pingpong_view;
-    @ViewById(R.id.rich)
-    RichPathView rich;
+//    @ViewById(R.id.rich)
+//    RichPathView rich;
 
     @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
@@ -99,17 +94,21 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //                    objectAnimator.start();
                     Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pratham);
                     splash_video.setVideoURI(video);
-                    splash_video.setOnPreparedListener(mp -> mp.setLooping(true));
+                    splash_video.setOnCompletionListener(mp -> {
+                        splashPresenter.checkPrathamCode();
+//                            new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
+                    });
+//                    splash_video.setOnPreparedListener(mp -> mp.setLooping(true));
 //                    splash_video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 //                        public void onCompletion(MediaPlayer mp) {
 //                            startNextActivity();
 //                        }
 //                    });
                     splash_video.start();
-                    rich.setVisibility(View.VISIBLE);
-                    final RichPath[] allPaths = rich.findAllRichPaths();
-                    RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
-                    pingpong_view.setVisibility(View.VISIBLE);
+//                    rich.setVisibility(View.VISIBLE);
+//                    final RichPath[] allPaths = rich.findAllRichPaths();
+//                    RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
+//                    pingpong_view.setVisibility(View.VISIBLE);
                     break;
                 case UPDATE_DIALOG:
                     new BlurPopupWindow.Builder(mContext)
@@ -188,7 +187,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         splashPresenter.clearPreviousBuildData();
         splashPresenter.populateDefaultDB();
         mhandler.sendEmptyMessage(LIGHT_ANIMATION);
-        new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
+//        new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
     }
 
     @Override

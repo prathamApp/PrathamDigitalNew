@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
@@ -27,6 +26,16 @@ import java.io.FileInputStream;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
 public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
 
@@ -56,25 +65,25 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             Type villType = new TypeToken<List<Modal_Village>>() {
                             }.getType();
                             List<Modal_Village> temp = gson.fromJson(mResponse, villType);
-                            BaseActivity.villageDao.insertAllVillages(temp);
+                            villageDao.insertAllVillages(temp);
                             break;
                         case "groups.json":
                             Type grpType = new TypeToken<List<Modal_Groups>>() {
                             }.getType();
                             List<Modal_Groups> grptemp = gson.fromJson(mResponse, grpType);
-                            BaseActivity.groupDao.insertAllGroups(grptemp);
+                            groupDao.insertAllGroups(grptemp);
                             break;
                         case "crls.json":
                             Type crlType = new TypeToken<List<Modal_Crl>>() {
                             }.getType();
                             List<Modal_Crl> crltemp = gson.fromJson(mResponse, crlType);
-                            BaseActivity.crLdao.insertAllCRL(crltemp);
+                            crLdao.insertAllCRL(crltemp);
                             break;
                         case "students.json":
                             Type stuType = new TypeToken<List<Modal_Student>>() {
                             }.getType();
                             List<Modal_Student> stutemp = gson.fromJson(mResponse, stuType);
-                            BaseActivity.studentDao.insertAllStudents(stutemp);
+                            studentDao.insertAllStudents(stutemp);
                             publishProgress("Receiving Profiles");
                             break;
                     }
@@ -84,25 +93,25 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             Type listType = new TypeToken<List<Modal_Session>>() {
                             }.getType();
                             List<Modal_Session> temp = gson.fromJson(mResponse, listType);
-                            BaseActivity.sessionDao.insertAll(temp);
+                            sessionDao.insertAll(temp);
                             break;
                         case "logs.json":
                             Type logType = new TypeToken<List<Modal_Log>>() {
                             }.getType();
                             List<Modal_Log> logtemp = gson.fromJson(mResponse, logType);
-                            BaseActivity.logDao.insertAllLogs(logtemp);
+                            logDao.insertAllLogs(logtemp);
                             break;
                         case "attendance.json":
                             Type attType = new TypeToken<List<Attendance>>() {
                             }.getType();
                             List<Attendance> atttemp = gson.fromJson(mResponse, attType);
-                            BaseActivity.attendanceDao.insertAttendance(atttemp);
+                            attendanceDao.insertAttendance(atttemp);
                             break;
                         case "scores.json":
                             Type scoreType = new TypeToken<List<Modal_Score>>() {
                             }.getType();
                             List<Modal_Score> scoretemp = gson.fromJson(mResponse, scoreType);
-                            BaseActivity.scoreDao.insertAll(scoretemp);
+                            scoreDao.insertAll(scoretemp);
                             break;
                         case "status.json":
                             Modal_Score modalScore = new Modal_Score();
@@ -121,7 +130,7 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             modalScore.setLevel(0);
                             modalScore.setLabel(mResponse);
                             modalScore.setSentFlag(0);
-                            BaseActivity.scoreDao.insert(modalScore);
+                            scoreDao.insert(modalScore);
                             publishProgress("Receiving Usages");
                             break;
                     }
@@ -141,7 +150,7 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                         if (PrathamApplication.contentExistOnSD) detail.setOnSDCard(true);
                         else detail.setOnSDCard(false);
                     }
-                    BaseActivity.modalContentDao.addContentList(tempContents);
+                    modalContentDao.addContentList(tempContents);
                     publishProgress(filename);
                 }
             } catch (Exception e) {

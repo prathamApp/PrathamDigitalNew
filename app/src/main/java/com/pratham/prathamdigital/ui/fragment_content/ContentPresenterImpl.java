@@ -46,6 +46,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+
 @EBean
 public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents, ApiResult {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
@@ -498,7 +500,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             d.setDownloaded(true);
             d.setOnSDCard(false);
         }
-        BaseActivity.modalContentDao.addContentList(temp);
+        modalContentDao.addContentList(temp);
         filesDownloading.remove(downloadId);
         postAllDownloadsCompletedMessage();
         postSingleFileDownloadCompleteMessage(content);
@@ -646,12 +648,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     private void checkAndDeleteParent(Modal_ContentDetail contentItem) {
         String parentId = contentItem.getParentid();
-        BaseActivity.modalContentDao.deleteContent(contentItem.getNodeid());
+        modalContentDao.deleteContent(contentItem.getNodeid());
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
-            int count = BaseActivity.modalContentDao.getChildCountOfParent(parentId,
+            int count = modalContentDao.getChildCountOfParent(parentId,
                     FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
             if (count == 0)
-                checkAndDeleteParent(BaseActivity.modalContentDao.getContent(parentId,
+                checkAndDeleteParent(modalContentDao.getContent(parentId,
                         FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
         }
     }
@@ -662,7 +664,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (dl_content != null && !dl_content.isEmpty()) {
             Modal_DownloadContent download_content = new Gson().fromJson(dl_content, Modal_DownloadContent.class);
             for (Modal_ContentDetail detail : download_content.getNodelist()) {
-                Modal_ContentDetail temp = BaseActivity.modalContentDao.getContent(detail.getNodeid(), BaseActivity.language);
+                Modal_ContentDetail temp = modalContentDao.getContent(detail.getNodeid(), BaseActivity.language);
                 if (temp == null) {
                     detail.setContent_language(BaseActivity.language);
                     if (detail.getResourcetype().equalsIgnoreCase("Game")

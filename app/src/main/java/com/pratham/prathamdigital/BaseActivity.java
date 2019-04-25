@@ -23,18 +23,7 @@ import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
-import com.pratham.prathamdigital.dbclasses.CRLdao;
-import com.pratham.prathamdigital.dbclasses.GroupDao;
-import com.pratham.prathamdigital.dbclasses.LogDao;
-import com.pratham.prathamdigital.dbclasses.ModalContentDao;
-import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
-import com.pratham.prathamdigital.dbclasses.ScoreDao;
-import com.pratham.prathamdigital.dbclasses.SessionDao;
-import com.pratham.prathamdigital.dbclasses.StatusDao;
-import com.pratham.prathamdigital.dbclasses.StudentDao;
-import com.pratham.prathamdigital.dbclasses.VillageDao;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_PushData;
@@ -53,6 +42,12 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.UUID;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private static final int UPDATE_CONNECTION = 1;
@@ -61,16 +56,16 @@ public class BaseActivity extends AppCompatActivity {
     private static final int GET_LOCATION_PERMISSION = 7;
     private static final int GET_READ_PHONE_STATE = 8;
     public static String sessionId = UUID.randomUUID().toString();
-    public static AttendanceDao attendanceDao;
-    public static CRLdao crLdao;
-    public static GroupDao groupDao;
-    public static ModalContentDao modalContentDao;
-    public static ScoreDao scoreDao;
-    public static SessionDao sessionDao;
-    public static StatusDao statusDao;
-    public static StudentDao studentDao;
-    public static VillageDao villageDao;
-    public static LogDao logDao;
+    //    public static AttendanceDao attendanceDao;
+//    public static CRLdao crLdao;
+//    public static GroupDao groupDao;
+//    public static ModalContentDao modalContentDao;
+//    public static ScoreDao scoreDao;
+//    public static SessionDao sessionDao;
+//    public static StatusDao statusDao;
+//    public static StudentDao studentDao;
+//    public static VillageDao villageDao;
+//    public static LogDao logDao;
     public static String language = "";
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
@@ -124,7 +119,9 @@ public class BaseActivity extends AppCompatActivity {
                 case GET_LOCATION_PERMISSION:
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
-                                    Manifest.permission.ACCESS_FINE_LOCATION)
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.READ_PHONE_STATE)
                             .onAccepted(permissionResult -> {
                                 new LocationService(BaseActivity.this).checkLocation();
                                 mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
@@ -139,7 +136,7 @@ public class BaseActivity extends AppCompatActivity {
                                     Modal_Status statusObj = new Modal_Status();
                                     statusObj.setStatusKey("SerialID");
                                     statusObj.setValue(Build.getSerial());
-                                    BaseActivity.statusDao.insert(statusObj);
+                                    statusDao.insert(statusObj);
                                 }
                             })
                             .ask();
@@ -165,7 +162,7 @@ public class BaseActivity extends AppCompatActivity {
 //        Catcho.Builder(this)
 //                .activity(CatchoTransparentActivity.class)
 //                .build();
-        initializeDatabaseDaos();
+//        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();
         language = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
@@ -199,19 +196,19 @@ public class BaseActivity extends AppCompatActivity {
         EventBus.getDefault().unregister(this);
     }
 
-    private void initializeDatabaseDaos() {
-        PrathamDatabase db = PrathamDatabase.getDatabaseInstance(BaseActivity.this);
-        attendanceDao = db.getAttendanceDao();
-        crLdao = db.getCrLdao();
-        groupDao = db.getGroupDao();
-        modalContentDao = db.getModalContentDao();
-        scoreDao = db.getScoreDao();
-        sessionDao = db.getSessionDao();
-        statusDao = db.getStatusDao();
-        studentDao = db.getStudentDao();
-        villageDao = db.getVillageDao();
-        logDao = db.getLogDao();
-    }
+//    private void initializeDatabaseDaos() {
+//        PrathamDatabase db = PrathamDatabase.getDatabaseInstance(BaseActivity.this);
+//        attendanceDao = db.getAttendanceDao();
+//        crLdao = db.getCrLdao();
+//        groupDao = db.getGroupDao();
+//        modalContentDao = db.getModalContentDao();
+//        scoreDao = db.getScoreDao();
+//        sessionDao = db.getSessionDao();
+//        statusDao = db.getStatusDao();
+//        studentDao = db.getStudentDao();
+//        villageDao = db.getVillageDao();
+//        logDao = db.getLogDao();
+//    }
 
     @Override
     protected void onResume() {
@@ -249,14 +246,14 @@ public class BaseActivity extends AppCompatActivity {
                 Modal_PushData pushedData = gson.fromJson(message.getPushData(), Modal_PushData.class);
                 for (Modal_PushData.Modal_PushSessionData pushed :
                         pushedData.getPushSession()) {
-                    BaseActivity.sessionDao.updateFlag(pushed.getSessionId());
+                    sessionDao.updateFlag(pushed.getSessionId());
                     for (Modal_Score score : pushed.getScores())
-                        BaseActivity.scoreDao.updateFlag(pushed.getSessionId());
+                        scoreDao.updateFlag(pushed.getSessionId());
                     for (Attendance att : pushed.getAttendances())
-                        BaseActivity.attendanceDao.updateSentFlag(pushed.getSessionId());
+                        attendanceDao.updateSentFlag(pushed.getSessionId());
                 }
                 for (Modal_Student student : pushedData.getStudents())
-                    BaseActivity.studentDao.updateSentStudentFlags(student.getStudentId());
+                    studentDao.updateSentStudentFlags(student.getStudentId());
             }
         }
     }

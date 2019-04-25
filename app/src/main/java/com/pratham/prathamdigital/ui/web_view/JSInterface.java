@@ -18,6 +18,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import java.io.File;
 import java.util.Locale;
 
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+
 public class JSInterface {
     //    MediaRecorder myAudioRecorder;
     private static MediaPlayer mp;
@@ -311,6 +313,6 @@ public class JSInterface {
         modal_score.setLevel(level);
         modal_score.setLabel(piStudId + "," + label);
         modal_score.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modal_score);
+        scoreDao.insert(modal_score);
     }
 }

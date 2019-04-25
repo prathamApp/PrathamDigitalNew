@@ -6,7 +6,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
@@ -21,6 +20,12 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
 public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
 
@@ -80,7 +85,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     content_cursor.moveToNext();
                                 }
                             }
-                            BaseActivity.modalContentDao.addContentList(contents);
+                            modalContentDao.addContentList(contents);
                             content_cursor.close();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -103,7 +108,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     village_cursor.moveToNext();
                                 }
                             }
-                            BaseActivity.villageDao.insertAllVillages(villages);
+                            villageDao.insertAllVillages(villages);
                             village_cursor.close();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -133,7 +138,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     crl_cursor.moveToNext();
                                 }
                             }
-                            BaseActivity.crLdao.insertAllCRL(crls);
+                            crLdao.insertAllCRL(crls);
                             crl_cursor.close();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -157,7 +162,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     grp_cursor.moveToNext();
                                 }
                             }
-                            BaseActivity.groupDao.insertAllGroups(groups);
+                            groupDao.insertAllGroups(groups);
                             grp_cursor.close();
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -188,7 +193,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
                                     stu_cursor.moveToNext();
                                 }
                             }
-                            BaseActivity.studentDao.insertAllStudents(students);
+                            studentDao.insertAllStudents(students);
                             stu_cursor.close();
                         } catch (Exception e) {
                             e.printStackTrace();

@@ -10,7 +10,6 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -33,6 +32,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
 @EFragment(R.layout.frag_aaj_ka_sawal)
 public class Fragment_AAJ_KA_SAWAL extends Fragment {
@@ -242,6 +243,6 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         else
             modalScore.setLabel(isSkipped ? "Skipped" : "Video not Viewed");
         modalScore.setSentFlag(0);
-        BaseActivity.scoreDao.insert(modalScore);
+        scoreDao.insert(modalScore);
     }
 }

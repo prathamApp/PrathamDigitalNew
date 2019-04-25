@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -42,7 +41,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static com.pratham.prathamdigital.BaseActivity.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.select_avatar)
 public class Fragment_SelectAvatar extends Fragment implements AvatarContract.avatarView, CircularRevelLayout.CallBacks {
@@ -180,12 +181,12 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         attendance.sentFlag = 0;
         FastSave.getInstance().saveString(PD_Constant.GROUPID, "SmartPhone");
         attendances.add(attendance);
-        BaseActivity.attendanceDao.insertAttendance(attendances);
+        attendanceDao.insertAttendance(attendances);
         Modal_Session s = new Modal_Session();
         s.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
         s.setFromDate(PD_Utility.getCurrentDateTime());
         s.setToDate("NA");
-        BaseActivity.sessionDao.insert(s);
+        sessionDao.insert(s);
     }
 
     @Click(R.id.img_add_child_back)

@@ -11,7 +11,6 @@ import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -40,6 +39,9 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
+
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 
 /**
  * Created by HP on 30-12-2016.
@@ -126,7 +128,7 @@ public class PD_ApiRequest {
                     @Override
                     public void onResponse(String response) {
 //                        apiResult.notifySuccess(requestType, "success");
-                        BaseActivity.logDao.deleteLogs();
+                        logDao.deleteLogs();
                         BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
@@ -155,7 +157,7 @@ public class PD_ApiRequest {
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        BaseActivity.logDao.deleteLogs();
+                        logDao.deleteLogs();
                         BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
@@ -334,7 +336,7 @@ public class PD_ApiRequest {
             d.setDownloaded(true);
             d.setOnSDCard(false);
         }
-        BaseActivity.modalContentDao.addContentList(temp);
+        modalContentDao.addContentList(temp);
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.FAST_DOWNLOAD_COMPLETE);
         message.setDownloadId(modal_download.getContent().getNodeid());

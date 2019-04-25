@@ -5,7 +5,6 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
@@ -35,6 +34,11 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 
+import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 import static com.pratham.prathamdigital.util.APIs.ECCE;
 import static com.pratham.prathamdigital.util.APIs.GP;
 import static com.pratham.prathamdigital.util.APIs.HG;
@@ -532,7 +536,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     //    @Background
     @Override
     public void saveData() {
-        BaseActivity.crLdao.insertAllCRL(crlList);
+        crLdao.insertAllCRL(crlList);
         //To safely remove from a collection while iterating over it, Iterator should be used.
         Iterator<Modal_Student> i = studentList.iterator();
         while (i.hasNext()) {
@@ -540,46 +544,46 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
             if (stu.getGender().equalsIgnoreCase("deleted"))
                 i.remove();
         }
-        BaseActivity.studentDao.insertAllStudents(studentList);
+        studentDao.insertAllStudents(studentList);
         Iterator<Modal_Groups> gi = groupList.iterator();
         while (gi.hasNext()) {
             Modal_Groups stu = gi.next(); // must be called before you can call i.remove()
             if (stu.getDeviceId().equalsIgnoreCase("deleted"))
                 gi.remove();
         }
-        BaseActivity.groupDao.insertAllGroups(groupList);
+        groupDao.insertAllGroups(groupList);
         saveDownloadedVillages();
 
         switch (selectedProgram) {
             case APIs.HL:
-                BaseActivity.statusDao.updateValue("programId", "1");
+                statusDao.updateValue("programId", "1");
                 break;
             case RI:
-                BaseActivity.statusDao.updateValue("programId", "2");
+                statusDao.updateValue("programId", "2");
                 break;
             case SC:
-                BaseActivity.statusDao.updateValue("programId", "3");
+                statusDao.updateValue("programId", "3");
                 break;
             case PI:
-                BaseActivity.statusDao.updateValue("programId", "10");
+                statusDao.updateValue("programId", "10");
                 break;
             case UP:
-                BaseActivity.statusDao.updateValue("programId", "6");
+                statusDao.updateValue("programId", "6");
                 break;
             case HG:
-                BaseActivity.statusDao.updateValue("programId", "13");
+                statusDao.updateValue("programId", "13");
                 break;
             case KGBV:
-                BaseActivity.statusDao.updateValue("programId", "5");
+                statusDao.updateValue("programId", "5");
                 break;
             case ECCE:
-                BaseActivity.statusDao.updateValue("programId", "8");
+                statusDao.updateValue("programId", "8");
                 break;
             case GP:
-                BaseActivity.statusDao.updateValue("programId", "14");
+                statusDao.updateValue("programId", "14");
                 break;
             default:
-                BaseActivity.statusDao.updateValue("programId", "1");
+                statusDao.updateValue("programId", "1");
                 break;
         }
         Toast.makeText(context, "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
@@ -589,7 +593,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
     private void saveDownloadedVillages() {
         for (Modal_Village vill : vilageList) {
             if (villageIDList.contains(String.valueOf(vill.getVillageId())))
-                BaseActivity.villageDao.insertVillage(vill);
+                villageDao.insertVillage(vill);
         }
     }
 
@@ -789,10 +793,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
 
     @Background
     public void clearData_() {
-        BaseActivity.villageDao.deleteAllVillages();
-        BaseActivity.groupDao.deleteAllGroups();
-        BaseActivity.studentDao.deleteAllStudents();
-        BaseActivity.crLdao.deleteAllCRLs();
+        villageDao.deleteAllVillages();
+        groupDao.deleteAllGroups();
+        studentDao.deleteAllStudents();
+        crLdao.deleteAllCRLs();
     }
 
     @Override

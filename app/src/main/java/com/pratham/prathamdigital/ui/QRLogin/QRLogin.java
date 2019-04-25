@@ -44,6 +44,9 @@ import java.util.regex.Pattern;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+
 @EActivity(R.layout.activity_qrlogin)
 public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHandler {
 
@@ -198,13 +201,13 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
                     attendances.add(attendance);
                 }
                 FastSave.getInstance().saveString(PD_Constant.GROUPID, "QR");
-                BaseActivity.attendanceDao.insertAttendance(attendances);
+                attendanceDao.insertAttendance(attendances);
 
                 Modal_Session s = new Modal_Session();
                 s.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "defaultSession"));
                 s.setFromDate(PD_Utility.getCurrentDateTime());
                 s.setToDate("NA");
-                BaseActivity.sessionDao.insert(s);
+                sessionDao.insert(s);
                 if (startCameraScan != null)
                     startCameraScan.stopCamera();
                 FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);

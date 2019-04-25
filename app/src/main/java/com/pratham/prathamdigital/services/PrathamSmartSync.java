@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.models.Attendance;
@@ -23,6 +22,13 @@ import org.json.JSONObject;
 
 import java.util.List;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
 
@@ -38,22 +44,22 @@ public class PrathamSmartSync extends AutoSync {
             Gson gson = new Gson();
             //iterate through all new sessions
             JSONArray sessionArray = new JSONArray();
-            List<Modal_Session> newSessions = BaseActivity.sessionDao.getAllNewSessions();
+            List<Modal_Session> newSessions = sessionDao.getAllNewSessions();
             for (Modal_Session session : newSessions) {
                 //fetch all logs
                 JSONArray logArray = new JSONArray();
-                List<Modal_Log> allLogs = BaseActivity.logDao.getAllLogs(session.getSessionID());
+                List<Modal_Log> allLogs = logDao.getAllLogs(session.getSessionID());
                 for (Modal_Log log : allLogs)
                     logArray.put(new JSONObject(gson.toJson(log)));
                 //fetch attendance
                 JSONArray attendanceArray = new JSONArray();
-                List<Attendance> newAttendance = BaseActivity.attendanceDao.getNewAttendances(session.getSessionID());
+                List<Attendance> newAttendance = attendanceDao.getNewAttendances(session.getSessionID());
                 for (Attendance att : newAttendance) {
                     attendanceArray.put(new JSONObject(gson.toJson(att)));
                 }
                 //fetch Scores & convert to Json Array
                 JSONArray scoreArray = new JSONArray();
-                List<Modal_Score> newScores = BaseActivity.scoreDao.getAllNewScores(session.getSessionID());
+                List<Modal_Score> newScores = scoreDao.getAllNewScores(session.getSessionID());
                 for (Modal_Score score : newScores) {
                     scoreArray.put(new JSONObject(gson.toJson(score)));
                 }
@@ -73,13 +79,13 @@ public class PrathamSmartSync extends AutoSync {
                 //fetch Students & convert to Json Array
                 JSONArray studentArray = new JSONArray();
                 if (!PrathamApplication.isTablet) {
-                    List<Modal_Student> newStudents = BaseActivity.studentDao.getAllNewStudents();
+                    List<Modal_Student> newStudents = studentDao.getAllNewStudents();
                     for (Modal_Student std : newStudents)
                         studentArray.put(new JSONObject(gson.toJson(std)));
                 }
                 //fetch updated status
                 JSONObject metadataJson = new JSONObject();
-                List<Modal_Status> metadata = BaseActivity.statusDao.getAllStatuses();
+                List<Modal_Status> metadata = statusDao.getAllStatuses();
                 for (Modal_Status status : metadata) {
                     metadataJson.put(status.getStatusKey(), status.getValue());
                     if (status.getStatusKey().equalsIgnoreCase("programId"))

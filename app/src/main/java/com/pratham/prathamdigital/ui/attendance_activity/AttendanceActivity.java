@@ -21,6 +21,8 @@ import org.androidannotations.annotations.EActivity;
 
 import java.util.ArrayList;
 
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+
 @EActivity(R.layout.activity_attendance)
 public class AttendanceActivity extends BaseActivity {
 
@@ -33,7 +35,7 @@ public class AttendanceActivity extends BaseActivity {
                     null, FragmentSelectAgeGroup.class.getSimpleName());
         } else {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
-                ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getAllStudents();
+                ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) studentDao.getAllStudents();
                 Bundle bundle = new Bundle();
                 if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
                     bundle.putBoolean(PD_Constant.DEEP_LINK, true);

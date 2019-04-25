@@ -10,7 +10,6 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -32,6 +31,10 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.fragment_select_group)
 public class FragmentSelectGroup extends Fragment implements ContractGroup, CircularRevelLayout.CallBacks {
@@ -74,15 +77,15 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Background
     public void initiaiteParametersInGroup() {
         ArrayList<String> present_groups = new ArrayList<>();
-        String groupId1 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID1);
+        String groupId1 = statusDao.getValue(PD_Constant.GROUPID1);
         if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
-        String groupId2 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID2);
+        String groupId2 = statusDao.getValue(PD_Constant.GROUPID2);
         if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
-        String groupId3 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID3);
+        String groupId3 = statusDao.getValue(PD_Constant.GROUPID3);
         if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
-        String groupId4 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID4);
+        String groupId4 = statusDao.getValue(PD_Constant.GROUPID4);
         if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
-        String groupId5 = BaseActivity.statusDao.getValue(PD_Constant.GROUPID5);
+        String groupId5 = statusDao.getValue(PD_Constant.GROUPID5);
         if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
         List<Modal_Groups> groups;
         if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
@@ -121,14 +124,14 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         boolean grpFound;
         for (String grID : allGroups) {
             grpFound = false;
-            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
+            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) studentDao.getGroupwiseStudents(grID);
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) < 7) {
                     grpFound = true;
                 }
             }
             if (grpFound) {
-                group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                group = groupDao.getGroupByGrpID(grID);
                 groups.add(group);
             }
         }
@@ -141,14 +144,14 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         boolean grpFound;
         for (String grID : allGroups) {
             grpFound = false;
-            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) BaseActivity.studentDao.getGroupwiseStudents(grID);
+            ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) studentDao.getGroupwiseStudents(grID);
             for (Modal_Student stu : students) {
                 if (Integer.parseInt(stu.getAge()) >= 7) {
                     grpFound = true;
                 }
             }
             if (grpFound) {
-                group = BaseActivity.groupDao.getGroupByGrpID(grID);
+                group = groupDao.getGroupByGrpID(grID);
                 groups.add(group);
             }
         }
@@ -190,7 +193,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @UiThread
     public void setNext(View v, Modal_Groups modal_groups) {
         PrathamApplication.bubble_mp.start();
-        ArrayList<Modal_Student> students = new ArrayList<>(BaseActivity.studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
+        ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
         int[] outLocation = new int[2];
         v.getLocationOnScreen(outLocation);
         outLocation[0] += v.getWidth() / 2;

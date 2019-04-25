@@ -24,7 +24,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStates;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.gpsLogger.GpsLoggingService;
 import com.pratham.prathamdigital.gpsLogger.Session;
@@ -39,6 +38,8 @@ import java.util.Locale;
 import io.nlopez.smartlocation.SmartLocation;
 import io.nlopez.smartlocation.location.config.LocationAccuracy;
 import io.nlopez.smartlocation.location.config.LocationParams;
+
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 
 public class LocationService implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private static final String TAG = LocationService.class.getSimpleName();
@@ -66,17 +67,17 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
 
                     statusObj.statusKey = "Latitude";
                     statusObj.value = String.valueOf(location.getLatitude());
-                    BaseActivity.statusDao.insert(statusObj);
+                    statusDao.insert(statusObj);
 
                     statusObj.statusKey = "Longitude";
                     statusObj.value = String.valueOf(location.getLongitude());
-                    BaseActivity.statusDao.insert(statusObj);
+                    statusDao.insert(statusObj);
 
                     statusObj.statusKey = "GPSDateTime";
                     DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
                     Date gdate = new Date(location.getTime());
                     statusObj.value = format.format(gdate);
-                    BaseActivity.statusDao.insert(statusObj);
+                    statusDao.insert(statusObj);
 
                     Log.d(TAG, "onLocationUpdated:" + location.getLatitude() + ":::" + location.getLongitude());
                 });

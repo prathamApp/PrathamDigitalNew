@@ -18,7 +18,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.CopyExistingDb;
@@ -40,6 +39,9 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EBean
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
@@ -112,7 +114,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             status.setStatusKey(PD_Constant.GOOGLE_ID);
             status.setValue(Objects.requireNonNull(email));
             status.setDescription("");
-            BaseActivity.statusDao.insert(status);
+            statusDao.insert(status);
 //            AuthCredential credential = GoogleAuthProvider.getCredential(token, null);
 //            firebaseAuthWithGoogle(credential);
 //            checkStudentList();
@@ -139,7 +141,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void checkStudentList() {
-        if (!BaseActivity.studentDao.getAllStudents().isEmpty()) {
+        if (!studentDao.getAllStudents().isEmpty()) {
             splashview.redirectToDashboard();
         } else {
             splashview.redirectToAvatar();
@@ -150,100 +152,100 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void populateDefaultDB() {
         Modal_Status statusObj = new Modal_Status();
-        if (BaseActivity.statusDao.getKey("CRLID") == null) {
+        if (statusDao.getKey("CRLID") == null) {
             statusObj.statusKey = "CRLID";
             statusObj.value = "default";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("group1") == null) {
+        if (statusDao.getKey("group1") == null) {
             statusObj.statusKey = "group1";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("group2") == null) {
+        if (statusDao.getKey("group2") == null) {
             statusObj.statusKey = "group2";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("group3") == null) {
+        if (statusDao.getKey("group3") == null) {
             statusObj.statusKey = "group3";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("group4") == null) {
+        if (statusDao.getKey("group4") == null) {
             statusObj.statusKey = "group4";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("group5") == null) {
+        if (statusDao.getKey("group5") == null) {
             statusObj.statusKey = "group5";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("DeviceId") == null) {
+        if (statusDao.getKey("DeviceId") == null) {
             statusObj.statusKey = "DeviceId";
             statusObj.value = PD_Utility.getDeviceID();
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("DeviceName") == null) {
+        if (statusDao.getKey("DeviceName") == null) {
             statusObj.statusKey = "DeviceName";
             statusObj.value = PD_Utility.getDeviceName();
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("ActivatedDate") == null) {
+        if (statusDao.getKey("ActivatedDate") == null) {
             statusObj.statusKey = "ActivatedDate";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("village") == null) {
+        if (statusDao.getKey("village") == null) {
             statusObj.statusKey = "village";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("ActivatedForGroups") == null) {
+        if (statusDao.getKey("ActivatedForGroups") == null) {
             statusObj.statusKey = "ActivatedForGroups";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("SerialID") == null) {
+        if (statusDao.getKey("SerialID") == null) {
             statusObj.statusKey = "SerialID";
             statusObj.value = PD_Utility.getDeviceSerialID();
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("prathamCode") == null) {
+        if (statusDao.getKey("prathamCode") == null) {
             statusObj.statusKey = "prathamCode";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("programId") == null) {
+        if (statusDao.getKey("programId") == null) {
             statusObj.statusKey = "programId";
             statusObj.value = "";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("wifiMAC") == null) {
+        if (statusDao.getKey("wifiMAC") == null) {
             statusObj.statusKey = "wifiMAC";
             WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             WifiInfo wInfo = wifiManager.getConnectionInfo();
             statusObj.value = wInfo.getMacAddress();
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("apkType") == null) {
+        if (statusDao.getKey("apkType") == null) {
             statusObj.statusKey = "apkType";
             if (PrathamApplication.isTablet)
                 statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Tablet Apk";
             else
                 statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Smartphone Apk";
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("appName") == null) {
+        if (statusDao.getKey("appName") == null) {
             statusObj.statusKey = "appName";
             statusObj.value = PD_Utility.getApplicationName(context);
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
-        if (BaseActivity.statusDao.getKey("apkVersion") == null) {
+        if (statusDao.getKey("apkVersion") == null) {
             statusObj.statusKey = "apkVersion";
             statusObj.value = PD_Utility.getCurrentVersion(context);
-            BaseActivity.statusDao.insert(statusObj);
+            statusDao.insert(statusObj);
         }
     }
 
@@ -323,28 +325,28 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         Modal_Status statusObj = new Modal_Status();
         statusObj.setStatusKey("Latitude");
         statusObj.setValue(String.valueOf(location.getLatitude()));
-        BaseActivity.statusDao.insert(statusObj);
+        statusDao.insert(statusObj);
 
         statusObj.setStatusKey("Longitude");
         statusObj.setValue(String.valueOf(location.getLongitude()));
-        BaseActivity.statusDao.insert(statusObj);
+        statusDao.insert(statusObj);
 
         statusObj.setStatusKey("GPSDateTime");
         DateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         Date gdate = new Date(location.getTime());
         String gpsDateTime = format.format(gdate);
         statusObj.setValue(gpsDateTime);
-        BaseActivity.statusDao.insert(statusObj);
+        statusDao.insert(statusObj);
 
         statusObj.setStatusKey("GPSFixDuration");
-        if (BaseActivity.statusDao.getKey("GPSFixDuration") == null) {
+        if (statusDao.getKey("GPSFixDuration") == null) {
             statusObj.setValue(String.valueOf(gpsFixCount));
         } else {
-            String value = BaseActivity.statusDao.getValue("GPSFixDuration");
+            String value = statusDao.getValue("GPSFixDuration");
             value += "," + gpsFixCount;
             statusObj.setValue(value);
         }
-        BaseActivity.statusDao.insert(statusObj);
+        statusDao.insert(statusObj);
         checkIfContentinSDCard();
     }
 
@@ -365,13 +367,13 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         Modal_Status statusObj = new Modal_Status();
         statusObj.setStatusKey("PrathamCode");
         statusObj.setValue(code);
-        BaseActivity.statusDao.insert(statusObj);
+        statusDao.insert(statusObj);
     }
 
     @Override
     public void checkPrathamCode() {
         if (PrathamApplication.isTablet) {
-            if (BaseActivity.statusDao.getKey("PrathamCode") == null)
+            if (statusDao.getKey("PrathamCode") == null)
                 splashview.showEnterPrathamCodeDialog();
             else
                 splashview.loadSplash();

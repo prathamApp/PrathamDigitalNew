@@ -5,10 +5,11 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
+
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 
 public class AppKillService extends Service {
 
@@ -23,7 +24,7 @@ public class AppKillService extends Service {
         try {
             PrathamSmartSync.pushUsageToServer(false);
             if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
-                BaseActivity.sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+                sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
                 stopSelf();
             }
         } catch (Exception e) {
