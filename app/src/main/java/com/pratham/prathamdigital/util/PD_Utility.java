@@ -64,7 +64,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -129,8 +128,18 @@ public class PD_Utility {
 
     public static final Pattern otp_pattern = Pattern.compile("(|^)\\d{4}");
     private static List<Integer> colors;
+    private static int[] boy_avatars = new int[]{
+            R.drawable.ic_boy_one, R.drawable.ic_boy_two, R.drawable.ic_boy_three, R.drawable.ic_boy_four
+            , R.drawable.ic_boy_five, R.drawable.ic_boy_six, R.drawable.ic_boy_seven, R.drawable.ic_boy_eight
+            , R.drawable.ic_boy_nine
+    };
+    private static int[] girl_avatars = new int[]{
+            R.drawable.ic_girl_one, R.drawable.ic_girl_two, R.drawable.ic_girl_three, R.drawable.ic_girl_four
+            , R.drawable.ic_girl_five, R.drawable.ic_girl_six, R.drawable.ic_girl_seven, R.drawable.ic_girl_eight
+            , R.drawable.ic_girl_nine
+    };
 
-    public PD_Utility(BaseActivity baseActivity) {
+    public PD_Utility(Context context) {
         colors = getAllMaterialColors();
     }
 
@@ -1854,10 +1863,11 @@ public class PD_Utility {
         return macAddress;
     }
 
-    public static String getRandomAvatar(Context context) {
-        String[] avatars = context.getResources().getStringArray(R.array.avatars);
-        String word = avatars[new Random().nextInt(avatars.length)];
-        return word;
+    public static int getRandomAvatar(String gender) {
+        if (gender.equalsIgnoreCase("male"))
+            return boy_avatars[new Random().nextInt(boy_avatars.length)];
+        else
+            return girl_avatars[new Random().nextInt(girl_avatars.length)];
     }
 
     public static int getRandomColorGradient() {

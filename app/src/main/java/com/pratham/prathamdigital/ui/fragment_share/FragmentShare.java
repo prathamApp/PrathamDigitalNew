@@ -3,9 +3,11 @@ package com.pratham.prathamdigital.ui.fragment_share;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
@@ -24,15 +26,18 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
+import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FileListAdapter;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.SharePresenter;
 import com.pratham.prathamdigital.util.ConnectionUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -47,6 +52,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 @EFragment(R.layout.fragment_share)
 public class FragmentShare extends Fragment implements ZXingScannerView.ResultHandler, ContractShare.shareView {
     private static final int INIT_CAMERA = 1;
+    private static final String TAG = FragmentShare.class.getSimpleName();
     private ZXingScannerView startCameraScan;
     @ViewById(R.id.rl_scan_qr)
     RelativeLayout rl_scan_qr;
@@ -83,7 +89,6 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @AfterViews
     public void initialize() {
-        sharePresenter.setView(FragmentShare.this);
         mHandler.sendEmptyMessage(INIT_CAMERA);
     }
 
@@ -97,6 +102,7 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
     @Override
     public void onResume() {
         super.onResume();
+        sharePresenter.setView(FragmentShare.this);
         if (startCameraScan != null)
             startCameraScan.resumeCameraPreview(FragmentShare.this);
     }
@@ -144,8 +150,6 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
         if (startCameraScan != null) startCameraScan.stopCamera();
         super.onDestroy();
         sharePresenter.viewDestroyed();
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-//            PrathamApplication.getInstance().unregisterReceiver();
     }
 
     @Override
@@ -206,7 +210,8 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void onWifiConnected(String ssid) {
-        Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
+        mHandler.sendEmptyMessage(PD_Constant.WiFiConnectSuccess);
+//        Message.obtain(mHandler, PD_Constant.WiFiConnectSuccess, ssid).sendToTarget();
     }
 
     @Override
@@ -247,14 +252,11 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
         sending_builder.show();
     }
 
+    @UiThread
     @Override
     public void showFilesList(ArrayList<File_Model> contents, String parentId) {
-//        filesSent.clear();
-//        filesSentPosition.clear();
         if (rv_share_files.getVisibility() == View.GONE)
             rv_share_files.setVisibility(View.VISIBLE);
-//        if (rv_share_files_receiving.getVisibility() == View.VISIBLE)
-//            rv_share_files_receiving.setVisibility(View.GONE);
         if (fileListAdapter == null) {
             //initialize adapter
             fileListAdapter = new FileListAdapter(getActivity(), FragmentShare.this);
@@ -271,12 +273,27 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void disconnectFTP() {
-
+        new AlertDialog.Builder(Objects.requireNonNull(getActivity()))
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("PraDigi")
+                .setMessage("Do you want to Disconnect?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    closeFTPJoin();
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
     @Override
     public void closeFTPJoin() {
-
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, 0);
+        bundle.putInt(PD_Constant.REVEALY, 0);
+        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
+                bundle, FragmentContent_.class.getSimpleName());
+        Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
+        if (fragment != null)
+            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
     @Override
@@ -297,5 +314,14 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void ftpConnectionFailed() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                EventMessage ms = new EventMessage();
+                ms.setMessage(PD_Constant.FRAGMENT_SHARE_BACK);
+                EventBus.getDefault().post(ms);
+            }
+        }, 2000);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 }

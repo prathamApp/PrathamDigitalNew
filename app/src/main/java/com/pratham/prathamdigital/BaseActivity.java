@@ -56,16 +56,6 @@ public class BaseActivity extends AppCompatActivity {
     private static final int GET_LOCATION_PERMISSION = 7;
     private static final int GET_READ_PHONE_STATE = 8;
     public static String sessionId = UUID.randomUUID().toString();
-    //    public static AttendanceDao attendanceDao;
-//    public static CRLdao crLdao;
-//    public static GroupDao groupDao;
-//    public static ModalContentDao modalContentDao;
-//    public static ScoreDao scoreDao;
-//    public static SessionDao sessionDao;
-//    public static StatusDao statusDao;
-//    public static StudentDao studentDao;
-//    public static VillageDao villageDao;
-//    public static LogDao logDao;
     public static String language = "";
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
@@ -195,20 +185,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onStop();
         EventBus.getDefault().unregister(this);
     }
-
-//    private void initializeDatabaseDaos() {
-//        PrathamDatabase db = PrathamDatabase.getDatabaseInstance(BaseActivity.this);
-//        attendanceDao = db.getAttendanceDao();
-//        crLdao = db.getCrLdao();
-//        groupDao = db.getGroupDao();
-//        modalContentDao = db.getModalContentDao();
-//        scoreDao = db.getScoreDao();
-//        sessionDao = db.getSessionDao();
-//        statusDao = db.getStatusDao();
-//        studentDao = db.getStudentDao();
-//        villageDao = db.getVillageDao();
-//        logDao = db.getLogDao();
-//    }
 
     @Override
     protected void onResume() {

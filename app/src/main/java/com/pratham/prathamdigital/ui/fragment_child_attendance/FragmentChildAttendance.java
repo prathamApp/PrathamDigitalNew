@@ -59,7 +59,6 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
 
-    private final ArrayList<String> avatars = new ArrayList<>();
     private ChildAdapter childAdapter;
     private ArrayList<Modal_Student> students = new ArrayList<>();
     private int revealX;
@@ -78,14 +77,10 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                         img_child_back.setVisibility(View.VISIBLE);
                         btn_attendance_next.setVisibility(View.VISIBLE);
                         groupID = getArguments().getString(PD_Constant.GROUPID);
-                        for (Modal_Student stu : students)
-                            avatars.add(PD_Utility.getRandomAvatar(Objects.requireNonNull(getActivity())));
                     } else {
                         img_child_back.setVisibility(View.GONE);
                         btn_attendance_next.setVisibility(View.GONE);
                         groupID = "SmartPhone";
-                        for (Modal_Student stu : students)
-                            avatars.add(stu.getAvatarName());
                         //adding add child item
                         Modal_Student add_student = new Modal_Student();
                         add_student.setFullName("Add Child");
@@ -118,7 +113,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     @UiThread
     public void setChilds(ArrayList<Modal_Student> childs) {
-        childAdapter = new ChildAdapter(getActivity(), childs, avatars, FragmentChildAttendance.this);
+        childAdapter = new ChildAdapter(getActivity(), childs, FragmentChildAttendance.this);
         rv_child.setHasFixedSize(true);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);

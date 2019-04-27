@@ -103,9 +103,9 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
     private static final int ANIMATE_RECIEVE_AND_INIT_CAMERA = 15;
     @ViewById(R.id.root_share)
     LinearLayout root_share;
-    @ViewById(R.id.rl_share)
+    @ViewById(R.id.rl_receive_root)
     RelativeLayout rl_share;
-    @ViewById(R.id.rl_recieve)
+    @ViewById(R.id.rl_share_root)
     RelativeLayout rl_recieve;
     @ViewById(R.id.searchCircle)
     RelativeLayout searchCircle;
@@ -348,7 +348,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         sd_builder.show();
     }
 
-    @Click(R.id.rl_share)
+    @Click(R.id.rl_receive_root)
     public void setRl_share() {
         if (PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.disableWifi();
@@ -382,7 +382,7 @@ public class FragmentShareRecieve extends Fragment implements ContractShare.shar
         mHandler.postDelayed(() -> hotspotUtils.enableConfigured("pratham", null), 800);
     }
 
-    @Click(R.id.rl_recieve)
+    @Click(R.id.rl_share_root)
     public void setRl_recieve() {
         WifiUtils.closeWifiAp();
         if (!PrathamApplication.wiseF.isWifiEnabled()) PrathamApplication.wiseF.enableWifi();

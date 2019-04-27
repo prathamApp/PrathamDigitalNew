@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -31,11 +32,13 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
+import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ReceivedFileListAdapter;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.SharePresenter;
 import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.WifiUtils;
 
 import org.androidannotations.annotations.AfterViews;
@@ -61,6 +64,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     private static final int RECIEVED_FROM_TETHERING_ACTIVITY = 1;
     private static final int SHOW_SD_CARD_DIALOG = 2;
     private static final int CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION = 3;
+    private static final String TAG = FragmentReceive.class.getSimpleName();
 
     @ViewById(R.id.shareCircle)
     RelativeLayout shareCircle;
@@ -136,7 +140,6 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 
     @AfterViews
     public void initialize() {
-        sharePresenter.setView(FragmentReceive.this);
         hotspotUtils = HotspotUtils.getInstance(getActivity(), mHandler);
         createHotspot();
     }
@@ -148,6 +151,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     @Override
     public void onResume() {
         super.onResume();
+        sharePresenter.setView(FragmentReceive.this);
         if (isHotspotEnabled) {
             isHotspotEnabled = false;
             onActivityResult(RECIEVED_FROM_TETHERING_ACTIVITY, 0, null);
@@ -187,16 +191,26 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
                 .setMessage("Do you want to Disconnect?")
                 .setPositiveButton("Yes", (dialog, which) -> {
                     WifiUtils.closeWifiAp();
-                    getActivity().sendBroadcast(new Intent(FsService.ACTION_STOP_FTPSERVER));
-                    //circular_share_reveal.unReveal();
+                    Intent intent = new Intent(FsService.ACTION_STOP_FTPSERVER);
+                    intent.setPackage(Objects.requireNonNull(getActivity()).getPackageName());
+                    getActivity().sendBroadcast(intent);
+                    closeFTPJoin();
                 })
                 .setNegativeButton("No", null)
                 .show();
     }
 
+    @UiThread
     @Override
     public void closeFTPJoin() {
-
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, 0);
+        bundle.putInt(PD_Constant.REVEALY, 0);
+        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
+                bundle, FragmentContent_.class.getSimpleName());
+        Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
+        if (fragment != null)
+            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
     }
 
     @Override
@@ -292,9 +306,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
                 }
                 if (ftpItem != null)
                     receivedFileListAdapter.notifyItemChanged(pos, ftpItem);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHARE_BACK))
-                sharePresenter.traverseFolderBackward();
-            else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER))
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER))
                 disconnectFTP();
         }
     }
@@ -320,4 +332,17 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
             receivedFileListAdapter.submitList(filesRecieving);
         }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        sharePresenter.viewDestroyed();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        sharePresenter.viewDestroyed();
+    }
+
 }

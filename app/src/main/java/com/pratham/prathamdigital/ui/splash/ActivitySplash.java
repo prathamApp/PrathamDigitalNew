@@ -157,7 +157,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     }
                     intent.putExtra(PD_Constant.STUDENT_ADDED, true);
                     startActivity(intent);
-//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
                 case REDIRECT_TO_AVATAR:
@@ -168,13 +168,13 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                     }
                     intent2.putExtra(PD_Constant.STUDENT_ADDED, false);
                     startActivity(intent2);
-//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
                 case REDIRECT_TO_ATTENDANCE:
                     Intent intent3 = new Intent(ActivitySplash.this, AttendanceActivity_.class);
                     startActivity(intent3);
-//                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
             }

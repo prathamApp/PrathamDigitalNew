@@ -96,6 +96,7 @@ public class PD_Constant {
     public static final String LOCATION_CHANGED = "LOCATION_CHANGED";
     public static final String KOLIBRI_PROGRAM = "KOLIBRI_PROGRAM";
     public static final String SERVER_PROGRAM = "SERVER_PROGRAM";
+    public static final String FRAGMENT_SHARE_BACK = "fragment_share_back";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";

@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/child_view"
     android:layout_width="@dimen/_120sdp"
-    android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true">
+    android:layout_height="@dimen/_110sdp"
+    android:layout_margin="@dimen/_5sdp">
 
-    <com.pratham.prathamdigital.custom.elastic_view.ElasticView
-        android:id="@+id/child_view"
-        android:layout_width="@dimen/_90sdp"
-        android:layout_height="@dimen/_90sdp"
+    <com.pratham.prathamdigital.custom.shapes.ShapeOfView
+        android:id="@+id/child_shape"
+        android:layout_width="@dimen/_60sdp"
+        android:layout_height="@dimen/_70sdp"
         android:layout_centerHorizontal="true"
-        android:clickable="true"
-        android:elevation="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_20sdp">
+        android:clickable="false"
+        android:elevation="@dimen/_6sdp"
+        android:focusable="false"
+        app:shape_clip_drawable="@drawable/ic_boy_seven">
 
-        <com.airbnb.lottie.LottieAnimationView
+        <ImageView
             android:id="@+id/child_avatar"
-            android:layout_width="@dimen/_90sdp"
-            android:layout_height="@dimen/_90sdp"
-            android:layout_centerHorizontal="true"
-            android:background="@drawable/child_attendance_bkgd"
-            android:clickable="false"
-            android:scaleType="centerInside"
-            app:lottie_autoPlay="true"
-            app:lottie_loop="true" />
-    </com.pratham.prathamdigital.custom.elastic_view.ElasticView>
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            app:srcCompat="@drawable/ic_boy_seven" />
+    </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
 
-    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-        android:id="@+id/child_name"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/child_view"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:paddingLeft="@dimen/_5sdp"
-        android:paddingRight="@dimen/_5sdp"
-        android:text="aasdldsd"
-        android:textColor="@color/white"
-        android:textSize="@dimen/_15sdp" />
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/child_card_name"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_below="@+id/child_shape"
+        android:clickable="false"
+        android:focusable="false"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardCornerRadius="@dimen/_7sdp"
+        app:cardElevation="0dp">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/child_name"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:maxLines="2"
+            android:padding="@dimen/_3sdp"
+            android:text="asdasdasdasdasasdasdasasdasdasdad"
+            android:textColor="@android:color/black" />
+    </android.support.design.card.MaterialCardView>
 </RelativeLayout>

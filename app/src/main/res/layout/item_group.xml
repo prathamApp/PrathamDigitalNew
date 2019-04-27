@@ -13,41 +13,26 @@
     app:cardCornerRadius="@dimen/_25sdp"
     app:flexibility="3">
 
-    <!--<android.support.design.card.MaterialCardView-->
-    <!--android:layout_width="@dimen/_120sdp"-->
-    <!--android:layout_height="@dimen/_120sdp"-->
-    <!--android:layout_gravity="center"-->
-    <!--android:clickable="false"-->
-    <!--app:cardBackgroundColor="#A77AEC"-->
-    <!--app:cardCornerRadius="@dimen/_60sdp">-->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:clickable="false"
+        android:gravity="center"
+        android:maxLines="4"
+        android:paddingLeft="@dimen/_5sdp"
+        android:paddingRight="@dimen/_5sdp"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_17sdp" />
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/group_name"
-            android:layout_width="@dimen/_100sdp"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:layout_gravity="center"
-            android:clickable="false"
-            android:gravity="center"
-            android:paddingLeft="@dimen/_5sdp"
-            android:paddingRight="@dimen/_5sdp"
-            android:text="asanksjdnsasdasdsasdsaks"
-            android:textColor="@color/white"
-            android:textSize="@dimen/_17sdp" />
-
-        <ImageView
-            android:id="@+id/img_grp_selected"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_checked" />
-    </RelativeLayout>
-    <!--</android.support.design.card.MaterialCardView>-->
+    <ImageView
+        android:id="@+id/img_grp_selected"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_marginRight="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_checked" />
 </com.pratham.prathamdigital.custom.elastic_view.ElasticView>

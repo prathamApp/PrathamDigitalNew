@@ -81,7 +81,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_EXIT = 6;
     private static final int MENU_HOME = 7;
     private static final int SHOW_MENU_WITH_DEEP_LINK = 8;
-    private static final int SCHEDULE_CONNETIVITY_JOB = 10;
     private static final int CHECK_AAJ_KA_SAWAL = 11;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
@@ -193,18 +192,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 case MENU_EXIT:
                     exitApp();
                     break;
-                case SCHEDULE_CONNETIVITY_JOB:
-//                    JobInfo myJob = new JobInfo.Builder(0, new ComponentName(this, NetworkSchedulerService.class))
-//                            .setRequiresCharging(true)
-//                            .setMinimumLatency(1000)
-//                            .setOverrideDeadline(2000)
-//                            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-//                            .setPersisted(true)
-//                            .build();
-//
-//                    JobScheduler jobScheduler = (JobScheduler) getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//                    jobScheduler.schedule(myJob);
-                    break;
                 case CHECK_AAJ_KA_SAWAL:
                     String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
                     File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename); //Creating an internal dir;
@@ -223,7 +210,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
-        mHandler.sendEmptyMessage(SCHEDULE_CONNETIVITY_JOB);
         mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
         mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
     }
@@ -231,7 +217,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private void initializeDrawer() {
         main_sliding_drawer.setPanelSlideListener(this);
         if (PrathamApplication.isTablet)
-            drawer_profile_lottie.setAnimation(PD_Utility.getRandomAvatar(this));
+            drawer_profile_lottie.setAnimation("avatars/dino_dance.json");
         else
             drawer_profile_lottie.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR,
                     "avatars/dino_dance.json"));

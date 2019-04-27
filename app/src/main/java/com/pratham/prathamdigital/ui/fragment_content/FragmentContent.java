@@ -97,6 +97,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
             switch (msg.what) {
                 case INITIALIZE_CONTENT_ADAPTER:
                     contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
+//                    LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(rv_content.getContext()
+//                            , R.anim.layout_animation_waterfall);
+//                    rv_content.setLayoutAnimation(animation);
                     rv_content.setHasFixedSize(true);
                     rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
                     gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();

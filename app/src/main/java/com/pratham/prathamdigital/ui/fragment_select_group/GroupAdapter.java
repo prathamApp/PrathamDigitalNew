@@ -26,7 +26,7 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     private final ContractGroup contractGroup;
     private final AsyncListDiffer<Modal_Groups> mDiffer;
 
-    public GroupAdapter(Context context/*, ArrayList<Modal_Groups> datalist*/, ContractGroup contractGroup) {
+    public GroupAdapter(Context context, ContractGroup contractGroup) {
         DiffUtil.ItemCallback<Modal_Groups> diffcallback = new DiffUtil.ItemCallback<Modal_Groups>() {
             @Override
             public boolean areItemsTheSame(@NonNull Modal_Groups detail, @NonNull Modal_Groups t1) {
@@ -41,7 +41,6 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
         };
         mDiffer = new AsyncListDiffer<>(this, diffcallback);
         this.context = context;
-//        this.datalist = datalist;
         this.contractGroup = contractGroup;
     }
 
