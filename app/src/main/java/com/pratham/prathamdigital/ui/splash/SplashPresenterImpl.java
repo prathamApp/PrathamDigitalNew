@@ -69,10 +69,15 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         String currentVersion = PD_Utility.getCurrentVersion(context);
         Log.d("version::", "Current version = $currentVersion");
         FastSave.getInstance().saveString(PD_Constant.APP_VERSION, latestVersion);
-        if (latestVersion != null && !latestVersion
-                .isEmpty() && (!currentVersion.equalsIgnoreCase(latestVersion))) {
-            splashview.showAppUpdateDialog();
-        } else {
+        try {
+            if (latestVersion != null && !latestVersion
+                    .isEmpty() && (Float.parseFloat(currentVersion) < Float.parseFloat(latestVersion)))
+                splashview.showAppUpdateDialog();
+            else
+                new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+        } catch (Exception e) {
+//            i.e Beta version
+            e.printStackTrace();
             new CopyExistingDb(context, SplashPresenterImpl.this).execute();
         }
     }

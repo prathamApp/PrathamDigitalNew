@@ -43,7 +43,7 @@ public class PrathamApplication extends Application {
      * Check Todo
      * Check Catcho in BaseActivity
      * Remove LeakCanary from oncreate
-     * check version
+     * increase version before generating signed apk
      */
     public static boolean isTablet = true;
     public static boolean useSatelliteGPS = false;
