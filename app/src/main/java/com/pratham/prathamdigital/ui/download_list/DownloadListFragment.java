@@ -3,12 +3,11 @@ package com.pratham.prathamdigital.ui.download_list;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import com.androidnetworking.AndroidNetworking;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
-import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
-import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -62,9 +61,10 @@ public class DownloadListFragment extends SuperBottomSheetFragment implements Do
 
     @Override
     public void deleteDownload(int pos, String downloadId) {
-        EventMessage message = new EventMessage();
-        message.setMessage(PD_Constant.CANCEL_DOWNLOAD);
-        message.setDownloadId(downloadId);
-        EventBus.getDefault().post(message);
+//        EventMessage message = new EventMessage();
+//        message.setMessage(PD_Constant.CANCEL_DOWNLOAD);
+//        message.setDownloadId(downloadId);
+//        EventBus.getDefault().post(message);
+        AndroidNetworking.cancel(downloadId);
     }
 }

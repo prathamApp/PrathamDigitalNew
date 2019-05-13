@@ -48,8 +48,9 @@ import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
-import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieveTwo;
-import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieveTwo_;
+import com.pratham.prathamdigital.ui.fragment_receive.FragmentReceive_;
+import com.pratham.prathamdigital.ui.fragment_share.FragmentShare_;
+import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -162,8 +163,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     Bundle bundle3 = new Bundle();
                     bundle3.putInt(PD_Constant.REVEALX, 0);
                     bundle3.putInt(PD_Constant.REVEALY, 0);
-                    PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieveTwo_(), R.id.main_frame,
-                            bundle3, FragmentShareRecieveTwo.class.getSimpleName());
+                    PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve_(), R.id.main_frame,
+                            bundle3, FragmentShareRecieve.class.getSimpleName());
                     break;
                 case MENU_SHARE_APP:
                     KotlinPermissions.with(ActivityMain.this)
@@ -309,7 +310,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.LANGUAGE_BACK);
             EventBus.getDefault().post(message);
-        } else if (fragment instanceof FragmentShareRecieve_) {
+        } else if (fragment instanceof FragmentShare_ || fragment instanceof FragmentReceive_) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.SHARE_BACK);
             EventBus.getDefault().post(message);

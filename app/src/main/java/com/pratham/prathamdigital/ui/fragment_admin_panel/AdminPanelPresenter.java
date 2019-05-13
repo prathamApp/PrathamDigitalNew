@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
 import android.content.Context;
+import android.os.Handler;
 
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
@@ -50,7 +51,14 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
 
     @Override
     public void pushData() {
-        PrathamSmartSync.pushUsageToServer(true);
+        adminPanelView.showPushingDialog();
+        //Necessary to add some delay, as the ui will change very frequent to notice
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                PrathamSmartSync.pushUsageToServer(true);
+            }
+        }, 1500);
     }
 
 }

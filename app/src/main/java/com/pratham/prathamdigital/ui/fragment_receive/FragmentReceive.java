@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,9 +23,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularProgress;
 import com.pratham.prathamdigital.ftpSettings.FsService;
@@ -56,13 +57,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static android.graphics.Color.BLACK;
-import static android.graphics.Color.WHITE;
-
 @EFragment(R.layout.fragment_receive)
 public class FragmentReceive extends Fragment implements ContractShare.shareView {
     private static final int RECIEVED_FROM_TETHERING_ACTIVITY = 1;
-    private static final int SHOW_SD_CARD_DIALOG = 2;
     private static final int CREATE_HOTSPOT_ACCORDING_TO_ANDROID_VERSION = 3;
     private static final String TAG = FragmentReceive.class.getSimpleName();
 
@@ -223,6 +220,11 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 
     }
 
+    @Override
+    public void animateHamburger() {
+
+    }
+
     @UiThread
     public void animateHotspotCreation() {
         startCreateAnim();
@@ -247,8 +249,8 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
             jsonObject.put(PD_Constant.FTP_HOTSPOT_SSID, PD_Constant.HOTSPOT_SSID);
             jsonObject.put(PD_Constant.FTP_HOTSPOT_PASS, PD_Constant.HOTSPOT_PASSWORD);
             jsonObject.put(PD_Constant.FTP_KEYMGMT, PD_Constant.FTP_HOTSPOT_KEYMGMT);
-            MultiFormatWriter formatWriter = new MultiFormatWriter();
-            BitMatrix bitMatrix = formatWriter.encode(jsonObject.toString(), BarcodeFormat.QR_CODE, 400, 400);
+            QRCodeWriter formatWriter = new QRCodeWriter();
+            BitMatrix bitMatrix = formatWriter.encode(jsonObject.toString(), BarcodeFormat.QR_CODE, 512, 512);
             Bitmap bitmap = createBitmap(bitMatrix);
             shareCircle.setVisibility(View.GONE);
             rl_hotspot_qr.setVisibility(View.VISIBLE);
@@ -272,16 +274,22 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     private Bitmap createBitmap(BitMatrix matrix) {
         int width = matrix.getWidth();
         int height = matrix.getHeight();
-        int[] pixels = new int[width * height];
-        for (int y = 0; y < height; y++) {
-            int offset = y * width;
-            for (int x = 0; x < width; x++) {
-                pixels[offset + x] = matrix.get(x, y) ? BLACK : WHITE;
+//        int[] pixels = new int[width * height];
+//        for (int y = 0; y < height; y++) {
+//            int offset = y * width;
+//            for (int x = 0; x < width; x++) {
+//                pixels[offset + x] = matrix.get(x, y) ? BLACK : WHITE;
+//            }
+//        }
+//        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+//        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
+        Bitmap bmp = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                bmp.setPixel(x, y, matrix.get(x, y) ? Color.BLACK : Color.WHITE);
             }
         }
-        Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
-        return bitmap;
+        return bmp;
     }
 
     @Subscribe
@@ -306,7 +314,8 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
                 }
                 if (ftpItem != null)
                     receivedFileListAdapter.notifyItemChanged(pos, ftpItem);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER))
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_FTP_SERVER) ||
+                    message.getMessage().equalsIgnoreCase(PD_Constant.SHARE_BACK))
                 disconnectFTP();
         }
     }

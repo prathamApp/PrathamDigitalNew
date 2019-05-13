@@ -30,6 +30,9 @@ public interface ContractShare {
         void ftpConnected_showFolders();
 
         void ftpConnectionFailed();
+
+        void animateHamburger();
+
     }
 
     interface sharePresenter {

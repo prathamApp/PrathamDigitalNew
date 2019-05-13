@@ -43,8 +43,8 @@ public class Modal_ReceivingFilesThroughFTP implements Comparable {
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ReceivingFilesThroughFTP compare = (Modal_ReceivingFilesThroughFTP) o;
-        if (compare.getGameName() != null) {
-            if (compare.getGameName().equals(this.gameName))
+        if (compare.getGamePart() != null) {
+            if (compare.getGamePart().equalsIgnoreCase(this.gamePart))
                 return 0;
             else return 1;
         } else

@@ -11,6 +11,7 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.support.v4.content.ContextCompat;
 
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 
 public class ConnectionUtils {
@@ -53,7 +54,8 @@ public class ConnectionUtils {
         // This is because we are only allowed to manipulate the connections that we added.
         // And if it is the case, then the return value of disableNetwork will be false.
         if (isConnectedToAnyNetwork() && getWifiManager().disconnect()) {
-            getWifiManager().disableNetwork(getWifiManager().getConnectionInfo().getNetworkId());
+//            getWifiManager().disableNetwork(getWifiManager().getConnectionInfo().getNetworkId());
+            PrathamApplication.wiseF.disconnectFromCurrentNetwork();
         }
     }
 /*
@@ -240,9 +242,6 @@ public class ConnectionUtils {
             sharePresenter.connectToAddedSSID(ssid);
         else
             sharePresenter.connectionFailed();
-//        return getWifiManager().reconnect();
-//        }
-//        return false;
     }
 
     public interface ConnectionCallback {

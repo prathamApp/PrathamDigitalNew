@@ -26,6 +26,7 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
+import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FileListAdapter;
@@ -224,6 +225,11 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
             showSendingDialog();
         } else
             sharePresenter.showFolders(detail);
+    }
+
+    @Override
+    public void animateHamburger() {
+        ((ContractMenu) Objects.requireNonNull(getActivity())).toggleMenuIcon();
     }
 
     @Override

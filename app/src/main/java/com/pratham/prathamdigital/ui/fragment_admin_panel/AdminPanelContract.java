@@ -11,6 +11,8 @@ public interface AdminPanelContract {
         void onLoginFail();
 
         void onLoginSuccess();
+
+        void showPushingDialog();
     }
 
     interface AdminPanelPresenter {

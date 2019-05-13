@@ -102,10 +102,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                         + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
                 share_title.setText(file_model.getDetail().getNodetitle());
-                itemView.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
+                share_content_image.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
             } else {
                 share_title.setText("Share");
-                itemView.setOnClickListener(v -> shareView.sendItemChecked(file_model, pos));
+                share_content_image.setOnClickListener(v -> shareView.sendItemChecked(file_model, pos));
             }
         }
 
@@ -119,9 +119,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
                         "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             if (file_model.getDetail().getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) {
                 share_title.setText(file_model.getDetail().getNodetitle());
-                itemView.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
+                share_content_image.setOnClickListener(v -> shareView.fileItemClicked(file_model.getDetail(), pos));
             } else {
-                itemView.setOnClickListener(v -> shareView.sendItemChecked(file_model, getAdapterPosition()));
+                share_content_image.setOnClickListener(v -> shareView.sendItemChecked(file_model, getAdapterPosition()));
             }
         }
     }

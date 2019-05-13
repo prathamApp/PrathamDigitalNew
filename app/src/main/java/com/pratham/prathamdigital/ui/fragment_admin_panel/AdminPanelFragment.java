@@ -1,12 +1,17 @@
 package com.pratham.prathamdigital.ui.fragment_admin_panel;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -43,6 +48,10 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
 
     @Bean(AdminPanelPresenter.class)
     AdminPanelContract.AdminPanelPresenter adminPanelPresenter;
+    LottieAnimationView push_lottie;
+    TextView txt_push_dialog_msg;
+    TextView txt_push_error;
+    BlurPopupWindow pushDialog;
 
     @AfterViews
     public void setViews() {
@@ -133,31 +142,29 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
-                new BlurPopupWindow.Builder(getContext())
-                        .setContentView(R.layout.app_success_dialog)
-                        .setGravity(Gravity.CENTER)
-                        .setScaleRatio(0.2f)
-                        .setDismissOnClickBack(true)
-                        .setDismissOnTouchBackground(true)
-                        .setBlurRadius(10)
-                        .setTintColor(0x30000000)
-                        .build()
-                        .show();
+                push_lottie.setAnimation("success.json");
+                txt_push_dialog_msg.setText("Data Pushed Successfully!!");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pushDialog.dismiss();
+                    }
+                }, 1500);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
-                new BlurPopupWindow.Builder(getContext())
-                        .setContentView(R.layout.app_failure_dialog)
-                        .setGravity(Gravity.CENTER)
-                        .setScaleRatio(0.2f)
-                        .setDismissOnClickBack(true)
-                        .setDismissOnTouchBackground(true)
-                        .setBlurRadius(10)
-                        .setTintColor(0x30000000)
-                        .build()
-                        .show();
+                push_lottie.setAnimation("error_cross.json");
+                txt_push_dialog_msg.setText("Data Pushing Failed!!");
+                txt_push_error.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        pushDialog.dismiss();
+                    }
+                }, 1500);
             }
         }
     }
@@ -165,5 +172,22 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @Click(R.id.img_admin_back)
     public void setAdminBack() {
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void showPushingDialog() {
+        pushDialog = new BlurPopupWindow.Builder(getContext())
+                .setContentView(R.layout.app_success_dialog)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(true)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        push_lottie = pushDialog.findViewById(R.id.push_lottie);
+        txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
+        txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+        pushDialog.show();
     }
 }

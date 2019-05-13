@@ -17,7 +17,6 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.CopyExistingJSONS;
 import com.pratham.prathamdigital.async.FTPContentUploadTask;
 import com.pratham.prathamdigital.async.FTPSingleFileUploadTask;
-import com.pratham.prathamdigital.async.GetDownloadedContent;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.ftpSettings.ConnectToFTP;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
@@ -55,6 +54,7 @@ import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.crLdao;
 import static com.pratham.prathamdigital.PrathamApplication.groupDao;
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
@@ -170,25 +170,27 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void showFolders(Modal_ContentDetail detail) {
         if (detail == null) {
-            new GetDownloadedContent(SharePresenter.this, null).execute();
+            getDownloadedContents(null);
         } else {
             levels.add(detail);
-            new GetDownloadedContent(SharePresenter.this, detail.getNodeid()).execute();
+            if (levels.size() == 1) shareView.animateHamburger();
+            getDownloadedContents(detail.getNodeid());
         }
     }
 
     @Override
     public void traverseFolderBackward() {
         if (levels.isEmpty()) {
-            if (shareView != null)
+            if (shareView != null) {
+                shareView.animateHamburger();
                 shareView.disconnectFTP();
+            }
         } else {
-            new GetDownloadedContent(SharePresenter.this, levels.get(levels.size() - 1).getParentid()).execute();
+            getDownloadedContents(levels.get(levels.size() - 1).getParentid());
             levels.remove(levels.size() - 1);
         }
     }
 
-    @Background
     @Override
     public void downloadedContents(Object o, String parentId) {
         ArrayList<File_Model> downloads = new ArrayList<>();
@@ -498,5 +500,17 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Background
+    public void getDownloadedContents(String parentId) {
+        String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
+        List<Modal_ContentDetail> childsOfParent;
+        if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
+            childsOfParent = modalContentDao.getChildsOfParent(parentId, lang);
+        } else {
+            childsOfParent = modalContentDao.getParentsHeaders(lang);
+        }
+        downloadedContents(childsOfParent, parentId);
     }
 }
