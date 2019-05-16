@@ -10,6 +10,7 @@ import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 
 import static com.pratham.prathamdigital.PrathamApplication.crLdao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 
 /**
  * Created by PEF on 19/11/2018.
@@ -41,6 +42,7 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
             // assign push logic
             Modal_Crl loggedCrl = crLdao.checkUserValidation(userName, password);
             if (loggedCrl != null) {
+                statusDao.updateValue("CRLID", loggedCrl.getCRLId());
                 adminPanelView.onLoginSuccess();
             } else {
                 //userNAme and password may be wrong

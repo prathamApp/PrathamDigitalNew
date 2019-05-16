@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -34,17 +35,14 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.Objects;
 
-/**
- * Created by PEF on 19/11/2018.
- */
 @EFragment(R.layout.admin_panel_login)
 public class AdminPanelFragment extends Fragment implements AdminPanelContract.AdminPanelView {
     @ViewById(R.id.circular_admin_reveal)
     CircularRevelLayout circular_admin_reveal;
     @ViewById(R.id.userName)
-    android.support.design.widget.TextInputEditText userNameET;
+    EditText userNameET;
     @ViewById(R.id.password)
-    android.support.design.widget.TextInputEditText passwordET;
+    EditText passwordET;
 
     @Bean(AdminPanelPresenter.class)
     AdminPanelContract.AdminPanelPresenter adminPanelPresenter;
@@ -128,6 +126,7 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
     @UiThread
     @Override
     public void onLoginSuccess() {
+
         Intent intent = new Intent(getActivity(), Activity_AssignGroups_.class);
         startActivityForResult(intent, 1);
     }
@@ -148,6 +147,7 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 push_lottie.setAnimation("success.json");
+                push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushed Successfully!!");
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -157,6 +157,7 @@ public class AdminPanelFragment extends Fragment implements AdminPanelContract.A
                 }, 1500);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
                 push_lottie.setAnimation("error_cross.json");
+                push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushing Failed!!");
                 txt_push_error.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(new Runnable() {

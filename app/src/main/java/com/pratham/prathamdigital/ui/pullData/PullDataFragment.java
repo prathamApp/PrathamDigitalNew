@@ -258,4 +258,9 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     public void onDataClearToast() {
         Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
     }
+
+    @Click(R.id.img_pull_back)
+    public void setBack() {
+        Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+    }
 }

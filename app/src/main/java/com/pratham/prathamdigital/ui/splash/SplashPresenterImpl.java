@@ -306,7 +306,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 if (f.getName().contains("app_Pratham"))
                     deleteRecursive(f);
             }
-        } catch (PackageManager.NameNotFoundException e) {
+        } catch (Exception e) {
             Log.w("yourtag", "Error Package name not found ", e);
         }
     }
@@ -370,7 +370,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void savePrathamCode(String code) {
         Modal_Status statusObj = new Modal_Status();
-        statusObj.setStatusKey("PrathamCode");
+        statusObj.setStatusKey("prathamCode");
         statusObj.setValue(code);
         statusDao.insert(statusObj);
     }
@@ -378,7 +378,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void checkPrathamCode() {
         if (PrathamApplication.isTablet) {
-            if (statusDao.getKey("PrathamCode") == null)
+            if (statusDao.getKey("prathamCode") == null)
                 splashview.showEnterPrathamCodeDialog();
             else
                 splashview.loadSplash();

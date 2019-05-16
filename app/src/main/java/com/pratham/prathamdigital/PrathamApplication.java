@@ -21,8 +21,6 @@ import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
-import com.pratham.prathamdigital.ftpSettings.FsNotification;
-import com.pratham.prathamdigital.ftpSettings.RequestStartStopReceiver;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -45,12 +43,10 @@ public class PrathamApplication extends Application {
      * Remove LeakCanary from oncreate
      * increase version before generating signed apk
      */
-    public static boolean isTablet = false;
+    public static boolean isTablet = true;
     public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
-    RequestStartStopReceiver requestStartStopReceiver;
-    FsNotification fsNotification;
     public static AttendanceDao attendanceDao;
     public static CRLdao crLdao;
     public static GroupDao groupDao;
@@ -80,6 +76,7 @@ public class PrathamApplication extends Application {
 //        LeakCanary.install(this);
 //        isTablet = PD_Utility.isTablet(this);
         initializeDatabaseDaos();
+//       copyBackupDb();
         Fresco.initialize(this);
         FastSave.init(getApplicationContext());
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
@@ -92,6 +89,29 @@ public class PrathamApplication extends Application {
                 .build();
         AndroidNetworking.initialize(getApplicationContext(), okHttpClient);
     }
+
+    /*private void copyBackupDb() {
+        try {
+            File db_file = new File(Environment.getExternalStorageDirectory(), PrathamDatabase.DB_NAME);
+            if (db_file.exists()) {
+                InputStream myInput = new FileInputStream(db_file);
+                String outFileName = "/data/data/"
+                        + getInstance().getPackageName()
+                        + "/databases/" + PrathamDatabase.DB_NAME;
+                OutputStream myOutput = new FileOutputStream(outFileName);
+                byte[] buffer = new byte[1024];
+                int length;
+                while ((length = myInput.read(buffer)) > 0) {
+                    myOutput.write(buffer, 0, length);
+                }
+                myOutput.flush();
+                myOutput.close();
+                myInput.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -127,6 +147,7 @@ public class PrathamApplication extends Application {
         villageDao = db.getVillageDao();
         logDao = db.getLogDao();
     }
+
     /*public void registerFtpReceiver() {
         //registering receivers in case of android version above Oreo
         requestStartStopReceiver = new RequestStartStopReceiver();

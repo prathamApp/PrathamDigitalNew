@@ -8,115 +8,80 @@
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#FFFFFF">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/login_credential"
-            android:layout_centerInParent="true"
-            android:background="@drawable/ic_admin" />
-
+            android:layout_width="@dimen/_300sdp"
+            android:layout_height="match_parent"
+            app:srcCompat="@drawable/key" />
 
         <LinearLayout
             android:id="@+id/login_credential"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:orientation="vertical"
-            android:paddingLeft="150dp"
-            android:paddingRight="150dp"
-            android:weightSum="4">
+            android:layout_centerInParent="true"
+            android:layout_marginStart="@dimen/_200sdp"
+            android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout_userName"
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/userName"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:layout_height="@dimen/_50sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edittext_bkgd"
+                android:gravity="center"
+                android:hint="Username"
+                android:imeOptions="actionNext"
+                android:maxLines="1"
+                android:singleLine="true" />
 
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/userName"
-                    style="@style/CustomText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="User name"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
-
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/textInputLayout_password"
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/password"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:layout_weight="1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textInputLayout_userName"
-                app:passwordToggleEnabled="true">
-
-                <android.support.design.widget.TextInputEditText
-                    android:id="@+id/password"
-                    style="@style/CustomText"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:hint="Password"
-                    android:inputType="textWebPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="@dimen/_50sdp"
+                android:layout_margin="@dimen/_5sdp"
+                android:background="@drawable/edittext_bkgd"
+                android:gravity="center"
+                android:hint="Password"
+                android:imeOptions="actionDone"
+                android:inputType="textWebPassword"
+                android:maxLines="1"
+                android:singleLine="true"
+                tools:ignore="HardcodedText" />
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:layout_below="@+id/login_credential"
-            android:orientation="horizontal"
-            android:paddingLeft="150dp"
-            android:paddingTop="20dp"
-            android:paddingRight="150dp"
-            android:weightSum="2">
+            android:layout_marginTop="@dimen/_20sdp"
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <Button
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
                 android:id="@+id/btn_login"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@color/light_green"
-                android:drawableLeft="@android:drawable/ic_lock_idle_lock"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:paddingLeft="@dimen/_4sdp"
-                android:text="Log In"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:background="@drawable/button_blue_selector"
+                android:text="Login"
                 android:textAllCaps="false"
-                android:textColor="#ffffff"
-                android:textSize="@dimen/_12sdp"
-                android:textStyle="bold" />
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
 
-            <Button
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
                 android:id="@+id/btn_push_data"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_16sdp"
-                android:layout_weight="1"
-                android:background="@color/light_green"
-                android:drawableLeft="@android:drawable/ic_menu_upload"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:paddingLeft="@dimen/_12sdp"
+                android:layout_width="@dimen/_150sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:background="@drawable/button_orange_selector"
                 android:text="Push Data"
                 android:textAllCaps="false"
-                android:textColor="#ffffff"
-                android:textSize="@dimen/_12sdp"
-                android:textStyle="bold" />
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
 
         </LinearLayout>
 
@@ -124,7 +89,7 @@
             android:id="@+id/img_admin_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginStart="@dimen/_10sdp"
             android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_att_back" />

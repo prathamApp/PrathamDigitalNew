@@ -78,15 +78,15 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     public void initiaiteParametersInGroup() {
         ArrayList<String> present_groups = new ArrayList<>();
         String groupId1 = statusDao.getValue(PD_Constant.GROUPID1);
-        if (!groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
+        if (groupId1 != null && !groupId1.equalsIgnoreCase("0")) present_groups.add(groupId1);
         String groupId2 = statusDao.getValue(PD_Constant.GROUPID2);
-        if (!groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
+        if (groupId2 != null && !groupId2.equalsIgnoreCase("0")) present_groups.add(groupId2);
         String groupId3 = statusDao.getValue(PD_Constant.GROUPID3);
-        if (!groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
+        if (groupId3 != null && !groupId3.equalsIgnoreCase("0")) present_groups.add(groupId3);
         String groupId4 = statusDao.getValue(PD_Constant.GROUPID4);
-        if (!groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
+        if (groupId4 != null && !groupId4.equalsIgnoreCase("0")) present_groups.add(groupId4);
         String groupId5 = statusDao.getValue(PD_Constant.GROUPID5);
-        if (!groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
+        if (groupId5 != null && !groupId5.equalsIgnoreCase("0")) present_groups.add(groupId5);
         List<Modal_Groups> groups;
         if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_AGE_BELOW_7)) {
             groups = get3to6Groups(present_groups);

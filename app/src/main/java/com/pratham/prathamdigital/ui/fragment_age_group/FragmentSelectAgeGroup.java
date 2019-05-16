@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.LinearLayout;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
@@ -26,14 +26,14 @@ import org.androidannotations.annotations.ViewById;
 
 import java.util.Objects;
 
-@EFragment(R.layout.fragment_age_group)
+@EFragment(R.layout.fragment_select_age_group)
 public class FragmentSelectAgeGroup extends Fragment {
-    @ViewById(R.id.admin_panel)
-    ImageView admin_panel;
+    @ViewById(R.id.btn_admin_panel)//admin_panel
+            LinearLayout admin_panel;
 
     private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
 
-    @Click(R.id.scan_qr)
+    @Click(R.id.btn_scan_qr)//scan_qr
     public void setScanQR() {
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.CAMERA)
@@ -45,7 +45,7 @@ public class FragmentSelectAgeGroup extends Fragment {
                 .ask();
     }
 
-    @Click(R.id.iv_age_3_to_6)
+    @Click(R.id.btn_3_6_yrs)//iv_age_3_to_6
     public void open3to6Groups(View view) {
         PrathamApplication.bubble_mp.start();
         int[] outLocation = new int[2];
@@ -59,7 +59,7 @@ public class FragmentSelectAgeGroup extends Fragment {
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
-    @Click(R.id.iv_age_8_to_14)
+    @Click(R.id.btn_8_14_yrs)//iv_age_8_to_14
     public void open8to14Groups(View view) {
         PrathamApplication.bubble_mp.start();
         int[] outLocation = new int[2];
@@ -73,7 +73,7 @@ public class FragmentSelectAgeGroup extends Fragment {
                 bundle, FragmentSelectGroup.class.getSimpleName());
     }
 
-    @Click(R.id.admin_panel)
+    @Click(R.id.btn_admin_panel)//admin_panel
     public void openAdminPanel() {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
