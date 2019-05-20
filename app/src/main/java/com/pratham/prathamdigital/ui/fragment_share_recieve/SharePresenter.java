@@ -282,9 +282,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                     Log.d(TAG, "run::" + client.getStatus());
                 } catch (Exception e) {
                     e.printStackTrace();
+                    //connection lost with server
                     if (shareView != null)
                         shareView.closeFTPJoin();
-                    ftpTimer.cancel();
+                    if (ftpTimer != null)
+                        ftpTimer.cancel();
                 }
             }
         }, new Date(System.currentTimeMillis() + 2000), 2000);

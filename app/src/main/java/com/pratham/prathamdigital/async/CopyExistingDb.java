@@ -50,7 +50,7 @@ public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
         try {
             ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
             if (sdPath.size() > 0) {
-                folder_file = new File(sdPath.get(0), PD_Constant.PRADIGI_FOLDER + "/" +
+                folder_file = new File(sdPath.get(0) + "/" + PD_Constant.PRADIGI_FOLDER + "/" +
                         FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                 if (folder_file.exists()) {
                     File db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
