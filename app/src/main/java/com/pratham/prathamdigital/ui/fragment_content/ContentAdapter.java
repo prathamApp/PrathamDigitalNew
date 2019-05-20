@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.swipe_reveal_layout.ViewBinderHelper;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.view_holders.EmptyHolder;
@@ -30,7 +29,6 @@ public class ContentAdapter extends RecyclerView.Adapter {
     static final int HEADER_TYPE = 3;
     private final ContentContract.contentClick contentInterface;
     private final AsyncListDiffer<Modal_ContentDetail> mDiffer;
-    private final ViewBinderHelper binderHelper = new ViewBinderHelper();
 
     ContentAdapter(Context context, ContentContract.contentClick contentClick) {
         DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
@@ -98,7 +96,6 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
                     // Use ViewBindHelper to restore and save the open/close state of the SwipeRevealView
                     // put an unique string id as value, can be any string which uniquely define the data
-                    binderHelper.bind(fileViewHolder.file_swipe_layout, contentDetail.getNodeid());
                     fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
                     break;
             }
@@ -119,8 +116,6 @@ public class ContentAdapter extends RecyclerView.Adapter {
                     break;
                 case FILE_TYPE:
                     FileViewHolder fileViewHolder = (FileViewHolder) holder;
-                    binderHelper.bind(fileViewHolder.file_swipe_layout, contentDetail.getNodeid());
-                    unreveal(fileViewHolder.rl_reveal);
                     fileViewHolder.setContentItem(contentDetail, holder.getAdapterPosition());
                     break;
             }
@@ -136,55 +131,20 @@ public class ContentAdapter extends RecyclerView.Adapter {
         return mDiffer.getCurrentList();
     }
 
-    public void reveal(View view) {
+    public void reveal(View view, View startView) {
         // previously invisible view
         try {
             int centerX = view.getWidth();
             int centerY = view.getHeight();
             int startRadius = 0;
-            int endRadius = (int) Math.hypot(view.getWidth(), view.getHeight());
-            Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, startRadius, endRadius);
+            int endRadius = (int) Math.hypot(centerX, centerY);
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, (int) startView.getX(), (int) startView.getY(), startRadius, endRadius);
             anim.setInterpolator(new AccelerateDecelerateInterpolator());
             anim.setDuration(300);
             view.setVisibility(View.VISIBLE);
             anim.start();
         } catch (Exception e) {
             e.printStackTrace();
-        }
-    }
-
-    private void unreveal(View view) {
-        // previously visible view
-        try {
-            int centerX = view.getWidth();
-            int centerY = view.getHeight();
-            int startRadius = 0;
-            int endRadius = Math.max(view.getWidth(), view.getHeight());
-            Animator anim = ViewAnimationUtils.createCircularReveal(view, centerX, centerY, endRadius, startRadius);
-            anim.setInterpolator(new AccelerateDecelerateInterpolator());
-            anim.setDuration(300);
-            anim.addListener(new Animator.AnimatorListener() {
-                @Override
-                public void onAnimationStart(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    view.setVisibility(View.GONE);
-                }
-
-                @Override
-                public void onAnimationCancel(Animator animation) {
-                }
-
-                @Override
-                public void onAnimationRepeat(Animator animation) {
-                }
-            });
-            anim.start();
-        } catch (Exception e) {
-            e.printStackTrace();
-            view.setVisibility(View.GONE);
         }
     }
 }

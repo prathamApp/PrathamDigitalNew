@@ -14,6 +14,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.models.ModalProgram;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -50,23 +51,22 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
 
     private ProgressDialog progressDialog;
     private String selectedProgram = "";
+    List<ModalProgram> prgrmList;
 
     @AfterViews
     public void initialize() {
         pullDataPresenter.setView(PullDataFragment.this);
         pullDataPresenter.loadProgrammes();
-//        pullDataPresenter.loadSpinner();
-//        radioGroupPrograms.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                pullDataPresenter.clearLists();
-//            }
-//        });
     }
 
     @Override
-    public void showProgram(List<String> prgrmList) {
-        ArrayAdapter arrayStateAdapter = new ArrayAdapter(Objects.requireNonNull(Objects.requireNonNull(getActivity())), android.R.layout.simple_spinner_item, prgrmList);
+    public void showProgram(List<ModalProgram> prgrmList) {
+        this.prgrmList = prgrmList;
+        List<String> prgrms = new ArrayList<>();
+        for (ModalProgram mp : prgrmList) {
+            prgrms.add(mp.getProgramName());
+        }
+        ArrayAdapter arrayStateAdapter = new ArrayAdapter(Objects.requireNonNull(Objects.requireNonNull(getActivity())), android.R.layout.simple_spinner_item, prgrms);
         arrayStateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         programSpinner.setAdapter(arrayStateAdapter);
         programSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -76,7 +76,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
                 if (position <= 0) {
                     pullDataPresenter.clearLists();
                 } else {
-                    selectedProgram = parent.getSelectedItem().toString();
+                    selectedProgram = prgrmList.get(position).getProgramId();
                     pullDataPresenter.loadSpinner();
                 }
             }
@@ -223,6 +223,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @UiThread
     @Override
     public void openLoginActivity() {
+        Toast.makeText(getActivity(), "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 

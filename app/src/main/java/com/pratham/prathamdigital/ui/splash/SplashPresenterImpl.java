@@ -369,16 +369,13 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void savePrathamCode(String code) {
-        Modal_Status statusObj = new Modal_Status();
-        statusObj.setStatusKey("prathamCode");
-        statusObj.setValue(code);
-        statusDao.insert(statusObj);
+        statusDao.updateValue("prathamCode", code);
     }
 
     @Override
     public void checkPrathamCode() {
         if (PrathamApplication.isTablet) {
-            if (statusDao.getKey("prathamCode") == null)
+            if (statusDao.getValue("prathamCode") == null || statusDao.getValue("prathamCode").isEmpty())
                 splashview.showEnterPrathamCodeDialog();
             else
                 splashview.loadSplash();

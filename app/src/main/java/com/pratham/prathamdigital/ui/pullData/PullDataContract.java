@@ -1,5 +1,7 @@
 package com.pratham.prathamdigital.ui.pullData;
 
+import com.pratham.prathamdigital.models.ModalProgram;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,7 +37,7 @@ public interface PullDataContract {
 
         void onDataClearToast();
 
-        void showProgram(List<String> prgrmList);
+        void showProgram(List<ModalProgram> prgrmList);
     }
 
     interface PullDataPresenter {

@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.pullData;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -39,14 +38,6 @@ import static com.pratham.prathamdigital.PrathamApplication.groupDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.PrathamApplication.villageDao;
-import static com.pratham.prathamdigital.util.APIs.ECCE;
-import static com.pratham.prathamdigital.util.APIs.GP;
-import static com.pratham.prathamdigital.util.APIs.HG;
-import static com.pratham.prathamdigital.util.APIs.KGBV;
-import static com.pratham.prathamdigital.util.APIs.PI;
-import static com.pratham.prathamdigital.util.APIs.RI;
-import static com.pratham.prathamdigital.util.APIs.SC;
-import static com.pratham.prathamdigital.util.APIs.UP;
 
 /**
  * Created by PEF on 20/11/2018.
@@ -108,105 +99,19 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         selectedBlock = statesCodes[pos];
         this.selectedProgram = selectedProgram;
         String url;
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-            switch (this.selectedProgram) {
-                case APIs.HL:
-                    url = APIs.HLpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case RI:
-                    url = APIs.RIpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case SC:
-                    url = APIs.SCpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case PI:
-                    url = APIs.PIpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case UP:
-                    url = APIs.UPpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case HG:
-                    url = APIs.HGpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case KGBV:
-                    url = APIs.KGBVpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case ECCE:
-                    url = APIs.ECCEpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-                case GP:
-                    url = APIs.GPpullVillagesKolibriURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
-                    break;
-            }
-        else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
-            switch (this.selectedProgram) {
-                case APIs.HL:
-                    url = APIs.HLpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case RI:
-                    url = APIs.RIpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case SC:
-                    url = APIs.SCpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case PI:
-                    url = APIs.PIpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case UP:
-                    url = APIs.UPpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case HG:
-                    url = APIs.HGpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case KGBV:
-                    url = APIs.KGBVpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case ECCE:
-                    url = APIs.ECCEpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-                case GP:
-                    url = APIs.GPpullVillagesServerURL + selectedBlock;
-                    pd_apiRequest
-                            .pullFromInternet(PD_Constant.SERVER_BLOCK, url);
-                    break;
-            }
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            url = APIs.pullVillagesKolibriURL + selectedProgram + APIs.KOLIBRI_STATE + selectedBlock;
+            pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
+        } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+            url = APIs.pullVillagesServerURL + selectedProgram + APIs.SERVER_STATE + selectedBlock;
+            pd_apiRequest.pullFromInternet(PD_Constant.SERVER_BLOCK, url);
+        }
     }
 
     @Override
     public void downloadStudentAndGroup(ArrayList<String> villageIDList1) {
         //download Student groups and KOLIBRI_CRL
-        pullDataView.showProgressDialog("loading..");
+        pullDataView.showProgressDialog("Please wait...");
         getStudentUrlAndFetch(villageIDList1);
     }
 
@@ -216,108 +121,18 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         villageIDList.addAll(villageIDList1);
         studentList.clear();
         count = 0;
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+        String url;
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             for (String id : villageIDList) {
-                String url;
-                switch (selectedProgram) {
-                    case APIs.HL:
-                        url = APIs.HLpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case RI:
-                        url = APIs.RIpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case SC:
-                        url = APIs.SCpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case PI:
-                        url = APIs.PIpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case UP:
-                        url = APIs.UPpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case HG:
-                        url = APIs.HGpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case KGBV:
-                        url = APIs.KGBVpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case ECCE:
-                        url = APIs.ECCEpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                    case GP:
-                        url = APIs.GPpullStudentsKolibriURL + id;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
-                        break;
-                }
+                url = APIs.pullStudentsKolibriURL + selectedProgram + APIs.KOLIBRI_VILLAGE + id;
+                pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
             }
-        else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+        } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             for (String id : villageIDList) {
-                String url;
-                switch (selectedProgram) {
-                    case APIs.HL:
-                        url = APIs.HLpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case RI:
-                        url = APIs.RIpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case SC:
-                        url = APIs.SCpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case PI:
-                        url = APIs.PIpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case UP:
-                        url = APIs.UPpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case HG:
-                        url = APIs.HGpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case KGBV:
-                        url = APIs.KGBVpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case ECCE:
-                        url = APIs.ECCEpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                    case GP:
-                        url = APIs.GPpullStudentsServerURL + id;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_STU, url);
-                        break;
-                }
+                url = APIs.pullStudentsServerURL + selectedProgram + APIs.SERVER_VILLAGE + id;
+                pd_apiRequest.pullFromInternet(PD_Constant.SERVER_STU, url);
             }
+        }
     }
 
     private void loadGroups() {
@@ -325,215 +140,34 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
             groupCount = 0;
             groupList.clear();
             String urlgroup;
-            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 for (String id : villageIDList) {
-                    switch (selectedProgram) {
-                        case APIs.HL:
-                            urlgroup = APIs.HLpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case RI:
-                            urlgroup = APIs.RIpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case SC:
-                            urlgroup = APIs.SCpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case PI:
-                            urlgroup = APIs.PIpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case UP:
-                            urlgroup = APIs.UPpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case HG:
-                            urlgroup = APIs.HGpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case KGBV:
-                            urlgroup = APIs.KGBVpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case ECCE:
-                            urlgroup = APIs.ECCEpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                        case GP:
-                            urlgroup = APIs.GPpullGroupsKolibriURL + id;
-                            pd_apiRequest
-                                    .pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
-                            break;
-                    }
+                    urlgroup = APIs.pullGroupsKolibriURL + selectedProgram + APIs.KOLIBRI_VILLAGE + id;
+                    pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                 }
-            else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
+            } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
                 for (String id : villageIDList) {
-                    switch (selectedProgram) {
-                        case APIs.HL:
-                            urlgroup = APIs.HLpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case RI:
-                            urlgroup = APIs.RIpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case SC:
-                            urlgroup = APIs.SCpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case PI:
-                            urlgroup = APIs.PIpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case UP:
-                            urlgroup = APIs.UPpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case HG:
-                            urlgroup = APIs.HGpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case KGBV:
-                            urlgroup = APIs.KGBVpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case ECCE:
-                            urlgroup = APIs.ECCEpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                        case GP:
-                            urlgroup = APIs.GPpullGroupsServerURL + id;
-                            pd_apiRequest
-                                    .pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
-                            break;
-                    }
+                    urlgroup = APIs.pullGroupsServerURL + selectedProgram + APIs.SERVER_VILLAGE + id;
+                    pd_apiRequest.pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
                 }
+            }
         }
     }
 
     private void loadCRL() {
         if (groupCount >= villageIDList.size()) {
             String crlURL;
-            if (crlList != null) {
-                crlList.clear();
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+                crlURL = APIs.pullCrlsKolibriURL + selectedProgram + APIs.KOLIBRI_STATE + selectedBlock;
+                pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
+            } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                crlURL = APIs.pullCrlsServerURL + selectedProgram + APIs.SERVER_STATECODE + selectedBlock;
+                pd_apiRequest.pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
             }
-            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-                switch (selectedProgram) {
-                    case APIs.HL:
-                        crlURL = APIs.HLpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case RI:
-                        crlURL = APIs.RIpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case SC:
-                        crlURL = APIs.SCpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case PI:
-                        crlURL = APIs.PIpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case UP:
-                        crlURL = APIs.UPpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case HG:
-                        crlURL = APIs.HGpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case KGBV:
-                        crlURL = APIs.KGBVpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case ECCE:
-                        crlURL = APIs.ECCEpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                    case GP:
-                        crlURL = APIs.GPpullCrlsKolibriURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
-                        break;
-                }
-            else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
-                switch (selectedProgram) {
-                    case APIs.HL:
-                        crlURL = APIs.HLpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case RI:
-                        crlURL = APIs.RIpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case SC:
-                        crlURL = APIs.SCpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case PI:
-                        crlURL = APIs.PIpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case UP:
-                        crlURL = APIs.UPpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case HG:
-                        crlURL = APIs.HGpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case KGBV:
-                        crlURL = APIs.KGBVpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case ECCE:
-                        crlURL = APIs.ECCEpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                    case GP:
-                        crlURL = APIs.GPpullCrlsServerURL + selectedBlock;
-                        pd_apiRequest
-                                .pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
-                        break;
-                }
         }
     }
 
-    //    @Background
+    @Background
     @Override
     public void saveData() {
         crLdao.insertAllCRL(crlList);
@@ -553,40 +187,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         }
         groupDao.insertAllGroups(groupList);
         saveDownloadedVillages();
-
-        switch (selectedProgram) {
-            case APIs.HL:
-                statusDao.updateValue("programId", "1");
-                break;
-            case RI:
-                statusDao.updateValue("programId", "2");
-                break;
-            case SC:
-                statusDao.updateValue("programId", "3");
-                break;
-            case PI:
-                statusDao.updateValue("programId", "10");
-                break;
-            case UP:
-                statusDao.updateValue("programId", "6");
-                break;
-            case HG:
-                statusDao.updateValue("programId", "13");
-                break;
-            case KGBV:
-                statusDao.updateValue("programId", "5");
-                break;
-            case ECCE:
-                statusDao.updateValue("programId", "8");
-                break;
-            case GP:
-                statusDao.updateValue("programId", "14");
-                break;
-            default:
-                statusDao.updateValue("programId", "1");
-                break;
-        }
-        Toast.makeText(context, "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
+        statusDao.updateValue("programId", selectedProgram);
         pullDataView.openLoginActivity();
     }
 
@@ -721,9 +322,7 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 } else {
                     blockList.add("Select block");
                     for (Modal_Village vill : vilageList) {
-                        //                                    for (Modal_Village village : raspVillage.getData()) {
                         blockList.add(vill.getBlock());
-                        //                                    }
                     }
                 }
                 LinkedHashSet hs = new LinkedHashSet(blockList);
@@ -738,15 +337,20 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
             }.getType();
             List<RaspProgram> prgm = gson.fromJson(response, listType);
             if (prgm != null) {
-                List<String> progrm_names = new ArrayList<>();
                 for (RaspProgram prg : prgm) {
-                    progrm_names.add(prg.getData().getKolibriProgramName());
+                    ModalProgram mp = new ModalProgram();
+                    mp.setProgramId(prg.getData().getKolibriProgramId());
+                    mp.setProgramName(prg.getData().getKolibriProgramName());
+                    prgrmList.add(mp);
                 }
-                LinkedHashSet hs = new LinkedHashSet(progrm_names);//to remove redundant values
-                progrm_names.clear();
-                progrm_names.addAll(hs);
-                progrm_names.add(0, "Select Program");
-                pullDataView.showProgram(progrm_names);
+                ModalProgram mp = new ModalProgram();
+                mp.setProgramId("-1");
+                mp.setProgramName("Select Program");
+                LinkedHashSet hs = new LinkedHashSet(prgrmList);//to remove redundant values
+                prgrmList.clear();
+                prgrmList.addAll(hs);
+                prgrmList.add(0, mp);
+                pullDataView.showProgram(prgrmList);
             }
         } else if (header.equalsIgnoreCase(PD_Constant.SERVER_PROGRAM)) {
             prgrmList.clear();
@@ -757,12 +361,11 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
                 ModalProgram modalProgram = new ModalProgram();
                 modalProgram.setProgramId("-1");
                 modalProgram.setProgramName("Select Program");
+                LinkedHashSet hs = new LinkedHashSet(prgrmList);//to remove redundant values
+                prgrmList.clear();
+                prgrmList.addAll(hs);
                 prgrmList.add(0, modalProgram);
-                List<String> programs = new ArrayList<>();
-                for (ModalProgram prg : prgrmList) {
-                    programs.add(prg.getProgramName());
-                }
-                pullDataView.showProgram(programs);
+                pullDataView.showProgram(prgrmList);
             }
         }
     }

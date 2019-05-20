@@ -111,7 +111,7 @@ public class PD_Constant {
     public static final String USAGEDATA = "USAGEDATA";
     public static final String DOWNLOAD_STARTED = "download_started";
     public static final String DOWNLOAD_UPDATE = "download_update";
-    public static final String PRADIGI_FOLDER = ".Pradigi";
+    public static final String PRADIGI_FOLDER = ".PraDigi";
     public static final String FILE_DOWNLOAD_COMPLETE = "file_download_complete";
     public static final String SCORE_COUNT = "ScoreCount";
     public static final String FOLDER = "folder";

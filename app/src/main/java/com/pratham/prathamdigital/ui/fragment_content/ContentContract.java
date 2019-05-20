@@ -91,7 +91,7 @@ public interface ContentContract {
     interface contentClick {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
 
-        void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view);
+        void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View start_reveal_item);
 
         void openContent(int position, Modal_ContentDetail contentDetail);
 

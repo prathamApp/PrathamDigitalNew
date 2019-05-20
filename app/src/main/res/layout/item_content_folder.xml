@@ -6,7 +6,6 @@
     android:background="?android:attr/selectableItemBackground"
     android:stateListAnimator="@animator/lift_on_touch"
     app:cardCornerRadius="@dimen/_10sdp"
-    app:cardElevation="@dimen/_5sdp"
     app:flexibility="3">
 
     <android.support.design.card.MaterialCardView

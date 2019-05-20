@@ -104,8 +104,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/inner_shadow"
-                android:elevation="@dimen/_10sdp"
+                android:background="@drawable/button_blue_selector"
                 android:text="Next"
                 android:textColor="@color/white"
                 android:visibility="visible" />

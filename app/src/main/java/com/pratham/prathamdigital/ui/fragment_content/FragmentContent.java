@@ -86,7 +86,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private int revealX;
     private int revealY;
     private BlurPopupWindow download_builder;
-    private BlurPopupWindow deleteDialog;
     private Modal_ContentDetail dl_Content;
     private BlurPopupWindow exitDialog;
 
@@ -345,10 +344,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @SuppressLint("SetTextI18n")
     @UiThread
     @Override
-    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View
-            reveal_view) {
+    public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View startView) {
         if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
-            contentAdapter.reveal(reveal_view);
+            contentAdapter.reveal(reveal_view, startView);
             PrathamApplication.bubble_mp.start();
             filesDownloading.put(contentDetail.getNodeid(), position);
             contentPresenter.downloadContent(contentDetail);
@@ -357,7 +355,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     .setContentView(R.layout.download_alert_dialog)
                     .bindClickListener(v -> {
                         FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, true);
-                        onDownloadClicked(position, contentDetail, reveal_view);
+                        onDownloadClicked(position, contentDetail, reveal_view, startView);
                         download_builder.dismiss();
                     }, R.id.btn_okay)
                     .bindClickListener(v -> download_builder.dismiss(), R.id.btn_change)
@@ -374,26 +372,10 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     @Override
     public void deleteContent(int pos, Modal_ContentDetail contentItem) {
-        deleteDialog = new BlurPopupWindow.Builder(getContext())
-                .setContentView(R.layout.dialog_delete_content_alert)
-                .setGravity(Gravity.CENTER)
-                .setScaleRatio(0.2f)
-                .bindClickListener(v -> {
-                    List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
-                    data.remove(pos);
-                    contentAdapter.notifyItemRemoved(pos);
-                    contentAdapter.submitList(data);
-                    contentPresenter.deleteContent(contentItem);
-                    deleteDialog.dismiss();
-                }, R.id.rl_delete_content)
-                .bindClickListener(v -> deleteDialog.dismiss(), R.id.rl_stop_delete_content)
-                .setDismissOnClickBack(true)
-                .setDismissOnTouchBackground(true)
-                .setScaleRatio(0.2f)
-                .setBlurRadius(8)
-                .setTintColor(0x30000000)
-                .build();
-        deleteDialog.show();
+        contentPresenter.deleteContent(contentItem);
+        List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
+        data.remove(pos);
+        contentAdapter.submitList(data);
     }
 
     @UiThread
