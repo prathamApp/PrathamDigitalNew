@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatDelegate;
 import com.androidnetworking.AndroidNetworking;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isupatches.wisefy.WiseFy;
+import com.pratham.prathamdigital.async.ReadBackupDb;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.CRLdao;
@@ -75,10 +76,10 @@ public class PrathamApplication extends Application {
 //        }
 //        LeakCanary.install(this);
 //        isTablet = PD_Utility.isTablet(this);
-        initializeDatabaseDaos();
-//       copyBackupDb();
         Fresco.initialize(this);
         FastSave.init(getApplicationContext());
+        initializeDatabaseDaos();
+//       copyBackupDb();
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         setPradigiPath();
         wiseF = new WiseFy.Brains(getApplicationContext()).logging(true).getSmarts();
@@ -146,6 +147,8 @@ public class PrathamApplication extends Application {
         studentDao = db.getStudentDao();
         villageDao = db.getVillageDao();
         logDao = db.getLogDao();
+        if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
+            new ReadBackupDb().execute();
     }
 
     /*public void registerFtpReceiver() {

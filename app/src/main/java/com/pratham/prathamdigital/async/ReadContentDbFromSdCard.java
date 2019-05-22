@@ -27,14 +27,14 @@ import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
-public class CopyExistingDb extends AsyncTask<String, String, Boolean> {
+public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> {
 
     @SuppressLint("StaticFieldLeak")
     private final Context context;
     private final Interface_copying interface_copying;
     private File folder_file;
 
-    public CopyExistingDb(Context context, Interface_copying interface_copying) {
+    public ReadContentDbFromSdCard(Context context, Interface_copying interface_copying) {
         this.context = context;
         this.interface_copying = interface_copying;
     }

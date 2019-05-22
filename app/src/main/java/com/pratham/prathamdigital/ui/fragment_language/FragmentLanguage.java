@@ -10,7 +10,7 @@ import android.view.ViewTreeObserver;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.async.CopyExistingDb;
+import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -104,7 +104,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
-        new CopyExistingDb(getActivity(), FragmentLanguage.this).execute();
+        new ReadContentDbFromSdCard(getActivity(), FragmentLanguage.this).execute();
         String filename = "AajKaSawal_" + language.getMain_language() + ".json";
         String aksUrl = PD_Constant.URL.AAJ_KA_SAWAL_URL.toString() + filename;
         downloadAajKaSawal(aksUrl, filename);

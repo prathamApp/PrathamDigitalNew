@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ftpSettings;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -11,10 +12,10 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
-    //    private ProgressDialog pd;
+    @SuppressLint("StaticFieldLeak")
     private Context context;
-    FTPClient client1;
-    FTPConnected ftpConnected;
+    private FTPClient client1;
+    private FTPConnected ftpConnected;
 
     public ConnectToFTP(Context context, FTPConnected ftpConnected) {
         this.context = context;
@@ -64,7 +65,7 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
     protected void onPostExecute(Boolean connected) {
         super.onPostExecute(connected);
         if (connected) {
-            ftpConnected.onFTPConnected(connected, client1);
+            ftpConnected.onFTPConnected(true, client1);
         } else {
             Toast.makeText(context, "not connected", Toast.LENGTH_SHORT).show();
             ftpConnected.onFTPConnected(connected, null);

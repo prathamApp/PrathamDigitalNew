@@ -20,8 +20,8 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.async.CopyExistingDb;
 import com.pratham.prathamdigital.async.GetLatestVersion;
+import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.Modal_Status;
@@ -74,11 +74,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                     .isEmpty() && (Float.parseFloat(currentVersion) < Float.parseFloat(latestVersion)))
                 splashview.showAppUpdateDialog();
             else
-                new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+                new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
         } catch (Exception e) {
 //            i.e Beta version
             e.printStackTrace();
-            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+            new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
         }
     }
 
@@ -272,7 +272,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void checkIfContentinSDCard() {
         if (PrathamApplication.isTablet)
-            new CopyExistingDb(context, SplashPresenterImpl.this).execute();
+            new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
         else
             checkConnectivity();
     }
