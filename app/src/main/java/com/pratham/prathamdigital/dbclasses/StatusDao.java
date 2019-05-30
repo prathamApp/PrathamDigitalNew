@@ -18,7 +18,7 @@ public interface StatusDao {
     long insert(Modal_Status status);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    long[] insertAll(Modal_Status... statuses);
+    long[] insertAll(List<Modal_Status> statuses);
 
     @Update
     int update(Modal_Status status);

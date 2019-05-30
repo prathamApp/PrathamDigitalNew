@@ -25,7 +25,6 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.elastic_view.ElasticView;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -61,7 +60,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     TextView file_content_desc;
     @Nullable
     @BindView(R.id.content_card_file)
-    ElasticView content_card_file;
+    RelativeLayout content_card_file;
     @Nullable
     @BindView(R.id.rl_delete_reveal)
     LinearLayout rl_delete_reveal;

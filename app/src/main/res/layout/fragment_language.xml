@@ -2,7 +2,9 @@
 <com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/circular_language_reveal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"

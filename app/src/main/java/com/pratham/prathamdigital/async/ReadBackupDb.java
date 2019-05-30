@@ -10,6 +10,7 @@ import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
+import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.io.File;
@@ -19,6 +20,7 @@ import java.util.List;
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 
 public class ReadBackupDb extends AsyncTask<String, String, Boolean> {
 
@@ -95,6 +97,24 @@ public class ReadBackupDb extends AsyncTask<String, String, Boolean> {
                     }
                     sessionDao.insertAll(sessions);
                     session_cursor.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                try {
+                    Cursor status_cursor = db.rawQuery("SELECT * FROM Status", null);
+                    List<Modal_Status> stat = new ArrayList<>();
+                    if (status_cursor.moveToFirst()) {
+                        while (!status_cursor.isAfterLast()) {
+                            Modal_Status modal_status = new Modal_Status();
+                            modal_status.setStatusKey(status_cursor.getString(status_cursor.getColumnIndex("statusKey")));
+                            modal_status.setValue(status_cursor.getString(status_cursor.getColumnIndex("value")));
+                            modal_status.setDescription(status_cursor.getString(status_cursor.getColumnIndex("description")));
+                            stat.add(modal_status);
+                            status_cursor.moveToNext();
+                        }
+                    }
+                    statusDao.insertAll(stat);
+                    status_cursor.close();
                     return true;
                 } catch (Exception e) {
                     e.printStackTrace();

@@ -73,7 +73,6 @@
         <!--<action android:name="android.net.wifi.WIFI_STATE_CHANGED" />-->
         <!--</intent-filter>-->
         <!--</receiver>-->
-
         <activity
             android:name=".ui.splash.ActivitySplash_"
             android:configChanges="orientation|screenSize"
@@ -158,7 +157,6 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1d9330f62c878e9baee0e17b985180647272403" />
