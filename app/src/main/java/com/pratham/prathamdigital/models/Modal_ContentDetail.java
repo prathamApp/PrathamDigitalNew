@@ -46,8 +46,13 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private boolean isDownloaded = false;
     //for offline content sharing
     private boolean onSDCard = false;
+    @SerializedName("altnodeid")
+    private String altnodeid;
+    @SerializedName("version")
+    private String version;
     @Ignore
     private String kolibriNodeImageUrl;
+
 
     public Modal_ContentDetail() {
     }
@@ -71,6 +76,8 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         isDownloaded = in.readByte() != 0;
         onSDCard = in.readByte() != 0;
         kolibriNodeImageUrl = in.readString();
+        altnodeid = in.readString();
+        version = in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -229,6 +236,22 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.kolibriNodeImageUrl = kolibriNodeImageUrl;
     }
 
+    public String getAltnodeid() {
+        return altnodeid;
+    }
+
+    public void setAltnodeid(String altnodeid) {
+        this.altnodeid = altnodeid;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -266,5 +289,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeByte((byte) (isDownloaded ? 1 : 0));
         dest.writeByte((byte) (onSDCard ? 1 : 0));
         dest.writeString(kolibriNodeImageUrl);
+        dest.writeString(altnodeid);
+        dest.writeString(version);
     }
 }

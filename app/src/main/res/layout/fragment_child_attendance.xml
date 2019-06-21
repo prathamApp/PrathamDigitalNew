@@ -44,5 +44,19 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_att_back" />
+
+        <!--<com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_talk"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:background="@drawable/button_orange_selector"
+            android:elevation="@dimen/_10sdp"
+            android:text="Let's Talk"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            tools:ignore="HardcodedText" />-->
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

@@ -58,6 +58,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     Button btn_attendance_next;
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
+//    @ViewById(R.id.btn_talk)
+//    Button btn_talk;
 
     private ChildAdapter childAdapter;
     private ArrayList<Modal_Student> students = new ArrayList<>();
@@ -96,6 +98,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @AfterViews
     public void initialize() {
         chid_attendance_reveal.setListener(this);
+//        if (PrathamApplication.isTablet) btn_talk.setVisibility(View.GONE);
+//        else btn_talk.setVisibility(View.VISIBLE);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -248,4 +252,12 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public void onUnRevealed() {
     }
+
+    /*@Click(R.id.btn_talk)
+    public void openConference(){
+        Intent mActivityIntent = new Intent(getActivity(), CnferenceAct.class);
+        startActivity(mActivityIntent);
+        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        getActivity().finishAfterTransition();
+    }*/
 }

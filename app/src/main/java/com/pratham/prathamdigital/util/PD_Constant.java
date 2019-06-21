@@ -4,6 +4,9 @@ import android.support.annotation.NonNull;
 
 public class PD_Constant {
 
+    private static final String BASE_URL = "http://prodigi.openiscool.org/api/pos/";
+//        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
+
     public static final String FAST_DOWNLOAD_STARTED = "fast_download_started";
     public static final String FAST_DOWNLOAD_UPDATE = "fast_download_update";
     public static final String FAST_DOWNLOAD_COMPLETE = "fast_download_complete";
@@ -13,7 +16,6 @@ public class PD_Constant {
     public static final String DOWNLOAD_PROGRESS = "download_progress";
     public static final String DOWNLOAD_SPEED_RATE = "download_speed_rate";
     public static final String RASP_IP = "http://192.168.4.1:8080";
-    //    public static final String BASE_URL = "http://devprodigi.openiscool.org/api/pos/";
     public static final String AVATAR = "avatar";
     public static final String INTERNET_HEADER = "INTERNET_HEADER";
     public static final String BROWSE_INTERNET = "BROWSE_INTERNET";
@@ -148,7 +150,6 @@ public class PD_Constant {
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
-    private static final String BASE_URL = "http://prodigi.openiscool.org/api/pos/";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
     public static String RASPBERRY_HEADER = "RASPBERRY_HEADER";

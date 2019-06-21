@@ -104,4 +104,10 @@ public class FragmentSelectAgeGroup extends Fragment {
             }
         }
     }
+
+    /*@Click(R.id.btn_talk_grp)
+    public void openConference() {
+        Intent mActivityIntent = new Intent(getActivity(), CnferenceAct.class);
+        startActivity(mActivityIntent);
+    }*/
 }

@@ -86,6 +86,8 @@ public interface ContentContract {
         void cancelDownload(String downloadId);
 
         void openDeepLinkContent(String string);
+
+        List<Modal_ContentDetail> getContentList();
     }
 
     interface contentClick {

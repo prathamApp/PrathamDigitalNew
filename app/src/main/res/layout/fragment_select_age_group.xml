@@ -110,4 +110,17 @@
             android:padding="@dimen/_10sdp"
             app:srcCompat="@drawable/ic_qr" />
     </LinearLayout>
+    <!-- <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+         android:id="@+id/btn_talk_grp"
+         android:layout_width="@dimen/_150sdp"
+         android:layout_height="@dimen/_40sdp"
+         android:layout_centerHorizontal="true"
+         android:layout_marginTop="@dimen/_10sdp"
+         android:layout_marginRight="@dimen/_10sdp"
+         android:background="@drawable/button_orange_selector"
+         android:elevation="@dimen/_10sdp"
+         android:text="Let's Talk"
+         android:textColor="@color/white"
+         android:visibility="visible"
+         tools:ignore="HardcodedText" />-->
 </RelativeLayout>

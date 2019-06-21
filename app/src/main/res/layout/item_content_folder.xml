@@ -52,12 +52,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/folder_content_image"
+                android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginLeft="@dimen/_5sdp"
-                android:layout_marginTop="@dimen/_5sdp"
                 android:duplicateParentState="true"
                 android:gravity="center_vertical"
                 android:inputType="textMultiLine"
                 android:maxLines="2"
+                android:text="sdfsdfs"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_15sdp" />
 
@@ -70,6 +71,7 @@
                 android:duplicateParentState="true"
                 android:gravity="center_vertical"
                 android:inputType="textMultiLine"
+                android:visibility="gone"
                 android:maxLines="2"
                 android:textColor="@color/white" />
         </RelativeLayout>

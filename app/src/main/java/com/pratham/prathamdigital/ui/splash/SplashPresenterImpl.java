@@ -20,7 +20,6 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FirebaseAuth;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.async.GetLatestVersion;
 import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
@@ -59,9 +58,9 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         splashview = (SplashContract.splashview) context;
     }
 
-    private void getVersion() {
-        new GetLatestVersion(context, SplashPresenterImpl.this).execute();
-    }
+//    private void getVersion() {
+//        new GetLatestVersion(context, SplashPresenterImpl.this).execute();
+//    }
 
     @Background
     @Override
@@ -257,16 +256,16 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void checkConnectivity() {
-        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-            getVersion();
-        } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            getVersion();
-        } else {
-            if (!FastSave.getInstance().getString(PD_Constant.APP_VERSION, "").isEmpty())
-                checkVersion(FastSave.getInstance().getString(PD_Constant.APP_VERSION, ""));
-            else
-                checkStudentList();
-        }
+//        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+//            getVersion();
+//        } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+//            getVersion();
+//        } else {
+//            if (!FastSave.getInstance().getString(PD_Constant.APP_VERSION, "").isEmpty())
+//                checkVersion(FastSave.getInstance().getString(PD_Constant.APP_VERSION, ""));
+//            else
+//        checkStudentList();
+        new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
     }
 
     @Override

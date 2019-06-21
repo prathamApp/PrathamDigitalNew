@@ -57,11 +57,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Bean(PD_ApiRequest.class)
     PD_ApiRequest pd_apiRequest;
     private ContentContract.contentView contentView;
-    ArrayList<String> dlContentIDs = new ArrayList<>();
 
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
     private ArrayList<Modal_ContentDetail> levelContents;
+    private ArrayList<Modal_ContentDetail> tempContentList;
 
     public ContentPresenterImpl(Context context) {
         this.context = context;
@@ -154,6 +154,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             } else {
 //                Collections.shuffle(totalContents);
                 contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(contentList);
                 if (contentView != null)
                     contentView.displayContents(contentList);
             }
@@ -236,6 +237,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
@@ -255,6 +257,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
@@ -277,6 +280,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
@@ -299,6 +303,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
@@ -335,26 +340,17 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     onlineContents.add(total);
             }
             return onlineContents;
-        } else
-            return onlineContents;
-    }
-
-    public ArrayList<Modal_ContentDetail> removeIfCurrentlyDownloading(final ArrayList<Modal_ContentDetail> content,
-                                                                       final ArrayList<Modal_FileDownloading> mfd) {
-        ArrayList<Modal_ContentDetail> temp = new ArrayList<>();
-        for (Modal_ContentDetail c : content) {
-            boolean found = false;
-            for (Modal_FileDownloading files : mfd) {
-                if (c.getNodeid().equalsIgnoreCase(files.getContentDetail().getNodeid())) {
-                    //content is downloading, no need to add in list
-                    found = true;
-                    break;
+        } else {
+            for (int i = 0; i < onlineContents.size(); i++) {
+                if (onlineContents.get(i).getContentType().equalsIgnoreCase(PD_Constant.FILE)) {
+                    Modal_ContentDetail tmp = modalContentDao.getContent(onlineContents.get(i).getAltnodeid(),
+                            FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                    if (tmp != null)
+                        onlineContents.set(i, tmp);                    //content is downloaded
                 }
             }
-            if (found) continue;
-            else temp.add(c);
+            return onlineContents;
         }
-        return temp;
     }
 
     @Override
@@ -365,6 +361,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         } else {
 //            Collections.shuffle(totalContents);
             Objects.requireNonNull(contentList).add(0, new Modal_ContentDetail());//null modal for displaying header
+            tempContentList = new ArrayList<>(contentList);
             if (contentView != null)
                 contentView.displayContents(contentList);
         }
@@ -692,5 +689,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 contentView.displayDLContents(details);
             }
         }
+    }
+
+    @Override
+    public List<Modal_ContentDetail> getContentList() {
+        return tempContentList;
     }
 }

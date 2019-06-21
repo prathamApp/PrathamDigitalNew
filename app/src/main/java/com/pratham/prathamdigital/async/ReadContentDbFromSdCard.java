@@ -79,6 +79,8 @@ public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> 
                                     detail.setContent_language(content_cursor.getString(content_cursor.getColumnIndex("content_language")));
                                     detail.setParentid(content_cursor.getString(content_cursor.getColumnIndex("parentid")));
                                     detail.setContentType(content_cursor.getString(content_cursor.getColumnIndex("contentType")));
+//                                    detail.setAltnodeid(content_cursor.getString(content_cursor.getColumnIndex("altnodeid")));
+//                                    detail.setVersion(content_cursor.getFloat(content_cursor.getColumnIndex("version")));
                                     detail.setDownloaded(true);
                                     detail.setOnSDCard(true);
                                     contents.add(detail);

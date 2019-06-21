@@ -175,6 +175,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 }
             });
         }
+        PD_Utility.showDialog(getActivity());
+        if (levelAdapter == null) contentPresenter.getContent(null);
+        else contentPresenter.getContent();
     }
 
     @Override
@@ -182,13 +185,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
         super.onResume();
         if (IS_DEEP_LINK) {
             contentPresenter.openDeepLinkContent(Objects.requireNonNull(getArguments()).getString(PD_Constant.DEEP_LINK_CONTENT, null));
-        } else {
-            PD_Utility.showDialog(getActivity());
-            if (levelAdapter == null)
-                contentPresenter.getContent(null);
-            else
-                contentPresenter.getContent();
         }
+        //When returned from the webview or other activity, latest contents are not updated. The below call is thus required.
+        if (contentAdapter != null) displayContents(contentPresenter.getContentList());
     }
 
     @Override
@@ -268,7 +267,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
         txt_wifi_status.setText(message.getConnection_name());
         iv_wifi_status.setImageDrawable(message.getConnection_resource());
         contentPresenter.checkConnectionForRaspberry();
-        contentPresenter.getContent(null);
+//        contentPresenter.getContent(null);
     }
 
     @UiThread
@@ -301,7 +300,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
         PD_Utility.dismissDialog();
         if (rv_content.getVisibility() == View.GONE)
             rv_content.setVisibility(View.VISIBLE);
-        if (!content.isEmpty() && content.size() > 1) {
+        if (content != null && !content.isEmpty() && content.size() > 1) {
             if (contentAdapter == null) {
                 mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
             } else {

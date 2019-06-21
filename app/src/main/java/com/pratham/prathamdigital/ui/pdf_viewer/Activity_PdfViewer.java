@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.pdf_viewer;
 
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
-import android.os.Handler;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.Gravity;
@@ -105,10 +104,6 @@ public class Activity_PdfViewer extends BaseActivity implements PDFContract.pdf_
             @Override
             public void onPageSelected(int i) {
                 Log.d("onPageSelected:::", "" + i);
-                if (i == (bitmaps.size() - 1)) {
-//                    addScoreToDB();
-                    new Handler().postDelayed(() -> onBackPressed(), 1200);
-                }
             }
 
             @Override

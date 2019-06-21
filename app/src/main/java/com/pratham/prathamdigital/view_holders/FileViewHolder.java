@@ -104,6 +104,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
                 Objects.requireNonNull(file_item_lottieview).setAnimation("book.json");
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
+            Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {
                 rl_delete_reveal.setVisibility(View.INVISIBLE);
                 new Handler().postDelayed(() -> reveal(rl_delete_reveal, item_file_delete), 200);

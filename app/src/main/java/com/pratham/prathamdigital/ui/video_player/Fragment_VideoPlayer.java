@@ -93,12 +93,12 @@ public class Fragment_VideoPlayer extends Fragment {
         resId = getArguments().getString("resId");
         isHint = getArguments().getBoolean("hint", false);
         mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
+        initializePlayer(videoPath);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        initializePlayer(videoPath);
     }
 
     private void initializePlayer(String videoPath) {
