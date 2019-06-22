@@ -22,6 +22,13 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -49,6 +56,8 @@
         android:name="android.permission.CHANGE_CONFIGURATION"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.microphone" />
     <!-- android:roundIcon="@mipmap/ic_launcher_round" -->
     <uses-feature
         android:name="android.software.device_admin"
@@ -63,9 +72,9 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        tools:replace="android:allowBackup"
         android:usesCleartextTraffic="true"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:allowBackup">
         <!--<receiver-->
         <!--android:name=".services.connectivity.ConnectivityReceiver"-->
         <!--android:enabled="true">-->
@@ -163,7 +172,7 @@
                 android:value=".BaseActivity" />
         </activity>
         <activity
-            android:name=".ui.web_view.Activity_WebView"
+            android:name=".ui.web_view.Activity_WebView_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
@@ -182,6 +191,7 @@
             android:screenOrientation="sensorLandscape"
             android:theme="@style/Theme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="e1d9330f62c878e9baee0e17b985180647272403" />
@@ -191,6 +201,9 @@
 
         <service
             android:name=".services.auto_sync.AutoSyncService"
+            android:exported="false" />
+        <service
+            android:name=".services.BkgdVideoRecordingService"
             android:exported="false" />
 
         <receiver

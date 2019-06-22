@@ -30,7 +30,7 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
 import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer_;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
-import com.pratham.prathamdigital.ui.web_view.Activity_WebView;
+import com.pratham.prathamdigital.ui.web_view.Activity_WebView_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -503,7 +503,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     @UiThread
     public void openGame(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_WebView.class);
+        Intent intent = new Intent(getActivity(), Activity_WebView_.class);
         String f_path;
         if (contentDetail.isOnSDCard())
             f_path = PrathamApplication.contentSDPath + "/PrathamGame/" + contentDetail.getResourcepath();

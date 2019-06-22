@@ -1,7 +1,8 @@
 package com.pratham.prathamdigital.ui.web_view;
 
+import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -9,34 +10,46 @@ import android.webkit.WebViewClient;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.util.PD_Utility;
+import com.pratham.prathamdigital.services.BkgdVideoRecordingService;
+
+import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.ViewById;
 
 import java.io.File;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
+@EActivity(R.layout.activity_web_view)
+public class Activity_WebView extends BaseActivity implements VideoListener/*, SurfaceHolder.Callback*/ {
 
-
-public class Activity_WebView extends BaseActivity implements VideoListener {
-
-    @BindView(R.id.loadGame)
+    @ViewById(R.id.loadGame)
     WebView webView;
-    @BindView(R.id.videoView)
+    @ViewById(R.id.videoView)
     com.pratham.prathamdigital.custom.FullScreenVideoView videoView;
+//    @SuppressLint("StaticFieldLeak")
+//    @ViewById(R.id.cameraView)
+//    public static SurfaceView surfaceView;
+//    public static SurfaceHolder mSurfaceHolder;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_web_view);
-        ButterKnife.bind(this);
-        String startTime = PD_Utility.getCurrentDateTime();
+    @AfterViews
+    public void initialize() {
         String index_path = getIntent().getStringExtra("index_path");
         String path = new File(index_path).getParent() + "/";
         String resId = getIntent().getStringExtra("resId");
         boolean isOnSdCard = getIntent().getBooleanExtra("isOnSdCard", false);
+//        mSurfaceHolder = surfaceView.getHolder();
+//        mSurfaceHolder.addCallback(this);
+//        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         createWebView(index_path, path, resId, isOnSdCard);
+//        startCameraService();
     }
 
+//    public void startCameraService() {
+//        Intent intent = new Intent(this, BkgdVideoRecordingService.class);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        startService(intent);
+//    }
+
+    @SuppressLint("SetJavaScriptEnabled")
     private void createWebView(String GamePath, String parse, String resId, boolean isOnSdCard) {
         try {
             webView.loadUrl("file:///" + GamePath);
@@ -67,9 +80,8 @@ public class Activity_WebView extends BaseActivity implements VideoListener {
 
     @Override
     public void onBackPressed() {
-        boolean backpressedFlag = true;
         webView.post(() -> webView.loadUrl("about:blank"));
-        super.onBackPressed();
+        stopService(new Intent(this, BkgdVideoRecordingService.class));
         webView.clearCache(true);
         Runtime rs = Runtime.getRuntime();
         rs.freeMemory();
@@ -94,5 +106,20 @@ public class Activity_WebView extends BaseActivity implements VideoListener {
         });
 
     }
+
+//    @Override
+//    public void surfaceCreated(SurfaceHolder holder) {
+//
+//    }
+//
+//    @Override
+//    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
+//
+//    }
+//
+//    @Override
+//    public void surfaceDestroyed(SurfaceHolder holder) {
+//
+//    }
 }
 

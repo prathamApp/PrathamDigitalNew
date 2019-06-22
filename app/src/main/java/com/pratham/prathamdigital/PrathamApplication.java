@@ -41,7 +41,7 @@ public class PrathamApplication extends Application {
     /*Also
      * Check Todo
      * Check Catcho in BaseActivity
-     * Remove LeakCanary from oncreate
+     * Check baseUrl in PDConstant
      * increase version before generating signed apk
      */
     public static boolean isTablet = false;
