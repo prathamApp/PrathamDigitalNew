@@ -56,22 +56,26 @@ public class Fragment_VideoPlayer extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case AAJ_KA_SAWAL_FOR_THIS_VIDEO:
-                    File aksFile = new File(PrathamApplication.pradigiPath + "/AajKaSawal.json");
+                    //aaj_ka_sawal is downloaded in main activity.
+                    String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
+                    File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename);
                     if (aksFile.exists()) {
                         String aks = PD_Utility.readJSONFile(aksFile.getAbsolutePath());
                         Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
                         for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
                             boolean found = false;
                             for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
-                                String[] ids = aajKaSawal.getResourceId().split(",");
-                                if (ids.length > 0) {
-                                    if ((ids[0] != null && ids[0].equalsIgnoreCase(resId)) ||
-                                            (ids[1] != null && ids[1].equalsIgnoreCase(resId))) {
-                                        found = true;
-                                        videoSawal = aajKaSawal;
-                                        break;
-                                    }
+                                if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
+                                    found = true;
+                                    videoSawal = aajKaSawal;
+                                    break;
                                 }
+//                                String[] ids = aajKaSawal.getResourceId().split(",");
+//                                if (ids.length > 0) {
+//                                    if ((ids[0] != null && ids[0].equalsIgnoreCase(resId)) ||
+//                                            (ids[1] != null && ids[1].equalsIgnoreCase(resId))) {
+//                                    }
+//                                }
                             }
                             if (found) break;
                         }

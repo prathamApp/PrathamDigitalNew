@@ -102,6 +102,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @ViewById(R.id.main_nav)
     MaterialCardView main_nav;
 
+    private boolean isChecked;
+    private BlurPopupWindow exitDialog;
+    private DownloadListFragment_ downloadListFragment_;
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -204,9 +208,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             }
         }
     };
-    private boolean isChecked;
-    private BlurPopupWindow exitDialog;
-    private DownloadListFragment_ downloadListFragment_;
 
     @AfterViews
     public void initialize() {
