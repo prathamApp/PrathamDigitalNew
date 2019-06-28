@@ -38,6 +38,7 @@ public class PrathamApplication extends Application {
     public static WiseFy wiseF;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
+    public static boolean isOTGattached = false;
     /*Also
      * Check Todo
      * Check Catcho in BaseActivity
@@ -150,28 +151,5 @@ public class PrathamApplication extends Application {
         if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
             new ReadBackupDb().execute();
     }
-
-    /*public void registerFtpReceiver() {
-        //registering receivers in case of android version above Oreo
-        requestStartStopReceiver = new RequestStartStopReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(FsService.ACTION_START_FTPSERVER);
-        intentFilter.addAction(FsService.ACTION_STOP_FTPSERVER);
-        registerReceiver(requestStartStopReceiver, intentFilter);
-
-        fsNotification = new FsNotification();
-        IntentFilter fsIntentFilter = new IntentFilter();
-        fsIntentFilter.addAction(FsService.ACTION_UPDATE_NOTIFICATION);
-        fsIntentFilter.addAction(FsService.ACTION_STARTED);
-        fsIntentFilter.addAction(FsService.ACTION_STOPPED);
-        registerReceiver(fsNotification, fsIntentFilter);
-    }
-
-    public void unregisterReceiver() {
-        if (requestStartStopReceiver != null)
-            unregisterReceiver(requestStartStopReceiver);
-        if (fsNotification != null)
-            unregisterReceiver(fsNotification);
-    }*/
 }
 

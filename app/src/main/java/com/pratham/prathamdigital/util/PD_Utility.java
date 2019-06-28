@@ -32,6 +32,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -50,6 +51,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -67,6 +69,7 @@ import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.StorageInfo;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
@@ -82,6 +85,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -95,13 +99,16 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.StringTokenizer;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -1905,6 +1912,8 @@ public class PD_Utility {
     public static void showDialog(Activity activity) {
         dialog = new Dialog(activity);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         dialog.setCancelable(true);
         dialog.setCanceledOnTouchOutside(false);
@@ -2093,5 +2102,68 @@ public class PD_Utility {
             e.printStackTrace();
             return "";
         }
+    }
+
+    public static List<StorageInfo> getStorageList() {
+        List<StorageInfo> list = new ArrayList<StorageInfo>();
+        String def_path = Environment.getExternalStorageDirectory().getPath();
+        boolean def_path_removable = Environment.isExternalStorageRemovable();
+        String def_path_state = Environment.getExternalStorageState();
+        boolean def_path_available = def_path_state.equals(Environment.MEDIA_MOUNTED)
+                || def_path_state.equals(Environment.MEDIA_MOUNTED_READ_ONLY);
+        boolean def_path_readonly = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED_READ_ONLY);
+
+        HashSet<String> paths = new HashSet<String>();
+        int cur_removable_number = 1;
+
+        if (def_path_available) {
+            paths.add(def_path);
+            list.add(0, new StorageInfo(def_path, def_path_readonly, def_path_removable, def_path_removable ? cur_removable_number++ : -1));
+        }
+
+        BufferedReader buf_reader = null;
+        try {
+            buf_reader = new BufferedReader(new FileReader("/proc/mounts"));
+            String line;
+            Log.d(TAG, "/proc/mounts");
+            while ((line = buf_reader.readLine()) != null) {
+                Log.d(TAG, line);
+                if (line.contains("vfat") || line.contains("/mnt")) {
+                    StringTokenizer tokens = new StringTokenizer(line, " ");
+                    String unused = tokens.nextToken(); //device
+                    String mount_point = tokens.nextToken(); //mount point
+                    if (paths.contains(mount_point)) {
+                        continue;
+                    }
+                    unused = tokens.nextToken(); //file system
+                    List<String> flags = Arrays.asList(tokens.nextToken().split(",")); //flags
+                    boolean readonly = flags.contains("ro");
+
+                    if (line.contains("/dev/block/vold")) {
+                        if (!line.contains("/mnt/secure")
+                                && !line.contains("/mnt/asec")
+                                && !line.contains("/mnt/obb")
+                                && !line.contains("/dev/mapper")
+                                && !line.contains("tmpfs")) {
+                            paths.add(mount_point);
+                            list.add(new StorageInfo(mount_point, readonly, true, cur_removable_number++));
+                        }
+                    }
+                }
+            }
+
+        } catch (FileNotFoundException ex) {
+            ex.printStackTrace();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        } finally {
+            if (buf_reader != null) {
+                try {
+                    buf_reader.close();
+                } catch (IOException ex) {
+                }
+            }
+        }
+        return list;
     }
 }

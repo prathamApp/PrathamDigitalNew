@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
@@ -57,28 +58,26 @@ public class Fragment_VideoPlayer extends Fragment {
             switch (msg.what) {
                 case AAJ_KA_SAWAL_FOR_THIS_VIDEO:
                     //aaj_ka_sawal is downloaded in main activity.
-                    String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
-                    File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename);
-                    if (aksFile.exists()) {
-                        String aks = PD_Utility.readJSONFile(aksFile.getAbsolutePath());
-                        Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
-                        for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
-                            boolean found = false;
-                            for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
-                                if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
-                                    found = true;
-                                    videoSawal = aajKaSawal;
-                                    break;
+                    try {
+                        String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
+                        File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename);
+                        if (aksFile.exists()) {
+                            String aks = PD_Utility.readJSONFile(aksFile.getAbsolutePath());
+                            Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
+                            for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
+                                boolean found = false;
+                                for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
+                                    if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
+                                        found = true;
+                                        videoSawal = aajKaSawal;
+                                        break;
+                                    }
                                 }
-//                                String[] ids = aajKaSawal.getResourceId().split(",");
-//                                if (ids.length > 0) {
-//                                    if ((ids[0] != null && ids[0].equalsIgnoreCase(resId)) ||
-//                                            (ids[1] != null && ids[1].equalsIgnoreCase(resId))) {
-//                                    }
-//                                }
+                                if (found) break;
                             }
-                            if (found) break;
                         }
+                    } catch (JsonSyntaxException e) {
+                        e.printStackTrace();
                     }
                     break;
                 case SHOW_SAWAL:

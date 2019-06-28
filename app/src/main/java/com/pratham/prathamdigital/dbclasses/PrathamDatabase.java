@@ -22,7 +22,7 @@ import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
 
-/*todo
+/*
     always update the version number,
     when their is a modification in any of the table structure.
 */

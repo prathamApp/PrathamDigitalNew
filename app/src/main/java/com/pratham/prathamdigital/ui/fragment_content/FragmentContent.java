@@ -187,7 +187,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
             contentPresenter.openDeepLinkContent(Objects.requireNonNull(getArguments()).getString(PD_Constant.DEEP_LINK_CONTENT, null));
         }
         //When returned from the webview or other activity, latest contents are not updated. The below call is thus required.
-        if (contentAdapter != null) displayContents(contentPresenter.getContentList());
+        if (contentAdapter != null)
+            if (contentPresenter.isFilesDownloading()) contentPresenter.getContent();
+            else displayContents(contentPresenter.getContentList());
     }
 
     @Override

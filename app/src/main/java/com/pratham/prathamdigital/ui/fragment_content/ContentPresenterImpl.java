@@ -24,6 +24,7 @@ import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
 import com.pratham.prathamdigital.models.Modal_Rasp_Header;
+import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
 @EBean
 public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents, ApiResult {
@@ -541,15 +543,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         EventBus.getDefault().post(msg);
     }
 
-    @Override
-    public void onDownloadPaused(int downloadId) {
-
-    }
-
-    @Override
-    public void ondownloadCancelled(String downloadId) {
-    }
-
     @Background
     @Override
     public void showPreviousContent() {
@@ -562,20 +555,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
             if (contentView != null) {
-                if (levelContents.isEmpty())
-                    contentView.animateHamburger();
+                if (levelContents.isEmpty()) contentView.animateHamburger();
                 contentView.displayLevel(levelContents);
             }
         }
     }
 
-    @Override
-    public int getLevels() {
-        if (levelContents != null)
-            return levelContents.size();
-        else
-            return 0;
-    }
 
     @Override
     public void downloadedContents(Object o, String parentId) {
@@ -611,6 +596,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Background
     @Override
     public void deleteContent(Modal_ContentDetail contentItem) {
+        addDeleteEntryInScore(contentItem);
         checkAndDeleteParent(contentItem);
         if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
             String foldername = contentItem.getResourcepath().split("/")[0];
@@ -625,6 +611,27 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         //delete content thumbnail image
         PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
                 + "/PrathamImages/" + contentItem.getNodeimage()));
+    }
+
+    private void addDeleteEntryInScore(Modal_ContentDetail contentItem) {
+        String endTime = PD_Utility.getCurrentDateTime();
+        Modal_Score modalScore = new Modal_Score();
+        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        if (PrathamApplication.isTablet)
+            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+        else
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+        modalScore.setDeviceID(PD_Utility.getDeviceID());
+        modalScore.setResourceID(contentItem.getResourceid());
+        modalScore.setQuestionId(0);
+        modalScore.setScoredMarks(0);
+        modalScore.setTotalMarks(0);
+        modalScore.setStartDateTime(endTime);
+        modalScore.setEndDateTime(endTime);
+        modalScore.setLevel(0);
+        modalScore.setLabel("Content is deleted either by crl or student");
+        modalScore.setSentFlag(0);
+        scoreDao.insert(modalScore);
     }
 
     @Override
@@ -694,5 +701,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public List<Modal_ContentDetail> getContentList() {
         return tempContentList;
+    }
+
+    @Override
+    public boolean isFilesDownloading() {
+        if (filesDownloading == null || filesDownloading.isEmpty()) return false;
+        else return true;
     }
 }

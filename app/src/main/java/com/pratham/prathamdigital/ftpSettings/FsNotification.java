@@ -206,8 +206,8 @@ public class FsNotification extends BroadcastReceiver {
                 .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
                 .setCategory(NotificationCompat.CATEGORY_SERVICE)
                 .setPriority(Notification.PRIORITY_MAX)
-                .addAction(stopIcon, stopText, stopPendingIntent)
-                .addAction(preferenceIcon, preferenceText, preferencePendingIntent)
+//                .addAction(stopIcon, stopText, stopPendingIntent)
+//                .addAction(preferenceIcon, preferenceText, preferencePendingIntent)
                 .setAutoCancel(true)
                 .setShowWhen(false);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {

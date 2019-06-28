@@ -29,6 +29,7 @@
     <uses-feature
         android:name="android.hardware.camera.front"
         android:required="false" />
+
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -62,7 +63,9 @@
     <uses-feature
         android:name="android.software.device_admin"
         android:required="false" />
+    <uses-feature android:name="android.hardware.usb.host" />
 
+    <uses-permission android:name="android.permission.USB_PERMISSION" />
     <application
         android:name=".PrathamApplication"
         android:allowBackup="false"
@@ -330,5 +333,13 @@
             android:name=".gpsLogger.RestarterReceiver"
             android:enabled="true"
             android:exported="false" />
+        <receiver
+            android:name=".services.OTGListener"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
+                <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

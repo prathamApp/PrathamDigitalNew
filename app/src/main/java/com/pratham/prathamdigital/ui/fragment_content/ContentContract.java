@@ -43,10 +43,6 @@ public interface ContentContract {
 
         void downloadContent(Modal_ContentDetail contentDetail);
 
-        void onDownloadPaused(int downloadId);
-
-        void ondownloadCancelled(String downloadId);
-
         void ondownloadError(String downloadId);
 
         void checkConnectionForRaspberry();
@@ -54,8 +50,6 @@ public interface ContentContract {
         void showPreviousContent();
 
         void getContent(Modal_ContentDetail contentDetail);
-
-        int getLevels();
 
         void eventFileDownloadStarted(EventMessage message);
 
@@ -88,6 +82,8 @@ public interface ContentContract {
         void openDeepLinkContent(String string);
 
         List<Modal_ContentDetail> getContentList();
+
+        boolean isFilesDownloading();
     }
 
     interface contentClick {
