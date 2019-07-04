@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -17,10 +18,11 @@
         android:layout_height="wrap_content"
         android:background="@drawable/update_button_round_bg"
         android:gravity="center"
-        android:padding="@dimen/_8sdp"
+        android:padding="@dimen/_10sdp"
         android:text="Choose SD card"
         android:textColor="@color/white"
         android:textSize="@dimen/_16sdp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        tools:ignore="HardcodedText" />
 
 </LinearLayout>

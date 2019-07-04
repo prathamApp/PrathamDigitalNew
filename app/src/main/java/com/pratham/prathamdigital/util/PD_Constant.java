@@ -100,6 +100,7 @@ public class PD_Constant {
     public static final String SERVER_PROGRAM = "SERVER_PROGRAM";
     public static final String FRAGMENT_SHARE_BACK = "fragment_share_back";
     public static final String BACKUP_DB_COPIED = "BACKUP_DB_COPIED";
+    public static final String BACKUP_DB_NOT_COPIED = "backup_db_not_copied";
     public static int FTP_HOTSPOT_KEYMGMT = -11;
     public static final String CONNECTION_STATUS = "CONNECTION_STATUS";
     public static final String STORAGE_ASKED = "storage_asked";
@@ -153,6 +154,7 @@ public class PD_Constant {
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
     public static String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
     public static String RASPBERRY_HEADER = "RASPBERRY_HEADER";
+    public static final String OTG_INSERTED = "OTG_INSERTED";
     //languages
     public static String HINDI = "Hindi";
     static String ENGLISH = "English";

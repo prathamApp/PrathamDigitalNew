@@ -3,9 +3,11 @@ package com.pratham.prathamdigital;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,14 +15,19 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
+import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.TextView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
 import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
 import com.novoda.merlin.Merlin;
+import com.pratham.prathamdigital.async.CopyDbToOTG;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -34,8 +41,6 @@ import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-
-import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -57,13 +62,25 @@ public class BaseActivity extends AppCompatActivity {
     private static final int REQUEST_WRITE_PERMISSION = 6;
     private static final int GET_LOCATION_PERMISSION = 7;
     private static final int GET_READ_PHONE_STATE = 8;
+    private static final int SHOW_OTG_TRANSFER_DIALOG = 9;
+    private static final int SDCARD_LOCATION_CHOOSER = 10;
+    private static final int SHOW_OTG_SELECT_DIALOG = 11;
+    private static final int HIDE_OTG_TRANSFER_DIALOG_SUCCESS = 12;
+    private static final int HIDE_OTG_TRANSFER_DIALOG_FAILED = 13;
+
     public static String sessionId = UUID.randomUUID().toString();
     public static String language = "";
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
+    LottieAnimationView push_lottie;
+    TextView txt_push_dialog_msg;
+    TextView txt_push_error;
+    BlurPopupWindow pushDialog;
+    BlurPopupWindow sd_builder;
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
-        @SuppressLint("MissingPermission")
+        @SuppressLint({"MissingPermission", "SetTextI18n"})
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -133,6 +150,66 @@ public class BaseActivity extends AppCompatActivity {
                             })
                             .ask();
                     break;
+                case SHOW_OTG_TRANSFER_DIALOG:
+                    sd_builder = new BlurPopupWindow.Builder(PrathamApplication.getInstance())
+                            .setContentView(R.layout.dialog_alert_sd_card)
+                            .setGravity(Gravity.CENTER)
+                            .setScaleRatio(0.2f)
+                            .bindClickListener(v -> {
+                                new Handler().postDelayed(() -> {
+                                    Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                                    intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                                    startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
+                                }, 1200);
+                                sd_builder.dismiss();
+                            }, R.id.txt_choose_sd_card)
+                            .setDismissOnClickBack(true)
+                            .setDismissOnTouchBackground(true)
+                            .setScaleRatio(0.2f)
+                            .setBlurRadius(8)
+                            .setTintColor(0x30000000)
+                            .build();
+                    ((TextView) sd_builder.findViewById(R.id.txt_choose_sd_card)).setText("Select OTG");
+                    sd_builder.show();
+                    break;
+                case SHOW_OTG_SELECT_DIALOG:
+                    pushDialog = new BlurPopupWindow.Builder(BaseActivity.this)
+                            .setContentView(R.layout.app_success_dialog)
+                            .setGravity(Gravity.CENTER)
+                            .setScaleRatio(0.2f)
+                            .setDismissOnClickBack(true)
+                            .setDismissOnTouchBackground(true)
+                            .setBlurRadius(10)
+                            .setTintColor(0x30000000)
+                            .build();
+                    push_lottie = pushDialog.findViewById(R.id.push_lottie);
+                    txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
+                    txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+                    pushDialog.show();
+                    break;
+                case HIDE_OTG_TRANSFER_DIALOG_SUCCESS:
+                    push_lottie.setAnimation("success.json");
+                    push_lottie.playAnimation();
+                    txt_push_dialog_msg.setText("Data Copied Successfully!!");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pushDialog.dismiss();
+                        }
+                    }, 1500);
+                    break;
+                case HIDE_OTG_TRANSFER_DIALOG_FAILED:
+                    push_lottie.setAnimation("error_cross.json");
+                    push_lottie.playAnimation();
+                    txt_push_dialog_msg.setText("Data Copying Failed!! Please re-insert the OTG");
+                    txt_push_error.setVisibility(View.VISIBLE);
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            pushDialog.dismiss();
+                        }
+                    }, 1500);
+                    break;
             }
         }
     };
@@ -151,9 +228,9 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
-                .build();
+//        Catcho.Builder(this)
+//                .activity(CatchoTransparentActivity.class)
+//                .build();
 //        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();
@@ -233,6 +310,29 @@ public class BaseActivity extends AppCompatActivity {
                 if (pushedData.getStudents() != null)
                     for (Modal_Student student : pushedData.getStudents())
                         studentDao.updateSentStudentFlags(student.getStudentId());
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.OTG_INSERTED)) {
+                mHandler.sendEmptyMessage(SHOW_OTG_TRANSFER_DIALOG);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BACKUP_DB_COPIED)) {
+                mHandler.sendEmptyMessage(HIDE_OTG_TRANSFER_DIALOG_SUCCESS);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BACKUP_DB_NOT_COPIED)) {
+                mHandler.sendEmptyMessage(HIDE_OTG_TRANSFER_DIALOG_FAILED);
+            }
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == SDCARD_LOCATION_CHOOSER) {
+            if (data != null && data.getData() != null) {
+                Uri treeUri = data.getData();
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+//                FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
+                mHandler.sendEmptyMessage(SHOW_OTG_SELECT_DIALOG);
+                new CopyDbToOTG().execute(treeUri);
             }
         }
     }
