@@ -236,7 +236,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                             || modal_rasp_header.getLang_code().equalsIgnoreCase("mul"))
                         displayedContents.add(modal_rasp_header.setContentToConfigNodeStructure(modal_rasp_header));
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.RASPBERRY_HEADER);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -259,7 +259,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         }
                     }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.BROWSE_RASPBERRY);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -284,7 +284,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         displayedContents.add(detail);
                     }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.INTERNET_HEADER);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -307,7 +307,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     detail.setContent_language(BaseActivity.language);
                     displayedContents.add(detail);
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.BROWSE_INTERNET);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -328,7 +328,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     private ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
-            , final ArrayList<Modal_ContentDetail> onlineContents) {
+            , final ArrayList<Modal_ContentDetail> onlineContents, String header) {
         if (!totalContents.isEmpty()) {
             for (Modal_ContentDetail total : totalContents) {
                 boolean found = false;
@@ -346,18 +346,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (!found)
                     onlineContents.add(total);
             }
-            return onlineContents;
-        } else {
-            for (int i = 0; i < onlineContents.size(); i++) {
-                if (onlineContents.get(i).getContentType().equalsIgnoreCase(PD_Constant.FILE)) {
-                    Modal_ContentDetail tmp = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
-                            FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-                    if (tmp != null)
-                        onlineContents.set(i, tmp);                    //content is downloaded
-                }
-            }
-            return onlineContents;
         }
+        for (int i = 0; i < onlineContents.size(); i++) {
+            if (onlineContents.get(i).getNodetype().equalsIgnoreCase("Resource")
+                    && !onlineContents.get(i).isDownloaded()) {
+                Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
+                        FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                if (content != null) onlineContents.set(i, content);
+            }
+        }
+        return onlineContents;
     }
 
     @Override

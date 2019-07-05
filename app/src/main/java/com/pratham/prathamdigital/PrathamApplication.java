@@ -45,7 +45,7 @@ public class PrathamApplication extends Application {
      * Check baseUrl in PDConstant
      * increase version before generating signed apk
      */
-    public static boolean isTablet = true;
+    public static boolean isTablet = false;
     public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
