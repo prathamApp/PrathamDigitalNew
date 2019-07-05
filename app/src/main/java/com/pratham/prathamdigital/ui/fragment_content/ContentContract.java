@@ -1,9 +1,9 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.view.View;
 
+import com.liulishuo.okdownload.DownloadTask;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
@@ -75,7 +75,7 @@ public interface ContentContract {
 
         void deleteContent(Modal_ContentDetail contentItem);
 
-        void currentDownloadRunning(String nodeid, AsyncTask task);
+        void currentDownloadRunning(String nodeid, DownloadTask task);
 
         void cancelDownload(String downloadId);
 

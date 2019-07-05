@@ -30,7 +30,11 @@ public interface ModalContentDao {
     @Query("SELECT * FROM TableContent WHERE parentid=:id and content_language=:language")
     List<Modal_ContentDetail> getChildsOfParent(String id, String language);
 
-    @Query("SELECT * FROM TableContent WHERE altnodeid=:id and content_language=:language")
+
+    @Query("SELECT * FROM TableContent WHERE nodeid=:id and content_language=:language")
     Modal_ContentDetail getContent(String id, String language);
+
+    @Query("SELECT * FROM TableContent WHERE altnodeid=:id and content_language=:language")
+    Modal_ContentDetail getContentFromAltNodeId(String id, String language);
 }
 

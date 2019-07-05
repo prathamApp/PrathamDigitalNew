@@ -6,9 +6,9 @@ apply plugin: 'kotlin-android-extensions'
  Increment the MAJOR after the MINOR version achieved the number 9*/
 ext.versionMajor = 1
 /*Minor Version : While adding a functionality , minor changes like color change or icon changes*/
-ext.versionMinor = 2
+ext.versionMinor = 3
 /*Patch : Bug fixing*/
-ext.versionPatch = 6
+ext.versionPatch = 0
 ext.minSdkVersion = 21
 android {
     compileSdkVersion 28
@@ -116,7 +116,8 @@ dependencies {
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-support-fragment:1.6.3'
     //Observes network connection status & gives callbacks
     implementation 'com.novoda:merlin:1.2.0'
-    //webrtc calling
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.5'
+//webrtc calling
 //    implementation('org.jitsi.react:jitsi-meet-sdk:2.+') { transitive = true }
 }
 apply plugin: 'com.google.gms.google-services'

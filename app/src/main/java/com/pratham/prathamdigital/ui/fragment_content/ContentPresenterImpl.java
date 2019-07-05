@@ -3,12 +3,12 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v4.provider.DocumentFile;
 import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.liulishuo.okdownload.DownloadTask;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.GetDownloadedContent;
@@ -55,7 +55,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
     private final Context context;
     private final Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
-    private final Map<String, AsyncTask> currentDownloadTasks = new HashMap<>();
+    private final Map<String, DownloadTask> currentDownloadTasks = new HashMap<>();
     @Bean(PD_ApiRequest.class)
     PD_ApiRequest pd_apiRequest;
     private ContentContract.contentView contentView;
@@ -253,7 +253,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
                     if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_content.getLang().getLangCode()))
                             || modal_rasp_content.getLang().getLangCode().equalsIgnoreCase("mul")) {
-                        displayedContents.add(modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content));
+                        Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
+                        if (!detail.getNodetitle().contains("3-6")) {
+                            displayedContents.add(detail);
+                        }
                     }
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
@@ -270,14 +273,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
                 for (Modal_ContentDetail detail : tempContents) {
-                    if (detail.getResourcetype().equalsIgnoreCase("Game")
-                            || detail.getResourcetype().equalsIgnoreCase("Video")
-                            || detail.getResourcetype().equalsIgnoreCase("Pdf"))
-                        detail.setContentType("file");
-                    else
-                        detail.setContentType("folder");
-                    detail.setContent_language(BaseActivity.language);
-                    displayedContents.add(detail);
+                    if (!detail.getNodetitle().contains("3-6")) {
+                        if (detail.getResourcetype().equalsIgnoreCase("Game")
+                                || detail.getResourcetype().equalsIgnoreCase("Video")
+                                || detail.getResourcetype().equalsIgnoreCase("Pdf"))
+                            detail.setContentType("file");
+                        else
+                            detail.setContentType("folder");
+                        detail.setContent_language(BaseActivity.language);
+                        displayedContents.add(detail);
+                    }
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
@@ -345,7 +350,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         } else {
             for (int i = 0; i < onlineContents.size(); i++) {
                 if (onlineContents.get(i).getContentType().equalsIgnoreCase(PD_Constant.FILE)) {
-                    Modal_ContentDetail tmp = modalContentDao.getContent(onlineContents.get(i).getAltnodeid(),
+                    Modal_ContentDetail tmp = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
                             FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                     if (tmp != null)
                         onlineContents.set(i, tmp);                    //content is downloaded
@@ -387,6 +392,13 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         postAllDownloadsCompletedMessage();
         postSingleFileDownloadCompleteMessage(content);
         currentDownloadTasks.remove(downloadID);
+        for (int i = 0; i < tempContentList.size(); i++) {
+            if (tempContentList.get(i).getNodeid() != null &&
+                    tempContentList.get(i).getNodeid().equalsIgnoreCase(content.getNodeid())) {
+                tempContentList.set(i, content);
+                break;
+            }
+        }
     }
 
     @Override
@@ -611,6 +623,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         //delete content thumbnail image
         PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
                 + "/PrathamImages/" + contentItem.getNodeimage()));
+        getContent(levelContents.get(levelContents.size() - 1));
     }
 
     private void addDeleteEntryInScore(Modal_ContentDetail contentItem) {
@@ -635,7 +648,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     @Override
-    public void currentDownloadRunning(String downloadId, AsyncTask task) {
+    public void currentDownloadRunning(String downloadId, DownloadTask task) {
         if (!currentDownloadTasks.containsKey(downloadId)) {
             currentDownloadTasks.put(downloadId, task);
         }
@@ -645,7 +658,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void cancelDownload(String downloadId) {
         if (downloadId != null && !downloadId.isEmpty()) {
             if (currentDownloadTasks.containsKey(downloadId))
-                Objects.requireNonNull(currentDownloadTasks.get(downloadId)).cancel(true);
+                Objects.requireNonNull(currentDownloadTasks.get(downloadId)).cancel();
             postProgressMessage();
         }
     }

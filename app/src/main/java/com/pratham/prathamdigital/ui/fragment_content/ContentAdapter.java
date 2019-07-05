@@ -44,7 +44,6 @@ public class ContentAdapter extends RecyclerView.Adapter {
             }
         };
         mDiffer = new AsyncListDiffer<>(this, diffcallback);
-        Context context1 = context;
         this.contentInterface = contentClick;
     }
 

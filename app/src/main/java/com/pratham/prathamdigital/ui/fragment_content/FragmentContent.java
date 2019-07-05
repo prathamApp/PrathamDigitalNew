@@ -238,7 +238,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 onDownloadComplete(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
                 updateConnectionStatus(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
+            }/* else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
                 contentPresenter.eventFileDownloadStarted(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_UPDATE)) {
                 contentPresenter.eventUpdateFileProgress(message);
@@ -246,7 +246,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 contentPresenter.eventOnDownloadCompleted(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
                 contentPresenter.eventOnDownloadFailed(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
+            } */ else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
                 onDownloadError(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BROADCAST_DOWNLOADINGS)) {
                 contentPresenter.broadcast_downloadings();
@@ -259,8 +259,17 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     public void onDownloadComplete(EventMessage message) {
         if (message != null) {
-            if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
-                contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
+            if (filesDownloading.containsKey(message.getContentDetail().getNodeid())) {
+                List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i).getNodeid() != null &&
+                            data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
+                        data.set(i, message.getContentDetail());
+                        break;
+                    }
+                }
+                contentAdapter.submitList(data);
+            }
         }
     }
 
@@ -374,9 +383,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void deleteContent(int pos, Modal_ContentDetail contentItem) {
         contentPresenter.deleteContent(contentItem);
-        List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
-        data.remove(pos);
-        contentAdapter.submitList(data);
+//        List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
+//        data.remove(pos);
+//        contentAdapter.submitList(data);
     }
 
     @UiThread
@@ -456,8 +465,17 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void onDownloadError(EventMessage message) {
 //        Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
-        if (filesDownloading.containsKey(message.getContentDetail().getNodeid()))
-            contentAdapter.notifyItemChanged(filesDownloading.get(message.getContentDetail().getNodeid()), message.getContentDetail());
+        if (filesDownloading.containsKey(message.getContentDetail().getNodeid())) {
+            List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
+            for (int i = 0; i < data.size(); i++) {
+                if (data.get(i).getNodeid() != null &&
+                        data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
+                    data.set(i, message.getContentDetail());
+                    break;
+                }
+            }
+            contentAdapter.submitList(data);
+        }
     }
 
     @UiThread
