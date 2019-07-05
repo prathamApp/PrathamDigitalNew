@@ -470,11 +470,10 @@ public class FragmentContent extends Fragment implements ContentContract.content
             for (int i = 0; i < data.size(); i++) {
                 if (data.get(i).getNodeid() != null &&
                         data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
-                    data.set(i, message.getContentDetail());
+                    contentAdapter.notifyItemChanged(i, data.get(i));
                     break;
                 }
             }
-            contentAdapter.submitList(data);
         }
     }
 
