@@ -82,25 +82,33 @@ public class FragmentShareRecieve extends Fragment implements CircularRevelLayou
             switch (msg.what) {
                 case ANIMATE_RECIEVE_AND_INIT_CAMERA:
                     if (new LocationService(getActivity()).checkLocationEnabled()) {
-                        TransitionManager.beginDelayedTransition(root_share);
-                        ViewGroup.LayoutParams params = rl_share_root.getLayoutParams();
-                        params.height = ViewGroup.LayoutParams.MATCH_PARENT;
-                        params.width = ViewGroup.LayoutParams.MATCH_PARENT;
-                        rl_share_root.requestLayout();
-                        rl_receive_root.setVisibility(View.GONE);
-                        rl_share_root.setClickable(false);
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (Settings.System.canWrite(getActivity()))
+                            if (Settings.System.canWrite(getActivity())) {
+                                TransitionManager.beginDelayedTransition(root_share);
+                                ViewGroup.LayoutParams params = rl_share_root.getLayoutParams();
+                                params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                                params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                                rl_share_root.requestLayout();
+                                rl_receive_root.setVisibility(View.GONE);
+                                rl_share_root.setClickable(false);
                                 PD_Utility.addFragment(getActivity(), new FragmentShare_(), R.id.main_frame,
                                         null, FragmentShare.class.getSimpleName());
-                            else {
+                            } else {
                                 Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
                                 intent.setData(Uri.parse("package:" + Objects.requireNonNull(getActivity()).getPackageName()));
                                 startActivityForResult(intent, JOIN_HOTSPOT);
                             }
-                        } else
+                        } else {
+                            TransitionManager.beginDelayedTransition(root_share);
+                            ViewGroup.LayoutParams params = rl_share_root.getLayoutParams();
+                            params.height = ViewGroup.LayoutParams.MATCH_PARENT;
+                            params.width = ViewGroup.LayoutParams.MATCH_PARENT;
+                            rl_share_root.requestLayout();
+                            rl_receive_root.setVisibility(View.GONE);
+                            rl_share_root.setClickable(false);
                             PD_Utility.addFragment(getActivity(), new FragmentShare_(), R.id.main_frame,
                                     null, FragmentShare.class.getSimpleName());
+                        }
                     } else new LocationService(getActivity()).checkLocation();
                     break;
                 case PD_Constant.ApScanResult:
@@ -175,14 +183,27 @@ public class FragmentShareRecieve extends Fragment implements CircularRevelLayou
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
                 .onAccepted(permissionResult -> {
-                    ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
-                    if (sdPath.size() > 0) {
-                        if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
-                            mHandler.sendEmptyMessage(SHOW_SD_CARD_DIALOG);
-                        else
-                            animateHotspotCreation();
-                    } else
-                        animateHotspotCreation();
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (Settings.System.canWrite(getActivity())) {
+                            ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                            if (sdPath.size() > 0) {
+                                if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                                    mHandler.sendEmptyMessage(SHOW_SD_CARD_DIALOG);
+                                else animateHotspotCreation();
+                            } else animateHotspotCreation();
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
+                            intent.setData(Uri.parse("package:" + Objects.requireNonNull(getActivity()).getPackageName()));
+                            startActivityForResult(intent, CREATE_HOTSPOT);
+                        }
+                    } else {
+                        ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(getActivity());
+                        if (sdPath.size() > 0) {
+                            if (FastSave.getInstance().getString(PD_Constant.SDCARD_URI, null) == null)
+                                mHandler.sendEmptyMessage(SHOW_SD_CARD_DIALOG);
+                            else animateHotspotCreation();
+                        } else animateHotspotCreation();
+                    }
                 })
                 .ask();
     }
@@ -225,16 +246,7 @@ public class FragmentShareRecieve extends Fragment implements CircularRevelLayou
                 PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
                 FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
             }
-        }/*  else if (requestCode == CREATE_HOTSPOT) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (Settings.System.canWrite(getActivity()))
-                    animateHotspotCreation();
-                else
-                    Toast.makeText(getActivity(), "Hotspot Permission Is required", Toast.LENGTH_SHORT).show();
-            }
-        }else if (requestCode == JOIN_HOTSPOT) {
-            setRl_recieve();
-        }*/
+        }
     }
 
     @Subscribe

@@ -35,6 +35,7 @@ public class WifiUtils {
     private static final String TAG = "Pratham_WifiUtils";
     private static Context mContext = PrathamApplication.getInstance();
     private static WifiManager mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
+    private static WifiManager.LocalOnlyHotspotReservation reservation;
 
     public static enum WifiCipherType {
         WIFICIPHER_WEP, WIFICIPHER_WPA, WIFICIPHER_NOPASS, WIFICIPHER_INVALID
@@ -44,8 +45,9 @@ public class WifiUtils {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             mWifiManager.startLocalOnlyHotspot(new WifiManager.LocalOnlyHotspotCallback() {
                 @Override
-                public void onStarted(WifiManager.LocalOnlyHotspotReservation reservation) {
+                public void onStarted(WifiManager.LocalOnlyHotspotReservation reserv) {
                     super.onStarted(reservation);
+                    reservation = reserv;
                     Log.d("Wifi Hotspot is on", "now reservation is::" + reservation.toString());
                     PD_Constant.HOTSPOT_SSID = reservation.getWifiConfiguration().SSID;
                     PD_Constant.HOTSPOT_PASSWORD = reservation.getWifiConfiguration().preSharedKey;
@@ -126,25 +128,26 @@ public class WifiUtils {
     public static void closeWifiAp() {
         if (isWifiApEnabled()) {
             try {
-                Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
-                method.setAccessible(true);
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+                    Method method = mWifiManager.getClass().getMethod("getWifiApConfiguration");
+                    method.setAccessible(true);
 
-                WifiConfiguration config = (WifiConfiguration) method.invoke(mWifiManager);
+                    WifiConfiguration config = (WifiConfiguration) method.invoke(mWifiManager);
 
-                Method method2 = mWifiManager.getClass().getMethod("setWifiApEnabled",
-                        WifiConfiguration.class, boolean.class);
-                method2.invoke(mWifiManager, config, false);
+                    Method method2 = mWifiManager.getClass().getMethod("setWifiApEnabled",
+                            WifiConfiguration.class, boolean.class);
+                    method2.invoke(mWifiManager, config, false);
+                } else {
+                    if (reservation != null)
+                        reservation.close();
+                }
             } catch (NoSuchMethodException e) {
-
                 e.printStackTrace();
             } catch (IllegalArgumentException e) {
-
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
-
                 e.printStackTrace();
             } catch (InvocationTargetException e) {
-
                 e.printStackTrace();
             }
         }

@@ -236,7 +236,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                             || modal_rasp_header.getLang_code().equalsIgnoreCase("mul"))
                         displayedContents.add(modal_rasp_header.setContentToConfigNodeStructure(modal_rasp_header));
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.RASPBERRY_HEADER);
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -259,7 +259,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         }
                     }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.BROWSE_RASPBERRY);
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -284,7 +284,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         displayedContents.add(detail);
                     }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.INTERNET_HEADER);
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -307,7 +307,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     detail.setContent_language(BaseActivity.language);
                     displayedContents.add(detail);
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents, PD_Constant.BROWSE_INTERNET);
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
                 tempContentList = new ArrayList<>(totalContents);
@@ -328,7 +328,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     private ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
-            , final ArrayList<Modal_ContentDetail> onlineContents, String header) {
+            , final ArrayList<Modal_ContentDetail> onlineContents) {
         if (!totalContents.isEmpty()) {
             for (Modal_ContentDetail total : totalContents) {
                 boolean found = false;
@@ -402,8 +402,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void ondownloadError(String downloadId) {
         Modal_ContentDetail content = Objects.requireNonNull(filesDownloading.get(downloadId)).getContentDetail();
-        postSingleFileDownloadErrorMessage(content);
         filesDownloading.remove(downloadId);
+        postSingleFileDownloadErrorMessage(content);
         EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
         cancelDownload(downloadId);
     }
