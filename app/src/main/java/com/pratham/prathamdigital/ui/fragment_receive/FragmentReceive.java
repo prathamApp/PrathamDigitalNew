@@ -40,7 +40,6 @@ import com.pratham.prathamdigital.ui.fragment_share_recieve.SharePresenter;
 import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
-import com.pratham.prathamdigital.util.WifiUtils;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -151,7 +150,12 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
         sharePresenter.setView(FragmentReceive.this);
         if (isHotspotEnabled) {
             isHotspotEnabled = false;
-            onActivityResult(RECIEVED_FROM_TETHERING_ACTIVITY, 0, null);
+//            if (WifiUtils.isWifiApEnabled()) {
+//                shareCircle.setVisibility(View.GONE);
+//                startServer();
+//                oreo_and_above_hotspot_message.setVisibility(View.VISIBLE);
+//                Log.d(TAG, "isWifiConnectedSuccessfully::" + FsService.getLocalInetAddress().getHostAddress() + "__" + FsService.getLocalInetAddress().getAddress());
+//            }
         }
     }
 
@@ -187,7 +191,8 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
                 .setTitle("PraDigi")
                 .setMessage("Do you want to Disconnect?")
                 .setPositiveButton("Yes", (dialog, which) -> {
-                    WifiUtils.closeWifiAp();
+//                    WifiUtils.closeWifiAp();
+                    hotspotUtils.disable();
                     Intent intent = new Intent(FsService.ACTION_STOP_FTPSERVER);
                     intent.setPackage(Objects.requireNonNull(getActivity()).getPackageName());
                     getActivity().sendBroadcast(intent);
@@ -249,6 +254,9 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
             jsonObject.put(PD_Constant.FTP_HOTSPOT_SSID, PD_Constant.HOTSPOT_SSID);
             jsonObject.put(PD_Constant.FTP_HOTSPOT_PASS, PD_Constant.HOTSPOT_PASSWORD);
             jsonObject.put(PD_Constant.FTP_KEYMGMT, PD_Constant.FTP_HOTSPOT_KEYMGMT);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                jsonObject.put(PD_Constant.FTP_IP, FsService.getLocalInetAddress().getHostAddress());
+            else jsonObject.put(PD_Constant.FTP_IP, "192.168.43.1");
             QRCodeWriter formatWriter = new QRCodeWriter();
             BitMatrix bitMatrix = formatWriter.encode(jsonObject.toString(), BarcodeFormat.QR_CODE, 512, 512);
             Bitmap bitmap = createBitmap(bitMatrix);

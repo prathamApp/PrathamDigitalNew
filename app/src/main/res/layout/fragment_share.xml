@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_yellow"
@@ -15,6 +16,20 @@
             android:id="@+id/qr_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_connect_wifi_manually"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:background="@drawable/button_blue_selector"
+            android:text="Connect Manually"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            tools:ignore="HardcodedText" />
 
         <LinearLayout
             android:id="@+id/connecting_progress"

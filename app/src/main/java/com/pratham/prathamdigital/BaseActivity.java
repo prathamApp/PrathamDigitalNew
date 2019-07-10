@@ -153,7 +153,7 @@ public class BaseActivity extends AppCompatActivity {
                             .ask();
                     break;
                 case SHOW_OTG_TRANSFER_DIALOG:
-                    sd_builder = new BlurPopupWindow.Builder(PrathamApplication.getInstance())
+                    sd_builder = new BlurPopupWindow.Builder(BaseActivity.this)
                             .setContentView(R.layout.dialog_alert_sd_card)
                             .setGravity(Gravity.CENTER)
                             .setScaleRatio(0.2f)

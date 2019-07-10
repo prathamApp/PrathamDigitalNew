@@ -78,7 +78,7 @@ public class FragmentSelectAgeGroup extends Fragment {
         if (!PrathamApplication.wiseF.isWifiEnabled())
             PrathamApplication.wiseF.enableWifi();
         if (!PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() && !PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-            ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity()).build();
+            ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity(), null).build();
             connectDialog.isDismissOnClickBack();
             connectDialog.isDismissOnTouchBackground();
             connectDialog.setOnDismissListener(popupWindow -> onActivityResult(3, Activity.RESULT_OK, null));

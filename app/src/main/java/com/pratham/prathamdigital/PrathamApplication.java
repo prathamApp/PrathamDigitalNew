@@ -38,14 +38,13 @@ public class PrathamApplication extends Application {
     public static WiseFy wiseF;
     public static String pradigiPath = "";
     public static MediaPlayer bubble_mp;
-    public static boolean isOTGattached = false;
     /*Also
      * Check Todo
      * Check Catcho in BaseActivity
      * Check baseUrl in PDConstant
      * increase version before generating signed apk
      */
-    public static boolean isTablet = false;
+    public static boolean isTablet = true;
     public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
@@ -92,30 +91,6 @@ public class PrathamApplication extends Application {
         AndroidNetworking.initialize(getApplicationContext(), okHttpClient);
     }
 
-    /*private void copyBackupDb() {
-        try {
-            File db_file = new File(Environment.getExternalStorageDirectory(), PrathamDatabase.DB_NAME);
-            if (db_file.exists()) {
-                InputStream myInput = new FileInputStream(db_file);
-                String outFileName = "/data/data/"
-                        + getInstance().getPackageName()
-                        + "/databases/" + PrathamDatabase.DB_NAME;
-                OutputStream myOutput = new FileOutputStream(outFileName);
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = myInput.read(buffer)) > 0) {
-                    myOutput.write(buffer, 0, length);
-                }
-                myOutput.flush();
-                myOutput.close();
-                myInput.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
-
-    @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);

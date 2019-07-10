@@ -149,7 +149,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 case MENU_CONNECT_WIFI:
                     if (isChecked)
                         toggleToArrow();
-                    ConnectDialog connectDialog = new ConnectDialog.Builder(ActivityMain.this).build();
+                    ConnectDialog connectDialog = new ConnectDialog.Builder(ActivityMain.this, null).build();
                     connectDialog.isDismissOnTouchBackground();
                     connectDialog.isDismissOnClickBack();
                     connectDialog.setOnDismissListener(popupWindow -> {

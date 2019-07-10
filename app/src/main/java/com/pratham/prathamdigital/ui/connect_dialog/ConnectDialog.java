@@ -26,6 +26,7 @@ import com.isupatches.wisefy.callbacks.GetSavedNetworkCallbacks;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
+import com.pratham.prathamdigital.interfaces.OnWifiConnected;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -66,9 +67,15 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
     private String ssid;
     private String password;
     private ArrayList<String> wifi_result;
+    private OnWifiConnected onWifiConnected;
 
-    public ConnectDialog(@NonNull Context context) {
+//    public ConnectDialog(@NonNull Context context) {
+//        super(context);
+//    }
+
+    public ConnectDialog(@NonNull Context context, OnWifiConnected connected) {
         super(context);
+        this.onWifiConnected = connected;
     }
 
     @SuppressLint("HandlerLeak")
@@ -221,23 +228,27 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         PrathamApplication.wiseF.connectToNetwork(ssid, 10000, new ConnectToNetworkCallbacks() {
             @Override
             public void connectedToNetwork() {
+                if (onWifiConnected != null) onWifiConnected.isWifiConnectedSuccessfully(true);
                 dismiss();
             }
 
             @Override
             public void failureConnectingToNetwork() {
+                if (onWifiConnected != null) onWifiConnected.isWifiConnectedSuccessfully(false);
                 mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "failureConnectingToNetwork: ");
             }
 
             @Override
             public void networkNotFoundToConnectTo() {
+                if (onWifiConnected != null) onWifiConnected.isWifiConnectedSuccessfully(false);
                 mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "networkNotFoundToConnectTo: ");
             }
 
             @Override
             public void wisefyFailure(int i) {
+                if (onWifiConnected != null) onWifiConnected.isWifiConnectedSuccessfully(false);
                 mHandler.sendEmptyMessage(1);
                 Log.d(TAG, "wisefyFailure: ");
             }
@@ -273,6 +284,9 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             password = et_wifi_pass.getText().toString();
             wiseF.disconnectFromCurrentNetwork();
             wiseF.getSavedNetwork(ssid, savedNetworkCallbacks);
+        } else {
+            if (onWifiConnected != null) onWifiConnected.isWifiConnectedSuccessfully(true);
+            dismiss();
         }
     }
 
@@ -302,14 +316,17 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
     }
 
     public static class Builder extends BlurPopupWindow.Builder<ConnectDialog> {
-        public Builder(Context context) {
+        private OnWifiConnected onWifiConnected;
+
+        public Builder(Context context, OnWifiConnected connected) {
             super(context);
+            this.onWifiConnected = connected;
             this.setScaleRatio(0.25f).setBlurRadius(8).setTintColor(0x30000000);
         }
 
         @Override
         protected ConnectDialog createPopupWindow() {
-            return new ConnectDialog(mContext);
+            return new ConnectDialog(mContext, onWifiConnected);
         }
     }
 }

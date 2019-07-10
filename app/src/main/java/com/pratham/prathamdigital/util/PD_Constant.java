@@ -4,10 +4,11 @@ import android.support.annotation.NonNull;
 
 public class PD_Constant {
 
-    public static final String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String BROWSE_RASPBERRY = "BROWSE_RASPBERRY";
+    public static final String FTP_IP = "FTP_IP";
     public static final String FAST_DOWNLOAD_STARTED = "fast_download_started";
     public static final String FAST_DOWNLOAD_UPDATE = "fast_download_update";
     public static final String FAST_DOWNLOAD_COMPLETE = "fast_download_complete";

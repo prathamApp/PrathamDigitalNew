@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.async;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.androidnetworking.AndroidNetworking;
@@ -10,10 +9,8 @@ import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
 import com.liulishuo.okdownload.DownloadTask;
-import com.liulishuo.okdownload.core.cause.EndCause;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
 import com.liulishuo.okdownload.core.listener.DownloadListener3;
-import com.liulishuo.okdownload.core.listener.assist.Listener1Assist;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -34,8 +31,6 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
@@ -138,24 +133,6 @@ public class ZipDownloader {
             if (totalLength <= 0)
                 totalLength = (modal_download.getContent().getLevel() > 0) ? modal_download.getContent().getLevel() : 1;
             updateProgress(modal_download, totalLength, currentOffset);
-        }
-
-        @Override
-        public void connectEnd(@NonNull DownloadTask task, int blockIndex, int responseCode, @NonNull Map<String, List<String>> responseHeaderFields) {
-            Log.d("connectEnd:::", ((Modal_Download) task.getTag()).getF_name());
-            super.connectEnd(task, blockIndex, responseCode, responseHeaderFields);
-        }
-
-        @Override
-        public void connectTrialEnd(@NonNull DownloadTask task, int responseCode, @NonNull Map<String, List<String>> responseHeaderFields) {
-            Log.d("connectTrialEnd:::", ((Modal_Download) task.getTag()).getF_name());
-            super.connectTrialEnd(task, responseCode, responseHeaderFields);
-        }
-
-        @Override
-        public void taskEnd(@NonNull DownloadTask task, @NonNull EndCause cause, @Nullable Exception realCause, @NonNull Listener1Assist.Listener1Model model) {
-            Log.d("taskEnd:::", ((Modal_Download) task.getTag()).getF_name());
-            super.taskEnd(task, cause, realCause, model);
         }
     };
 

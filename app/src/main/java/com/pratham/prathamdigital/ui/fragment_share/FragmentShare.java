@@ -9,6 +9,7 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -22,10 +23,13 @@ import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.progress_layout.ProgressLayout;
+import com.pratham.prathamdigital.ftpSettings.FsService;
+import com.pratham.prathamdigital.interfaces.OnWifiConnected;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
+import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
@@ -37,6 +41,7 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -51,7 +56,7 @@ import java.util.Objects;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 @EFragment(R.layout.fragment_share)
-public class FragmentShare extends Fragment implements ZXingScannerView.ResultHandler, ContractShare.shareView {
+public class FragmentShare extends Fragment implements ZXingScannerView.ResultHandler, ContractShare.shareView, OnWifiConnected {
     private static final int INIT_CAMERA = 1;
     private static final String TAG = FragmentShare.class.getSimpleName();
     private ZXingScannerView startCameraScan;
@@ -67,6 +72,13 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
     RecyclerView rv_share_files;
     @Bean(SharePresenter.class)
     ContractShare.sharePresenter sharePresenter;
+    private String scanned_ftp_ip;
+    //    private final HashMap<String, File_Model> filesSent = new HashMap<>();
+//    private final HashMap<String, Integer> filesSentPosition = new HashMap<>();
+    private FileListAdapter fileListAdapter;
+    private TextView dialog_tv;
+    private ProgressLayout dialog_progressLayout;
+    private BlurPopupWindow sending_builder;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -76,17 +88,11 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
                     initCamera();
                     break;
                 case PD_Constant.WiFiConnectSuccess:
-                    sharePresenter.connectFTP();
+                    sharePresenter.connectFTP(scanned_ftp_ip);
                     break;
             }
         }
     };
-    //    private final HashMap<String, File_Model> filesSent = new HashMap<>();
-//    private final HashMap<String, Integer> filesSentPosition = new HashMap<>();
-    private FileListAdapter fileListAdapter;
-    private TextView dialog_tv;
-    private ProgressLayout dialog_progressLayout;
-    private BlurPopupWindow sending_builder;
 
     @AfterViews
     public void initialize() {
@@ -168,6 +174,7 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
                 JSONObject jsonobject = new JSONObject(result.getText());
                 String wifiname = jsonobject.getString(PD_Constant.FTP_HOTSPOT_SSID);
                 String wifipass = jsonobject.getString(PD_Constant.FTP_HOTSPOT_PASS);
+                scanned_ftp_ip = jsonobject.getString(PD_Constant.FTP_IP);
                 int wifikeymgmt = jsonobject.getInt(PD_Constant.FTP_KEYMGMT);
                 ConnectionUtils.getInstance(getActivity()).toggleConnection(wifiname, wifipass, wifikeymgmt, sharePresenter);
                 //sharePresenter.connectToWify(wifiname, wifipass);
@@ -329,5 +336,26 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
             }
         }, 2000);
         getActivity().getSupportFragmentManager().popBackStack();
+    }
+
+    @Click(R.id.btn_connect_wifi_manually)
+    public void ConnectWifiManually() {
+        ConnectDialog connectDialog = new ConnectDialog.Builder(getActivity(), FragmentShare.this).build();
+//        connectDialog.isDismissOnTouchBackground();
+//        connectDialog.isDismissOnClickBack();
+        connectDialog.show();
+    }
+
+    @UiThread
+    @Override
+    public void isWifiConnectedSuccessfully(boolean result) {
+        if (result) {
+            startCameraScan.stopCamera();
+            Log.d(TAG, "isWifiConnectedSuccessfully::" + FsService.getLocalInetAddress().getHostAddress() + "__" + FsService.getLocalInetAddress().getAddress());
+            connecting_progress.setVisibility(View.VISIBLE);
+            mHandler.sendEmptyMessage(PD_Constant.WiFiConnectSuccess);
+        } else {
+            ftpConnectionFailed();
+        }
     }
 }

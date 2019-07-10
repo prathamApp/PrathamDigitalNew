@@ -16,10 +16,12 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
     private Context context;
     private FTPClient client1;
     private FTPConnected ftpConnected;
+    private String scanned_qr_ip;
 
-    public ConnectToFTP(Context context, FTPConnected ftpConnected) {
+    public ConnectToFTP(Context context, FTPConnected ftpConnected, String ip) {
         this.context = context;
         this.ftpConnected = ftpConnected;
+        this.scanned_qr_ip = ip;
 //        this.ftpConnectInterface = ftpConnectInterface;
 //        this.ipaddress = ipaddress.replace("ftp://", "");
 //        this.port = port;
@@ -47,7 +49,7 @@ public class ConnectToFTP extends AsyncTask<Void, Void, Boolean> {
             /*The Apache Commons Net library believes that the 220 response from the server does not conform to RFC 959 (probably rightfully).
             If you want to allow the library to talk to the server, call FTP.setStrictReplyParsing*/
             client1.setStrictReplyParsing(false);
-            client1.connect("192.168.43.1", 8080);
+            client1.connect(scanned_qr_ip, 8080);
             client1.login("ftp", "ftp");
 //            client1.changeWorkingDirectory("/storage/sdcard1");
             client1.enterLocalPassiveMode();

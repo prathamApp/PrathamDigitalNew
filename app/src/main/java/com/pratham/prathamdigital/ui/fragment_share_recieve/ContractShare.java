@@ -36,7 +36,7 @@ public interface ContractShare {
     }
 
     interface sharePresenter {
-        void connectFTP();
+        void connectFTP(String ip);
 
         void showFolders(Modal_ContentDetail detail);
 
@@ -63,5 +63,7 @@ public interface ContractShare {
         void viewDestroyed();
 
         void connectionFailed();
+
+        void scanFtp();
     }
 }

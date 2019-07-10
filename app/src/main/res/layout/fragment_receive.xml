@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/dark_blue"
@@ -12,7 +13,8 @@
         android:layout_width="@dimen/_250sdp"
         android:layout_height="@dimen/_250sdp"
         android:layout_centerInParent="true"
-        android:clickable="false">
+        android:clickable="false"
+        android:visibility="visible">
 
         <com.pratham.prathamdigital.custom.CircularProgress
             android:id="@+id/circleProgress"
@@ -67,6 +69,38 @@
             android:text="Scan the QR to connect to hotspot"
             android:textColor="@color/dark_yellow"
             android:textSize="@dimen/_25sdp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/oreo_and_above_hotspot_message"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="false"
+        android:focusable="false"
+        android:orientation="horizontal"
+        android:visibility="gone"
+        android:weightSum="1">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:clickable="false"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="wifi_intro.json"
+            app:lottie_loop="true" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center"
+            android:text="Connect to this hotspot\n...\n MANUALLY"
+            android:textColor="@color/dark_yellow"
+            android:textSize="@dimen/_25sdp"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 
     <LinearLayout

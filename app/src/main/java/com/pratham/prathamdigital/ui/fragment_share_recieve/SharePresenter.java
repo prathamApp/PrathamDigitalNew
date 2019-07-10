@@ -86,6 +86,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     };
     private FTPClient ftpClient;
     private Timer ftpTimer = new Timer();
+    private String scanned_qr_ip;
 
     public SharePresenter(Context context) {
         this.context = context;
@@ -237,8 +238,9 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     }
 
     @Override
-    public void connectFTP() {
-        new ConnectToFTP(context, SharePresenter.this).execute();
+    public void connectFTP(String ip) {
+        scanned_qr_ip = ip;
+        new ConnectToFTP(context, SharePresenter.this, scanned_qr_ip).execute();
     }
 
     @Override
@@ -253,7 +255,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             new Handler().postDelayed(() -> {
                 if (ftpConnectionTry < 5) {     //not more than 5 tries, otherwise infinite loop until success
                     ftpConnectionTry += 1;
-                    connectFTP();
+                    if (scanned_qr_ip != null && !scanned_qr_ip.isEmpty())
+                        connectFTP(scanned_qr_ip);
                 } else {
                     if (shareView != null) shareView.ftpConnectionFailed();
                 }
@@ -514,5 +517,9 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             childsOfParent = modalContentDao.getParentsHeaders(lang);
         }
         downloadedContents(childsOfParent, parentId);
+    }
+
+    @Override
+    public void scanFtp() {
     }
 }
