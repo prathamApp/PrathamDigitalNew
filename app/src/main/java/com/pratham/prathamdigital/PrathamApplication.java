@@ -42,7 +42,7 @@ public class PrathamApplication extends Application {
      * Check Todo
      * Check Catcho in BaseActivity
      * Check baseUrl in PDConstant
-     * increase version before generating signed apk
+     * increase version before generating signed apk otherwise "app not installed"
      */
     public static boolean isTablet = true;
     public static boolean useSatelliteGPS = false;

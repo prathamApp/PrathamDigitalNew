@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="@dimen/_130sdp"
     android:layout_height="@dimen/_130sdp"
     android:background="@drawable/item_folder_rounded_corner_bkgd"
@@ -25,7 +26,7 @@
                 android:id="@+id/folder_content_image"
                 android:layout_width="@dimen/_60sdp"
                 android:layout_height="@dimen/_60sdp"
-                android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:duplicateParentState="true"
                 app:actualImageScaleType="centerInside"
@@ -38,7 +39,8 @@
                 android:id="@+id/lottie_folder"
                 android:layout_width="@dimen/_40sdp"
                 android:layout_height="@dimen/_40sdp"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_5sdp"
                 android:layout_marginRight="@dimen/_5sdp"
                 android:duplicateParentState="true"
@@ -52,15 +54,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/folder_content_image"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_centerHorizontal="true"
                 android:layout_marginLeft="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginRight="@dimen/_5sdp"
                 android:duplicateParentState="true"
+                android:ellipsize="marquee"
+                android:fadingEdge="horizontal"
                 android:gravity="center_vertical"
-                android:inputType="textMultiLine"
-                android:maxLines="2"
-                android:text="sdfsdfs"
+                android:marqueeRepeatLimit="marquee_forever"
+                android:scrollHorizontally="true"
+                android:singleLine="true"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_15sdp" />
+                android:textSize="@dimen/_14sdp"
+                tools:ignore="HardcodedText" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/folder_content_desc"
@@ -71,9 +78,9 @@
                 android:duplicateParentState="true"
                 android:gravity="center_vertical"
                 android:inputType="textMultiLine"
-                android:visibility="gone"
                 android:maxLines="2"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:visibility="gone" />
         </RelativeLayout>
     </android.support.design.card.MaterialCardView>
 </RelativeLayout>

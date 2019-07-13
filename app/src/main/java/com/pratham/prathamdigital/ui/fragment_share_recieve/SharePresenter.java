@@ -68,6 +68,9 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     private final ArrayList<Modal_ContentDetail> levels = new ArrayList<>();
     private final HashMap<String, Modal_ReceivingFilesThroughFTP> filesRecieving = new HashMap<>();
     private ContractShare.shareView shareView;
+    private FTPClient ftpClient;
+    private Timer ftpTimer = new Timer();
+    private String scanned_qr_ip;
     private final AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
         @Override
         public void failureAddingNetwork(int i) {
@@ -84,9 +87,6 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             Log.d(TAG, "wisefyFailure: ");
         }
     };
-    private FTPClient ftpClient;
-    private Timer ftpTimer = new Timer();
-    private String scanned_qr_ip;
 
     public SharePresenter(Context context) {
         this.context = context;

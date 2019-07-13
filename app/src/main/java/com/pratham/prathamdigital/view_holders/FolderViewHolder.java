@@ -92,10 +92,11 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
         }
         Objects.requireNonNull(content_card).setBackgroundColor(PD_Utility.getRandomColorGradient());
         Objects.requireNonNull(folder_title).setText(contentItem.getNodetitle());
-        if (contentItem.getNodedesc() == null || contentItem.getNodedesc().isEmpty())
-            Objects.requireNonNull(folder_content_desc).setText("No description");
-        else
-            Objects.requireNonNull(folder_content_desc).setText(contentItem.getNodedesc());
+        Objects.requireNonNull(folder_title).setSelected(true);
+//        if (contentItem.getNodedesc() == null || contentItem.getNodedesc().isEmpty())
+//            Objects.requireNonNull(folder_content_desc).setText("No description");
+//        else
+//            Objects.requireNonNull(folder_content_desc).setText(contentItem.getNodedesc());
         content_card.setOnClickListener(v -> contentClick.onfolderClicked(pos, contentItem));
     }
 }

@@ -81,7 +81,8 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     public void setContentItem(Modal_ContentDetail contentItem, int pos) {
         Objects.requireNonNull(file_content_desc).setText(contentItem.getNodetitle());
         if (contentItem.isDownloaded()) {
-            item_file_delete.setVisibility(View.VISIBLE);
+            if (!PrathamApplication.isTablet) item_file_delete.setVisibility(View.VISIBLE);
+            else item_file_delete.setVisibility(View.GONE);
             rl_reveal.setVisibility(View.GONE);
             file_item_lottieview.setVisibility(View.VISIBLE);
             img_download_content.setVisibility(View.GONE);

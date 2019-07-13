@@ -216,6 +216,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
         contentPresenter.viewDestroyed();
     }
 
+    @UiThread
     @Override
     public void dismissDialog() {
         PD_Utility.dismissDialog();

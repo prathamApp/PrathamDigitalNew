@@ -11,7 +11,6 @@ import com.google.gson.reflect.TypeToken;
 import com.liulishuo.okdownload.DownloadTask;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
-import com.pratham.prathamdigital.async.GetDownloadedContent;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
@@ -53,7 +52,6 @@ import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 @EBean
 public class ContentPresenterImpl implements ContentContract.contentPresenter, DownloadedContents, ApiResult {
     private static final String TAG = ContentPresenterImpl.class.getSimpleName();
-    private final Context context;
     private final Map<String, Modal_FileDownloading> filesDownloading = new HashMap<>();
     private final Map<String, DownloadTask> currentDownloadTasks = new HashMap<>();
     @Bean(PD_ApiRequest.class)
@@ -65,8 +63,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     private ArrayList<Modal_ContentDetail> levelContents;
     private ArrayList<Modal_ContentDetail> tempContentList;
 
-    public ContentPresenterImpl(Context context) {
-        this.context = context;
+    ContentPresenterImpl(Context context) {
+        Context context1 = context;
     }
 
     @Override
@@ -85,7 +83,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void getContent(Modal_ContentDetail contentDetail) {
         //fetching content from database first
         if (contentDetail == null) {
-            new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
+            getDownloadedContents(null);
+//            new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
         } else {
             if (levelContents == null) levelContents = new ArrayList<>();
             boolean found = false;
@@ -105,15 +104,18 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     contentView.animateHamburger();
                 contentView.displayLevel(levelContents);
             }
-            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
+            getDownloadedContents(contentDetail.getNodeid());
+//            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
         }
     }
 
+    @Background
     @Override
     public void getContent() {
         if (levelContents != null && levelContents.size() > 0) {
-            new GetDownloadedContent(ContentPresenterImpl.this,
-                    levelContents.get(levelContents.size() - 1).getNodeid()).execute();
+            getDownloadedContents(levelContents.get(levelContents.size() - 1).getNodeid());
+//            new GetDownloadedContent(ContentPresenterImpl.this,
+//                    levelContents.get(levelContents.size() - 1).getNodeid()).execute();
         } else {
             if (contentView != null)
                 contentView.dismissDialog();
@@ -163,8 +165,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    @Background
-    public void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    private void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             pd_apiRequest.getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
         } else {
@@ -173,8 +174,17 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    @Background
-    public void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    public void getKolibriLanguages(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+        pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
+                + parentId, contentList);
+    }
+
+    public void getKolibriLanguagesChilds(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+        pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES_CHILDS, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
+                + parentId, contentList);
+    }
+
+    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
                     PD_Constant.URL.GET_TOP_LEVEL_NODE
@@ -231,10 +241,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }.getType();
                 List<Modal_Rasp_Header> rasp_headers = gson.fromJson(response, listType);
                 for (Modal_Rasp_Header modal_rasp_header : rasp_headers) {
-                    String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
-                    if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_header.getLang_code()))
-                            || modal_rasp_header.getLang_code().equalsIgnoreCase("mul"))
-                        displayedContents.add(modal_rasp_header.setContentToConfigNodeStructure(modal_rasp_header));
+                    displayedContents.add(modal_rasp_header.setContentToConfigNodeStructure(modal_rasp_header));
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
@@ -242,7 +249,37 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 tempContentList = new ArrayList<>(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
-            } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
+            } /*else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY_LANGUAGES)) {
+                displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
+                Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
+                }.getType();
+                List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
+                String language_id = null;
+                for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
+                    String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
+                    Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
+                    if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_content.getLang().getLangCode()))
+                        *//*|| modal_rasp_content.getLang().getLangCode().equalsIgnoreCase("mul")*//*) {
+                        language_id = detail.getNodeid();
+                        break;
+                    } else {
+                        detail.setParentid(null);
+                        displayedContents.add(detail);
+                    }
+                }
+                if (language_id != null) {
+                    getKolibriLanguagesChilds(totalContents, language_id);
+                } else {
+                    totalContents = removeDownloadedContents(totalContents, displayedContents);
+//                Collections.shuffle(totalContents);
+                    totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                    tempContentList = new ArrayList<>(totalContents);
+                    if (contentView != null)
+                        contentView.displayContents(totalContents);
+                }
+            } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY_LANGUAGES_CHILDS)) {
                 displayedContents.clear();
                 totalContents.clear();
                 totalContents.addAll(contentList);
@@ -250,13 +287,37 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
-                    String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
+                    Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
+                    detail.setParentid(null);
+                    if (!PrathamApplication.isTablet) {
+                        if (!detail.getNodetitle().contains("3-6"))
+                            displayedContents.add(detail);
+                    } else displayedContents.add(detail);
+//                }
+                }
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
+//                Collections.shuffle(totalContents);
+                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
+                tempContentList = new ArrayList<>(totalContents);
+                if (contentView != null)
+                    contentView.displayContents(totalContents);
+            } */ else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
+                displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
+                Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
+                }.getType();
+                List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
+                String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
+                for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
                     if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_content.getLang().getLangCode()))
                             || modal_rasp_content.getLang().getLangCode().equalsIgnoreCase("mul")) {
                         Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
-                        if (!detail.getNodetitle().contains("3-6")) {
-                            displayedContents.add(detail);
-                        }
+                        if (PrathamApplication.isTablet) {
+                            if (!detail.getNodetitle().contains("3-6")) {
+                                displayedContents.add(detail);
+                            }
+                        } else displayedContents.add(detail);
                     }
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
@@ -273,7 +334,18 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
                 for (Modal_ContentDetail detail : tempContents) {
-                    if (!detail.getNodetitle().contains("3-6")) {
+                    if (!PrathamApplication.isTablet) {
+                        if (!detail.getNodetitle().contains("3-6")) {
+                            if (detail.getResourcetype().equalsIgnoreCase("Game")
+                                    || detail.getResourcetype().equalsIgnoreCase("Video")
+                                    || detail.getResourcetype().equalsIgnoreCase("Pdf"))
+                                detail.setContentType("file");
+                            else
+                                detail.setContentType("folder");
+                            detail.setContent_language(BaseActivity.language);
+                            displayedContents.add(detail);
+                        }
+                    } else {
                         if (detail.getResourcetype().equalsIgnoreCase("Game")
                                 || detail.getResourcetype().equalsIgnoreCase("Video")
                                 || detail.getResourcetype().equalsIgnoreCase("Pdf"))
@@ -322,13 +394,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 zipDownloader.initialize(ContentPresenterImpl.this, download_content.getDownloadurl(),
                         download_content.getFoldername(), fileName, contentDetail, levelContents);
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             e.printStackTrace();
         }
+
     }
 
-    private ArrayList<Modal_ContentDetail> removeDownloadedContents(final ArrayList<Modal_ContentDetail> totalContents
-            , final ArrayList<Modal_ContentDetail> onlineContents) {
+    private ArrayList<Modal_ContentDetail> removeDownloadedContents(
+            ArrayList<Modal_ContentDetail> totalContents
+            , ArrayList<Modal_ContentDetail> onlineContents) {
         if (!totalContents.isEmpty()) {
             for (Modal_ContentDetail total : totalContents) {
                 boolean found = false;
@@ -373,7 +448,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     @Override
-    public void fileDownloadStarted(String downloadID, Modal_FileDownloading modal_fileDownloading) {
+    public void fileDownloadStarted(String downloadID, Modal_FileDownloading
+            modal_fileDownloading) {
         filesDownloading.put(downloadID, modal_fileDownloading);
         postDownloadStartMessage();
     }
@@ -562,7 +638,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 //            new GetDownloadedContent(null).execute();
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
-            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
+            getDownloadedContents(contentDetail.getParentid());
+//            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
             levelContents.remove(levelContents.size() - 1);
             if (contentView != null) {
                 if (levelContents.isEmpty()) contentView.animateHamburger();
@@ -574,7 +651,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Override
     public void downloadedContents(Object o, String parentId) {
-        checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
+//        checkConnectivity((ArrayList<Modal_ContentDetail>) o, parentId);
     }
 
     @Background
@@ -716,7 +793,17 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Override
     public boolean isFilesDownloading() {
-        if (filesDownloading == null || filesDownloading.isEmpty()) return false;
-        else return true;
+        return !filesDownloading.isEmpty();
+    }
+
+    private void getDownloadedContents(String parentId) {
+        String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
+        List<Modal_ContentDetail> childsOfParent;
+        if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
+            childsOfParent = modalContentDao.getChildsOfParent(parentId, lang);
+        } else {
+            childsOfParent = modalContentDao.getParentsHeaders(lang);
+        }
+        checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId);
     }
 }

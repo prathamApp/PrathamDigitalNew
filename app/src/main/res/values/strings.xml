@@ -193,6 +193,12 @@
         <item>Share App</item>
         <item>Exit</item>
     </string-array>
+    <string-array name="admin_options">
+        <item>Push Data</item>
+        <item>Assign Groups</item>
+        <item>View Statistics</item>
+        <item>Clear Data</item>
+    </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>
     <string name="second_chance">Second Chance</string>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cir_admin_option_reveal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/att_bkgd"
+    android:clickable="true"
+    android:focusable="true">
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/_10sdp"
+        android:weightSum=".9">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_admin_options"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/img_option_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_att_back" />
+    </RelativeLayout>
+
+</com.pratham.prathamdigital.custom.CircularRevelLayout>
