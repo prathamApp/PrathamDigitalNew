@@ -42,8 +42,6 @@ import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import net.alhazmy13.catcho.library.Catcho;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -230,10 +228,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
+//        Catcho.Builder(this)
+//                .activity(CatchoTransparentActivity.class)
 //                .recipients("abc@gm.com")
-                .build();
+//                .build();
 //        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();

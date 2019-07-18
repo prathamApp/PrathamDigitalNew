@@ -8,4 +8,4 @@
     android:gravity="center"
     android:maxLines="2"
     android:padding="@dimen/_5sdp"
-    android:text="asdasdasdasdsdsdsdsdsdsd" />
+    android:textColor="@color/dark_grey" />

@@ -131,6 +131,7 @@ public class Modal_Rasp_Header {
         try {
             modal_contentDetail = new Modal_ContentDetail();
             modal_contentDetail.setNodeid(modal_rasp_header.getId());
+            modal_contentDetail.setAltnodeid(modal_rasp_header.getId());
             modal_contentDetail.setNodetype("topic");
             modal_contentDetail.setNodetitle(modal_rasp_header.getName());
             modal_contentDetail.setNodekeywords("");

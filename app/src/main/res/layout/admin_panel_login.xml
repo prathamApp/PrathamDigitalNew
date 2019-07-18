@@ -34,6 +34,7 @@
                 android:background="@drawable/edittext_bkgd"
                 android:gravity="center"
                 android:hint="Username"
+                android:text="mh_reena"
                 android:imeOptions="actionNext"
                 android:maxLines="1"
                 android:singleLine="true" />
@@ -41,6 +42,7 @@
             <com.pratham.prathamdigital.custom.edittexts.IndieEditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
+                android:text="pratham"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_margin="@dimen/_5sdp"
                 android:background="@drawable/edittext_bkgd"

@@ -52,6 +52,10 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String version;
     @Ignore
     private String kolibriNodeImageUrl;
+    @Ignore
+    private String mappedApiId;
+    @Ignore
+    private String mappedParentId;
 
 
     public Modal_ContentDetail() {
@@ -78,6 +82,8 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         kolibriNodeImageUrl = in.readString();
         altnodeid = in.readString();
         version = in.readString();
+        mappedApiId = in.readString();
+        mappedParentId = in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -252,6 +258,22 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.version = version;
     }
 
+    public String getMappedApiId() {
+        return mappedApiId;
+    }
+
+    public void setMappedApiId(String mappedApiId) {
+        this.mappedApiId = mappedApiId;
+    }
+
+    public String getMappedParentId() {
+        return mappedParentId;
+    }
+
+    public void setMappedParentId(String mappedParentId) {
+        this.mappedParentId = mappedParentId;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -291,5 +313,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(kolibriNodeImageUrl);
         dest.writeString(altnodeid);
         dest.writeString(version);
+        dest.writeString(mappedApiId);
+        dest.writeString(mappedParentId);
     }
 }

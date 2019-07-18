@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.assign;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -271,25 +270,30 @@ public class Activity_AssignGroups extends BaseActivity implements AssignContrac
         }
     }
 
-    @Click(R.id.assign_clear_data)
-    public void clearData() {
-        AlertDialog clearDataDialog = new AlertDialog.Builder(Activity_AssignGroups.this)
-                .setTitle("Clear Data")
-                .setMessage("Are you sure you want to clear everything ?")
-                .setIcon(R.drawable.ic_warning)
-                .setPositiveButton("Delete", (dialog, whichButton) -> {
-                    assignPresenter.clearData();
-                    dialog.dismiss();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create();
-        clearDataDialog.show();
-        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
-    }
+//    @Click(R.id.assign_clear_data)
+//    public void clearData() {
+//        AlertDialog clearDataDialog = new AlertDialog.Builder(Activity_AssignGroups.this)
+//                .setTitle("Clear Data")
+//                .setMessage("Are you sure you want to clear everything ?")
+//                .setIcon(R.drawable.ic_warning)
+//                .setPositiveButton("Delete", (dialog, whichButton) -> {
+//                    assignPresenter.clearData();
+//                    dialog.dismiss();
+//                })
+//                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
+//                .create();
+//        clearDataDialog.show();
+//        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
+//    }
 
     @Override
     public void onDataCleared() {
         isAssigned = false;
         super.onBackPressed();
+    }
+
+    @Click(R.id.img_assign_back)
+    public void setBack() {
+        onBackPressed();
     }
 }

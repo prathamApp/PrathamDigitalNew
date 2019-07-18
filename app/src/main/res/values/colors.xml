@@ -18,6 +18,7 @@
     <color name="ghost_white">#FAFAFC</color>
     <color name="trans_ghost_white">#7ffafafc</color>
     <color name="yellow_sand">#fff1b9</color>
+    <color name="l_yellow_sand">#BEFFF1B9</color>
     <color name="red">#FF3A41</color>
     <color name="light_green">#39b54a</color>
     <color name="oslo_grey">#eb828786</color>

@@ -6,7 +6,9 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
+import com.pratham.prathamdigital.models.Modal_ResourcePlayedByGroups;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Modal_TotalDaysGroupsPlayed;
 
 import java.util.List;
 
@@ -35,4 +37,13 @@ public interface ScoreDao {
 
     @Query("DELETE FROM Score")
     void deleteAllScores();
+
+    @Query("Select count(distinct REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(substr(startdatetime,1,instr(startdatetime,' ')),'01','1'),'02','2'),'03','3'),'04','4'),'05','5'),'06','6'),'07','7'),'08','8'),'09','9')) as dates from Score sc where length(startdatetime)>5")
+    int getTotalActiveDeviceDays();
+
+    @Query("Select count(distinct REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(substr(startdatetime,1,instr(startdatetime,' ')),'01','1'),'02','2'),'03','3'),'04','4'),'05','5'),'06','6'),'07','7'),'08','8'),'09','9')) as dates,at.groupid,g.groupname from Score sc inner join Attendance at on sc.sessionid=at.sessionid inner join Groups g on at.groupid=g.groupid where length(startdatetime)>5 group by at.groupid,g.groupname")
+    List<Modal_TotalDaysGroupsPlayed> getTotalDaysGroupsPlayed();
+
+    @Query("Select distinct REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(substr(startdatetime,1,instr(startdatetime,' ')),'01','1'),'02','2'),'03','3'),'04','4'),'05','5'),'06','6'),'07','7'),'08','8'),'09','9') as dates,sc.resourceid,tc.nodetitle,at.groupid,g.groupname from Score sc inner join TableContent tc on tc.resourceid=sc.resourceid inner join Attendance at on sc.sessionid=at.sessionid inner join Groups g on at.groupid=g.groupid where length(startdatetime)>5 and at.groupid=:grpId")
+    List<Modal_ResourcePlayedByGroups> getRecourcesPlayedByGroups(String grpId);
 }

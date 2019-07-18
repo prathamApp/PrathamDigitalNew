@@ -171,11 +171,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void showFolders(Modal_ContentDetail detail) {
         if (detail == null) {
-            getDownloadedContents(null);
+            getDownloadedContents(null, null);
         } else {
             levels.add(detail);
             if (levels.size() == 1) shareView.animateHamburger();
-            getDownloadedContents(detail.getNodeid());
+            getDownloadedContents(detail.getNodeid(), detail.getAltnodeid());
         }
     }
 
@@ -187,7 +187,9 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 shareView.disconnectFTP();
             }
         } else {
-            getDownloadedContents(levels.get(levels.size() - 1).getParentid());
+            Modal_ContentDetail detail = levels.get(levels.size() - 1);
+            getDownloadedContents(detail.getNodeid(), ""); //altnodeId is sent blank coz it points to its same node,
+            // that's why their will be no child nodes
             levels.remove(levels.size() - 1);
         }
     }
@@ -508,11 +510,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     }
 
     @Background
-    public void getDownloadedContents(String parentId) {
+    public void getDownloadedContents(String parentId, String altnodeId) {
         String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         List<Modal_ContentDetail> childsOfParent;
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
-            childsOfParent = modalContentDao.getChildsOfParent(parentId, lang);
+            childsOfParent = modalContentDao.getChildsOfParent(parentId, altnodeId, lang);
         } else {
             childsOfParent = modalContentDao.getParentsHeaders(lang);
         }

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/item_grp_card"
     android:layout_width="@dimen/_170sdp"
     android:layout_height="@dimen/_110sdp"
-    app:cardCornerRadius="@dimen/_8sdp"
-    app:cardElevation="@dimen/_5sdp">
+    app:cardBackgroundColor="@color/l_yellow_sand"
+    app:cardCornerRadius="@dimen/_8sdp">
 
     <RelativeLayout
         android:layout_width="match_parent"

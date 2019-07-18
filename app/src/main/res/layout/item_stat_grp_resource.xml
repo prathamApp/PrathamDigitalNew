@@ -2,9 +2,9 @@
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="@dimen/_120sdp"
     android:layout_margin="@dimen/_5sdp"
-    app:cardBackgroundColor="@color/light_pink"
+    app:cardBackgroundColor="@color/l_yellow_sand"
     app:cardCornerRadius="@dimen/_7sdp">
 
     <RelativeLayout
@@ -16,12 +16,14 @@
             android:id="@+id/stat_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="25July, 2019" />
+            android:text="aksjdaksjdaskdj"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/_12sdp" />
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_stat_resource"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_below="@+id/stat_date" />
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

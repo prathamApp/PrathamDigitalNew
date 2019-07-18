@@ -27,8 +27,8 @@ public interface ModalContentDao {
             "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     List<Modal_ContentDetail> getParentsHeaders(String language);
 
-    @Query("SELECT * FROM TableContent WHERE parentid=:id and content_language=:language")
-    List<Modal_ContentDetail> getChildsOfParent(String id, String language);
+    @Query("SELECT * FROM TableContent WHERE parentid=:id or parentid=:altnodeId and content_language=:language")
+    List<Modal_ContentDetail> getChildsOfParent(String id, String altnodeId, String language);
 
 
     @Query("SELECT * FROM TableContent WHERE nodeid=:id and content_language=:language")

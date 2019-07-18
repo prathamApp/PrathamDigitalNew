@@ -234,6 +234,8 @@ public class Modal_Rasp_Content {
             modal_contentDetail = new Modal_ContentDetail();
             modal_contentDetail.setNodeid(modal_rasp_content.getId());
             modal_contentDetail.setAltnodeid(modal_rasp_content.getId());
+            modal_contentDetail.setMappedApiId(modal_rasp_content.getId());
+            modal_contentDetail.setMappedParentId(null);
             switch (modal_rasp_content.getKind()) {
                 case "html5":
                     modal_contentDetail.setNodetype("Resource");

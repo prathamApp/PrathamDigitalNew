@@ -15,18 +15,21 @@
         <ImageView
             android:id="@+id/img_option"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="@dimen/_95sdp"
             android:layout_centerHorizontal="true" />
 
-        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/txt_option_name"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_35sdp"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/_5sdp"
-            android:background="@drawable/button_blue_selector"
+            android:gravity="center"
+            android:maxLines="2"
+            android:padding="@dimen/_3sdp"
             android:textAllCaps="false"
-            android:textColor="@color/white" />
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_12sdp" />
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

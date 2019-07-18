@@ -2,6 +2,7 @@ package com.pratham.prathamdigital;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Log;
@@ -13,7 +14,7 @@ import net.alhazmy13.catcho.library.error.CatchoError;
 
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
 
-public class CatchoTransparentActivity extends BaseActivity {
+public class CatchoTransparentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,6 +28,6 @@ public class CatchoTransparentActivity extends BaseActivity {
         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         log.setDeviceId(PD_Utility.getDeviceSerialID());
         logDao.insertLog(log);
-        finish();
+        finishAffinity();
     }
 }
