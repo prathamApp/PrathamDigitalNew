@@ -16,6 +16,7 @@ import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.zxing.Result;
 import com.pratham.prathamdigital.R;
@@ -133,6 +134,7 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
         super.onStop();
     }
 
+    @UiThread
     @Subscribe
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {
@@ -240,6 +242,11 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
     }
 
     @Override
+    public void showFileNotFoundToast() {
+        Toast.makeText(getActivity(), "File not found.", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void sendItemChecked(File_Model model, int position) {
 //        filesSent.put(model.getDetail().getNodeid(), model);
 //        filesSentPosition.put(model.getDetail().getNodeid(), position);
@@ -261,6 +268,7 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
                 .build();
         dialog_tv = sending_builder.findViewById(R.id.dialog_file_name);
         dialog_progressLayout = sending_builder.findViewById(R.id.dialog_progressLayout);
+        dialog_progressLayout.setCurProgress(0);
         dialog_tv.setText("Please Wait...");
         sending_builder.show();
     }

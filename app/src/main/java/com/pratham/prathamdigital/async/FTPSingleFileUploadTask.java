@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.async;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.util.Log;
 
 import com.pratham.prathamdigital.models.EventMessage;
@@ -10,6 +9,7 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.EBean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.greenrobot.eventbus.EventBus;
 
@@ -18,28 +18,28 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class FTPSingleFileUploadTask extends AsyncTask {
-    private final FTPClient client;
+@EBean
+public class FTPSingleFileUploadTask {
+    private FTPClient client;
     @SuppressLint("StaticFieldLeak")
     private final Context context;
-    private final String localFilePath;
-    private final boolean isImage;
-    private final ArrayList<Modal_ContentDetail> levels;
+    private String localFilePath;
+    private boolean isImage;
+    private ArrayList<Modal_ContentDetail> levels;
     private long lenghtOfFile;
     private boolean isProfileSharing = false;
     private long total = 0;
 
-    public FTPSingleFileUploadTask(Context context, FTPClient client, String localFilePath, boolean isImage, ArrayList<Modal_ContentDetail> levels) {
+    public FTPSingleFileUploadTask(Context context) {
         this.context = context;
-        this.client = client;
-        this.localFilePath = localFilePath;
-        this.isImage = isImage;
-        this.levels = levels;
     }
 
-    @Override
-    protected Object doInBackground(Object[] objects) {
+    public void doInBackground(FTPClient _client, String _localFilePath, boolean _isImage, ArrayList<Modal_ContentDetail> _levels) {
         try {
+            this.client = _client;
+            this.localFilePath = _localFilePath;
+            this.isImage = _isImage;
+            this.levels = _levels;
             client.enterLocalPassiveMode();
             String remoteFilePath;
             if (isImage) {
@@ -66,11 +66,10 @@ public class FTPSingleFileUploadTask extends AsyncTask {
                         }
                 }
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
+        onPostExecute();
     }
 
     private void uploadSingleFile(FTPClient ftpClient, String localFilePath, String remoteFilePath, boolean isProfileSharing) {
@@ -82,16 +81,14 @@ public class FTPSingleFileUploadTask extends AsyncTask {
             Log.v("upload_result:::", "" + result);
 //            if (result && !isImage) localFile.delete();
             if (isProfileSharing)
-                publishProgress((total * 100) / lenghtOfFile, localFile.getName());
+                onProgressUpdate((total * 100) / lenghtOfFile, localFile.getName());
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    @Override
-    protected void onProgressUpdate(Object[] values) {
-        super.onProgressUpdate(values);
+    protected void onProgressUpdate(Object... values) {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FILE_SHARE_PROGRESS);
         msg.setProgress((Long) values[0]);
@@ -99,12 +96,12 @@ public class FTPSingleFileUploadTask extends AsyncTask {
         EventBus.getDefault().post(msg);
     }
 
-    @Override
-    protected void onPostExecute(Object o) {
-        super.onPostExecute(o);
-        File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
-        if (path.exists())
-            PD_Utility.deleteRecursive(path);
+    protected void onPostExecute() {
+        if (!isImage) {
+            File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
+            if (path.exists())
+                PD_Utility.deleteRecursive(path);
+        }
         if (isProfileSharing) {
             EventMessage msg = new EventMessage();
             msg.setMessage(PD_Constant.FILE_SHARE_COMPLETE);

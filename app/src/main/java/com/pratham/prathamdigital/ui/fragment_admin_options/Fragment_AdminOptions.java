@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
@@ -29,6 +30,9 @@ import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.admin_statistics.Fragment_AdminStatistics;
 import com.pratham.prathamdigital.ui.admin_statistics.Fragment_AdminStatistics_;
 import com.pratham.prathamdigital.ui.assign.Activity_AssignGroups_;
+import com.pratham.prathamdigital.ui.fragment_admin_panel.AdminPanelFragment;
+import com.pratham.prathamdigital.ui.pullData.PullDataFragment;
+import com.pratham.prathamdigital.ui.pullData.PullDataFragment_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -55,7 +59,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
 
     private static final int PUSH_DATA = 1;
     private static final int ASSIGN_GROUPS = 2;
-    private static final int VIEW_STATISTICS = 3;
+    private static final int PULL_DATA = 3;
     @ViewById(R.id.rv_admin_options)
     RecyclerView rv_admin_options;
     @ViewById(R.id.cir_admin_option_reveal)
@@ -86,6 +90,10 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
                     Intent intent = new Intent(getActivity(), Activity_AssignGroups_.class);
                     startActivityForResult(intent, 1);
                     break;
+                case PULL_DATA:
+                    PD_Utility.showFragment(getActivity(), new PullDataFragment_(), R.id.frame_attendance,
+                            null, PullDataFragment.class.getSimpleName());
+                    break;
             }
         }
     };
@@ -110,7 +118,8 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
     private void initializeMenu() {
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.admin_options);
-        int[] menus_img = {R.drawable.ic_push_data, R.drawable.ic_assign_groups, R.drawable.ic_device_usage, R.drawable.ic_clear_data};
+        int[] menus_img = {R.drawable.ic_push_data, R.drawable.ic_assign_groups, R.drawable.ic_device_usage,
+                R.drawable.ic_clear_data, R.drawable.ic_pull_data};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -185,6 +194,8 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
                     null, Fragment_AdminStatistics.class.getSimpleName());
         } else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Clear Data"))
             showClearDataDialog();
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Pull Data"))
+            mHandler.sendEmptyMessage(PULL_DATA);
     }
 
     private void showClearDataDialog() {
@@ -208,6 +219,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
         groupDao.deleteAllGroups();
         studentDao.deleteAllStudents();
         crLdao.deleteAllCRLs();
+        Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 
     @Override
@@ -242,7 +254,8 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == Activity.RESULT_OK) {
-                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
+                        AdminPanelFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
             }
         }
     }

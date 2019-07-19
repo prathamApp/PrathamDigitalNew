@@ -33,6 +33,7 @@ public interface ContractShare {
 
         void animateHamburger();
 
+        void showFileNotFoundToast();
     }
 
     interface sharePresenter {

@@ -3,7 +3,6 @@ package com.pratham.prathamdigital.ui.pullData;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.graphics.Color;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.View;
@@ -223,7 +222,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @UiThread
     @Override
     public void openLoginActivity() {
-        Toast.makeText(getActivity(), "Data Pulled Successful !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), "Data Pulled Successfully !", Toast.LENGTH_SHORT).show();
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 
@@ -236,22 +235,6 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @Click(R.id.save_button)
     public void saveData() {
         pullDataPresenter.onSaveClick();
-    }
-
-    @Click(R.id.btn_clearData)
-    public void clearData() {
-        AlertDialog clearDataDialog = new AlertDialog.Builder(getActivity())
-                .setTitle("Clear Data")
-                .setMessage("Are you sure you want to clear everything ?")
-                .setIcon(R.drawable.ic_warning)
-                .setPositiveButton("Delete", (dialog, whichButton) -> {
-                    pullDataPresenter.clearData();
-                    dialog.dismiss();
-                })
-                .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
-                .create();
-        clearDataDialog.show();
-        clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
     }
 
     @UiThread

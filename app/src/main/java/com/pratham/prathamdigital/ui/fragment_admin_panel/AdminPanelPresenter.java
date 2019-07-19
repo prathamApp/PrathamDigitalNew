@@ -35,8 +35,9 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
 
     @Background
     public void checkLogin_(String userName, String password) {
+        int crl_count = crLdao.getCRLsCount();
         // if user name and password are admin then navigate to Download activity otherWise admin activity
-        if (userName.equals("pratham") && password.equals("pratham")) {
+        if (userName.equals("pratham") && password.equals("pratham") && crl_count <= 0) {
             adminPanelView.openPullDataFragment();
         } else {
             // assign push logic
@@ -62,5 +63,4 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
             }
         }, 1500);
     }
-
 }

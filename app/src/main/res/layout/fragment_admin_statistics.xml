@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><!--<com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"--><!--xmlns:app="http://schemas.android.com/apk/res-auto"--><!--android:id="@+id/cir_stat_reveal"--><!--android:layout_width="match_parent"--><!--android:layout_height="match_parent"--><!--android:background="#FFF4EB"--><!--android:clickable="true"--><!--android:focusable="true">-->
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFF4EB">
+    android:background="@color/white">
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:id="@+id/txt_active"
@@ -28,6 +29,30 @@
         android:layout_below="@+id/txt_active"
         android:layout_toEndOf="@+id/rv_stat_group" />
 
+    <RelativeLayout
+        android:id="@+id/rl_no_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/no_device_data" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:text="No usage on this device!"
+            android:textColor="@color/dark_blue"
+            android:textSize="@dimen/_25sdp"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+
     <ImageView
         android:id="@+id/img_stat_back"
         android:layout_width="wrap_content"
@@ -37,4 +62,4 @@
         android:scaleType="centerInside"
         app:srcCompat="@drawable/ic_att_back" />
 
-</RelativeLayout><!--</com.pratham.prathamdigital.custom.CircularRevelLayout>-->
+</RelativeLayout>

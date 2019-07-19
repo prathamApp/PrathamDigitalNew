@@ -317,18 +317,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
-//                String languageSelected = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
-//                    if (languageSelected.equalsIgnoreCase(PD_Utility.getLanguageKeyword(modal_rasp_content.getLang().getLangCode()))
-//                            || modal_rasp_content.getLang().getLangCode().equalsIgnoreCase("mul")) {
                     Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
+                    detail.setMappedParentId(mappedParentApi);
                     if (PrathamApplication.isTablet) {
                         if (!detail.getNodetitle().contains("3-6")) {
                             displayedContents.add(detail);
                         }
                     } else displayedContents.add(detail);
                 }
-//                }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
                 totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
@@ -388,6 +385,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     else
                         detail.setContentType("folder");
                     detail.setMappedApiId(detail.getNodeid());
+                    detail.setMappedParentId(mappedParentApi);
                     detail.setContent_language(BaseActivity.language);
                     displayedContents.add(detail);
                 }
@@ -406,35 +404,33 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 zipDownloader.initialize(ContentPresenterImpl.this, download_content.getDownloadurl(),
                         download_content.getFoldername(), fileName, contentDetail, levelContents);
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     private ArrayList<Modal_ContentDetail> removeDownloadedContents(ArrayList<Modal_ContentDetail> dbContents
             , ArrayList<Modal_ContentDetail> onlineContents) {
         String parentid = null;
         if (!dbContents.isEmpty()) {
-            for (Modal_ContentDetail total : dbContents) {
-                parentid = total.getParentid();
-                boolean found = false;
-                for (int i = 0; i < onlineContents.size(); i++) {
-                    boolean replaced = false;
-                    if (onlineContents.get(i).getNodeid().equalsIgnoreCase(total.getNodeid()) ||
-                            onlineContents.get(i).getAltnodeid().equalsIgnoreCase(total.getAltnodeid())) {
-                        onlineContents.set(i, total);                    //content is downloaded
-                        replaced = true;
-                    }
-                    if (replaced) {
-                        found = true;                              //content not found in list, just add it
-                        break;
-                    }
-                }
-                if (!found)
-                    onlineContents.add(total);
-            }
+            parentid = dbContents.get(0).getParentid();
+//            for (Modal_ContentDetail total : dbContents) {
+//                boolean found = false;
+//                for (int i = 0; i < onlineContents.size(); i++) {
+//                    boolean replaced = false;
+//                    if (onlineContents.get(i).getNodeid().equalsIgnoreCase(total.getNodeid()) ||
+//                            onlineContents.get(i).getAltnodeid().equalsIgnoreCase(total.getAltnodeid())) {
+//                        onlineContents.set(i, total);                    //content is downloaded
+//                        replaced = true;
+//                    }
+//                    if (replaced) {
+//                        found = true;                              //content not found in list, just add it
+//                        break;
+//                    }
+//                }
+//                if (!found)
+//                    onlineContents.add(total);
+//            }
         }
         for (int i = 0; i < onlineContents.size(); i++) {
             Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
@@ -447,7 +443,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (parentid != null) onlineContents.get(i).setParentid(parentid);
                 onlineContents.get(i).setMappedParentId(mappedParentApi);
             }
+            int pos = -1;
+            for (int j = 0; j < dbContents.size(); j++) {
+                if (dbContents.get(j).getNodeid().equalsIgnoreCase(onlineContents.get(i).getNodeid())) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos != -1) dbContents.remove(pos);
         }
+        if (dbContents.size() > 0) onlineContents.addAll(dbContents);
         return onlineContents;
     }
 

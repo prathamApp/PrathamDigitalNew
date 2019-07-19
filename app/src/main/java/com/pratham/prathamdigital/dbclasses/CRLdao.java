@@ -23,10 +23,10 @@ public interface CRLdao {
     @Query("SELECT * FROM CRL")
     List<Modal_Crl> getAllCRLs();
 
-   /*  @Query("SELECT count(*) FROM KOLIBRI_CRL")
-    public int getCRLsCount();
+    @Query("SELECT count(*) FROM CRL")
+    int getCRLsCount();
 
-    @Query("SELECT RoleId FROM KOLIBRI_CRL where CRLId=:id")
+   /* @Query("SELECT RoleId FROM KOLIBRI_CRL where CRLId=:id")
     public String getCRLsRoleById(String id);
 
     @Query("SELECT DISTINCT ProgramName FROM KOLIBRI_CRL")

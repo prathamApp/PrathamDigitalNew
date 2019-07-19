@@ -294,7 +294,7 @@ public class ProgressLayout extends View {
 
     public void setCurProgress(final int progress) {
 
-        ObjectAnimator animator = ObjectAnimator.ofInt(this, "progress", progress).setDuration(1500);
+        ObjectAnimator animator = ObjectAnimator.ofInt(this, "progress", progress).setDuration(800);
         animator.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {

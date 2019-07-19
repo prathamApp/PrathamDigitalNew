@@ -5,7 +5,6 @@ import android.net.wifi.WifiConfiguration;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,6 +36,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.jetbrains.annotations.NotNull;
@@ -71,6 +71,11 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     private FTPClient ftpClient;
     private Timer ftpTimer = new Timer();
     private String scanned_qr_ip;
+    @Bean(FTPContentUploadTask.class)
+    FTPContentUploadTask ftpContentUploadTask;
+    @Bean(FTPSingleFileUploadTask.class)
+    FTPSingleFileUploadTask ftpSingleFileUploadTask;
+
     private final AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
         @Override
         public void failureAddingNetwork(int i) {
@@ -326,23 +331,17 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
                 File contentJson = createJsonFileForContent(detail);
                 if (contentJson != null) {
 //                    for Content Transfer
-                    FTPContentUploadTask contentTask = new FTPContentUploadTask(/*context, */ftpClient, dirPath,
-                            detail.getResourcetype(), detail.getNodeid());
-                    contentTask.execute();
+                    ftpContentUploadTask.doInBackground(ftpClient, dirPath, detail.getResourcetype(), detail.getNodeid());
 //                    for content thumbnail Image Transfer
 //                    imgDirPath += "/PrathamImages/" + detail.getNodeimage();
                     ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levels);
                     temp.add(detail);
-                    FTPSingleFileUploadTask imgtask = new FTPSingleFileUploadTask(context, ftpClient,
-                            imgDirPath, true, temp);
-                    imgtask.execute();
+                    ftpSingleFileUploadTask.doInBackground(ftpClient, imgDirPath, true, temp);
 //                    for file Json Transfer
-                    FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient,
-                            contentJson.getAbsolutePath(), false, null);
-                    jsontask.execute();
+                    ftpSingleFileUploadTask.doInBackground(ftpClient, contentJson.getAbsolutePath(), false, null);
                 }
             } else {
-                Toast.makeText(context, "File not found.", Toast.LENGTH_SHORT).show();
+                shareView.showFileNotFoundToast();
             }
         }
     }
@@ -356,7 +355,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
             if (!path.exists()) path.mkdir();
             return createJsonFileOnInternal(array,
-                    path.getAbsolutePath() + "/" + detail.getNodetitle());
+                    path.getAbsolutePath() + "/" + detail.getNodeid());
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -467,8 +466,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray stu_array = gson.toJsonTree(students).getAsJsonArray();
             createJsonFileOnInternal(stu_array, path.getAbsolutePath() + "/students");
 //            for file Json Transfer
-            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false, null);
-            jsontask.execute();
+            ftpSingleFileUploadTask.doInBackground(ftpClient, path.getAbsolutePath(), false, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -502,8 +500,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray meta_array = gson.toJsonTree(metadata).getAsJsonArray();
             createJsonFileOnInternal(meta_array, path.getAbsolutePath() + "/status");
             // for file Json Transfer
-            FTPSingleFileUploadTask jsontask = new FTPSingleFileUploadTask(context, ftpClient, path.getAbsolutePath(), false, null);
-            jsontask.execute();
+            ftpSingleFileUploadTask.doInBackground(ftpClient, path.getAbsolutePath(), false, null);
         } catch (Exception e) {
             e.printStackTrace();
         }

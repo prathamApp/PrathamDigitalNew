@@ -230,6 +230,11 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
 
     }
 
+    @Override
+    public void showFileNotFoundToast() {
+
+    }
+
     @UiThread
     public void animateHotspotCreation() {
         startCreateAnim();
@@ -300,6 +305,7 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
         return bmp;
     }
 
+    @UiThread
     @Subscribe
     public void messageRecievedInShare(EventMessage message) {
         if (message != null) {

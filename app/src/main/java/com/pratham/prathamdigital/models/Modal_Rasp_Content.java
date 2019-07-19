@@ -253,7 +253,10 @@ public class Modal_Rasp_Content {
                     modal_contentDetail.setContentType("file");
                     break;
                 default:
-                    modal_contentDetail.setNodetype(modal_rasp_content.getKind());
+                    if (modal_rasp_content.getDescription().contains(PD_Constant.COURSE) ||
+                            modal_rasp_content.getDescription().contains(PD_Constant.COURSE.toLowerCase()))
+                        modal_contentDetail.setNodetype(PD_Constant.COURSE);
+                    else modal_contentDetail.setNodetype(modal_rasp_content.getKind());
                     modal_contentDetail.setResourcetype(modal_rasp_content.getKind());
                     modal_contentDetail.setContentType("folder");
             }

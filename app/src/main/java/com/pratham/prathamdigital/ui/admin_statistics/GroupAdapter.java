@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_TotalDaysGroupsPlayed;
+import com.pratham.prathamdigital.ui.fragment_admin_options.ContractOptions;
 
 import java.util.List;
 
@@ -20,10 +21,12 @@ import butterknife.ButterKnife;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
     private List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds;
+    private ContractOptions contractOptions;
 
-    public GroupAdapter(Context context, List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds) {
+    public GroupAdapter(Context context, List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds, ContractOptions contractOptions) {
         Context context1 = context;
         this.modal_totalDaysGroupsPlayeds = modal_totalDaysGroupsPlayeds;
+        this.contractOptions = contractOptions;
     }
 
     @NonNull
@@ -38,6 +41,9 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     public void onBindViewHolder(@NonNull GroupAdapter.ViewHolder viewHolder, int i) {
         viewHolder.stat_grp_name.setText(modal_totalDaysGroupsPlayeds.get(viewHolder.getAdapterPosition()).getGroupName());
         viewHolder.stat_grp_date.setText(modal_totalDaysGroupsPlayeds.get(viewHolder.getAdapterPosition()).getDates());
+        viewHolder.itemView.setOnClickListener(v -> {
+            contractOptions.menuClicked(viewHolder.getAdapterPosition(), null, null);
+        });
     }
 
     @Override

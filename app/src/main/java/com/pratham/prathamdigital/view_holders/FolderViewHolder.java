@@ -5,7 +5,6 @@ import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -16,8 +15,10 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.label.LabelView;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
+import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
     TextView folder_content_desc;
     @Nullable
     @BindView(R.id.content_card)
-    RelativeLayout content_card;
+    LabelView content_card;
 
     private final ContentContract.contentClick contentClick;
 
@@ -50,9 +51,11 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 
     @SuppressLint("SetTextI18n")
     public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
-        if (contentItem.getNodeserverimage() == null) {
+        if (contentItem.getNodeserverimage() == null)
             Objects.requireNonNull(contentItem.getNodeserverimage());
-        }
+        if (contentItem.getNodetype().equalsIgnoreCase(PD_Constant.COURSE))
+            Objects.requireNonNull(content_card).setLabelVisual(true);
+        else Objects.requireNonNull(content_card).setLabelVisual(false);
         ImageRequest request;
         if (contentItem.isDownloaded()) {
             Uri imgUri;

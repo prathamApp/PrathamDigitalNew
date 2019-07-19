@@ -261,7 +261,13 @@ public class ZipDownloader {
         modal_download.getContent().setContentType("file");
         ArrayList<Modal_ContentDetail> temp = new ArrayList<>(modal_download.getLevelContents());
         temp.add(modal_download.getContent());
+        String parentid = null;
         for (Modal_ContentDetail d : temp) {
+            if (d.getContentType().equalsIgnoreCase(PD_Constant.FOLDER)) parentid = d.getNodeid();
+            else {
+                //for keeping the same parent id as with other childrens if downloaded with other source i.e kolibri
+                if (parentid != null) d.setParentid(parentid);
+            }
             if (d.getNodeimage() != null) {
                 String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
                 d.setNodeimage(img_name);

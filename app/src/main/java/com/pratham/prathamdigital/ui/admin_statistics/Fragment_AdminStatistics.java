@@ -5,11 +5,14 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.models.Modal_ResourcePlayedByGroups;
 import com.pratham.prathamdigital.models.Modal_TotalDaysGroupsPlayed;
+import com.pratham.prathamdigital.ui.fragment_admin_options.ContractOptions;
 import com.yarolegovich.discretescrollview.DSVOrientation;
 import com.yarolegovich.discretescrollview.DiscreteScrollView;
 import com.yarolegovich.discretescrollview.transform.ScaleTransformer;
@@ -26,7 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 @EFragment(R.layout.fragment_admin_statistics)
-public class Fragment_AdminStatistics extends Fragment implements AdminStatContract.StatView {
+public class Fragment_AdminStatistics extends Fragment implements AdminStatContract.StatView, ContractOptions {
     //    @ViewById(R.id.cir_stat_reveal)
 //    CircularRevelLayout cir_stat_reveal;
     @ViewById(R.id.txt_active)
@@ -35,6 +38,8 @@ public class Fragment_AdminStatistics extends Fragment implements AdminStatContr
     DiscreteScrollView rv_stat_group;
     @ViewById(R.id.rv_daily_stat)
     RecyclerView rv_daily_stat;
+    @ViewById(R.id.rl_no_data)
+    View rl_no_data;
 
     @Bean(AdminStatPresenter.class)
     AdminStatContract.StatPresenter statPresenter;
@@ -73,7 +78,7 @@ public class Fragment_AdminStatistics extends Fragment implements AdminStatContr
     @UiThread
     public void initializeGroupAdapter(List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds) {
         if (groupAdapter == null) {
-            groupAdapter = new GroupAdapter(getActivity(), modal_totalDaysGroupsPlayeds);
+            groupAdapter = new GroupAdapter(getActivity(), modal_totalDaysGroupsPlayeds, this);
             rv_stat_group.setOrientation(DSVOrientation.VERTICAL);
             rv_stat_group.setAdapter(groupAdapter);
             rv_stat_group.addOnItemChangedListener(new DiscreteScrollView.OnItemChangedListener<RecyclerView.ViewHolder>() {
@@ -90,6 +95,7 @@ public class Fragment_AdminStatistics extends Fragment implements AdminStatContr
         } else
             groupAdapter.updateItems(modal_totalDaysGroupsPlayeds);
         if (modal_totalDaysGroupsPlayeds.size() > 0) rv_daily_stat.smoothScrollToPosition(0);
+        else rl_no_data.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -113,5 +119,15 @@ public class Fragment_AdminStatistics extends Fragment implements AdminStatContr
     @Click(R.id.img_stat_back)
     public void setStatBack() {
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+    }
+
+    @Override
+    public void menuClicked(int position, Modal_NavigationMenu modal_navigationMenu, View view) {
+        rv_stat_group.smoothScrollToPosition(position);
+    }
+
+    @Override
+    public void toggleMenuIcon() {
+
     }
 }

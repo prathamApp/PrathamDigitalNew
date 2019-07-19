@@ -1,12 +1,13 @@
 package com.pratham.prathamdigital.async;
 
-import android.os.AsyncTask;
+import android.content.Context;
 import android.util.Log;
 
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.EBean;
 import org.apache.commons.net.ftp.FTPClient;
 import org.greenrobot.eventbus.EventBus;
 
@@ -14,19 +15,35 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class FTPContentUploadTask extends AsyncTask {
-    private final FTPClient client;
-    private final long lenghtOfFile;
-    //    private Context context;
-    private final String localPath;
-    private final String contentType;
-    private final String downloadId;
+@EBean
+public class FTPContentUploadTask {
+    private FTPClient client;
+    private long lenghtOfFile;
+    private Context context;
+    private String localPath;
+    private String contentType;
+    private String downloadId;
     private String remoteDirPath;
     private long total = 0;
 
-    @Override
-    protected Object doInBackground(Object[] objects) {
+    public FTPContentUploadTask(Context context) {
+        this.context = context;
+    }
+
+    public void doInBackground(FTPClient ftpclient, String _localPath, String _contentType, String _downloadId) {
         try {
+            this.client = ftpclient;
+            this.localPath = _localPath;
+            this.downloadId = _downloadId;
+            this.contentType = "Pratham" + _contentType;
+            File f = new File(localPath);
+            lenghtOfFile = (f.isFile()) ? f.length() : PD_Utility.folderSize(f);
+            if (_contentType.equalsIgnoreCase(PD_Constant.GAME))
+                remoteDirPath = "/PrathamGame/";
+            else if (_contentType.equalsIgnoreCase(PD_Constant.VIDEO))
+                remoteDirPath = "/PrathamVideo/";
+            else if (_contentType.equalsIgnoreCase(PD_Constant.PDF))
+                remoteDirPath = "/PrathamPDF/";
             // use local passive mode to pass firewall
             client.enterLocalPassiveMode();
             client.makeDirectory(contentType);
@@ -38,27 +55,10 @@ public class FTPContentUploadTask extends AsyncTask {
                 String remoteFilePath = "/" + contentType + "/" + new File(localPath).getName();
                 uploadSingleFile(client, localPath, remoteFilePath);
             }
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
-    }
-
-    public FTPContentUploadTask(/*Context context, */FTPClient client, String localPath, String contentType, String downloadId) {
-//        this.context = context;
-        this.client = client;
-        this.localPath = localPath;
-        this.downloadId = downloadId;
-        this.contentType = "Pratham" + contentType;
-        File f = new File(localPath);
-        lenghtOfFile = (f.isFile()) ? f.length() : PD_Utility.folderSize(f);
-        if (contentType.equalsIgnoreCase(PD_Constant.GAME))
-            remoteDirPath = "/PrathamGame/";
-        else if (contentType.equalsIgnoreCase(PD_Constant.VIDEO))
-            remoteDirPath = "/PrathamVideo/";
-        else if (contentType.equalsIgnoreCase(PD_Constant.PDF))
-            remoteDirPath = "/PrathamPDF/";
+        onPostExecute();
     }
 
     private void uploadDirectory(FTPClient ftpClient, String remoteDirPath, String localParentDir,
@@ -95,7 +95,7 @@ public class FTPContentUploadTask extends AsyncTask {
             total += localFile.length();
             FileInputStream in = new FileInputStream(localFile);
             boolean result = ftpClient.storeFile(remoteFilePath, in);
-            publishProgress((total * 100) / lenghtOfFile, localFile.getName());
+            onProgressUpdate((total * 100) / lenghtOfFile, localFile.getName());
             Log.v("upload_result:::", "" + result);
             in.close();
         } catch (IOException e) {
@@ -103,9 +103,7 @@ public class FTPContentUploadTask extends AsyncTask {
         }
     }
 
-    @Override
-    protected void onProgressUpdate(Object[] values) {
-        super.onProgressUpdate(values);
+    protected void onProgressUpdate(Object... values) {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FILE_SHARE_PROGRESS);
         msg.setDownloadId(downloadId);
@@ -114,9 +112,7 @@ public class FTPContentUploadTask extends AsyncTask {
         EventBus.getDefault().post(msg);
     }
 
-    @Override
-    protected void onPostExecute(Object o) {
-        super.onPostExecute(o);
+    protected void onPostExecute() {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FILE_SHARE_COMPLETE);
         EventBus.getDefault().post(msg);
