@@ -28,6 +28,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EBean;
 
 import java.io.File;
@@ -53,14 +54,13 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     private Timer gpsFixTimer;
     private int gpsFixCount = 0;
 
+    @Bean(ReadContentDbFromSdCard.class)
+    ReadContentDbFromSdCard readContentDbFromSdCard;
+
     SplashPresenterImpl(Context context) {
         this.context = context;
         splashview = (SplashContract.splashview) context;
     }
-
-//    private void getVersion() {
-//        new GetLatestVersion(context, SplashPresenterImpl.this).execute();
-//    }
 
     @Background
     @Override
@@ -73,11 +73,10 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                     .isEmpty() && (Float.parseFloat(currentVersion) < Float.parseFloat(latestVersion)))
                 splashview.showAppUpdateDialog();
             else
-                new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
+                readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
         } catch (Exception e) {
-//            i.e Beta version
             e.printStackTrace();
-            new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
+            readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
         }
     }
 
@@ -145,7 +144,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void checkStudentList() {
-        if (!studentDao.getAllStudents().isEmpty()) {
+        if (studentDao.getStudentsCount() > 0) {
             splashview.redirectToDashboard();
         } else {
             splashview.redirectToAvatar();
@@ -265,13 +264,13 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 //                checkVersion(FastSave.getInstance().getString(PD_Constant.APP_VERSION, ""));
 //            else
 //        checkStudentList();
-        new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
+        readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
     }
 
     @Override
     public void checkIfContentinSDCard() {
         if (PrathamApplication.isTablet)
-            new ReadContentDbFromSdCard(context, SplashPresenterImpl.this).execute();
+            readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
         else
             checkConnectivity();
     }

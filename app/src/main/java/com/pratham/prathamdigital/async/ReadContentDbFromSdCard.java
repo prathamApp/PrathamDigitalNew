@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.AsyncTask;
 
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
@@ -17,6 +16,10 @@ import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,27 +30,22 @@ import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
-public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> {
+@EBean
+public class ReadContentDbFromSdCard {
 
     @SuppressLint("StaticFieldLeak")
     private final Context context;
-    private final Interface_copying interface_copying;
+    private Interface_copying interface_copying;
     private File folder_file;
 
-    public ReadContentDbFromSdCard(Context context, Interface_copying interface_copying) {
+    public ReadContentDbFromSdCard(Context context) {
         this.context = context;
-        this.interface_copying = interface_copying;
     }
 
-    @Override
-    protected void onPreExecute() {
-        super.onPreExecute();
-        interface_copying.copyingExisting();
-    }
-
-    @Override
-    protected Boolean doInBackground(String... strings) {
+    @Background
+    public void doInBackground(Interface_copying _interface_copying) {
         try {
+            this.interface_copying = _interface_copying;
             ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
             if (sdPath.size() > 0) {
                 folder_file = new File(sdPath.get(0) + "/" + PD_Constant.PRADIGI_FOLDER + "/" +
@@ -56,7 +54,7 @@ public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> 
                     File db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
                     if (db_file.exists()) {
                         SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
-                        if (db == null) return false;
+                        if (db == null) onPostExecute(false);
                         try {
                             Cursor content_cursor = db.rawQuery("SELECT * FROM TableContent", null);
                             //populate contents
@@ -79,8 +77,8 @@ public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> 
                                     detail.setContent_language(content_cursor.getString(content_cursor.getColumnIndex("content_language")));
                                     detail.setParentid(content_cursor.getString(content_cursor.getColumnIndex("parentid")));
                                     detail.setContentType(content_cursor.getString(content_cursor.getColumnIndex("contentType")));
-//                                    detail.setAltnodeid(content_cursor.getString(content_cursor.getColumnIndex("altnodeid")));
-//                                    detail.setVersion(content_cursor.getFloat(content_cursor.getColumnIndex("version")));
+                                    detail.setAltnodeid(content_cursor.getString(content_cursor.getColumnIndex("altnodeid")));
+                                    detail.setVersion(content_cursor.getString(content_cursor.getColumnIndex("version")));
                                     detail.setDownloaded(true);
                                     detail.setOnSDCard(true);
                                     contents.add(detail);
@@ -200,22 +198,21 @@ public class ReadContentDbFromSdCard extends AsyncTask<String, String, Boolean> 
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
-                        return true;
+                        onPostExecute(true);
                     } else
-                        return false;
+                        onPostExecute(false);
                 } else
-                    return false;
+                    onPostExecute(false);
             } else
-                return false;
+                onPostExecute(false);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            onPostExecute(false);
         }
     }
 
-    @Override
-    protected void onPostExecute(Boolean copied) {
-        super.onPostExecute(copied);
+    @UiThread
+    public void onPostExecute(Boolean copied) {
         if (copied)
             interface_copying.successCopyingExisting(folder_file.getAbsolutePath());
         else

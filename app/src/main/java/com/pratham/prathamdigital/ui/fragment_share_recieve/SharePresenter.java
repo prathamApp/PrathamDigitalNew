@@ -75,6 +75,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     FTPContentUploadTask ftpContentUploadTask;
     @Bean(FTPSingleFileUploadTask.class)
     FTPSingleFileUploadTask ftpSingleFileUploadTask;
+    @Bean(ConnectToFTP.class)
+    ConnectToFTP connectToFTP;
 
     private final AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
         @Override
@@ -247,7 +249,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void connectFTP(String ip) {
         scanned_qr_ip = ip;
-        new ConnectToFTP(context, SharePresenter.this, scanned_qr_ip).execute();
+        connectToFTP.doInBackground(SharePresenter.this, scanned_qr_ip);
     }
 
     @Override

@@ -414,23 +414,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         String parentid = null;
         if (!dbContents.isEmpty()) {
             parentid = dbContents.get(0).getParentid();
-//            for (Modal_ContentDetail total : dbContents) {
-//                boolean found = false;
-//                for (int i = 0; i < onlineContents.size(); i++) {
-//                    boolean replaced = false;
-//                    if (onlineContents.get(i).getNodeid().equalsIgnoreCase(total.getNodeid()) ||
-//                            onlineContents.get(i).getAltnodeid().equalsIgnoreCase(total.getAltnodeid())) {
-//                        onlineContents.set(i, total);                    //content is downloaded
-//                        replaced = true;
-//                    }
-//                    if (replaced) {
-//                        found = true;                              //content not found in list, just add it
-//                        break;
-//                    }
-//                }
-//                if (!found)
-//                    onlineContents.add(total);
-//            }
         }
         for (int i = 0; i < onlineContents.size(); i++) {
             Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),

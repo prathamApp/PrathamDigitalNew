@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -51,12 +52,12 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 
     @SuppressLint("SetTextI18n")
     public void setFolderItem(Modal_ContentDetail contentItem, int pos) {
-        if (contentItem.getNodeserverimage() == null)
-            Objects.requireNonNull(contentItem.getNodeserverimage());
+//        if (contentItem.getNodeserverimage() == null)
+//            Objects.requireNonNull(contentItem.getNodeserverimage());
         if (contentItem.getNodetype().equalsIgnoreCase(PD_Constant.COURSE))
             Objects.requireNonNull(content_card).setLabelVisual(true);
         else Objects.requireNonNull(content_card).setLabelVisual(false);
-        ImageRequest request;
+        ImageRequest request = null;
         if (contentItem.isDownloaded()) {
             Uri imgUri;
             if (contentItem.isOnSDCard()) {
@@ -68,11 +69,6 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
                         PrathamApplication.pradigiPath + "/PrathamImages/" + contentItem.getNodeimage()));
                 Objects.requireNonNull(folder_content_image).setImageURI(imgUri);
             }
-//                request = ImageRequestBuilder
-//                        .newBuilderWithSource(imgUri)
-//                        .setRequestPriority(Priority.HIGH)
-//                        .setLowestPermittedRequestLevel(ImageRequest.RequestLevel.FULL_FETCH)
-//                        .build();
         } else {
             if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {
                 request = ImageRequestBuilder
@@ -80,15 +76,17 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
                         .setResizeOptions(new ResizeOptions(300, 200))
                         .setLocalThumbnailPreviewsEnabled(true).build();
             } else {
-                request = ImageRequestBuilder
-                        .newBuilderWithSource(Uri.parse(contentItem.getNodeserverimage()))
-                        .setResizeOptions(new ResizeOptions(300, 200))
-                        .setLocalThumbnailPreviewsEnabled(true).build();
+                if (contentItem.getNodeserverimage() != null)
+                    request = ImageRequestBuilder
+                            .newBuilderWithSource(Uri.parse(contentItem.getNodeserverimage()))
+                            .setResizeOptions(new ResizeOptions(300, 200))
+                            .setLocalThumbnailPreviewsEnabled(false).build();
             }
             if (request != null) {
+                Log.d("uri::", "" + request.getSourceUri().toString());
                 DraweeController controller = Fresco.newDraweeControllerBuilder()
-                        .setImageRequest(request)
                         .setOldController(Objects.requireNonNull(folder_content_image).getController())
+                        .setImageRequest(request)
                         .build();
                 folder_content_image.setController(controller);
             }

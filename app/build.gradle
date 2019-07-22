@@ -6,9 +6,9 @@ apply plugin: 'kotlin-android-extensions'
  Increment the MAJOR after the MINOR version achieved the number 9*/
 ext.versionMajor = 1
 /*Minor Version : While adding a functionality , minor changes like color change or icon changes*/
-ext.versionMinor = 3
+ext.versionMinor = 4
 /*Patch : Bug fixing*/
-ext.versionPatch = 3
+ext.versionPatch = 1
 ext.minSdkVersion = 21
 android {
     compileSdkVersion 28
@@ -17,7 +17,7 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion 28
         versionCode generateVersionCode()
-        versionName "3.41"
+        versionName "3.42"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -89,7 +89,7 @@ dependencies {
     implementation 'com.airbnb.android:lottie:2.7.0'
     implementation 'android.arch.persistence.room:runtime:1.1.1'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.1'
-    implementation 'com.facebook.fresco:fresco:1.12.1'
+    implementation 'com.facebook.fresco:fresco:1.13.0'
     implementation 'com.intuit.sdp:sdp-android:1.0.6'
     implementation 'com.github.joielechong:zip4jandroid:1.0.1'
     implementation 'org.jbundle.util.osgi.wrapped:org.jbundle.util.osgi.wrapped.org.apache.http.client:4.1.2'

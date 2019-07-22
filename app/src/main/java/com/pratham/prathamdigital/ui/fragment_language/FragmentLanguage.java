@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -46,6 +47,9 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     private LanguageAdapter adapter;
     private int revealX;
     private int revealY;
+
+    @Bean(ReadContentDbFromSdCard.class)
+    ReadContentDbFromSdCard readContentDbFromSdCard;
 
     @AfterViews
     public void initialize() {
@@ -104,7 +108,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
-        new ReadContentDbFromSdCard(getActivity(), FragmentLanguage.this).execute();
+        readContentDbFromSdCard.doInBackground(FragmentLanguage.this);
         String filename = "AajKaSawal_" + language.getMain_language() + ".json";
         String aksUrl = PD_Constant.URL.AAJ_KA_SAWAL_URL.toString() + filename;
         downloadAajKaSawal(aksUrl, filename);

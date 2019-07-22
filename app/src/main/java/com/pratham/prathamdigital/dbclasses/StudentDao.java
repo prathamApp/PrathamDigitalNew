@@ -48,5 +48,8 @@ public interface StudentDao {
     @Query("DELETE FROM Students Where StudentId=:stdID")
     void deleteStudentByID(String stdID);
 
- //   void deleteAllStudents();
+    @Query("SELECT count(*) FROM Students")
+    int getStudentsCount();
+
+    //   void deleteAllStudents();
 }
