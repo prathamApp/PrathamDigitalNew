@@ -77,6 +77,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     FTPSingleFileUploadTask ftpSingleFileUploadTask;
     @Bean(ConnectToFTP.class)
     ConnectToFTP connectToFTP;
+    @Bean(CopyExistingJSONS.class)
+    CopyExistingJSONS copyExistingJSONS;
 
     private final AddNetworkCallbacks addNetworkCallbacks = new AddNetworkCallbacks() {
         @Override
@@ -382,7 +384,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
     @Override
     public void readRecievedFiles(File filePath) {
         //read recieved jsons and insert to DB
-        new CopyExistingJSONS(/*context, */filePath).execute();
+        copyExistingJSONS.doInBackground(filePath);
     }
 
     @Background

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/fragment_course_bkgd"
+    android:fillViewport="true">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:id="@+id/rl_course"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_40sdp"
+            android:layout_marginTop="@dimen/_10sdp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/img_course"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_120sdp"
+                android:background="@color/white"
+                app:actualImageScaleType="centerInside"
+                app:placeholderImage="@drawable/ic_clear_data"
+                app:roundedCornerRadius="@dimen/_15sdp"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="@dimen/_2sdp" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_course_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/img_course"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:text="adsdfsffasdad"
+                android:textColor="@color/dark_blue"
+                android:textSize="@dimen/_15sdp" />
+
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                android:id="@+id/btn_startCourse"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_below="@+id/txt_course_title"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:background="@drawable/button_orange_selector"
+                android:text="Start Course"
+                android:textAllCaps="false"
+                android:textColor="@color/white" />
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_course"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/rl_course"
+            android:layout_margin="@dimen/_10sdp" />
+    </RelativeLayout>
+</ScrollView>

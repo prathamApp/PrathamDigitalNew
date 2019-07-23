@@ -23,6 +23,9 @@ public interface SessionDao {
     @Query("UPDATE Session SET sentFlag = 1 where SessionID = :s_id")
     int updateFlag(String s_id);
 
+    @Query("UPDATE Session SET sentFlag = 1")
+    int updateAllFlag();
+
     @Delete
     void delete(Modal_Session session);
 

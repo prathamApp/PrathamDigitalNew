@@ -1,6 +1,6 @@
 package com.pratham.prathamdigital.async;
 
-import android.os.AsyncTask;
+import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,6 +19,9 @@ import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.EBean;
+import org.androidannotations.annotations.UiThread;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
@@ -37,20 +40,20 @@ import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 
-public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
+@EBean
+public class CopyExistingJSONS {
 
-    //    Context context;
-    private final File filePath;
-//    Interface_copying interface_copying;
+    Context context;
+    private File filePath;
 
-    public CopyExistingJSONS(/*Context context, */File filePath) {
-//        this.context = context;
-        this.filePath = filePath;
+    public CopyExistingJSONS(Context context) {
+        this.context = context;
     }
 
-    @Override
-    protected Boolean doInBackground(String... strings) {
+    @Background
+    public void doInBackground(File _filePath) {
         try {
+            this.filePath = _filePath;
             try {
                 FileInputStream is = new FileInputStream(filePath);
                 int size = is.available();
@@ -84,7 +87,7 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             }.getType();
                             List<Modal_Student> stutemp = gson.fromJson(mResponse, stuType);
                             studentDao.insertAllStudents(stutemp);
-                            publishProgress("Receiving Profiles");
+                            onProgressUpdate("Receiving Profiles");
                             break;
                     }
                 } else if (PD_Utility.isUsages(filePath.getName())) {
@@ -99,19 +102,63 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             Type logType = new TypeToken<List<Modal_Log>>() {
                             }.getType();
                             List<Modal_Log> logtemp = gson.fromJson(mResponse, logType);
-                            logDao.insertAllLogs(logtemp);
+                            List<Modal_Log> logs = new ArrayList<>();
+                            for (Modal_Log l : logtemp) {
+                                Modal_Log log = new Modal_Log();
+                                log.setCurrentDateTime(l.getCurrentDateTime());
+                                log.setDeviceId(l.getDeviceId());
+                                log.setErrorType(l.getErrorType());
+                                log.setExceptionMessage(l.getExceptionMessage());
+                                log.setExceptionStackTrace(l.getExceptionStackTrace());
+                                log.setLogDetail(l.getLogDetail());
+                                log.setMethodName(l.getMethodName());
+                                log.setSentFlag(l.getSentFlag());
+                                log.setSessionId(l.getSessionId());
+                                logs.add(log);
+                            }
+                            logDao.insertAllLogs(logs);
                             break;
                         case "attendance.json":
                             Type attType = new TypeToken<List<Attendance>>() {
                             }.getType();
                             List<Attendance> atttemp = gson.fromJson(mResponse, attType);
-                            attendanceDao.insertAttendance(atttemp);
+                            List<Attendance> tmp = new ArrayList<>();
+                            for (Attendance att : atttemp) {
+                                Attendance attendance = new Attendance();
+                                attendance.setSentFlag(att.getSentFlag());
+                                attendance.setPresent(att.getPresent());
+                                attendance.setDate(att.getDate());
+                                attendance.setStudentID(att.getStudentID());
+                                attendance.setSessionID(att.getSessionID());
+                                attendance.setGroupID(att.getGroupID());
+                                attendance.setVillageID(att.getVillageID());
+                                tmp.add(attendance);
+                            }
+                            attendanceDao.insertAttendance(tmp);
                             break;
                         case "scores.json":
                             Type scoreType = new TypeToken<List<Modal_Score>>() {
                             }.getType();
                             List<Modal_Score> scoretemp = gson.fromJson(mResponse, scoreType);
-                            scoreDao.insertAll(scoretemp);
+                            List<Modal_Score> scores = new ArrayList<>();
+                            for (Modal_Score sc : scoretemp) {
+                                Modal_Score modal_score = new Modal_Score();
+                                modal_score.setSentFlag(sc.getSentFlag());
+                                modal_score.setLabel(sc.getLabel());
+                                modal_score.setLevel(sc.getLevel());
+                                modal_score.setEndDateTime(sc.getEndDateTime());
+                                modal_score.setStartDateTime(sc.getStartDateTime());
+                                modal_score.setTotalMarks(sc.getTotalMarks());
+                                modal_score.setScoredMarks(sc.getScoredMarks());
+                                modal_score.setQuestionId(sc.getQuestionId());
+                                modal_score.setResourceID(sc.getResourceID());
+                                modal_score.setDeviceID(sc.getDeviceID());
+                                modal_score.setGroupID(sc.getGroupID());
+                                modal_score.setStudentID(sc.getStudentID());
+                                modal_score.setSessionID(sc.getSessionID());
+                                scores.add(modal_score);
+                            }
+                            scoreDao.insertAll(scores);
                             break;
                         case "status.json":
                             Modal_Score modalScore = new Modal_Score();
@@ -131,7 +178,7 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                             modalScore.setLabel(mResponse);
                             modalScore.setSentFlag(0);
                             scoreDao.insert(modalScore);
-                            publishProgress("Receiving Usages");
+                            onProgressUpdate("Receiving Usages");
                             break;
                     }
                 } else if (filePath.exists()) {
@@ -151,30 +198,22 @@ public class CopyExistingJSONS extends AsyncTask<String, String, Boolean> {
                         else detail.setOnSDCard(false);
                     }
                     modalContentDao.addContentList(tempContents);
-                    publishProgress(filename);
+                    onProgressUpdate(filename);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
             filePath.delete();
-            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
         }
     }
 
-    @Override
-    protected void onProgressUpdate(String... values) {
-        super.onProgressUpdate(values);
+    @UiThread
+    public void onProgressUpdate(String... values) {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FILE_RECEIVE_COMPLETE);
         msg.setFile_name(values[0]);
         EventBus.getDefault().post(msg);
-    }
-
-    @Override
-    protected void onPostExecute(Boolean copied) {
-        super.onPostExecute(copied);
     }
 }

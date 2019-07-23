@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -80,12 +81,22 @@ public class FTPSingleFileUploadTask {
             boolean result = ftpClient.storeFile(remoteFilePath, in);
             Log.v("upload_result:::", "" + result);
 //            if (result && !isImage) localFile.delete();
+            updateFlag(localFile.getAbsolutePath());
             if (isProfileSharing)
                 onProgressUpdate((total * 100) / lenghtOfFile, localFile.getName());
             in.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void updateFlag(String localFilePath) {
+        if (localFilePath.endsWith("sessions.json"))
+            PrathamApplication.sessionDao.updateAllFlag();
+        else if (localFilePath.endsWith("attendance.json"))
+            PrathamApplication.attendanceDao.updateAllSentFlag();
+        else if (localFilePath.endsWith("scores.json"))
+            PrathamApplication.scoreDao.updateAllFlag();
     }
 
     protected void onProgressUpdate(Object... values) {

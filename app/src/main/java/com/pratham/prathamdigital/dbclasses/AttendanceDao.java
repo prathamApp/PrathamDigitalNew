@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.dbclasses;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 
 import com.pratham.prathamdigital.models.Attendance;
@@ -11,7 +10,7 @@ import java.util.List;
 
 @Dao
 public interface AttendanceDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     void insertAttendance(List<Attendance> attendancesList);
 
     @Query("DELETE FROM Attendance")
@@ -29,8 +28,8 @@ public interface AttendanceDao {
     @Query("SELECT * FROM Attendance WHERE sentFlag=0")
     List<Attendance> getNewAttendances();
 
-    @Query("UPDATE Attendance SET sentFlag=:pushStatus")
-    void updateAllSentFlag(int pushStatus);
+    @Query("UPDATE Attendance SET sentFlag=1")
+    void updateAllSentFlag();
 
     @Query("SELECT DISTINCT SessionID FROM Attendance")
     List<String> getAllDistinctSessions();

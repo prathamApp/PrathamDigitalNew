@@ -17,11 +17,14 @@ public interface ScoreDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insert(Modal_Score score);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert
     void insertAll(List<Modal_Score> score);
 
     @Query("UPDATE Score SET sentFlag = 1 where SessionID = :s_id")
     int updateFlag(String s_id);
+
+    @Query("UPDATE Score SET sentFlag = 1")
+    int updateAllFlag();
 
     @Delete
     void delete(Modal_Score score);
