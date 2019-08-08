@@ -24,13 +24,13 @@ import java.util.Objects;
 
 public class ContentAdapter extends RecyclerView.Adapter {
 
-    static final int FOLDER_TYPE = 1;
-    static final int FILE_TYPE = 2;
-    static final int HEADER_TYPE = 3;
+    private static final int FOLDER_TYPE = 1;
+    private static final int FILE_TYPE = 2;
+    private static final int HEADER_TYPE = 3;
     private final ContentContract.contentClick contentInterface;
     private final AsyncListDiffer<Modal_ContentDetail> mDiffer;
 
-    ContentAdapter(Context context, ContentContract.contentClick contentClick) {
+    public ContentAdapter(Context context, ContentContract.contentClick contentClick) {
         DiffUtil.ItemCallback<Modal_ContentDetail> diffcallback = new DiffUtil.ItemCallback<Modal_ContentDetail>() {
             @Override
             public boolean areItemsTheSame(@NonNull Modal_ContentDetail detail, @NonNull Modal_ContentDetail t1) {
@@ -87,6 +87,10 @@ public class ContentAdapter extends RecyclerView.Adapter {
         Modal_ContentDetail contentDetail = mDiffer.getCurrentList().get(holder.getAdapterPosition());
         if (contentDetail != null) {
             switch (holder.getItemViewType()) {
+                case HEADER_TYPE:
+                    EmptyHolder emptyHolder = (EmptyHolder) holder;
+                    emptyHolder.setView(contentDetail);
+                    break;
                 case FOLDER_TYPE:
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;
                     folderViewHolder.setFolderItem(contentDetail, holder.getAdapterPosition());
@@ -108,6 +112,10 @@ public class ContentAdapter extends RecyclerView.Adapter {
         } else {
             Modal_ContentDetail contentDetail = (Modal_ContentDetail) payloads.get(0);
             switch (holder.getItemViewType()) {
+                case HEADER_TYPE:
+                    EmptyHolder emptyHolder = (EmptyHolder) holder;
+                    emptyHolder.setView(contentDetail);
+                    break;
                 case FOLDER_TYPE:
                     //folder type
                     FolderViewHolder folderViewHolder = (FolderViewHolder) holder;

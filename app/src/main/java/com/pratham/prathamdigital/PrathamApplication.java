@@ -13,6 +13,7 @@ import com.pratham.prathamdigital.async.ReadBackupDb;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.CRLdao;
+import com.pratham.prathamdigital.dbclasses.CourseDao;
 import com.pratham.prathamdigital.dbclasses.GroupDao;
 import com.pratham.prathamdigital.dbclasses.LogDao;
 import com.pratham.prathamdigital.dbclasses.ModalContentDao;
@@ -58,6 +59,7 @@ public class PrathamApplication extends Application {
     public static StudentDao studentDao;
     public static VillageDao villageDao;
     public static LogDao logDao;
+    public static CourseDao courseDao;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -123,6 +125,7 @@ public class PrathamApplication extends Application {
         studentDao = db.getStudentDao();
         villageDao = db.getVillageDao();
         logDao = db.getLogDao();
+        courseDao = db.getCourseDao();
         if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
             new ReadBackupDb().execute();
     }

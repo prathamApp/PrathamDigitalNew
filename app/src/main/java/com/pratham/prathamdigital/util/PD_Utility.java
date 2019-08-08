@@ -1406,7 +1406,7 @@ public class PD_Utility {
         final View dialogView = View.inflate(context, R.layout.sunbaby_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setView(dialogView);
+        builder.setWeekOneView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);

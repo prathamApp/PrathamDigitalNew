@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_5sdp"
+    android:minHeight="@dimen/_30sdp"
+    app:cardBackgroundColor="@color/lightGrey"
+    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardElevation="@dimen/_5sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.pratham.prathamdigital.custom.expansionpanel.ExpansionHeader
+            android:id="@+id/exp_course_header"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:background="@color/dark_yellow"
+            app:expansion_headerIndicator="@id/headerIndicator"
+            app:expansion_layout="@id/expansionLayout"
+            app:expansion_toggleOnClick="true">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/exp_header_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:text="sdfsdfsdfsdfsdf"
+                android:textColor="@color/white" />
+
+            <ImageView
+                android:id="@+id/headerIndicator"
+                android:layout_width="@dimen/_25sdp"
+                android:layout_height="@dimen/_25sdp"
+                android:layout_centerVertical="true"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:adjustViewBounds="true"
+                app:srcCompat="@drawable/ic_expansion_header_indicator_grey_24dp" />
+
+        </com.pratham.prathamdigital.custom.expansionpanel.ExpansionHeader>
+
+        <com.pratham.prathamdigital.custom.expansionpanel.ExpansionLayout
+            android:id="@+id/expansionLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/yellow_sand"
+            app:expansion_expanded="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/ll_exp_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="3">
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="@dimen/_1sdp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        android:text="Course Name"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_12sdp"
+                        tools:ignore="HardcodedText" />
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="@dimen/_1sdp"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        android:text="Course Info"
+                        android:textColor="@android:color/black"
+                        tools:ignore="HardcodedText" />
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="@dimen/_2sdp"
+                        android:text="Assignment"
+                        android:textColor="@android:color/black"
+                        android:textSize="@dimen/_12sdp"
+                        tools:ignore="HardcodedText" />
+
+                </LinearLayout>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_exp_course_details"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </com.pratham.prathamdigital.custom.expansionpanel.ExpansionLayout>
+    </LinearLayout>
+</android.support.design.card.MaterialCardView>

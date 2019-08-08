@@ -1,4 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<View xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_60sdp" />
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent"
+    android:minHeight="@dimen/_60sdp">
+
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/header_card"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="@dimen/_80sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_8sdp"
+        android:visibility="gone"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_40sdp"
+        app:cardElevation="@dimen/_15sdp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/img_header"
+                android:layout_width="@dimen/_80sdp"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_3sdp"
+                app:actualImageScaleType="centerCrop"
+                app:roundedCornerRadius="@dimen/_40sdp" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_header"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_toEndOf="@+id/img_header"
+                android:gravity="center"
+                android:maxLines="2"
+                android:minWidth="@dimen/_100sdp"
+                android:text="Vidyut"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_12sdp" />
+
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                android:id="@+id/header_startCourse"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:layout_toEndOf="@+id/img_header"
+                android:background="@drawable/button_orange_selector"
+                android:text="Start Course"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
+                tools:ignore="HardcodedText" />
+        </RelativeLayout>
+    </android.support.design.card.MaterialCardView>
+</RelativeLayout>

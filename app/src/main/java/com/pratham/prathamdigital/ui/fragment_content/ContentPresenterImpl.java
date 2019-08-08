@@ -63,13 +63,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     private ArrayList<Modal_ContentDetail> levelContents;
     private ArrayList<Modal_ContentDetail> tempContentList;
     private String mappedParentApi = null;
+    private Modal_ContentDetail folderContentClicked;
 
     ContentPresenterImpl(Context context) {
         Context context1 = context;
     }
 
     @Override
-    public void setView(FragmentContent context) {
+    public void setView(ContentContract.contentView context) {
         this.contentView = context;
         pd_apiRequest.setApiResult(ContentPresenterImpl.this);
     }
@@ -83,6 +84,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Override
     public void getContent(Modal_ContentDetail contentDetail) {
         //fetching content from database first
+        folderContentClicked = contentDetail;
         if (contentDetail == null) {
             getDownloadedContents(null, null);
 //            new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
@@ -116,10 +118,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void getContent() {
         if (levelContents != null && levelContents.size() > 0) {
             Modal_ContentDetail detail = levelContents.get(levelContents.size() - 1);
+            folderContentClicked = detail;
             getDownloadedContents(detail.getNodeid(), detail.getAltnodeid());
 //            new GetDownloadedContent(ContentPresenterImpl.this,
 //                    levelContents.get(levelContents.size() - 1).getNodeid()).execute();
         } else {
+            folderContentClicked = null;
             if (contentView != null)
                 contentView.dismissDialog();
         }
@@ -142,7 +146,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    public void checkConnectivity(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    private void checkConnectivity(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             callOnlineContentAPI(contentList, parentId);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
@@ -159,8 +163,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     contentView.showNoConnectivity();
             } else {
 //                Collections.shuffle(totalContents);
-                contentList.add(0, new Modal_ContentDetail());//null modal for displaying header
-                tempContentList = new ArrayList<>(contentList);
+                tempContentList = getFinalListWithHeader(contentList);
                 if (contentView != null)
                     contentView.displayContents(contentList);
             }
@@ -176,17 +179,20 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    public void getKolibriLanguages(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    private void getKolibriLanguages(ArrayList<Modal_ContentDetail> contentList, String
+            parentId) {
         pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
                 + parentId, contentList);
     }
 
-    public void getKolibriLanguagesChilds(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    private void getKolibriLanguagesChilds
+            (ArrayList<Modal_ContentDetail> contentList, String parentId) {
         pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES_CHILDS, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
                 + parentId, contentList);
     }
 
-    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String
+            parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
                     PD_Constant.URL.GET_TOP_LEVEL_NODE
@@ -225,7 +231,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Background
     @Override
-    public void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList) {
+    public void recievedContent(String header, String
+            response, ArrayList<Modal_ContentDetail> contentList) {
         ArrayList<Modal_ContentDetail> displayedContents = new ArrayList<>();
         ArrayList<Modal_ContentDetail> totalContents = new ArrayList<>();
         try {
@@ -254,8 +261,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 else {
                     totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                    totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                    tempContentList = new ArrayList<>(totalContents);
+                    tempContentList = getFinalListWithHeader(totalContents);
                     if (contentView != null)
                         contentView.displayContents(totalContents);
                 }
@@ -283,8 +289,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 } else {
                     totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                    totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                    tempContentList = new ArrayList<>(totalContents);
+                    tempContentList = getFinalListWithHeader(totalContents);
                     if (contentView != null)
                         contentView.displayContents(totalContents);
                 }
@@ -306,8 +311,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                tempContentList = new ArrayList<>(totalContents);
+                tempContentList = getFinalListWithHeader(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
@@ -328,8 +332,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                tempContentList = new ArrayList<>(totalContents);
+                tempContentList = getFinalListWithHeader(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
@@ -366,8 +369,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                tempContentList = new ArrayList<>(totalContents);
+                tempContentList = getFinalListWithHeader(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
@@ -391,8 +393,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                totalContents.add(0, new Modal_ContentDetail());//null modal for displaying header
-                tempContentList = new ArrayList<>(totalContents);
+                tempContentList = getFinalListWithHeader(totalContents);
                 if (contentView != null)
                     contentView.displayContents(totalContents);
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
@@ -409,12 +410,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    private ArrayList<Modal_ContentDetail> removeDownloadedContents(ArrayList<Modal_ContentDetail> dbContents
-            , ArrayList<Modal_ContentDetail> onlineContents) {
+    private ArrayList<Modal_ContentDetail> removeDownloadedContents
+            (ArrayList<Modal_ContentDetail> dbContents
+                    , ArrayList<Modal_ContentDetail> onlineContents) {
         String parentid = null;
-        if (!dbContents.isEmpty()) {
+        if (!dbContents.isEmpty())
             parentid = dbContents.get(0).getParentid();
-        }
         for (int i = 0; i < onlineContents.size(); i++) {
             Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
                     FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
@@ -446,10 +447,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 contentView.showNoConnectivity();
         } else {
 //            Collections.shuffle(totalContents);
-            Objects.requireNonNull(contentList).add(0, new Modal_ContentDetail());//null modal for displaying header
-            tempContentList = new ArrayList<>(contentList);
-            if (contentView != null)
-                contentView.displayContents(contentList);
+            tempContentList = getFinalListWithHeader(contentList);
+            if (contentView != null) contentView.displayContents(contentList);
         }
     }
 
@@ -638,6 +637,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     @Background
     @Override
     public void showPreviousContent() {
+        folderContentClicked = null;
         if (levelContents == null || levelContents.isEmpty()) {
             if (contentView != null)
                 contentView.exitApp();
@@ -813,5 +813,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             childsOfParent = modalContentDao.getParentsHeaders(lang);
         }
         checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId);
+    }
+
+    private ArrayList<Modal_ContentDetail> getFinalListWithHeader(ArrayList<Modal_ContentDetail> contentList) {
+        Modal_ContentDetail header;
+        if (folderContentClicked != null && folderContentClicked.getNodetype().equalsIgnoreCase(PD_Constant.COURSE))
+            header = folderContentClicked;
+        else header = null;
+        contentList.add(0, header);
+        return contentList;
     }
 }

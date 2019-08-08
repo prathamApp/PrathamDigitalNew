@@ -5,6 +5,7 @@
     android:id="@+id/content_card_file"
     android:layout_width="@dimen/_130sdp"
     android:layout_height="@dimen/_130sdp"
+    android:layout_margin="@dimen/_5sdp"
     android:background="@drawable/item_folder_rounded_corner_bkgd"
     android:clickable="true"
     android:focusable="true">

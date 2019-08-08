@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/btn_course_select"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/_2sdp"
+    app:cardBackgroundColor="@color/light_orange"
+    app:cardCornerRadius="@dimen/_3sdp"
+    app:cardElevation="@dimen/_5sdp">
+
+    <LinearLayout
+        android:id="@+id/ll_table"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="3">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_course_name"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/_1sdp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center"
+            android:padding="@dimen/_2sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_18sdp" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_course_info"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginEnd="@dimen/_1sdp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_2sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_18sdp" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_assignment"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:padding="@dimen/_2sdp"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_18sdp" />
+    </LinearLayout>
+    <!--
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_course_select"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_below="@+id/ll_table"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/button_blue_selector"
+            android:text="Select"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            tools:ignore="HardcodedText" />
+    -->
+</android.support.design.card.MaterialCardView>

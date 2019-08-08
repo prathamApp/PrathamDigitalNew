@@ -46,6 +46,8 @@ import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseEnrollment;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseEnrollment_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
 import com.pratham.prathamdigital.ui.fragment_receive.FragmentReceive_;
@@ -69,7 +71,7 @@ import java.util.ArrayList;
 
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
 
-@EActivity(R.layout.main_activity_two)
+@EActivity(R.layout.main_activity)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu,
         SlidingPaneLayout.PanelSlideListener {
 
@@ -83,6 +85,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_HOME = 7;
     private static final int SHOW_MENU_WITH_DEEP_LINK = 8;
     private static final int CHECK_AAJ_KA_SAWAL = 11;
+    private static final int MENU_COURSES = 12;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -197,6 +200,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 case MENU_EXIT:
                     exitApp();
                     break;
+                case MENU_COURSES:
+                    PD_Utility.showFragment(ActivityMain.this, new Fragment_CourseEnrollment_(), R.id.main_frame,
+                            null, Fragment_CourseEnrollment.class.getSimpleName());
+                    break;
                 case CHECK_AAJ_KA_SAWAL:
                     String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
                     File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename); //Creating an internal dir;
@@ -283,7 +290,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private void initializeMenu() {
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.navigation_menu);
-        int[] menus_img = {R.drawable.ic_education, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
+        int[] menus_img = {R.drawable.ic_education, R.drawable.ic_courses, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
                 R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_backpacker};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
@@ -399,6 +406,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_SHARE_APP);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Exit"))
             mHandler.sendEmptyMessage(MENU_EXIT);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Courses"))
+            mHandler.sendEmptyMessage(MENU_COURSES);
     }
 
     @Override

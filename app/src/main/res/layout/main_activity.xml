@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.SlidingPaneLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.pratham.prathamdigital.custom.UnSwippableSlidingPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_sliding_drawer"
@@ -99,4 +99,4 @@
         <!--android:layout_height="@dimen/_50sdp" />-->
     </RelativeLayout>
 
-</android.support.v4.widget.SlidingPaneLayout>
+</com.pratham.prathamdigital.custom.UnSwippableSlidingPanelLayout>

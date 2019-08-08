@@ -186,10 +186,10 @@
     </string-array>
     <string-array name="navigation_menu">
         <item>Home</item>
+        <item>Courses</item>
         <item>Language</item>
         <item>Connect Wifi</item>
         <item>Share or Receive</item>
-        <!--<item>Rate Us</item>-->
         <item>Share App</item>
         <item>Exit</item>
     </string-array>

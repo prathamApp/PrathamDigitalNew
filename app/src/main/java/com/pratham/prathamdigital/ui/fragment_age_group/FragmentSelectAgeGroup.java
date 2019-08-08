@@ -31,8 +31,6 @@ public class FragmentSelectAgeGroup extends Fragment {
     @ViewById(R.id.btn_admin_panel)//admin_panel
             LinearLayout admin_panel;
 
-    private static final int MY_PERMISSIONS_REQUEST_CODE = 123;
-
     @Click(R.id.btn_scan_qr)//scan_qr
     public void setScanQR() {
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))

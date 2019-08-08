@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/root_card_courses"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="@dimen/_15sdp"
+    app:cardBackgroundColor="@color/light_orange"
+    app:cardCornerRadius="@dimen/_14sdp">
+
+    <include layout="@layout/layout_add_new_course" />
+
+    <RelativeLayout
+        android:id="@+id/rl_enrolled_courses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_week"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Week 1"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/_25sdp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_courses_enrolled"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/txt_week" />
+    </RelativeLayout>
+
+    <include layout="@layout/course_list" />
+
+    <include layout="@layout/layout_calendar" />
+</android.support.design.card.MaterialCardView>

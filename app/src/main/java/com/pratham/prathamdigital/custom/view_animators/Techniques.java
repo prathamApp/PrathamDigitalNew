@@ -2,7 +2,10 @@ package com.pratham.prathamdigital.custom.view_animators;
 
 public enum Techniques {
     Flash(FlashAnimator.class),
-    ZoomIn(ZoomInAnimator.class);
+    ZoomIn(ZoomInAnimator.class),
+    BounceInUp(BounceInUpAnimator.class),
+    SlideOutDown(SlideOutDownAnimator.class),
+    FlipIn(FlipInXAnimator.class);
     private Class animatorClazz;
 
     private Techniques(Class clazz) {

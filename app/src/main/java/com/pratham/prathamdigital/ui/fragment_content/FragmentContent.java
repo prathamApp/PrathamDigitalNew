@@ -21,7 +21,9 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
-import com.pratham.prathamdigital.custom.ContentItemDecoration;
+import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
+import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
+import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
@@ -100,30 +102,12 @@ public class FragmentContent extends Fragment implements ContentContract.content
 //                    LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(rv_content.getContext()
 //                            , R.anim.layout_animation_waterfall);
 //                    rv_content.setLayoutAnimation(animation);
-                    rv_content.setHasFixedSize(true);
-                    rv_content.addItemDecoration(new ContentItemDecoration(PD_Constant.CONTENT, 10));
-                    gridLayoutManager = (GridLayoutManager) rv_content.getLayoutManager();
-                    Objects.requireNonNull(gridLayoutManager).setAutoMeasureEnabled(false);
-                    gridLayoutManager.setSpanSizeLookup(new GridLayoutManager.SpanSizeLookup() {
-                        @Override
-                        public int getSpanSize(int pos) {
-                            switch (contentAdapter.getItemViewType(pos)) {
-                                case ContentAdapter.HEADER_TYPE:
-                                    return gridLayoutManager.getSpanCount();
-                                case ContentAdapter.FOLDER_TYPE:
-                                    return 1;
-                                case ContentAdapter.FILE_TYPE:
-                                    return 1;
-                                default:
-                                    return 1;
-                            }
-                        }
-                    });
-//                    GridPagerSnapHelper gridPagerSnapHelper = new GridPagerSnapHelper();
-//                    gridPagerSnapHelper.setRow(2).setColumn(gridLayoutManager.getSpanCount());
-//                    gridPagerSnapHelper.attachToRecyclerView(rv_content);
+                    FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
+                    flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
+//                    flexboxLayoutManager.setAlignItems(AlignItems.CENTER);
+                    rv_content.setLayoutManager(flexboxLayoutManager);
                     rv_content.setAdapter(contentAdapter);
-                    rv_content.scheduleLayoutAnimation();
+//                    rv_content.scheduleLayoutAnimation();
                     break;
                 case INITIALIZE_LEVEL_ADAPTER:
                     levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
@@ -157,9 +141,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     @AfterViews
     public void initialize() {
+        contentPresenter.setView(FragmentContent.this);
         IS_DEEP_LINK = Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.DEEP_LINK, false);
         frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
-        contentPresenter.setView(FragmentContent.this);
         mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
         mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
         circular_content_reveal.setListener(this);
@@ -183,6 +167,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void onResume() {
         super.onResume();
+        contentPresenter.setView(FragmentContent.this);
         if (IS_DEEP_LINK) {
             contentPresenter.openDeepLinkContent(Objects.requireNonNull(getArguments()).getString(PD_Constant.DEEP_LINK_CONTENT, null));
         }
@@ -316,10 +301,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
         if (content != null && !content.isEmpty() && content.size() > 1) {
             if (contentAdapter == null) {
                 mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
-            } else {
-                contentAdapter.submitList(content);
-                rv_content.smoothScrollToPosition(0);
             }
+            contentAdapter.submitList(content);
+            rv_content.smoothScrollToPosition(0);
         } else {
             showNoConnectivity();
         }
@@ -385,9 +369,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void deleteContent(int pos, Modal_ContentDetail contentItem) {
         contentPresenter.deleteContent(contentItem);
-//        List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
-//        data.remove(pos);
-//        contentAdapter.submitList(data);
     }
 
     @UiThread

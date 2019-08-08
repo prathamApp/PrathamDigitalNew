@@ -39,7 +39,7 @@ public interface ContentContract {
     }
 
     interface contentPresenter {
-        void setView(FragmentContent context);
+        void setView(ContentContract.contentView context);
 
         void downloadContent(Modal_ContentDetail contentDetail);
 

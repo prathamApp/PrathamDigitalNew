@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
+import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 
 /*
     always update the version number,
@@ -28,7 +29,7 @@ import com.pratham.prathamdigital.models.Modal_Village;
 */
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class,
         Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class,
-        Modal_Log.class}, version = 2, exportSchema = false)
+        Modal_Log.class, Model_CourseEnrollment.class}, version = 3, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi_db";
@@ -53,7 +54,7 @@ public abstract class PrathamDatabase extends RoomDatabase {
 
     public abstract LogDao getLogDao();
 
-    static Migration MIGRATION_1_2 = new Migration(1, 2) {
+    private static Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE TableContent ADD COLUMN altnodeid TEXT");
@@ -61,6 +62,26 @@ public abstract class PrathamDatabase extends RoomDatabase {
             // Since we didn't alter the table, there's nothing else to do here.
         }
     };
+    private static Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("CREATE TABLE IF NOT EXISTS CourseEnrolled ('c_autoID' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    "'courseId' TEXT ,'groupId' TEXT ,'planFromDate' TEXT ," +
+                    "'planToDate' TEXT ,'coachVerified' BOOLEAN DEFAULT 0,'coachVerificationDate' TEXT ," +
+                    "'courseExperience' TEXT )");
+        }
+    };
+
+    public static PrathamDatabase getDatabaseInstance(final Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                    PrathamDatabase.class, DB_NAME)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
+                    .build();
+        }
+        return INSTANCE;
+    }
 
     public static void destroyInstance() {
         INSTANCE = null;
@@ -83,22 +104,5 @@ public abstract class PrathamDatabase extends RoomDatabase {
 
     }
 
-    public static PrathamDatabase getDatabaseInstance(final Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                    PrathamDatabase.class, DB_NAME)
-                    .addMigrations(MIGRATION_1_2)
-                    .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
-//                    .addCallback(new RoomDatabase.Callback() {
-//                        @Override
-//                        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-//                            super.onCreate(db);
-//                            Log.d("MoviesDatabase", "populating with data...");
-//                            new PopulateDbAsync(INSTANCE).execute();
-//                        }
-//                    })
-                    .build();
-        }
-        return INSTANCE;
-    }
+    public abstract CourseDao getCourseDao();
 }

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/rl_calendar_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_20"
+    android:visibility="gone">
+
+    <ImageView
+        android:id="@+id/iv_close_calendar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/_10sdp"
+        app:srcCompat="@drawable/ic_close_black_24dp" />
+
+    <com.archit.calendardaterangepicker.customviews.DateRangeCalendarView
+        android:id="@+id/course_date_picker"
+        android:layout_width="@dimen/_300sdp"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:background="@color/white"
+        custom:disable_date_color="#ABABAB"
+        custom:editable="true"
+        custom:enable_past_date="false"
+        custom:header_bg="@drawable/calendar_header"
+        custom:range_color="@color/yellow_sand"
+        custom:selected_date_circle_color="@color/dark_yellow"
+        custom:title_color="@color/white"
+        custom:week_offset="0" />
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        android:id="@+id/btn_course_time_select"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_orange_selector"
+        android:text="Confirm Date"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        tools:ignore="HardcodedText" />
+</RelativeLayout>

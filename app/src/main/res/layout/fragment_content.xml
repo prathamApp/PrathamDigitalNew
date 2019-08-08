@@ -15,13 +15,12 @@
 
         <include layout="@layout/layout_network_error" />
         <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
-        <com.pratham.prathamdigital.custom.GridRecyclerView
+        <android.support.v7.widget.RecyclerView
             android:id="@+id/rv_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:columnWidth="@dimen/_130sdp"
-            android:layoutAnimation="@anim/grid_layout_animation_from_bottom"
             android:scrollbars="vertical" />
 
         <LinearLayout
