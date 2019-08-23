@@ -19,6 +19,18 @@ public interface PlanningContract {
         void loadEnrolledCourses(List<Model_CourseEnrollment> coursesEnrolled);
 
         void showDatePicker(Modal_ContentDetail modal_contentDetail, int adapterPosition);
+
+        void showEnrolledList(List<Model_CourseEnrollment> courseEnrollments);
+
+        void courseAlreadySelected();
+
+        void addAnotherCourse(View view);
+
+        void showVerificationButton();
+
+        void deleteCourse(int pos, Model_CourseEnrollment c_enrolled);
+
+        void noCoursesEnrolled();
     }
 
     interface weekOnePlanningPresenter {
@@ -29,5 +41,7 @@ public interface PlanningContract {
         void fetchEnrolledCourses(String week);
 
         void addCourseToDb(String week_1, Modal_ContentDetail selectedCourse, Calendar startDate, Calendar endDate);
+
+        void deleteCourse(Model_CourseEnrollment c_enrolled, String week_1);
     }
 }

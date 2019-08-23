@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/avatar_circular_reveal"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/attendance_bkgd"
@@ -14,16 +14,18 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/img_add_child_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:layout_marginTop="@dimen/_10sdp"
+                android:contentDescription="back"
                 android:scaleType="centerInside"
-                app:srcCompat="@drawable/ic_att_back" />
+                app:srcCompat="@drawable/ic_att_back"
+                tools:ignore="HardcodedText" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:layout_width="wrap_content"
@@ -32,13 +34,14 @@
                 android:layout_marginTop="@dimen/_10sdp"
                 android:text="Add Child"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_35sdp" />
+                android:textSize="@dimen/_20sdp"
+                tools:ignore="HardcodedText" />
 
             <View
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="@dimen/_150sdp"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:background="@drawable/avatars_round_bg"
                 android:elevation="@dimen/_10sdp" />
 
@@ -46,7 +49,7 @@
                 android:id="@+id/avatar_rv"
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="match_parent"
-                android:layout_marginLeft="@dimen/_10sdp"
+                android:layout_marginStart="@dimen/_10sdp"
                 android:background="@android:color/transparent"
                 android:elevation="@dimen/_15sdp"
                 app:dsv_orientation="vertical" />
@@ -56,7 +59,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_margin="@dimen/_10sdp"
-                android:layout_toRightOf="@+id/avatar_rv"
+                android:layout_toEndOf="@+id/avatar_rv"
                 android:background="@drawable/avatar_dash_bkgd"
                 android:padding="@dimen/_15sdp">
 
@@ -69,14 +72,15 @@
                     android:gravity="center"
                     android:hint="Name"
                     android:textColor="@color/white"
-                    android:textColorHint="@color/white" />
+                    android:textColorHint="@color/white"
+                    tools:ignore="HardcodedText" />
 
                 <Spinner
                     android:id="@+id/spinner_age"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_40sdp"
                     android:layout_below="@+id/et_child_name"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/avatar_etxt_bkgd"
                     android:drawSelectorOnTop="true"
                     android:elevation="@dimen/_10sdp"
@@ -88,12 +92,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_40sdp"
                     android:layout_below="@+id/spinner_age"
-                    android:layout_marginTop="@dimen/_10sdp"
+                    android:layout_marginTop="@dimen/_5sdp"
                     android:background="@drawable/avatar_etxt_bkgd"
                     android:drawSelectorOnTop="true"
                     android:elevation="@dimen/_10sdp"
                     android:gravity="center"
                     android:textAlignment="center" />
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/txt_sel_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_40sdp"
+                    android:layout_below="@+id/spinner_class"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:background="@drawable/avatar_etxt_bkgd"
+                    android:elevation="@dimen/_18sdp"
+                    android:gravity="center"
+                    android:text="Select Language"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    tools:ignore="HardcodedText" />
+
             </RelativeLayout>
 
             <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
@@ -104,10 +123,11 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:layout_marginBottom="@dimen/_10sdp"
-                android:background="@drawable/button_blue_selector"
+                android:background="@drawable/button_orange_selector"
                 android:text="Next"
                 android:textColor="@color/white"
-                android:visibility="visible" />
+                android:visibility="visible"
+                tools:ignore="HardcodedText" />
         </RelativeLayout>
     </ScrollView>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

@@ -1,14 +1,13 @@
 package com.pratham.prathamdigital.models;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "CourseEnrolled")
 public class Model_CourseEnrollment {
-    @SerializedName("sentFlag")
-    public int sentFlag;
     @PrimaryKey(autoGenerate = true)
     @SerializedName("c_autoID")
     private int c_autoID;
@@ -26,6 +25,10 @@ public class Model_CourseEnrollment {
     private String coachVerificationDate;
     @SerializedName("courseExperience")
     private String courseExperience;
+    @SerializedName("sentFlag")
+    public int sentFlag;
+    @Ignore
+    private Modal_ContentDetail courseDetail;
 
     public int getC_autoID() {
         return c_autoID;
@@ -97,5 +100,13 @@ public class Model_CourseEnrollment {
 
     public void setCourseExperience(String courseExperience) {
         this.courseExperience = courseExperience;
+    }
+
+    public Modal_ContentDetail getCourseDetail() {
+        return courseDetail;
+    }
+
+    public void setCourseDetail(Modal_ContentDetail courseDetail) {
+        this.courseDetail = courseDetail;
     }
 }

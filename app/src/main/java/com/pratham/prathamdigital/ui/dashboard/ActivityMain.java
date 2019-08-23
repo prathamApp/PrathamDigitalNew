@@ -253,6 +253,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 decreaseNotificationCount(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
                 decreaseNotificationCount(message);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.EXIT_APP)) {
+                exitApp();
             }
         }
     }
@@ -325,11 +327,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
-    private void exitApp() {
+    @UiThread
+    public void exitApp() {
         if (!FsService.isRunning()) {
             exitDialog = new BlurPopupWindow.Builder(ActivityMain.this)
                     .setContentView(R.layout.app_exit_dialog)
-                    .bindClickListener(v -> finishAffinity(), R.id.dialog_btn_exit)
+                    .bindClickListener(v -> {
+                        exitDialog.dismiss();
+                        new Handler().postDelayed((Runnable) this::finishAffinity, 200);
+                    }, R.id.dialog_btn_exit)
                     .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
                     .setGravity(Gravity.CENTER)
                     .setDismissOnTouchBackground(true)

@@ -29,7 +29,6 @@ import com.novoda.merlin.Merlin;
 import com.pratham.prathamdigital.async.CopyDbToOTG;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -42,12 +41,13 @@ import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import net.alhazmy13.catcho.library.Catcho;
+
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 import java.util.Locale;
 import java.util.Objects;
-import java.util.UUID;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
@@ -68,8 +68,6 @@ public class BaseActivity extends AppCompatActivity {
     private static final int HIDE_OTG_TRANSFER_DIALOG_SUCCESS = 12;
     private static final int HIDE_OTG_TRANSFER_DIALOG_FAILED = 13;
 
-    public static String sessionId = UUID.randomUUID().toString();
-    public static String language = "";
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
     LottieAnimationView push_lottie;
@@ -228,16 +226,13 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-//        Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
+        Catcho.Builder(this)
+                .activity(CatchoTransparentActivity.class)
 //                .recipients("abc@gm.com")
-//                .build();
+                .build();
 //        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();
-        language = FastSave.getInstance().getString(PD_Constant.LANGUAGE, "");
-        if (language.isEmpty())
-            FastSave.getInstance().saveString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
     }
 
     private void initializeTTS() {

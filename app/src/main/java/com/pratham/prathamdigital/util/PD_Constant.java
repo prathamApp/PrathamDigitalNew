@@ -7,8 +7,9 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
-    public static final String POSITION = "position";
-    public static final String COURSE_BACK = "course_back";
+    public static final String IS_AVATAR = "is_avatar";
+    public static final String EXIT_APP = "exit_app";
+    public static final String STUDENT_PROFILE_AGE = "student_profile_age";
     public static final String COURSE = "COURSE";
     public static final String BROWSE_RASPBERRY_LANGUAGES_CHILDS = "browse_raspberry_languages_childs";
     public static final String BROWSE_RASPBERRY_LANGUAGES = "browse_raspberry_languages";

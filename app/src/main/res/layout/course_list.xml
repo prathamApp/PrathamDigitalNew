@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/ll_no_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -26,16 +26,18 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_centerHorizontal="true"
             app:srcCompat="@drawable/no_data_to_show" />
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/_5sdp"
             android:text="No Courses to show"
             android:textColor="#E54D5A"
             android:textSize="@dimen/_18sdp"
             tools:ignore="HardcodedText" />
-    </LinearLayout>
+    </RelativeLayout>
 </RelativeLayout>

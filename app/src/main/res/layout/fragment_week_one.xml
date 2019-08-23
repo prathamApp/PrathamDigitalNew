@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_card_courses"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -31,6 +32,38 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@+id/txt_week" />
+
+        <RelativeLayout
+            android:id="@+id/rl_verify_coach"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_alignParentBottom="true"
+            android:background="@color/red">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_verify_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:drawableStart="@drawable/ic_exclamation_mark"
+                android:drawablePadding="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="Verify By Coach"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                tools:ignore="HardcodedText" />
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/coach_image"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:roundedCornerRadius="@dimen/_17sdp"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="@dimen/_1sdp" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <include layout="@layout/course_list" />

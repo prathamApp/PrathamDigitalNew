@@ -7,7 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ViewTreeObserver;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
@@ -15,6 +14,7 @@ import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.ContentItemDecoration;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Language;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -47,6 +47,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     private LanguageAdapter adapter;
     private int revealX;
     private int revealY;
+    private boolean isAvatar = false;
 
     @Bean(ReadContentDbFromSdCard.class)
     ReadContentDbFromSdCard readContentDbFromSdCard;
@@ -57,6 +58,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
+            isAvatar = getArguments().getBoolean(PD_Constant.IS_AVATAR, false);
             circular_language_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -104,7 +106,6 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     public void languageSelected(int position) {
         PrathamApplication.bubble_mp.start();
         Modal_Language language = adapter.getitem(position);
-        BaseActivity.language = language.getMain_language();
         FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
@@ -112,6 +113,9 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         String filename = "AajKaSawal_" + language.getMain_language() + ".json";
         String aksUrl = PD_Constant.URL.AAJ_KA_SAWAL_URL.toString() + filename;
         downloadAajKaSawal(aksUrl, filename);
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.LANGUAGE);
+        EventBus.getDefault().post(message);
     }
 
     @Override
@@ -122,14 +126,18 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     @UiThread
     @Override
     public void onUnRevealed() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, 0);
-        bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
-                bundle, FragmentContent_.class.getSimpleName());
-        Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
-        if (fragment != null)
-            getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        if (isAvatar) {
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+        } else {
+            Bundle bundle = new Bundle();
+            bundle.putInt(PD_Constant.REVEALX, 0);
+            bundle.putInt(PD_Constant.REVEALY, 0);
+            PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
+                    bundle, FragmentContent_.class.getSimpleName());
+            Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
+            if (fragment != null)
+                getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();
+        }
     }
 
     @Override

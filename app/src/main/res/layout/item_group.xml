@@ -34,5 +34,5 @@
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:visibility="gone"
-        app:srcCompat="@drawable/ic_checked" />
+        app:srcCompat="@drawable/ic_checked_black" />
 </com.pratham.prathamdigital.custom.elastic_view.ElasticView>

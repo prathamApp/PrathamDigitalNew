@@ -20,7 +20,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.location.Address;
@@ -50,8 +49,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -1907,26 +1904,6 @@ public class PD_Utility {
             e.printStackTrace();
             return null;
         }
-    }
-
-    public static void showDialog(Activity activity) {
-        if (dialog == null) {
-            dialog = new Dialog(activity);
-            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            dialog.setCancelable(true);
-            dialog.setCanceledOnTouchOutside(false);
-            dialog.setContentView(R.layout.cat_loading_dialog);
-        }
-        dialog.show();
-    }
-
-    public static void dismissDialog() {
-        if (dialog != null)
-            dialog.dismiss();
-//        dialog = null;
     }
 
     public static long getAvailableSpaceInGB(Context context, String path) {

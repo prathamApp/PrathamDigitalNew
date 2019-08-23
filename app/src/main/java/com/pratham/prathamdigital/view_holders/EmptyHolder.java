@@ -1,27 +1,15 @@
 package com.pratham.prathamdigital.view_holders;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.facebook.drawee.backends.pipeline.Fresco;
-import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.facebook.imagepipeline.common.ResizeOptions;
-import com.facebook.imagepipeline.request.ImageRequest;
-import com.facebook.imagepipeline.request.ImageRequestBuilder;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
-import com.pratham.prathamdigital.util.PD_Constant;
-
-import java.io.File;
-import java.util.Objects;
 
 public class EmptyHolder extends RecyclerView.ViewHolder {
 
@@ -39,7 +27,7 @@ public class EmptyHolder extends RecyclerView.ViewHolder {
     }
 
     public void setView(Modal_ContentDetail contentDetail) {
-        if (contentDetail != null && contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.COURSE)) {
+        /*if (contentDetail != null && contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.COURSE)) {
             header_card.setVisibility(View.VISIBLE);
             txt_header.setText(contentDetail.getNodetitle());
             ImageRequest request = null;
@@ -74,10 +62,10 @@ public class EmptyHolder extends RecyclerView.ViewHolder {
                     img_header.setController(controller);
                 }
             }
-        } else {
-            if (header_card.getVisibility() == View.VISIBLE)
-                header_card.setVisibility(View.GONE);
-            header_startCourse.setOnClickListener(null);
-        }
+        } else {*/
+        if (header_card.getVisibility() == View.VISIBLE)
+            header_card.setVisibility(View.GONE);
+        header_startCourse.setOnClickListener(null);
+//        }
     }
 }

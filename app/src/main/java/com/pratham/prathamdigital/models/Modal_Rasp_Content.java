@@ -261,7 +261,7 @@ public class Modal_Rasp_Content {
                     modal_contentDetail.setContentType("folder");
             }
             modal_contentDetail.setNodetitle(modal_rasp_content.getTitle());
-            modal_contentDetail.setNodeeage("");
+            modal_contentDetail.setNodeeage(modal_rasp_content.getTitle().split(" ")[0]);
             modal_contentDetail.setNodedesc(modal_rasp_content.getDescription());
             for (Modal_Rasp_ContentFilesItem filesItem : modal_rasp_content.getFiles()) {
                 if (filesItem.isThumbnail()) {

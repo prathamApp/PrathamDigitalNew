@@ -2,7 +2,10 @@ package com.pratham.prathamdigital.ui.fragment_content;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -13,6 +16,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -63,6 +68,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private static final int INITIALIZE_LEVEL_ADAPTER = 2;
     private static final int CLICK_DL_CONTENT = 3;
     private static boolean IS_DEEP_LINK = false;
+    private Dialog dialog;
     @ViewById(R.id.frag_content_bkgd)
     RelativeLayout frag_content_bkgd;
     @ViewById(R.id.circular_content_reveal)
@@ -144,8 +150,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
         contentPresenter.setView(FragmentContent.this);
         IS_DEEP_LINK = Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.DEEP_LINK, false);
         frag_content_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
-        mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
-        mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
         circular_content_reveal.setListener(this);
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
@@ -159,9 +163,13 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 }
             });
         }
-        PD_Utility.showDialog(getActivity());
-        if (levelAdapter == null) contentPresenter.getContent(null);
-        else contentPresenter.getContent();
+        new Handler().postDelayed(() -> {
+            mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
+            mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
+            showDialog();
+            if (levelAdapter == null) contentPresenter.getContent(null);
+            else contentPresenter.getContent();
+        }, 500);
     }
 
     @Override
@@ -204,7 +212,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     @Override
     public void dismissDialog() {
-        PD_Utility.dismissDialog();
+        if (dialog != null)
+            dialog.dismiss();
     }
 
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
@@ -248,7 +257,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
             if (filesDownloading.containsKey(message.getContentDetail().getNodeid())) {
                 List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
                 for (int i = 0; i < data.size(); i++) {
-                    if (data.get(i).getNodeid() != null &&
+                    if (data.get(i) != null && data.get(i).getNodeid() != null &&
                             data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
 //                        data.set(i, message.getContentDetail());
                         contentAdapter.notifyItemChanged(i, message.getContentDetail());
@@ -272,14 +281,14 @@ public class FragmentContent extends Fragment implements ContentContract.content
     public void setContent_back() {
         filesDownloading.clear();
         PrathamApplication.bubble_mp.start();
-        PD_Utility.showDialog(getActivity());
+        showDialog();
         contentPresenter.showPreviousContent();
     }
 
     @UiThread
     @Override
     public void showNoConnectivity() {
-        PD_Utility.dismissDialog();
+        dismissDialog();
         rv_content.setVisibility(View.GONE);
         rl_network_error.setVisibility(View.VISIBLE);
     }
@@ -295,7 +304,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     public void displayContents(List<Modal_ContentDetail> content) {
         filesDownloading.clear();
         rl_network_error.setVisibility(View.GONE);
-        PD_Utility.dismissDialog();
+        dismissDialog();
         if (rv_content.getVisibility() == View.GONE)
             rv_content.setVisibility(View.VISIBLE);
         if (content != null && !content.isEmpty() && content.size() > 1) {
@@ -313,7 +322,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
         PrathamApplication.bubble_mp.start();
-        PD_Utility.showDialog(getActivity());
+        showDialog();
         contentPresenter.getContent(detail);
     }
 
@@ -328,7 +337,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
-        PD_Utility.showDialog(getActivity());
+        showDialog();
         contentPresenter.getContent(contentDetail);
     }
 
@@ -354,7 +363,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         onDownloadClicked(position, contentDetail, reveal_view, startView);
                         download_builder.dismiss();
                     }, R.id.btn_okay)
-                    .bindClickListener(v -> download_builder.dismiss(), R.id.btn_change)
                     .setGravity(Gravity.CENTER)
                     .setScaleRatio(0.2f)
                     .setBlurRadius(8)
@@ -412,19 +420,10 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     @Override
     public void exitApp() {
-        PD_Utility.dismissDialog();
-        exitDialog = new BlurPopupWindow.Builder(getActivity())
-                .setContentView(R.layout.app_exit_dialog)
-                .bindClickListener(v -> Objects.requireNonNull(getActivity()).finishAffinity(), R.id.dialog_btn_exit)
-                .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
-                .setGravity(Gravity.CENTER)
-                .setDismissOnTouchBackground(true)
-                .setDismissOnClickBack(true)
-                .setScaleRatio(0.2f)
-                .setBlurRadius(10)
-                .setTintColor(0x30000000)
-                .build();
-        exitDialog.show();
+        dismissDialog();
+        EventMessage eventMessage = new EventMessage();
+        eventMessage.setMessage(PD_Constant.EXIT_APP);
+        EventBus.getDefault().post(eventMessage);
     }
 
     @UiThread
@@ -560,5 +559,19 @@ public class FragmentContent extends Fragment implements ContentContract.content
         dl_Content = details.get(details.size() - 1);
         displayContents(details);
         mHandler.sendEmptyMessage(CLICK_DL_CONTENT);
+    }
+
+    private void showDialog() {
+        if (dialog == null) {
+            dialog = new Dialog(getActivity());
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setContentView(R.layout.cat_loading_dialog);
+        }
+        dialog.show();
     }
 }

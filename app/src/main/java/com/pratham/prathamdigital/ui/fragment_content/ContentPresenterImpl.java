@@ -9,7 +9,6 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.liulishuo.okdownload.DownloadTask;
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
@@ -300,20 +299,32 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
+                String id_3_6 = "";
+                int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
                     Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
                     detail.setParentid(null);
                     if (!PrathamApplication.isTablet) {
-                        if (!detail.getNodetitle().contains("3-6"))
-                            displayedContents.add(detail);
+                        if (child_age > 6) {
+                            if (!detail.getNodetitle().contains("3-6"))
+                                displayedContents.add(detail);
+                        } else {
+                            if (detail.getNodetitle().contains("3-6")) {
+                                id_3_6 = detail.getNodeid();
+                                break;
+                            }
+                        }
                     } else displayedContents.add(detail);
-//                }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                if (!PrathamApplication.isTablet && child_age <= 6 && !id_3_6.isEmpty()) {
+                    callKolibriAPI(contentList, id_3_6);
+                } else {
+                    totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                tempContentList = getFinalListWithHeader(totalContents);
-                if (contentView != null)
-                    contentView.displayContents(totalContents);
+                    tempContentList = getFinalListWithHeader(totalContents);
+                    if (contentView != null)
+                        contentView.displayContents(totalContents);
+                }
             } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -324,11 +335,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
                     Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
                     detail.setMappedParentId(mappedParentApi);
-                    if (PrathamApplication.isTablet) {
-                        if (!detail.getNodetitle().contains("3-6")) {
-                            displayedContents.add(detail);
-                        }
-                    } else displayedContents.add(detail);
+                    displayedContents.add(detail);
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
@@ -342,18 +349,27 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
+                String id_3_6 = "";
+                int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
                 for (Modal_ContentDetail detail : tempContents) {
                     if (!PrathamApplication.isTablet) {
-                        if (!detail.getNodetitle().contains("3-6")) {
-                            if (detail.getResourcetype().equalsIgnoreCase("Game")
-                                    || detail.getResourcetype().equalsIgnoreCase("Video")
-                                    || detail.getResourcetype().equalsIgnoreCase("Pdf"))
-                                detail.setContentType("file");
-                            else
-                                detail.setContentType("folder");
-                            detail.setMappedApiId(detail.getNodeid());
-                            detail.setContent_language(BaseActivity.language);
-                            displayedContents.add(detail);
+                        if (child_age > 6) {
+                            if (!detail.getNodeeage().contains("3-6")) {
+                                if (detail.getResourcetype().equalsIgnoreCase("Game")
+                                        || detail.getResourcetype().equalsIgnoreCase("Video")
+                                        || detail.getResourcetype().equalsIgnoreCase("Pdf"))
+                                    detail.setContentType("file");
+                                else
+                                    detail.setContentType("folder");
+                                detail.setMappedApiId(detail.getNodeid());
+                                detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                                displayedContents.add(detail);
+                            }
+                        } else {
+                            if (detail.getNodeeage().contains("3-6")) {
+                                id_3_6 = detail.getNodeid();
+                                break;
+                            }
                         }
                     } else {
                         if (detail.getResourcetype().equalsIgnoreCase("Game")
@@ -363,15 +379,19 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         else
                             detail.setContentType("folder");
                         detail.setMappedApiId(detail.getNodeid());
-                        detail.setContent_language(BaseActivity.language);
+                        detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                         displayedContents.add(detail);
                     }
                 }
-                totalContents = removeDownloadedContents(totalContents, displayedContents);
+                if (!PrathamApplication.isTablet && child_age <= 6 && !id_3_6.isEmpty()) {
+                    callOnlineContentAPI(totalContents, id_3_6);
+                } else {
+                    totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                tempContentList = getFinalListWithHeader(totalContents);
-                if (contentView != null)
-                    contentView.displayContents(totalContents);
+                    tempContentList = getFinalListWithHeader(totalContents);
+                    if (contentView != null)
+                        contentView.displayContents(totalContents);
+                }
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -388,7 +408,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         detail.setContentType("folder");
                     detail.setMappedApiId(detail.getNodeid());
                     detail.setMappedParentId(mappedParentApi);
-                    detail.setContent_language(BaseActivity.language);
+                    detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                     displayedContents.add(detail);
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
@@ -410,9 +430,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    private ArrayList<Modal_ContentDetail> removeDownloadedContents
-            (ArrayList<Modal_ContentDetail> dbContents
-                    , ArrayList<Modal_ContentDetail> onlineContents) {
+    private ArrayList<Modal_ContentDetail> removeDownloadedContents(ArrayList<Modal_ContentDetail> dbContents
+            , ArrayList<Modal_ContentDetail> onlineContents) {
         String parentid = null;
         if (!dbContents.isEmpty())
             parentid = dbContents.get(0).getParentid();
@@ -472,7 +491,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         postSingleFileDownloadCompleteMessage(content);
         currentDownloadTasks.remove(downloadID);
         for (int i = 0; i < tempContentList.size(); i++) {
-            if (tempContentList.get(i).getNodeid() != null &&
+            if (tempContentList.get(i) != null && tempContentList.get(i).getNodeid() != null &&
                     tempContentList.get(i).getNodeid().equalsIgnoreCase(content.getNodeid())) {
                 tempContentList.set(i, content);
                 break;
@@ -764,9 +783,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (dl_content != null && !dl_content.isEmpty()) {
             Modal_DownloadContent download_content = new Gson().fromJson(dl_content, Modal_DownloadContent.class);
             for (Modal_ContentDetail detail : download_content.getNodelist()) {
-                Modal_ContentDetail temp = modalContentDao.getContent(detail.getNodeid(), BaseActivity.language);
+                Modal_ContentDetail temp = modalContentDao.getContent(detail.getNodeid(), FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                 if (temp == null) {
-                    detail.setContent_language(BaseActivity.language);
+                    detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
                     if (detail.getResourcetype().equalsIgnoreCase("Game")
                             || detail.getResourcetype().equalsIgnoreCase("Video")
                             || detail.getResourcetype().equalsIgnoreCase("Pdf"))
@@ -810,7 +829,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
             childsOfParent = modalContentDao.getChildsOfParent(parentId, altNodeId, lang);
         } else {
-            childsOfParent = modalContentDao.getParentsHeaders(lang);
+            int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
+            if (PrathamApplication.isTablet)
+                childsOfParent = modalContentDao.getParentsHeaders(lang);
+            else {
+                if (child_age <= 6)
+                    childsOfParent = modalContentDao.getPrimaryAgeParentsHeaders(lang);
+                else
+                    childsOfParent = modalContentDao.getAbovePrimaryAgeParentHeaders(lang);
+            }
         }
         checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId);
     }

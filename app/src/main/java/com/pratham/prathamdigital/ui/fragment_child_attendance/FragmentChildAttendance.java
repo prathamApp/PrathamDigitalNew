@@ -158,6 +158,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         PrathamApplication.bubble_mp.start();
         FastSave.getInstance().saveString(PD_Constant.STUDENTID, student.getStudentId());
         FastSave.getInstance().saveString(PD_Constant.AVATAR, student.getAvatarName());
+        FastSave.getInstance().saveInt(PD_Constant.STUDENT_PROFILE_AGE, Integer.parseInt(student.getAge()));
         if (student.getFullName() != null && !student.getFullName().isEmpty())
             FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, student.getFullName());
         else

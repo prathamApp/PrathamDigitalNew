@@ -27,6 +27,14 @@ public interface ModalContentDao {
             "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     List<Modal_ContentDetail> getParentsHeaders(String language);
 
+    @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage='3-6'")
+    List<Modal_ContentDetail> getPrimaryAgeParentsHeaders(String language);
+
+    @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage not like '3-6'")
+    List<Modal_ContentDetail> getAbovePrimaryAgeParentHeaders(String language);
+
     @Query("SELECT * FROM TableContent WHERE parentid=:id or parentid=:altnodeId and content_language=:language")
     List<Modal_ContentDetail> getChildsOfParent(String id, String altnodeId, String language);
 

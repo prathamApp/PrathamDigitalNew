@@ -36,9 +36,6 @@ import java.util.concurrent.Executors;
 
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 
-/**
- * Created by User on 16/11/15.
- */
 @EBean
 public class ZipDownloader {
 
@@ -46,51 +43,7 @@ public class ZipDownloader {
     PD_ApiRequest pd_apiRequest;
     private String filename;
 
-    public ZipDownloader(Context context) {
-        Context context1 = context;
-    }
-
-    public void initialize(ContentContract.contentPresenter contentPresenter, String url,
-                           String foldername, String f_name, Modal_ContentDetail contentDetail,
-                           ArrayList<Modal_ContentDetail> levelContents) {
-        this.filename = f_name;
-        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
-    }
-
-    /*private void createOverSdCardAndStartDownload(String url, String foldername, String f_name,
-                                                  Modal_ContentDetail contentDetail,
-                                                  ContentContract.contentPresenter contentPresenter,
-                                                  ArrayList<Modal_ContentDetail> levelContents) {
-        String path = FastSave.getInstance().getString(PD_Constant.SDCARD_PATH, "");
-        if (path.isEmpty())
-            return;
-        DocumentFile documentFile = DocumentFile.fromFile(new File(path));
-        if (documentFile.findFile("/Pratham" + foldername) != null)
-            documentFile = documentFile.findFile("/Pratham" + foldername);
-        else
-            documentFile = documentFile.createDirectory("/Pratham" + foldername);
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
-                f_name = f_name.substring(0, f_name.lastIndexOf("."));
-                if (documentFile != null) {
-                    if (documentFile.findFile(f_name) != null)
-                        documentFile = documentFile.findFile(f_name);
-                    else
-                        documentFile = documentFile.createDirectory(f_name);
-                }
-            }
-        }
-        Modal_Download modal_download = new Modal_Download();
-        modal_download.setUrl(url);
-        modal_download.setDir_path(FileUtils.getPath(PrathamApplication.getInstance(), documentFile != null ? documentFile.getUri() : null));
-        modal_download.setF_name(filename);
-        modal_download.setFolder_name(foldername);
-        modal_download.setContent(contentDetail);
-        modal_download.setContentPresenter(contentPresenter);
-        modal_download.setLevelContents(levelContents);
-        new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
-    }*/
-    com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {
+    private com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {
         @Override
         protected void started(@NonNull DownloadTask task) {
             notifyAdapter((Modal_Download) task.getTag());
@@ -136,7 +89,18 @@ public class ZipDownloader {
         }
     };
 
-    public static void downloadImage(String url, String filename) {
+    public void initialize(ContentContract.contentPresenter contentPresenter, String url,
+                           String foldername, String f_name, Modal_ContentDetail contentDetail,
+                           ArrayList<Modal_ContentDetail> levelContents) {
+        this.filename = f_name;
+        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
+    }
+
+    ZipDownloader(Context context) {
+        Context context1 = context;
+    }
+
+    private static void downloadImage(String url, String filename) {
         File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
         if (!dir.exists()) dir.mkdirs();
         AndroidNetworking.download(url, dir.getAbsolutePath(), filename)
@@ -284,7 +248,7 @@ public class ZipDownloader {
         EventBus.getDefault().post(message);
     }
 
-    public void unzipFile(String source, String destination) {
+    private void unzipFile(String source, String destination) {
         ZipFile zipFile;
         try {
             zipFile = new ZipFile(source);
@@ -309,7 +273,7 @@ public class ZipDownloader {
         EventBus.getDefault().post(msg);
     }
 
-    public void dowloadImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
+    private void dowloadImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
         for (Modal_ContentDetail detail : levelContents) {
             if (detail.getNodeserverimage() != null) {
                 String f_name = detail.getNodeserverimage()

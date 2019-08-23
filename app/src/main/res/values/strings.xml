@@ -75,6 +75,7 @@
         <item>avatars/acrobatics.json</item>
     </string-array>
     <string-array name="student_class">
+        <item>PreSchool</item>
         <item>Class 1</item>
         <item>Class 2</item>
         <item>Class 3</item>

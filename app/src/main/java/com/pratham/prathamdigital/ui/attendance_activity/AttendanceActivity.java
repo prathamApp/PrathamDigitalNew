@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.attendance_activity;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.view.Gravity;
 
@@ -67,7 +68,10 @@ public class AttendanceActivity extends BaseActivity {
         if (getSupportFragmentManager().getBackStackEntryCount() == 1) {
             exitDialog = new BlurPopupWindow.Builder(this)
                     .setContentView(R.layout.app_exit_dialog)
-                    .bindClickListener(v -> finishAffinity(), R.id.dialog_btn_exit)
+                    .bindClickListener(v -> {
+                        exitDialog.dismiss();
+                        new Handler().postDelayed((Runnable) this::finishAffinity, 200);
+                    }, R.id.dialog_btn_exit)
                     .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
                     .setGravity(Gravity.CENTER)
                     .setDismissOnTouchBackground(true)

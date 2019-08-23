@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.ui.avatar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -20,10 +22,13 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
+import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
+import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.yarolegovich.discretescrollview.DSVOrientation;
@@ -36,6 +41,8 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -63,10 +70,13 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     Spinner spinner_age;
     @ViewById(R.id.img_add_child_back)
     ImageView img_add_child_back;
+    @ViewById(R.id.txt_sel_language)
+    TextView txt_sel_language;
 
     private final ArrayList<String> avatarList = new ArrayList<>();
     private Context context;
     private String avatar_selected = "";
+
     private final DiscreteScrollView.OnItemChangedListener onItemChangedListener = new DiscreteScrollView.OnItemChangedListener() {
         @Override
         public void onCurrentItemChanged(@Nullable RecyclerView.ViewHolder viewHolder, int adapterPosition) {
@@ -137,6 +147,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     public void insertStudentAndMarkAttendance() {
         FastSave.getInstance().saveString(PD_Constant.AVATAR, avatar_selected);
         FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, et_child_name.getText().toString());
+        getSelectedAge();
         Modal_Student modal_student = new Modal_Student();
         modal_student.setStudentId(PD_Utility.getUUID().toString());
         modal_student.setFullName(et_child_name.getText().toString());
@@ -146,7 +157,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setMiddleName(et_child_name.getText().toString());
         modal_student.setLastName(et_child_name.getText().toString());
         modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
-        modal_student.setAge(spinner_age.getSelectedItem().toString());
+        modal_student.setAge(String.valueOf(FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0)));
         modal_student.setGender("M");
         modal_student.setSentFlag(0);
         modal_student.setAvatarName(avatar_selected);
@@ -154,6 +165,15 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         FastSave.getInstance().saveString(PD_Constant.STUDENTID, modal_student.getStudentId());
         markAttendance(modal_student);
         presentActivity();
+    }
+
+    private void getSelectedAge() {
+        String age = spinner_age.getSelectedItem().toString();
+        String[] split_age = age.split(" ");
+        if (split_age.length > 1)
+            FastSave.getInstance().saveInt(PD_Constant.STUDENT_PROFILE_AGE, Integer.parseInt(split_age[1]));
+        else
+            FastSave.getInstance().saveInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
     }
 
     @UiThread
@@ -196,6 +216,38 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Click(R.id.txt_sel_language)
+    public void chooseLanguage(View view) {
+        int[] outLocation = new int[2];
+        view.getLocationOnScreen(outLocation);
+        outLocation[0] += view.getWidth() / 2;
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+        bundle.putBoolean(PD_Constant.IS_AVATAR, true);
+        PD_Utility.addFragment(getActivity(), new FragmentLanguage_(), R.id.frame_attendance,
+                bundle, FragmentLanguage.class.getSimpleName());
+    }
+
+    @Subscribe
+    public void onMessageReceived(EventMessage message) {
+        if (message != null)
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.LANGUAGE))
+                txt_sel_language.setText(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
