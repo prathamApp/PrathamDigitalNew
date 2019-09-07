@@ -7,6 +7,15 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String SHOW_HOME = "show_home";
+    public static final String RESOURSE_ID = "resourse_id";
+    public static final String HELPER_FOLDER = "helper";
+    public static final String COURSE_ID = "course_id";
+    public static final String SHOW_NEXT_CONTENT = "show_next_content";
+    public static final String CLOSE_CONTENT_PLAYER = "close_content_player";
+    public static final String CONTENT_TYPE = "content_type";
+    public static final String WEEK = "week";
+    public static final String ENROLLED_COURSE = "enrolled_course";
     public static final String IS_AVATAR = "is_avatar";
     public static final String EXIT_APP = "exit_app";
     public static final String STUDENT_PROFILE_AGE = "student_profile_age";
@@ -37,7 +46,6 @@ public class PD_Constant {
     public static final String PDF = "pdf";
     public static final String SESSIONID = "sessionid";
     public static final String GROUPID = "groupid";
-    public static final String STUDENTID = "studentid";
     public static final String CONTENT_BACK = "content_back";
     public static final String STUDENT_ADDED = "STUDENT_ADDED";
     public static final String STUDENT_LIST = "STUDENT_LIST";
@@ -64,7 +72,6 @@ public class PD_Constant {
     public static final String DEEP_LINK = "deep_link";
     public static final String DEEP_LINK_CONTENT = "deep_link_content";
     public static final String AKS_QUESTION = "aks_file_path";
-    public static final String VIDEO_PLAYER_BACK_PRESS = "video_player_back_press";
     public static final String GPS_SESSION = "GPS_SESSION_";
     public static final String GPS_MINIMUM_INTERVAL = "GPS_MINIMUM_INTERVAL";
     public static final String GPS_MINIMUM_DISTANCE = "GPS_MINIMUM_DISTANCE";

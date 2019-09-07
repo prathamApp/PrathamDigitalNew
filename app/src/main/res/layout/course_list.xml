@@ -12,8 +12,20 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_selectCourse"
+        android:layout_below="@+id/tv_sel_course"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/tv_sel_course"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:text="Select from below courses"
+        android:textColor="@android:color/black"
+        android:textSize="@dimen/_15sdp"
+        tools:ignore="HardcodedText" />
 
     <RelativeLayout
         android:id="@+id/ll_no_data"

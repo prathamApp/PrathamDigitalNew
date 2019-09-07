@@ -162,7 +162,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setSentFlag(0);
         modal_student.setAvatarName(avatar_selected);
         studentDao.insertStudent(modal_student);
-        FastSave.getInstance().saveString(PD_Constant.STUDENTID, modal_student.getStudentId());
+        FastSave.getInstance().saveString(PD_Constant.GROUPID, modal_student.getStudentId());
+        FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
         markAttendance(modal_student);
         presentActivity();
     }
@@ -191,7 +192,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     private void markAttendance(Modal_Student stud) {
-        FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
         ArrayList<Attendance> attendances = new ArrayList<>();
         Attendance attendance = new Attendance();
         attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
@@ -199,7 +199,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         attendance.Date = PD_Utility.getCurrentDateTime();
         attendance.GroupID = "SmartPhone";
         attendance.sentFlag = 0;
-        FastSave.getInstance().saveString(PD_Constant.GROUPID, "SmartPhone");
         attendances.add(attendance);
         attendanceDao.insertAttendance(attendances);
         Modal_Session s = new Modal_Session();

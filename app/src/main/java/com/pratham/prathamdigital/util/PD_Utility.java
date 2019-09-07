@@ -68,8 +68,8 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.StorageInfo;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParserException;
@@ -237,8 +237,8 @@ public class PD_Utility {
                     .replace(frame, mFragment, TAG)
                     .addToBackStack(TAG)
                     .commit();
-        } else if (mActivity instanceof Activity_VPlayer) {
-            ((Activity_VPlayer) mActivity).getSupportFragmentManager()
+        } else if (mActivity instanceof Activity_ContentPlayer) {
+            ((Activity_ContentPlayer) mActivity).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(frame, mFragment, TAG)
                     .addToBackStack(TAG)
@@ -258,12 +258,6 @@ public class PD_Utility {
                     .commit();
         } else if (mActivity instanceof AttendanceActivity) {
             ((AttendanceActivity) mActivity).getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(frame, mFragment, TAG)
-                    .addToBackStack(TAG)
-                    .commit();
-        } else if (mActivity instanceof Activity_VPlayer) {
-            ((Activity_VPlayer) mActivity).getSupportFragmentManager()
                     .beginTransaction()
                     .add(frame, mFragment, TAG)
                     .addToBackStack(TAG)
@@ -1043,8 +1037,7 @@ public class PD_Utility {
             result = contentURI.getPath();
         } else {
             cursor.moveToFirst();
-            int idx = cursor
-                    .getColumnIndex(MediaStore.Images.ImageColumns.DATA);
+            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
             result = cursor.getString(idx);
             cursor.close();
         }

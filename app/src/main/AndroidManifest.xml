@@ -158,30 +158,14 @@
             android:theme="@style/AppTheme.Transparent"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".ui.pdf_viewer.Activity_PdfViewer_"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
-            android:name=".ui.video_player.Activity_VPlayer_"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
-            android:theme="@style/AppTheme.Dialog"
-            android:windowSoftInputMode="stateAlwaysHidden">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".BaseActivity" />
-        </activity>
-        <activity
-            android:name=".ui.web_view.Activity_WebView_"
-            android:configChanges="orientation|screenSize"
-            android:parentActivityName=".BaseActivity"
-            android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".ui.assign.Activity_AssignGroups_"
+            android:configChanges="orientation|screenSize"
+            android:parentActivityName=".BaseActivity"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.Transparent"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+        <activity
+            android:name=".ui.content_player.Activity_ContentPlayer_"
             android:configChanges="orientation|screenSize"
             android:parentActivityName=".BaseActivity"
             android:screenOrientation="sensorLandscape"
@@ -204,9 +188,6 @@
 
         <service
             android:name=".services.auto_sync.AutoSyncService"
-            android:exported="false" />
-        <service
-            android:name=".services.BkgdVideoRecordingService"
             android:exported="false" />
 
         <receiver

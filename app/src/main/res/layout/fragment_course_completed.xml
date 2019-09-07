@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/course_enrollment_bkgd"
+    android:clickable="true"
+    android:fillViewport="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/edittext_bkgd"
+            android:minHeight="@dimen/_50sdp">
+
+            <ImageView
+                android:id="@+id/mic_1"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_2sdp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/asl_trimclip_mic"
+                tools:ignore="ContentDescription" />
+
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/et_new_words_learnt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_toStartOf="@+id/mic_1"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black_20" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/edittext_bkgd"
+            android:minHeight="@dimen/_50sdp">
+
+            <ImageView
+                android:id="@+id/mic_2"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_2sdp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/asl_trimclip_mic"
+                tools:ignore="ContentDescription" />
+
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/et_no_of_assignments_completed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_toStartOf="@+id/mic_2"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black_20" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/edittext_bkgd"
+            android:minHeight="@dimen/_50sdp">
+
+            <ImageView
+                android:id="@+id/mic_3"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_2sdp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/asl_trimclip_mic"
+                tools:ignore="ContentDescription" />
+
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/et_assignment_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_toStartOf="@+id/mic_3"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black_20" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_10sdp"
+            android:background="@drawable/edittext_bkgd"
+            android:minHeight="@dimen/_50sdp">
+
+            <ImageView
+                android:id="@+id/mic_4"
+                android:layout_width="@dimen/_45sdp"
+                android:layout_height="@dimen/_45sdp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_2sdp"
+                android:scaleType="center"
+                app:srcCompat="@drawable/asl_trimclip_mic"
+                tools:ignore="ContentDescription" />
+
+            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                android:id="@+id/et_coach_comments"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_margin="@dimen/_5sdp"
+                android:layout_toStartOf="@+id/mic_4"
+                android:background="@android:color/transparent"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:textColor="@color/black_20" />
+        </RelativeLayout>
+
+
+        <RelativeLayout
+            android:id="@+id/btn_exp_done"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/button_orange_selector"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/exp_coach_image"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:visibility="gone"
+                app:roundedCornerRadius="@dimen/_17sdp"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="@dimen/_1sdp" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_toEndOf="@+id/exp_coach_image"
+                android:drawablePadding="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="Verify By Coach"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                tools:ignore="HardcodedText" />
+
+        </RelativeLayout>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Write your experience"
+            android:textColor="@color/dark_yellow"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="What all new words did you learnt this week?"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="How many assignments did you completed this week?"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Give a small description about the assignments"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Coach comments on group's/student's work"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+    </LinearLayout>
+</ScrollView>

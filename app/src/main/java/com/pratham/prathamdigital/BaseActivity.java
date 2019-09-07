@@ -41,8 +41,6 @@ import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
-import net.alhazmy13.catcho.library.Catcho;
-
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
@@ -162,7 +160,7 @@ public class BaseActivity extends AppCompatActivity {
                                 sd_builder.dismiss();
                             }, R.id.txt_choose_sd_card)
                             .setDismissOnClickBack(true)
-                            .setDismissOnTouchBackground(true)
+                            .setDismissOnTouchBackground(false)
                             .setScaleRatio(0.2f)
                             .setBlurRadius(8)
                             .setTintColor(0x30000000)
@@ -226,10 +224,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
-//                .recipients("abc@gm.com")
-                .build();
+//        Catcho.Builder(this)
+//                .activity(CatchoTransparentActivity.class)
+////                .recipients("abc@gm.com")
+//                .build();
 //        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();

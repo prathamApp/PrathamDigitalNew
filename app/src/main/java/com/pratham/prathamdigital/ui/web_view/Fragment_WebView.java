@@ -1,53 +1,45 @@
 package com.pratham.prathamdigital.ui.web_view;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.services.BkgdVideoRecordingService;
+import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.EActivity;
+import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
+import java.util.Objects;
 
-@EActivity(R.layout.activity_web_view)
-public class Activity_WebView extends BaseActivity implements VideoListener/*, SurfaceHolder.Callback*/ {
+@EFragment(R.layout.activity_web_view)
+public class Fragment_WebView extends Fragment implements VideoListener {
 
     @ViewById(R.id.loadGame)
     WebView webView;
     @ViewById(R.id.videoView)
     com.pratham.prathamdigital.custom.FullScreenVideoView videoView;
-//    @SuppressLint("StaticFieldLeak")
-//    @ViewById(R.id.cameraView)
-//    public static SurfaceView surfaceView;
-//    public static SurfaceHolder mSurfaceHolder;
+
+    private String resId;
 
     @AfterViews
     public void initialize() {
-        String index_path = getIntent().getStringExtra("index_path");
+        String index_path = Objects.requireNonNull(getArguments()).getString("index_path");
         String path = new File(index_path).getParent() + "/";
-        String resId = getIntent().getStringExtra("resId");
-        boolean isOnSdCard = getIntent().getBooleanExtra("isOnSdCard", false);
-//        mSurfaceHolder = surfaceView.getHolder();
-//        mSurfaceHolder.addCallback(this);
-//        mSurfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+        resId = getArguments().getString("resId");
+        boolean isOnSdCard = getArguments().getBoolean("isOnSdCard", false);
         createWebView(index_path, path, resId, isOnSdCard);
-//        startCameraService();
     }
-
-//    public void startCameraService() {
-//        Intent intent = new Intent(this, BkgdVideoRecordingService.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        startService(intent);
-//    }
 
     @SuppressLint("SetJavaScriptEnabled")
     private void createWebView(String GamePath, String parse, String resId, boolean isOnSdCard) {
@@ -56,8 +48,8 @@ public class Activity_WebView extends BaseActivity implements VideoListener/*, S
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
-            webView.addJavascriptInterface(new JSInterface(Activity_WebView.this, webView,
-                    "file://" + parse, resId, isOnSdCard, this, this), "Android");
+            webView.addJavascriptInterface(new JSInterface(getActivity(), webView,
+                    "file://" + parse, resId, isOnSdCard, this, getActivity()), "Android");
             WebView.setWebContentsDebuggingEnabled(true);
             webView.setWebViewClient(new WebViewClient());
             webView.setWebChromeClient(new WebChromeClient());
@@ -71,25 +63,6 @@ public class Activity_WebView extends BaseActivity implements VideoListener/*, S
         }
     }
 
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        webView.post(() -> webView.loadUrl("about:blank"));
-    }
-
-    @Override
-    public void onBackPressed() {
-        webView.post(() -> webView.loadUrl("about:blank"));
-        stopService(new Intent(this, BkgdVideoRecordingService.class));
-        webView.clearCache(true);
-        Runtime rs = Runtime.getRuntime();
-        rs.freeMemory();
-        rs.gc();
-        rs.freeMemory();
-        finish();
-    }
-
     @Override
     public void showVideo(String videoPath) {
         webView.setVisibility(View.GONE);
@@ -97,29 +70,50 @@ public class Activity_WebView extends BaseActivity implements VideoListener/*, S
         Uri video = Uri.parse(videoPath);
         videoView.setVideoURI(video);
         videoView.setOnPreparedListener(mp -> {
-//                mp.setLooping(true);
             videoView.start();
         });
         videoView.setOnCompletionListener(mp -> {
             webView.setVisibility(View.VISIBLE);
             videoView.setVisibility(View.GONE);
         });
-
     }
 
-//    @Override
-//    public void surfaceCreated(SurfaceHolder holder) {
-//
-//    }
-//
-//    @Override
-//    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
-//
-//    }
-//
-//    @Override
-//    public void surfaceDestroyed(SurfaceHolder holder) {
-//
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void messageReceived(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
+                webView.post(() -> webView.loadUrl("about:blank"));
+                webView.clearCache(true);
+                Runtime rs = Runtime.getRuntime();
+                rs.freeMemory();
+                rs.gc();
+                rs.freeMemory();
+                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+            }
+        }
+    }
+
+    @Override
+    public void gameCompleted() {
+        if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+            EventMessage message = new EventMessage();
+            message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
+            message.setDownloadId(resId);
+            EventBus.getDefault().post(message);
+        } else
+            Objects.requireNonNull(getActivity()).onBackPressed();
+    }
 }
 

@@ -3,11 +3,13 @@ package com.pratham.prathamdigital.models;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "CourseEnrolled")
-public class Model_CourseEnrollment {
+public class Model_CourseEnrollment implements Parcelable, Comparable {
     @PrimaryKey(autoGenerate = true)
     @SerializedName("c_autoID")
     private int c_autoID;
@@ -25,10 +27,49 @@ public class Model_CourseEnrollment {
     private String coachVerificationDate;
     @SerializedName("courseExperience")
     private String courseExperience;
-    @SerializedName("sentFlag")
-    public int sentFlag;
+    public static final Creator<Model_CourseEnrollment> CREATOR = new Creator<Model_CourseEnrollment>() {
+        @Override
+        public Model_CourseEnrollment createFromParcel(Parcel in) {
+            return new Model_CourseEnrollment(in);
+        }
+
+        @Override
+        public Model_CourseEnrollment[] newArray(int size) {
+            return new Model_CourseEnrollment[size];
+        }
+    };
+    @SerializedName("courseCompleted")
+    private boolean courseCompleted;
+    @SerializedName("coachImage")
+    private String coachImage;
+    @SerializedName("language")
+    private String language;
     @Ignore
     private Modal_ContentDetail courseDetail;
+    @SerializedName("sentFlag")
+    private int sentFlag;
+    @Ignore
+    private boolean isProgressCompleted = false;
+
+    public Model_CourseEnrollment() {
+    }
+
+    protected Model_CourseEnrollment(Parcel in) {
+        c_autoID = in.readInt();
+        courseId = in.readString();
+        groupId = in.readString();
+        planFromDate = in.readString();
+        planToDate = in.readString();
+        coachVerified = in.readByte() != 0;
+        coachVerificationDate = in.readString();
+        courseExperience = in.readString();
+        sentFlag = in.readInt();
+        courseDetail = in.readParcelable(Modal_ContentDetail.class.getClassLoader());
+        courseCompleted = in.readByte() != 0;
+        coachImage = in.readString();
+        isProgressCompleted = in.readByte() != 0;
+        language = in.readString();
+    }
 
     public int getC_autoID() {
         return c_autoID;
@@ -108,5 +149,72 @@ public class Model_CourseEnrollment {
 
     public void setCourseDetail(Modal_ContentDetail courseDetail) {
         this.courseDetail = courseDetail;
+    }
+
+    public boolean isCourseCompleted() {
+        return courseCompleted;
+    }
+
+    public void setCourseCompleted(boolean courseCompleted) {
+        this.courseCompleted = courseCompleted;
+    }
+
+    public String getCoachImage() {
+        return coachImage;
+    }
+
+    public void setCoachImage(String coachImage) {
+        this.coachImage = coachImage;
+    }
+
+    public boolean isProgressCompleted() {
+        return isProgressCompleted;
+    }
+
+    public void setProgressCompleted(boolean progressCompleted) {
+        isProgressCompleted = progressCompleted;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(c_autoID);
+        dest.writeString(courseId);
+        dest.writeString(groupId);
+        dest.writeString(planFromDate);
+        dest.writeString(planToDate);
+        dest.writeByte((byte) (coachVerified ? 1 : 0));
+        dest.writeString(coachVerificationDate);
+        dest.writeString(courseExperience);
+        dest.writeInt(sentFlag);
+        dest.writeParcelable(courseDetail, flags);
+        dest.writeByte((byte) (courseCompleted ? 1 : 0));
+        dest.writeString(coachImage);
+        dest.writeByte((byte) (isProgressCompleted ? 1 : 0));
+        dest.writeString(language);
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        Model_CourseEnrollment compare = (Model_CourseEnrollment) o;
+        if (compare.getCourseId() != null) {
+            if (compare.getCourseId().equalsIgnoreCase(this.courseId) && compare.isCoachVerified() == this.isCoachVerified())
+                return 0;
+            else return 1;
+        } else {
+            return 0;
+        }
     }
 }

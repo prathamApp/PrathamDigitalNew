@@ -10,8 +10,10 @@ public interface PDFContract {
     }
 
     interface pdfPresenter {
-        void setView(Activity_PdfViewer activity_pdfViewer);
+        void setView(Fragment_PdfViewer activity_pdfViewer);
 
         void generateImageFromPdf(String pdfPath);
+
+        void addScoreToDB(String resId, String startTime, int pageSelected);
     }
 }

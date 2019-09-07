@@ -3,24 +3,38 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@drawable/course_enrollment_bkgd">
 
-    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-        android:id="@+id/txt_crse"
+    <ImageView
+        android:id="@+id/iv_previous_week"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:text="Select Courses to enroll"
-        android:textColor="@android:color/black"
-        android:textSize="@dimen/_15sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_10sdp"
+        android:contentDescription="Next"
+        android:elevation="@dimen/_5sdp"
+        android:rotation="180"
+        android:visibility="gone"
+        app:srcCompat="@drawable/ic_right_arrow"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/iv_next_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="@dimen/_10sdp"
+        android:contentDescription="Previous"
+        android:elevation="@dimen/_5sdp"
+        app:srcCompat="@drawable/ic_right_arrow"
         tools:ignore="HardcodedText" />
 
     <android.support.v4.view.ViewPager
         android:id="@+id/vp_course"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/txt_crse" />
+        android:layout_height="match_parent" />
 
     <!--<include layout="@layout/layout_coming_soon" />-->
 </RelativeLayout>

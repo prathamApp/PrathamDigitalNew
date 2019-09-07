@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_230sdp"
+    android:layout_height="@dimen/_230sdp"
+    android:layout_gravity="center"
+    android:gravity="center"
+    android:orientation="vertical"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardElevation="0dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/lottie_completed"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_100sdp"
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="star_success.json"
+            app:lottie_loop="true"
+            app:lottie_scale="0.7" />
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/dialog_btn_lets_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/update_button_round_bg"
+            android:elevation="@dimen/_8sdp"
+            android:gravity="center"
+            android:minWidth="@dimen/_120sdp"
+            android:minHeight="@dimen/_35sdp"
+            android:text="Let's Go"
+            android:textColor="@android:color/white"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/txt_completed_msg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_marginRight="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_20sdp"
+            android:gravity="center"
+            android:text="Great!!\n Let's share our experience for this course."
+            android:textColor="@color/charcoal"
+            android:textSize="@dimen/_16sdp"
+            tools:ignore="HardcodedText" />
+
+    </LinearLayout>
+</android.support.design.card.MaterialCardView>

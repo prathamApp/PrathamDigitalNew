@@ -21,6 +21,7 @@ import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
+import com.pratham.prathamdigital.models.Model_ContentProgress;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 
 /*
@@ -29,7 +30,7 @@ import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 */
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class,
         Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class,
-        Modal_Log.class, Model_CourseEnrollment.class}, version = 3, exportSchema = false)
+        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 4, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi_db";
@@ -54,6 +55,30 @@ public abstract class PrathamDatabase extends RoomDatabase {
 
     public abstract LogDao getLogDao();
 
+    private static Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN courseCompleted INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN coachImage TEXT");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN sentFlag BOOLEAN DEFAULT 0");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN language TEXT");
+            database.execSQL("CREATE TABLE IF NOT EXISTS ContentProgress ('progressId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    "'studentId' TEXT ,'resourceId' TEXT ,'updatedDateTime' TEXT ," +
+                    "'progressPercentage' TEXT ,'label' TEXT )");
+        }
+    };
+
+    public static PrathamDatabase getDatabaseInstance(final Context context) {
+        if (INSTANCE == null) {
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+                    PrathamDatabase.class, DB_NAME)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
+                    .build();
+        }
+        return INSTANCE;
+    }
+
     private static Migration MIGRATION_1_2 = new Migration(1, 2) {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
@@ -72,16 +97,9 @@ public abstract class PrathamDatabase extends RoomDatabase {
         }
     };
 
-    public static PrathamDatabase getDatabaseInstance(final Context context) {
-        if (INSTANCE == null) {
-            INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                    PrathamDatabase.class, DB_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
-                    .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
-                    .build();
-        }
-        return INSTANCE;
-    }
+    public abstract CourseDao getCourseDao();
+
+    public abstract ContentProgressDao getContentProgressDao();
 
     public static void destroyInstance() {
         INSTANCE = null;
@@ -104,5 +122,4 @@ public abstract class PrathamDatabase extends RoomDatabase {
 
     }
 
-    public abstract CourseDao getCourseDao();
 }

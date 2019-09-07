@@ -34,10 +34,8 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
-import com.pratham.prathamdigital.ui.pdf_viewer.Activity_PdfViewer_;
-import com.pratham.prathamdigital.ui.video_player.Activity_VPlayer_;
-import com.pratham.prathamdigital.ui.web_view.Activity_WebView_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -56,8 +54,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
-import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 @EFragment(R.layout.fragment_content)
 public class FragmentContent extends Fragment implements ContentContract.contentView,
@@ -259,7 +255,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 for (int i = 0; i < data.size(); i++) {
                     if (data.get(i) != null && data.get(i).getNodeid() != null &&
                             data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
-//                        data.set(i, message.getContentDetail());
                         contentAdapter.notifyItemChanged(i, message.getContentDetail());
                         break;
                     }
@@ -471,52 +466,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
         }
     }
 
-    @UiThread
-    public void openPdf(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_PdfViewer_.class);
-        String f_path;
-        if (contentDetail.isOnSDCard())
-            f_path = PrathamApplication.contentSDPath + "/PrathamPdf/" + contentDetail.getResourcepath();
-        else
-            f_path = pradigiPath + "/PrathamPdf/" + contentDetail.getResourcepath();
-        intent.putExtra("pdfPath", f_path);
-        intent.putExtra("pdfTitle", contentDetail.getNodetitle());
-        intent.putExtra("resId", contentDetail.getResourceid());
-        Objects.requireNonNull(getActivity()).startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
-    }
-
-    @UiThread
-    public void openVideo(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_VPlayer_.class);
-        String f_path;
-        if (contentDetail.isOnSDCard())
-            f_path = PrathamApplication.contentSDPath + "/PrathamVideo/" + contentDetail.getResourcepath();
-        else
-            f_path = pradigiPath + "/PrathamVideo/" + contentDetail.getResourcepath();
-        intent.putExtra("videoPath", f_path);
-        intent.putExtra("videoTitle", contentDetail.getNodetitle());
-        intent.putExtra("resId", contentDetail.getResourceid());
-        intent.putExtra("hint", false);
-        Objects.requireNonNull(getActivity()).startActivity(intent);
-        getActivity().overridePendingTransition(R.anim.pop_in, R.anim.nothing);
-    }
-
-    @UiThread
-    public void openGame(Modal_ContentDetail contentDetail) {
-        Intent intent = new Intent(getActivity(), Activity_WebView_.class);
-        String f_path;
-        if (contentDetail.isOnSDCard())
-            f_path = PrathamApplication.contentSDPath + "/PrathamGame/" + contentDetail.getResourcepath();
-        else
-            f_path = pradigiPath + "/PrathamGame/" + contentDetail.getResourcepath();
-        intent.putExtra("index_path", f_path);
-        intent.putExtra("resId", contentDetail.getResourceid());
-        intent.putExtra("isOnSdCard", contentDetail.isOnSDCard());
-        Objects.requireNonNull(getActivity()).overridePendingTransition(R.anim.zoom_enter, R.anim.nothing);
-        startActivity(intent);
-    }
-
     @Override
     public void onRevealed() {
         PD_Utility.getConnectivityStatus(Objects.requireNonNull(getActivity()));
@@ -534,17 +483,21 @@ public class FragmentContent extends Fragment implements ContentContract.content
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.RECORD_AUDIO)
                 .onAccepted(permissionResult -> {
+                    Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
                     switch (contentDetail.getResourcetype().toLowerCase()) {
                         case PD_Constant.GAME:
-                            openGame(contentDetail);
+                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.GAME);
                             break;
                         case PD_Constant.VIDEO:
-                            openVideo(contentDetail);
+                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.VIDEO);
                             break;
                         case PD_Constant.PDF:
-                            openPdf(contentDetail);
+                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.PDF);
                             break;
                     }
+                    intent.putExtra(PD_Constant.CONTENT, contentDetail);
+                    Objects.requireNonNull(getActivity()).startActivity(intent);
+                    getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                 })
                 .ask();
     }

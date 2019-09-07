@@ -385,4 +385,16 @@
     <declare-styleable name="ExpansionLayout">
         <attr name="expansion_expanded" format="boolean" />
     </declare-styleable>
+    <declare-styleable name="CountDownTextView">
+        <attr name="text_size" format="dimension" />
+        <attr name="text_color" format="color" />
+        <attr name="tip_text" format="string" />
+        <attr name="init_text" format="string" />
+        <attr name="gap_string_format" format="string" />
+        <attr name="enable_background" format="reference" />
+        <attr name="disable_background" format="reference" />
+        <attr name="total_time" format="integer" />
+        <attr name="anim_in" format="reference" />
+        <attr name="anim_out" format="reference" />
+    </declare-styleable>
 </resources>

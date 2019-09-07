@@ -45,8 +45,8 @@ public interface ModalContentDao {
     @Query("SELECT * FROM TableContent WHERE altnodeid=:id and content_language=:language")
     Modal_ContentDetail getContentFromAltNodeId(String id, String language);
 
-    @Query("select * from TableContent where nodetype='Course'")
-    List<Modal_ContentDetail> getAllCourses();
+    @Query("select * from TableContent where nodetype='Course' and content_language=:language")
+    List<Modal_ContentDetail> getAllCourses(String language);
 
     @Query("with tmp(id, level) as (  select nodeid,1  from TableContent  where nodeid = :node_id \n" +
             "union all  select s.parentid, t.level+1  from tmp t  join TableContent s on s.nodeid = t.id)\n" +

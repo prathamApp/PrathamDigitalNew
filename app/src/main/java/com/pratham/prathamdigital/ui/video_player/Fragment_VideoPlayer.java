@@ -16,6 +16,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
 import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -47,7 +48,6 @@ public class Fragment_VideoPlayer extends Fragment {
     private String startTime = "no_resource";
     private String resId;
     private long videoDuration = 0;
-    private boolean isHint = false;
     private Modal_AajKaSawal videoSawal = null;
     @SuppressLint("HandlerLeak")
     private final
@@ -57,32 +57,13 @@ public class Fragment_VideoPlayer extends Fragment {
             super.handleMessage(msg);
             switch (msg.what) {
                 case AAJ_KA_SAWAL_FOR_THIS_VIDEO:
-                    //aaj_ka_sawal is downloaded in main activity.
-                    try {
-                        String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
-                        File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename);
-                        if (aksFile.exists()) {
-                            String aks = PD_Utility.readJSONFile(aksFile.getAbsolutePath());
-                            Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
-                            for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
-                                boolean found = false;
-                                for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
-                                    if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
-                                        found = true;
-                                        videoSawal = aajKaSawal;
-                                        break;
-                                    }
-                                }
-                                if (found) break;
-                            }
-                        }
-                    } catch (JsonSyntaxException e) {
-                        e.printStackTrace();
-                    }
+                    findSawalForThisVideo();
                     break;
                 case SHOW_SAWAL:
                     Bundle aksbundle = new Bundle();
                     aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
+                    aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
+                    aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
                     PD_Utility.addFragment(getActivity(), new Fragment_AAJ_KA_SAWAL_(), R.id.vp_frame,
                             aksbundle, Fragment_AAJ_KA_SAWAL.class.getSimpleName());
                     break;
@@ -90,11 +71,36 @@ public class Fragment_VideoPlayer extends Fragment {
         }
     };
 
+    @Background
+    public void findSawalForThisVideo() {
+        //aaj_ka_sawal is downloaded in main activity.
+        try {
+            String filename = "AajKaSawal_" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI) + ".json";
+            File aksFile = new File(PrathamApplication.pradigiPath + "/" + filename);
+            if (aksFile.exists()) {
+                String aks = PD_Utility.readJSONFile(aksFile.getAbsolutePath());
+                Modal_AajKaSawal rootAajKaSawal = new Gson().fromJson(aks, Modal_AajKaSawal.class);
+                for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
+                    boolean found = false;
+                    for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
+                        if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
+                            found = true;
+                            videoSawal = aajKaSawal;
+                            break;
+                        }
+                    }
+                    if (found) break;
+                }
+            }
+        } catch (JsonSyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
     @AfterViews
     public void initialize() {
         videoPath = Objects.requireNonNull(getArguments()).getString("videoPath");
         resId = getArguments().getString("resId");
-        isHint = getArguments().getBoolean("hint", false);
         mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
         initializePlayer(videoPath);
     }
@@ -114,11 +120,17 @@ public class Fragment_VideoPlayer extends Fragment {
             videoDuration = videoView.getDuration();
         });
         videoView.setOnCompletionListener(mp -> {
-            if (!isHint) addScoreToDB();
-            if (videoSawal == null)
-                Objects.requireNonNull(getActivity()).onBackPressed();
-            else
+            if (videoSawal == null) {
+                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    EventMessage message = new EventMessage();
+                    message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
+                    message.setDownloadId(resId);
+                    EventBus.getDefault().post(message);
+                } else
+                    Objects.requireNonNull(getActivity()).onBackPressed();
+            } else {
                 mHandler.sendEmptyMessage(SHOW_SAWAL);
+            }
         });
     }
 
@@ -137,9 +149,9 @@ public class Fragment_VideoPlayer extends Fragment {
     @Subscribe
     public void messageReceived(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.VIDEO_PLAYER_BACK_PRESS)) {
-                if (!isHint) addScoreToDB();
-                Objects.requireNonNull(getActivity()).onBackPressed();
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
+                addScoreToDB();
+                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
             }
         }
     }
@@ -149,10 +161,13 @@ public class Fragment_VideoPlayer extends Fragment {
         String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();
         modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        if (PrathamApplication.isTablet)
+        if (PrathamApplication.isTablet) {
             modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-        else
-            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+            modalScore.setStudentID("");
+        } else {
+            modalScore.setGroupID("");
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+        }
         modalScore.setDeviceID(PD_Utility.getDeviceID());
         modalScore.setResourceID(resId);
         modalScore.setQuestionId(0);

@@ -255,6 +255,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 decreaseNotificationCount(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.EXIT_APP)) {
                 exitApp();
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_HOME)) {
+                mHandler.sendEmptyMessage(MENU_HOME);
             }
         }
     }

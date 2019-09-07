@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.ui.web_view;
 import android.app.Activity;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
@@ -21,6 +22,7 @@ import java.util.Locale;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
 public class JSInterface {
+    private static final int GAME_COMPLETED = 1;
     //    MediaRecorder myAudioRecorder;
     private static MediaPlayer mp;
     //    RadioGroup radioGroup;
@@ -221,13 +223,8 @@ public class JSInterface {
     public void showVideo(String filename, String resId) {
         try {
             String vidPath = gamePath + filename;
-//            Intent intent = new Intent(mContext, Activity_VPlayer_.class);
-//            intent.putExtra("videoPath", vidPath);
-//            intent.putExtra("resId", resId);
-//            intent.putExtra("hint", true);
             MediaFlag = true;
             activity.runOnUiThread(() -> videoListener.showVideo(vidPath));
-//            ((Activity) mContext).startActivityForResult(intent, 1);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -263,7 +260,9 @@ public class JSInterface {
     }
 
     @JavascriptInterface
-    public static boolean informCompletion() {
+    public boolean informCompletion() {
+        Log.d("gamecompleted:::", "informCompletion:");
+        activity.runOnUiThread(() -> videoListener.gameCompleted());
         return true;
     }
 
@@ -299,10 +298,13 @@ public class JSInterface {
     private void addScore(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
         Modal_Score modal_score = new Modal_Score();
         modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
-        if (PrathamApplication.isTablet)
+        if (PrathamApplication.isTablet) {
             modal_score.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-        else
-            modal_score.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+            modal_score.setStudentID("");
+        } else {
+            modal_score.setGroupID("");
+            modal_score.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+        }
         modal_score.setDeviceID(PD_Utility.getDeviceID());
         modal_score.setResourceID(tempResId);
         modal_score.setQuestionId(questionId);

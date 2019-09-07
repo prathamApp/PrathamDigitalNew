@@ -732,10 +732,13 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();
         modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        if (PrathamApplication.isTablet)
+        if (PrathamApplication.isTablet) {
             modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-        else
-            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.STUDENTID, "no_student"));
+            modalScore.setStudentID("");
+        } else {
+            modalScore.setGroupID("");
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+        }
         modalScore.setDeviceID(PD_Utility.getDeviceID());
         modalScore.setResourceID(contentItem.getResourceid());
         modalScore.setQuestionId(0);

@@ -156,7 +156,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public void moveToDashboardOnChildClick(Modal_Student student, int position, View v) {
         PrathamApplication.bubble_mp.start();
-        FastSave.getInstance().saveString(PD_Constant.STUDENTID, student.getStudentId());
+        FastSave.getInstance().saveString(PD_Constant.GROUPID, student.getStudentId());
         FastSave.getInstance().saveString(PD_Constant.AVATAR, student.getAvatarName());
         FastSave.getInstance().saveInt(PD_Constant.STUDENT_PROFILE_AGE, Integer.parseInt(student.getAge()));
         if (student.getFullName() != null && !student.getFullName().isEmpty())
@@ -194,6 +194,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             PrathamApplication.bubble_mp.start();
             FastSave.getInstance().saveString(PD_Constant.AVATAR, "avatars/dino_dance.json");
             FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, Objects.requireNonNull(getArguments()).getString(PD_Constant.GROUP_NAME));
+            FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
             markAttendance(checkedStds);
             presentActivity(v);
         } else {
@@ -212,7 +213,6 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             attendance.Date = PD_Utility.getCurrentDateTime();
             attendance.GroupID = groupID;
             attendance.sentFlag = 0;
-            FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
             attendances.add(attendance);
         }
         attendanceDao.insertAttendance(attendances);

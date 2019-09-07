@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_20">
+
+    <ImageView
+        android:id="@+id/close_content_player"
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_alignParentEnd="true"
+        android:elevation="@dimen/_10sdp"
+        app:srcCompat="@drawable/ic_video_cancel"
+        tools:ignore="ContentDescription" />
+
+    <android.support.design.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_10sdp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="@dimen/_5sdp"
+        app:cardElevation="0dp">
+
+        <FrameLayout
+            android:id="@+id/content_player_frame"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <com.pratham.prathamdigital.custom.CountDownTextView
+            android:id="@+id/txt_next_countdown"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="end|bottom"
+            android:layout_margin="@dimen/_5sdp"
+            android:animateFirstView="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:minWidth="@dimen/_100sdp"
+            android:padding="@dimen/_5sdp"
+            android:visibility="gone"
+            app:anim_in="@anim/enter_bottom"
+            app:anim_out="@anim/exit_top"
+            app:disable_background="@drawable/rounded_corners"
+            app:text_color="@color/white"
+            app:text_size="@dimen/_13sdp"
+            app:total_time="5" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/pdf_play_next"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_40sdp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@color/black_20"
+            android:clickable="true"
+            android:elevation="@dimen/_5sdp"
+            android:focusable="true"
+            android:gravity="center"
+            android:text="Play Next"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_13sdp"
+            android:visibility="gone"
+            tools:ignore="HardcodedText" />
+    </android.support.design.card.MaterialCardView>
+</RelativeLayout>

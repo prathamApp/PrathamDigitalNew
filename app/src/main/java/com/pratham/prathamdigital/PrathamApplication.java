@@ -3,6 +3,7 @@ package com.pratham.prathamdigital;
 import android.app.Application;
 import android.content.Context;
 import android.media.MediaPlayer;
+import android.os.StrictMode;
 import android.support.multidex.MultiDex;
 import android.support.v7.app.AppCompatDelegate;
 
@@ -13,6 +14,7 @@ import com.pratham.prathamdigital.async.ReadBackupDb;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.CRLdao;
+import com.pratham.prathamdigital.dbclasses.ContentProgressDao;
 import com.pratham.prathamdigital.dbclasses.CourseDao;
 import com.pratham.prathamdigital.dbclasses.GroupDao;
 import com.pratham.prathamdigital.dbclasses.LogDao;
@@ -45,7 +47,7 @@ public class PrathamApplication extends Application {
      * Check baseUrl in PDConstant
      * increase version before generating signed apk otherwise "app not installed"
      */
-    public static final boolean isTablet = true;
+    public static final boolean isTablet = false;
     public static boolean useSatelliteGPS = false;
     public static boolean contentExistOnSD = false;
     public static String contentSDPath = "";
@@ -60,6 +62,7 @@ public class PrathamApplication extends Application {
     public static VillageDao villageDao;
     public static LogDao logDao;
     public static CourseDao courseDao;
+    public static ContentProgressDao contentProgressDao;
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -71,6 +74,9 @@ public class PrathamApplication extends Application {
         if (mInstance == null) {
             mInstance = this;
         }
+        //this way the VM ignores the file URI exposure. if commented, the camera crashes on open
+        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
+        StrictMode.setVmPolicy(builder.build());
 //        if (LeakCanary.isInAnalyzerProcess(this)) {
 //            // This process is dedicated to LeakCanary for heap analysis.
 //            // You should not init your app in this process.
@@ -126,6 +132,7 @@ public class PrathamApplication extends Application {
         villageDao = db.getVillageDao();
         logDao = db.getLogDao();
         courseDao = db.getCourseDao();
+        contentProgressDao = db.getContentProgressDao();
         if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
             new ReadBackupDb().execute();
     }

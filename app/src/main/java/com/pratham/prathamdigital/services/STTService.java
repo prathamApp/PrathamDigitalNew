@@ -93,7 +93,7 @@ public class STTService {
 
         @Override
         public void onEndOfSpeech() {
-
+            mSpeechResult.sttStopped();
         }
 
         @Override

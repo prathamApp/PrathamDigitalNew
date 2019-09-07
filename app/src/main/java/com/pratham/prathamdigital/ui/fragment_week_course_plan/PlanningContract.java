@@ -31,6 +31,14 @@ public interface PlanningContract {
         void deleteCourse(int pos, Model_CourseEnrollment c_enrolled);
 
         void noCoursesEnrolled();
+
+        void courseCompleted(int pos, Model_CourseEnrollment c_enrolled);
+
+        void playCourse(int pos, Model_CourseEnrollment c_enrolled);
+
+        void showChilds(List<Modal_ContentDetail> childs, String nodeid);
+
+        void verifiedSuccessfully(Model_CourseEnrollment model_courseEnrollment);
     }
 
     interface weekOnePlanningPresenter {
@@ -43,5 +51,11 @@ public interface PlanningContract {
         void addCourseToDb(String week_1, Modal_ContentDetail selectedCourse, Calendar startDate, Calendar endDate);
 
         void deleteCourse(Model_CourseEnrollment c_enrolled, String week_1);
+
+        void markCoursesVerified(String week_1, String imagePath);
+
+        void fetchCourseChilds(Model_CourseEnrollment c_enrolled);
+
+        void checkProgress(String week, String courseId);
     }
 }
