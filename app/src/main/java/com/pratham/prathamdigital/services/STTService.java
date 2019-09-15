@@ -98,6 +98,7 @@ public class STTService {
 
         @Override
         public void onError(int error) {
+            mSpeechResult.sttStopped();
             returnPartialResultsAndRecreateSpeechRecognizer();
         }
 
@@ -177,7 +178,7 @@ public class STTService {
             try {
                 mSpeechRecognizer.stopListening();
             } catch (final Exception exc) {
-                Log.d(getClass().getSimpleName(), "Warning while de-initing speech recognizer", exc);
+                Log.d(getClass().getSimpleName(), "Warning while de-initiating speech recognizer", exc);
             }
         }
         instance = null;

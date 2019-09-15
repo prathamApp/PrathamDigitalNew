@@ -63,6 +63,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     private ArrayList<Modal_ContentDetail> tempContentList;
     private String mappedParentApi = null;
     private Modal_ContentDetail folderContentClicked;
+    private String id_3_6 = "";
 
     ContentPresenterImpl(Context context) {
         Context context1 = context;
@@ -184,14 +185,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 + parentId, contentList);
     }
 
-    private void getKolibriLanguagesChilds
-            (ArrayList<Modal_ContentDetail> contentList, String parentId) {
-        pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES_CHILDS, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
-                + parentId, contentList);
+    private void getKolibriLanguagesChilds(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+        pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY_LANGUAGES_CHILDS,
+                PD_Constant.URL.BROWSE_RASPBERRY_URL.toString() + parentId, contentList);
     }
 
-    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String
-            parentId) {
+    private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
             pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
                     PD_Constant.URL.GET_TOP_LEVEL_NODE
@@ -299,7 +298,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
-                String id_3_6 = "";
                 int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
                     Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
@@ -320,7 +318,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     callKolibriAPI(contentList, id_3_6);
                 } else {
                     totalContents = removeDownloadedContents(totalContents, displayedContents);
-//                Collections.shuffle(totalContents);
                     tempContentList = getFinalListWithHeader(totalContents);
                     if (contentView != null)
                         contentView.displayContents(totalContents);
@@ -334,6 +331,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
                 for (Modal_Rasp_Content modal_rasp_content : rasp_contents) {
                     Modal_ContentDetail detail = modal_rasp_content.setContentToConfigNodeStructure(modal_rasp_content);
+                    if (detail.getParentid().equalsIgnoreCase(id_3_6))
+                        detail.setParentid("0");
                     detail.setMappedParentId(mappedParentApi);
                     displayedContents.add(detail);
                 }
@@ -349,7 +348,6 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
                 }.getType();
                 List<Modal_ContentDetail> tempContents = gson.fromJson(response, listType);
-                String id_3_6 = "";
                 int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
                 for (Modal_ContentDetail detail : tempContents) {
                     if (!PrathamApplication.isTablet) {
@@ -406,6 +404,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         detail.setContentType("file");
                     else
                         detail.setContentType("folder");
+                    if (detail.getParentid().equalsIgnoreCase(id_3_6))
+                        detail.setParentid("0");
                     detail.setMappedApiId(detail.getNodeid());
                     detail.setMappedParentId(mappedParentApi);
                     detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));

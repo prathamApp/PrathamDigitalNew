@@ -6,18 +6,16 @@ import java.util.List;
 
 public class Modal_PushData {
     @SerializedName("session")
-    private
-    List<Modal_PushSessionData> pushSession;
+    private List<Modal_PushSessionData> pushSession;
     @SerializedName("students")
-    private
-    List<Modal_Student> students;
+    private List<Modal_Student> students;
+    @SerializedName("course_enrolled")
+    private List<Model_CourseEnrollment> course_enrolled;
+    @SerializedName("course_progress")
+    private List<Model_ContentProgress> course_progress;
 
     public List<Modal_PushSessionData> getPushSession() {
         return pushSession;
-    }
-
-    public void setPushSession(List<Modal_PushSessionData> pushSession) {
-        this.pushSession = pushSession;
     }
 
     public List<Modal_Student> getStudents() {
@@ -26,6 +24,22 @@ public class Modal_PushData {
 
     public void setStudents(List<Modal_Student> students) {
         this.students = students;
+    }
+
+    public List<Model_CourseEnrollment> getCourse_enrolled() {
+        return course_enrolled;
+    }
+
+    public void setCourse_enrolled(List<Model_CourseEnrollment> course_enrolled) {
+        this.course_enrolled = course_enrolled;
+    }
+
+    public List<Model_ContentProgress> getCourse_progress() {
+        return course_progress;
+    }
+
+    public void setCourse_progress(List<Model_ContentProgress> course_progress) {
+        this.course_progress = course_progress;
     }
 
     public class Modal_PushSessionData {

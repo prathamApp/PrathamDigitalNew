@@ -15,8 +15,8 @@ public interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCourse(Model_CourseEnrollment courseEnrolled);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertCourses(List<Model_CourseEnrollment> courseEnrollments);
+    @Query("Select * from COURSEENROLLED where sentFlag=0")
+    List<Model_CourseEnrollment> fetchUnpushedCourses();
 
     @Query("Select * from COURSEENROLLED where courseId=:course_Id and groupId=:grp_id " +
             "and planFromDate LIKE '%' || :week || '%' and coachVerified=0")
@@ -30,10 +30,19 @@ public interface CourseDao {
             "'%' || :week || '%' and language=:lang")
     void deleteCourse(String nodeId, String grpId, String week, String lang);
 
-    @Update(onConflict = OnConflictStrategy.IGNORE)
-    void updateCourse(Model_CourseEnrollment enrollment);
+    @Query("Update CourseEnrolled SET coachVerified=1 and coachImage=:imagePath and coachVerificationDate=:verificationDate" +
+            " WHERE courseId=:courseId and groupId=:grpId " +
+            "and planFromDate LIKE '%' || :week || '%' and coachVerified=1 and language=:language")
+    void coachVerifiedTheCourse(String imagePath, String verificationDate, String courseId, String grpId, String week, String language);
 
-    @Query("Update CourseEnrolled SET courseExperience=:courseExp and courseCompleted=1 WHERE courseId=:nodeId and " +
-            "groupId=:grpId and planFromDate LIKE '%' || :week || '%' and coachVerified=1")
-    void addExperienceToCourse(String courseExp, String nodeId, String grpId, String week);
+    @Query("Update CourseEnrolled SET courseCompleted=1 and courseExperience=:courseExp and sentFlag=0 " +
+            " WHERE courseId=:courseId and groupId=:grpId " +
+            "and planFromDate LIKE '%' || :week || '%' and coachVerified=1 and language=:language")
+    void addExperienceToCourse(String courseExp, String courseId, String grpId, String week, String language);
+
+    @Query("UPDATE CourseEnrolled SET sentFlag = 1 where courseId=:courseId and groupId=:grpId and language=:language")
+    int updateFlag(String courseId, String grpId, String language);
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    void updateCourse(Model_CourseEnrollment enrollment);
 }

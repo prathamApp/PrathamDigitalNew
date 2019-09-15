@@ -166,9 +166,11 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
                 btn_resume.setVisibility(View.GONE);
             }
             item_course_index.setText("0" + (pos + 1));
-            item_en_course_name.setText(courseDetail.getNodetitle());
-            item_en_course_assign.setText(courseDetail.getNodedesc());
-            item_en_course_detail.setText(courseDetail.getNodedesc());
+            if (courseDetail != null) {
+                item_en_course_name.setText(courseDetail.getNodetitle());
+                item_en_course_assign.setText(courseDetail.getNodedesc());
+                item_en_course_detail.setText(courseDetail.getNodedesc());
+            }
             item_en_course_dates.setText(c_Enrolled.getPlanFromDate() + " - " + c_Enrolled.getPlanToDate());
             iv_delete_course.setOnClickListener(v -> planningView.deleteCourse(pos, c_Enrolled));
             iv_completed_course.setOnClickListener(v -> planningView.courseCompleted(pos, c_Enrolled));

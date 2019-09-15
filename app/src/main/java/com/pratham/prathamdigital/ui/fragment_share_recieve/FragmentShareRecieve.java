@@ -49,7 +49,7 @@ import java.util.Objects;
 
 @EFragment(R.layout.fragment_share_receive)
 public class FragmentShareRecieve extends Fragment implements CircularRevelLayout.CallBacks {
-
+//todo menu not opening after sharing content
     private static final String TAG = FragmentShareRecieve.class.getSimpleName();
     private static final int SDCARD_LOCATION_CHOOSER = 100;
     private static final int SHOW_SD_CARD_DIALOG = 101;

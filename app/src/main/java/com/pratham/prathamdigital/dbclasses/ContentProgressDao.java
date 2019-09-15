@@ -8,6 +8,8 @@ import android.arch.persistence.room.Update;
 
 import com.pratham.prathamdigital.models.Model_ContentProgress;
 
+import java.util.List;
+
 @Dao
 public interface ContentProgressDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
@@ -23,4 +25,10 @@ public interface ContentProgressDao {
 //            "WHERE resourceId=:courseId and studentId=:student_id ")
     @Update(onConflict = OnConflictStrategy.IGNORE)
     void updateProgress(Model_ContentProgress progress);
+
+    @Query("select * from ContentProgress where sentFlag=0")
+    List<Model_ContentProgress> fetchProgress();
+
+    @Query("UPDATE ContentProgress SET sentFlag = 1 where studentId = :s_id and resourceId = :r_id")
+    int updateFlag(String s_id, String r_id);
 }

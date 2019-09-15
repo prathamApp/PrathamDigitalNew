@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/course_enrollment_bkgd"
@@ -14,6 +14,24 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         android:orientation="vertical">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Write your experience"
+            android:textColor="@color/dark_yellow"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="What all new words did you learnt this week?"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -46,6 +64,16 @@
                 android:textColor="@color/black_20" />
         </RelativeLayout>
 
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="How many assignments did you completed this week?"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,6 +104,16 @@
                 android:imeOptions="actionDone"
                 android:textColor="@color/black_20" />
         </RelativeLayout>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Give a small description about the assignments"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -108,6 +146,15 @@
                 android:textColor="@color/black_20" />
         </RelativeLayout>
 
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/_5sdp"
+            android:text="Coach comments on group's/student's work"
+            android:textColor="@android:color/black"
+            android:textSize="@dimen/_15sdp"
+            tools:ignore="HardcodedText" />
+
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -138,7 +185,6 @@
                 android:imeOptions="actionDone"
                 android:textColor="@color/black_20" />
         </RelativeLayout>
-
 
         <RelativeLayout
             android:id="@+id/btn_exp_done"
@@ -172,51 +218,5 @@
                 tools:ignore="HardcodedText" />
 
         </RelativeLayout>
-
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="Write your experience"
-            android:textColor="@color/dark_yellow"
-            android:textSize="@dimen/_15sdp"
-            tools:ignore="HardcodedText" />
-
-
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="What all new words did you learnt this week?"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp"
-            tools:ignore="HardcodedText" />
-
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="How many assignments did you completed this week?"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp"
-            tools:ignore="HardcodedText" />
-
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="Give a small description about the assignments"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp"
-            tools:ignore="HardcodedText" />
-
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="Coach comments on group's/student's work"
-            android:textColor="@android:color/black"
-            android:textSize="@dimen/_15sdp"
-            tools:ignore="HardcodedText" />
     </LinearLayout>
 </ScrollView>

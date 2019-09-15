@@ -13,6 +13,8 @@ import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.models.Model_ContentProgress;
+import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
 
@@ -23,6 +25,8 @@ import org.json.JSONObject;
 import java.util.List;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
+import static com.pratham.prathamdigital.PrathamApplication.courseDao;
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
@@ -91,22 +95,36 @@ public class PrathamSmartSync extends AutoSync {
                     if (status.getStatusKey().equalsIgnoreCase("programId"))
                         programID = status.getValue();
                 }
+                //fetch enrolled courses
+                JSONArray courseArray = new JSONArray();
+                List<Model_CourseEnrollment> coursedata = courseDao.fetchUnpushedCourses();
+                for (Model_CourseEnrollment course : coursedata) {
+                    courseArray.put(new JSONObject(gson.toJson(course)));
+                }
+                //fetch courses progress
+                JSONArray progArray = new JSONArray();
+                List<Model_ContentProgress> progdata = contentProgressDao.fetchProgress();
+                for (Model_ContentProgress progress : progdata) {
+                    progArray.put(new JSONObject(gson.toJson(progress)));
+                }
                 metadataJson.put(PD_Constant.SCORE_COUNT, (metadata.size() > 0) ? metadata.size() : 0);
                 if (!PrathamApplication.isTablet)
                     rootJson.put(PD_Constant.STUDENTS, studentArray);
                 rootJson.put(PD_Constant.SESSION, sessionArray);
                 rootJson.put(PD_Constant.METADATA, metadataJson);
+                rootJson.put(PD_Constant.COURSE_ENROLLED, courseArray);
+                rootJson.put(PD_Constant.COURSE_PROGRESS, progArray);
                 if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
                     new PD_ApiRequest(PrathamApplication.getInstance())
-                            .pushDataToRaspberry(/*PD_Constant.USAGEDATA,*/ PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
+                            .pushDataToRaspberry(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
                                     rootJson.toString(), programID, PD_Constant.USAGEDATA);
                 else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
                     if (PrathamApplication.isTablet)
                         new PD_ApiRequest(PrathamApplication.getInstance())
-                                .pushDataToInternet(/*PD_Constant.USAGEDATA, */PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
+                                .pushDataToInternet(PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
                     else
                         new PD_ApiRequest(PrathamApplication.getInstance())
-                                .pushDataToInternet(/*PD_Constant.USAGEDATA, */PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
+                                .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
                 }
             } else {
                 if (isPressed) {

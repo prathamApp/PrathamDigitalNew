@@ -16,6 +16,9 @@ import com.pratham.prathamdigital.util.Audio;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
 import java.util.Locale;
 
@@ -316,5 +319,18 @@ public class JSInterface {
         modal_score.setLabel(piStudId + "," + label);
         modal_score.setSentFlag(0);
         scoreDao.insert(modal_score);
+    }
+
+    @JavascriptInterface
+    public String getStudentList() {
+        try {
+            JSONArray playerData = new JSONArray();
+            JSONObject playerObj;
+            //todo return student list in jsonarray string
+            return "" + playerData;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "[]";
+        }
     }
 }

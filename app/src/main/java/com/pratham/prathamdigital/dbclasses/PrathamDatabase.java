@@ -55,19 +55,6 @@ public abstract class PrathamDatabase extends RoomDatabase {
 
     public abstract LogDao getLogDao();
 
-    private static Migration MIGRATION_3_4 = new Migration(3, 4) {
-        @Override
-        public void migrate(SupportSQLiteDatabase database) {
-            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN courseCompleted INTEGER NOT NULL DEFAULT 0");
-            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN coachImage TEXT");
-            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN sentFlag BOOLEAN DEFAULT 0");
-            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN language TEXT");
-            database.execSQL("CREATE TABLE IF NOT EXISTS ContentProgress ('progressId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
-                    "'studentId' TEXT ,'resourceId' TEXT ,'updatedDateTime' TEXT ," +
-                    "'progressPercentage' TEXT ,'label' TEXT )");
-        }
-    };
-
     public static PrathamDatabase getDatabaseInstance(final Context context) {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
@@ -94,6 +81,19 @@ public abstract class PrathamDatabase extends RoomDatabase {
                     "'courseId' TEXT ,'groupId' TEXT ,'planFromDate' TEXT ," +
                     "'planToDate' TEXT ,'coachVerified' BOOLEAN DEFAULT 0,'coachVerificationDate' TEXT ," +
                     "'courseExperience' TEXT )");
+        }
+    };
+
+    private static Migration MIGRATION_3_4 = new Migration(3, 4) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN courseCompleted INTEGER NOT NULL DEFAULT 0");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN coachImage TEXT");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN sentFlag BOOLEAN DEFAULT 0");
+            database.execSQL("ALTER TABLE CourseEnrolled ADD COLUMN language TEXT");
+            database.execSQL("CREATE TABLE IF NOT EXISTS ContentProgress ('progressId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    "'studentId' TEXT ,'resourceId' TEXT ,'updatedDateTime' TEXT ," +
+                    "'progressPercentage' TEXT ,'label' TEXT ,'sentFlag' BOOLEAN DEFAULT 0)");
         }
     };
 

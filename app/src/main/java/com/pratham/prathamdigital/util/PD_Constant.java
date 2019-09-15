@@ -7,6 +7,8 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String COURSE_PROGRESS = "course_progress";
+    public static final String COURSE_ENROLLED = "course_enrolled";
     public static final String SHOW_HOME = "show_home";
     public static final String RESOURSE_ID = "resourse_id";
     public static final String HELPER_FOLDER = "helper";

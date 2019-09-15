@@ -26,19 +26,6 @@
             app:lottie_loop="true"
             app:lottie_scale="0.7" />
 
-        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
-            android:id="@+id/dialog_btn_lets_go"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/update_button_round_bg"
-            android:elevation="@dimen/_8sdp"
-            android:gravity="center"
-            android:minWidth="@dimen/_120sdp"
-            android:minHeight="@dimen/_35sdp"
-            android:text="Let's Go"
-            android:textColor="@android:color/white"
-            tools:ignore="HardcodedText" />
-
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/txt_completed_msg"
             android:layout_width="wrap_content"
@@ -52,5 +39,17 @@
             android:textSize="@dimen/_16sdp"
             tools:ignore="HardcodedText" />
 
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/dialog_btn_lets_go"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/update_button_round_bg"
+            android:elevation="@dimen/_8sdp"
+            android:gravity="center"
+            android:minWidth="@dimen/_120sdp"
+            android:minHeight="@dimen/_35sdp"
+            android:text="Let's Go"
+            android:textColor="@android:color/white"
+            tools:ignore="HardcodedText" />
     </LinearLayout>
 </android.support.design.card.MaterialCardView>

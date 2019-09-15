@@ -20,6 +20,8 @@ public class Model_ContentProgress {
     private String progressPercentage;
     @SerializedName("label")
     private String label;
+    @SerializedName("sentFlag")
+    private boolean sentFlag;
 
     public String getStudentId() {
         return studentId;
@@ -67,5 +69,13 @@ public class Model_ContentProgress {
 
     public void setProgressId(int progressId) {
         this.progressId = progressId;
+    }
+
+    public boolean isSentFlag() {
+        return sentFlag;
+    }
+
+    public void setSentFlag(boolean sentFlag) {
+        this.sentFlag = sentFlag;
     }
 }

@@ -235,6 +235,7 @@ public class Activity_ContentPlayer extends BaseActivity {
                 contentProgress.setLabel(label);
                 contentProgress.setUpdatedDateTime(course_week + " " + PD_Utility.getCurrentDateTime());
                 contentProgress.setProgressPercentage(String.valueOf(ttl));
+                contentProgress.setSentFlag(false);
                 PrathamApplication.contentProgressDao.updateProgress(contentProgress);
             }
         } else {
@@ -245,6 +246,7 @@ public class Activity_ContentPlayer extends BaseActivity {
             contentProgress.setUpdatedDateTime(course_week + " " + PD_Utility.getCurrentDateTime());
             contentProgress.setProgressPercentage(String.valueOf(percentage_progress));
             contentProgress.setLabel(resID + ",");
+            contentProgress.setSentFlag(false);
             PrathamApplication.contentProgressDao.insertProgress(contentProgress);
         }
     }

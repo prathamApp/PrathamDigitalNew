@@ -36,10 +36,14 @@ import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.models.Model_ContentProgress;
+import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.services.LocationService;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
+
+import net.alhazmy13.catcho.library.Catcho;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -48,6 +52,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
+import static com.pratham.prathamdigital.PrathamApplication.courseDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
@@ -224,10 +230,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffeling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-//        Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
-////                .recipients("abc@gm.com")
-//                .build();
+        Catcho.Builder(this)
+                .activity(CatchoTransparentActivity.class)
+//                .recipients("abc@gm.com")
+                .build();
 //        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();
@@ -293,13 +299,18 @@ public class BaseActivity extends AppCompatActivity {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 Gson gson = new Gson();
                 Modal_PushData pushedData = gson.fromJson(message.getPushData(), Modal_PushData.class);
-                for (Modal_PushData.Modal_PushSessionData pushed :
-                        pushedData.getPushSession()) {
+                for (Modal_PushData.Modal_PushSessionData pushed : pushedData.getPushSession()) {
                     sessionDao.updateFlag(pushed.getSessionId());
                     for (Modal_Score score : pushed.getScores())
                         scoreDao.updateFlag(pushed.getSessionId());
                     for (Attendance att : pushed.getAttendances())
                         attendanceDao.updateSentFlag(pushed.getSessionId());
+                }
+                for (Model_CourseEnrollment enroll : pushedData.getCourse_enrolled()) {
+                    courseDao.updateFlag(enroll.getCourseId(), enroll.getGroupId(), enroll.getLanguage());
+                }
+                for (Model_ContentProgress prog : pushedData.getCourse_progress()) {
+                    contentProgressDao.updateFlag(prog.getStudentId(), prog.getResourceId());
                 }
                 if (pushedData.getStudents() != null)
                     for (Modal_Student student : pushedData.getStudents())

@@ -76,7 +76,7 @@ public class Fragment_CourseExperience extends Fragment implements SpeechResult 
     RelativeLayout btn_exp_done;
 
     private STTService sttService;
-    private boolean isChecked;
+    private boolean isChecked=true;
     private Uri capturedImageUri;
     private Model_CourseEnrollment model_courseEnrollment;
     private BlurPopupWindow exitDialog;
@@ -235,7 +235,6 @@ public class Fragment_CourseExperience extends Fragment implements SpeechResult 
     @Background
     public void completeAndUpdateCourseInDb(String coachImage) {
         try {
-            String week = getArguments() != null ? getArguments().getString(PD_Constant.WEEK) : "na";
             JSONObject c_exp = new JSONObject();
             c_exp.put("words_learnt", et_new_words_learnt.getText().toString());
             c_exp.put("assignments_completed", et_no_of_assignments_completed.getText().toString());
@@ -243,7 +242,13 @@ public class Fragment_CourseExperience extends Fragment implements SpeechResult 
             c_exp.put("coach_comments", et_coach_comments.getText().toString());
             c_exp.put("coach_verification_date", PD_Utility.getCurrentDateTime());
             c_exp.put("coach_image", coachImage);
-            PrathamApplication.courseDao.addExperienceToCourse(c_exp.toString(), model_courseEnrollment.getCourseId(), model_courseEnrollment.getGroupId(), week);
+            model_courseEnrollment.setCourseExperience(c_exp.toString());
+            model_courseEnrollment.setCourseCompleted(true);
+            model_courseEnrollment.setSentFlag(0);
+            PrathamApplication.courseDao.updateCourse(model_courseEnrollment);
+//            PrathamApplication.courseDao.addExperienceToCourse(c_exp.toString(), model_courseEnrollment.getCourseId(),
+//                    model_courseEnrollment.getGroupId(), (getArguments() != null ? getArguments().getString(PD_Constant.WEEK) : "na"),
+//                    model_courseEnrollment.getLanguage());
         } catch (JSONException e) {
             e.printStackTrace();
         }

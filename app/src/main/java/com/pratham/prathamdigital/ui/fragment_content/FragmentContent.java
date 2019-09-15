@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
@@ -86,12 +85,10 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private final Map<String, Integer> filesDownloading = new HashMap<>();
     private ContentAdapter contentAdapter;
     private RV_LevelAdapter levelAdapter;
-    private GridLayoutManager gridLayoutManager;
     private int revealX;
     private int revealY;
     private BlurPopupWindow download_builder;
     private Modal_ContentDetail dl_Content;
-    private BlurPopupWindow exitDialog;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -101,15 +98,11 @@ public class FragmentContent extends Fragment implements ContentContract.content
             switch (msg.what) {
                 case INITIALIZE_CONTENT_ADAPTER:
                     contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
-//                    LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(rv_content.getContext()
-//                            , R.anim.layout_animation_waterfall);
-//                    rv_content.setLayoutAnimation(animation);
                     FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
                     flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
 //                    flexboxLayoutManager.setAlignItems(AlignItems.CENTER);
                     rv_content.setLayoutManager(flexboxLayoutManager);
                     rv_content.setAdapter(contentAdapter);
-//                    rv_content.scheduleLayoutAnimation();
                     break;
                 case INITIALIZE_LEVEL_ADAPTER:
                     levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
@@ -229,15 +222,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 onDownloadComplete(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CONNECTION_STATUS)) {
                 updateConnectionStatus(message);
-            }/* else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
-                contentPresenter.eventFileDownloadStarted(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_UPDATE)) {
-                contentPresenter.eventUpdateFileProgress(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_COMPLETE)) {
-                contentPresenter.eventOnDownloadCompleted(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
-                contentPresenter.eventOnDownloadFailed(message);
-            } */ else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
                 onDownloadError(message);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BROADCAST_DOWNLOADINGS)) {
                 contentPresenter.broadcast_downloadings();
@@ -269,7 +254,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
         txt_wifi_status.setText(message.getConnection_name());
         iv_wifi_status.setImageDrawable(message.getConnection_resource());
         contentPresenter.checkConnectionForRaspberry();
-//        contentPresenter.getContent(null);
     }
 
     @UiThread
@@ -432,12 +416,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
             contentDetail, ArrayList<String> selectedNodeIds) {
     }
 
-    //    SpringAnimation(recyclerView, ScrollXProperty())
-//            .setSpring(SpringForce()
-//            .setFinalPosition(0f)
-//            .setStiffness(SpringForce.STIFFNESS_LOW)
-//            .setDampingRatio(SpringForce.DAMPING_RATIO_MEDIUM_BOUNCY))
-//            .start()
     @UiThread
     @Override
     public void onDownloadError(EventMessage message) {
@@ -459,7 +437,6 @@ public class FragmentContent extends Fragment implements ContentContract.content
         if (levelContents != null) {
             if (levelAdapter == null) {
                 mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
-//                levelAdapter.submitList(levelContents);
             } else {
                 levelAdapter.submitList(levelContents);
             }

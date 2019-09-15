@@ -63,21 +63,12 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     @Background
     @Override
     public void fetchEnrolledCourses(String week) {
-        coursesPerWeek.remove(week);
         String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group");
-        List<Model_CourseEnrollment> courseEnrollments = PrathamApplication.courseDao.
-                fetchEnrolledCourses(groupId, week, FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-        List<Model_CourseEnrollment> temp = new ArrayList<>();
+        List<Model_CourseEnrollment> courseEnrollments = enrolledCoursesFromDb(week, groupId);
         boolean areAllCoursesVerified = true;
         for (Model_CourseEnrollment ce : courseEnrollments) {
-            ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),
-                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
-            ce.setProgressCompleted(isCourseProgressCompleted(ce, week));
             if (!ce.isCoachVerified()) areAllCoursesVerified = false;
-            temp.add(ce);
         }
-        if (temp.size() > 0)
-            coursesPerWeek.put(week, temp);
         if (!areAllCoursesVerified) {
             planningView.showVerificationButton();
             if (courseEnrollments.size() > 0 && courseEnrollments.size() <= 5)
@@ -87,6 +78,22 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
                 planningView.verifiedSuccessfully(courseEnrollments.get(0));
         }
         planningView.loadEnrolledCourses(courseEnrollments);
+    }
+
+    private List<Model_CourseEnrollment> enrolledCoursesFromDb(String week, String groupId) {
+        coursesPerWeek.remove(week);
+        List<Model_CourseEnrollment> courseEnrollments = PrathamApplication.courseDao.
+                fetchEnrolledCourses(groupId, week, FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        List<Model_CourseEnrollment> temp = new ArrayList<>();
+        for (Model_CourseEnrollment ce : courseEnrollments) {
+            ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),
+                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
+            ce.setProgressCompleted(isCourseProgressCompleted(ce, week));
+            temp.add(ce);
+        }
+        if (temp.size() > 0)
+            coursesPerWeek.put(week, temp);
+        return courseEnrollments;
     }
 
     private boolean isCourseProgressCompleted(Model_CourseEnrollment ce, String week) {
@@ -154,7 +161,8 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     @Background
     @Override
     public void markCoursesVerified(String week, String imagePath) {
-        List<Model_CourseEnrollment> enrollments = new ArrayList<>(Objects.requireNonNull(coursesPerWeek.get(week)));
+        List<Model_CourseEnrollment> enrollments = enrolledCoursesFromDb(week,
+                FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
         for (Model_CourseEnrollment mce : enrollments) {
             if (mce.getCourseId() != null) {
                 mce.setCoachVerified(true);

@@ -28,7 +28,7 @@ public interface ModalContentDao {
     List<Modal_ContentDetail> getParentsHeaders(String language);
 
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
-            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage='3-6'")
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage like '3-6'")
     List<Modal_ContentDetail> getPrimaryAgeParentsHeaders(String language);
 
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
