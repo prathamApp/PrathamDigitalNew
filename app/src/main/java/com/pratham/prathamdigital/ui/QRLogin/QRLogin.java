@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.google.zxing.Result;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
@@ -68,46 +69,14 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
     Button btn_Reset;
 
     private ZXingScannerView startCameraScan;
-    private ArrayList<Modal_Student> stdList;
+    private ArrayList<Modal_Student> stdList = new ArrayList<>();
     private Dialog dialog;
     private int totalStudents = 0;
     private Boolean setStud = false;
 
-   /* @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qrlogin);
-        ButterKnife.bind(QRLogin.this);
-
-        hideAllStudents();
-        stdList = new ArrayList<Modal_Student>();
-        if (ContextCompat.checkSelfPermission(QRLogin.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(QRLogin.this, Manifest.permission.CAMERA)) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(QRLogin.this);
-                builder.setMessage("App requires camera permission to scan QR code");
-                builder.setCancelable(false);
-                builder.setPositiveButton("Enable", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        ActivityCompat.requestPermissions(QRLogin.this, new String[]{Manifest.permission.CAMERA}, 1);
-                    }
-                });
-                Dialog dialog = builder.create();
-                dialog.show();
-            } else {
-                ActivityCompat.requestPermissions(QRLogin.this, new String[]{Manifest.permission.CAMERA}, 1);
-            }
-        } else {
-            permission = true;
-        initCamera();
-        }
-
-    }// onCreate*/
-
     @AfterViews
     public void initialize() {
         hideAllStudents();
-        stdList = new ArrayList<>();
         initCamera();
     }
 
@@ -145,22 +114,6 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
             Toast.makeText(QRLogin.this, "Please Add Student !!!", Toast.LENGTH_SHORT).show();
     }
 
-//    @RequiresApi(api = Build.VERSION_CODES.M)
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-//        if (requestCode == 1) {
-//            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-//                Toast.makeText(QRLogin.this, "You Need Camera permission", Toast.LENGTH_SHORT).show();
-//                finish();
-//            } else {
-//                initCamera();
-//                permission = true;
-//            }
-//        }
-//
-//    }
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -190,6 +143,8 @@ public class QRLogin extends BaseActivity implements ZXingScannerView.ResultHand
         List<Attendance> attendances = new ArrayList<>();
         try {
             if (stdList != null && stdList.size() > 0) {
+                String stu_json = new Gson().toJson(stdList);
+                FastSave.getInstance().saveString(PD_Constant.PRESENT_STUDENTS, stu_json);
                 FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
                 for (int i = 0; i < stdList.size(); i++) {
                     Attendance attendance = new Attendance();

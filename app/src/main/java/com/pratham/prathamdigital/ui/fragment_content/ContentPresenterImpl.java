@@ -86,6 +86,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         //fetching content from database first
         folderContentClicked = contentDetail;
         if (contentDetail == null) {
+            modalContentDao.updateParentsFromPreviousAppVersion(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
             getDownloadedContents(null, null);
 //            new GetDownloadedContent(ContentPresenterImpl.this, null).execute();
         } else {

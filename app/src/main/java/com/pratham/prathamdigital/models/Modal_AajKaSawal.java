@@ -44,6 +44,8 @@ public class Modal_AajKaSawal implements Parcelable {
     private String programLanguage;
     @SerializedName("nodelist")
     private List<Modal_AajKaSawal> nodelist;
+    @SerializedName("altnodeid")
+    private String altnodeid;
 
     public static final Creator<Modal_AajKaSawal> CREATOR = new Creator<Modal_AajKaSawal>() {
         @Override
@@ -76,6 +78,7 @@ public class Modal_AajKaSawal implements Parcelable {
         resourcePath = in.readString();
         programLanguage = in.readString();
         nodelist = in.createTypedArrayList(Modal_AajKaSawal.CREATOR);
+        altnodeid = in.readString();
     }
 
     public String getAksVersion() {
@@ -222,6 +225,14 @@ public class Modal_AajKaSawal implements Parcelable {
         this.nodelist = nodelist;
     }
 
+    public String getAltnodeid() {
+        return altnodeid;
+    }
+
+    public void setAltnodeid(String altnodeid) {
+        this.altnodeid = altnodeid;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -247,5 +258,6 @@ public class Modal_AajKaSawal implements Parcelable {
         dest.writeString(resourcePath);
         dest.writeString(programLanguage);
         dest.writeTypedList(nodelist);
+        dest.writeString(altnodeid);
     }
 }

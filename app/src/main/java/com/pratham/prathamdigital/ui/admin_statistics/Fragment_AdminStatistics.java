@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Objects;
 
 @EFragment(R.layout.fragment_admin_statistics)
-public class Fragment_AdminStatistics extends Fragment implements AdminStatContract.StatView, ContractOptions {
+public class Fragment_AdminStatistics extends Fragment implements AdminStatContract.StatView, ContractOptions.optionAdapterClick {
     //    @ViewById(R.id.cir_stat_reveal)
 //    CircularRevelLayout cir_stat_reveal;
     @ViewById(R.id.txt_active)
@@ -124,10 +124,5 @@ public class Fragment_AdminStatistics extends Fragment implements AdminStatContr
     @Override
     public void menuClicked(int position, Modal_NavigationMenu modal_navigationMenu, View view) {
         rv_stat_group.smoothScrollToPosition(position);
-    }
-
-    @Override
-    public void toggleMenuIcon() {
-
     }
 }

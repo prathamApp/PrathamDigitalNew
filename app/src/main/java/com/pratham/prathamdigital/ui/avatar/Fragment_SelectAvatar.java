@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -192,6 +193,12 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     }
 
     private void markAttendance(Modal_Student stud) {
+        //<editor-fold desc="below code is for saving the student attendance so as to pass it to "meri dukan" game, nothing else">
+        ArrayList<Modal_Student> stuList = new ArrayList<>();
+        stuList.add(stud);
+        String stu_json = new Gson().toJson(stuList);
+        FastSave.getInstance().saveString(PD_Constant.PRESENT_STUDENTS, stu_json);
+        //</editor-fold>
         ArrayList<Attendance> attendances = new ArrayList<>();
         Attendance attendance = new Attendance();
         attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");

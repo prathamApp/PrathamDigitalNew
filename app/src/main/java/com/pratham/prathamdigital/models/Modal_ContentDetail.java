@@ -50,6 +50,8 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String altnodeid;
     @SerializedName("version")
     private String version;
+    @SerializedName("assignment")
+    private String assignment;
     @Ignore
     private String kolibriNodeImageUrl;
     @Ignore
@@ -84,6 +86,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         version = in.readString();
         mappedApiId = in.readString();
         mappedParentId = in.readString();
+        assignment = in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -274,6 +277,14 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.mappedParentId = mappedParentId;
     }
 
+    public String getAssignment() {
+        return assignment;
+    }
+
+    public void setAssignment(String assignment) {
+        this.assignment = assignment;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -315,5 +326,6 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(version);
         dest.writeString(mappedApiId);
         dest.writeString(mappedParentId);
+        dest.writeString(assignment);
     }
 }

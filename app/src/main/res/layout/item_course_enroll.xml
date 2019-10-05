@@ -7,7 +7,7 @@
     android:layout_margin="@dimen/_3sdp"
     android:minHeight="@dimen/_60sdp"
     android:orientation="horizontal"
-    app:cardBackgroundColor="@color/blue"
+    app:cardBackgroundColor="@color/blue_btn_bg_color"
     app:cardCornerRadius="@dimen/_5sdp"
     app:cardElevation="@dimen/_5sdp">
 
@@ -54,7 +54,7 @@
                 android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_40sdp"
                 android:background="@drawable/button_orange_selector"
-                android:text="Resume"
+                android:text="View"
                 android:textColor="@color/white"
                 android:textSize="@dimen/_13sdp"
                 android:visibility="gone"
@@ -87,8 +87,8 @@
                 android:id="@+id/item_en_course_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/black"
-                android:textSize="@dimen/_12sdp" />
+                android:textColor="@color/red"
+                android:textSize="@dimen/_16sdp" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_detail"
@@ -96,7 +96,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_en_course_name"
                 android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_11sdp" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_assign"
@@ -104,7 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_en_course_detail"
                 android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_11sdp" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_dates"
@@ -112,7 +112,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/item_en_course_assign"
                 android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_8sdp" />
+                android:textSize="@dimen/_11sdp" />
         </RelativeLayout>
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

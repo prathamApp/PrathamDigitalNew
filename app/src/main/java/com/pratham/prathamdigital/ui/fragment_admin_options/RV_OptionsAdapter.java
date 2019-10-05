@@ -24,9 +24,9 @@ import butterknife.ButterKnife;
 public class RV_OptionsAdapter extends RecyclerView.Adapter<RV_OptionsAdapter.NormalItemViewHolder> {
 
     private final ArrayList<Modal_NavigationMenu> menus;
-    private final ContractOptions contractMenu;
+    private final ContractOptions.optionAdapterClick contractMenu;
 
-    public RV_OptionsAdapter(Context context, ArrayList<Modal_NavigationMenu> menus, ContractOptions contractMenu) {
+    public RV_OptionsAdapter(Context context, ArrayList<Modal_NavigationMenu> menus, ContractOptions.optionAdapterClick contractMenu) {
         Context context1 = context;
         this.menus = menus;
         this.contractMenu = contractMenu;

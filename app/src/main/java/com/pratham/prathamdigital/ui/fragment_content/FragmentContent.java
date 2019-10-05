@@ -292,6 +292,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
             }
             contentAdapter.submitList(content);
             rv_content.smoothScrollToPosition(0);
+            rv_content.scheduleLayoutAnimation();
         } else {
             showNoConnectivity();
         }
@@ -419,14 +420,15 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     @Override
     public void onDownloadError(EventMessage message) {
-//        Toast.makeText(getActivity(), "Could not download " + file_name, Toast.LENGTH_SHORT).show();
-        if (filesDownloading.containsKey(message.getContentDetail().getNodeid())) {
-            List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
-            for (int i = 0; i < data.size(); i++) {
-                if (data.get(i).getNodeid() != null &&
-                        data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
-                    contentAdapter.notifyItemChanged(i, data.get(i));
-                    break;
+        if (message != null) {
+            if (filesDownloading.containsKey(message.getContentDetail().getNodeid())) {
+                List<Modal_ContentDetail> data = new ArrayList<>(contentAdapter.getData());
+                for (int i = 0; i < data.size(); i++) {
+                    if (data.get(i) != null && data.get(i).getNodeid() != null &&
+                            data.get(i).getNodeid().equalsIgnoreCase(message.getContentDetail().getNodeid())) {
+                        contentAdapter.notifyItemChanged(i, data.get(i));
+                        break;
+                    }
                 }
             }
         }

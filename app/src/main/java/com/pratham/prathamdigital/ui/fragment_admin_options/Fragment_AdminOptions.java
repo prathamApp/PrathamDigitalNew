@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -37,7 +38,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
-import org.androidannotations.annotations.Background;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
@@ -49,26 +50,28 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.Objects;
 
-import static com.pratham.prathamdigital.PrathamApplication.crLdao;
-import static com.pratham.prathamdigital.PrathamApplication.groupDao;
-import static com.pratham.prathamdigital.PrathamApplication.studentDao;
-import static com.pratham.prathamdigital.PrathamApplication.villageDao;
-
 @EFragment(R.layout.fragment_admin_options)
-public class Fragment_AdminOptions extends Fragment implements ContractOptions {
+public class Fragment_AdminOptions extends Fragment implements ContractOptions.optionAdapterClick,
+        ContractOptions.optionView {
 
     private static final int PUSH_DATA = 1;
     private static final int ASSIGN_GROUPS = 2;
     private static final int PULL_DATA = 3;
+    private static final int UPDATE_DATABASE = 4;
+    private static final int SDCARD_LOCATION_CHOOSER = 5;
+    private static final int SHOW_DB_COPYING_DIALOG = 6;
     @ViewById(R.id.rv_admin_options)
     RecyclerView rv_admin_options;
     @ViewById(R.id.cir_admin_option_reveal)
     CircularRevelLayout cir_admin_option_reveal;
 
+    @Bean(AdminOptionsPresenter.class)
+    ContractOptions.optionPresenter optionPresenter;
     BlurPopupWindow pushDialog;
     LottieAnimationView push_lottie;
     TextView txt_push_dialog_msg;
     TextView txt_push_error;
+    private BlurPopupWindow sd_builder;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -77,14 +80,9 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
             super.handleMessage(msg);
             switch (msg.what) {
                 case PUSH_DATA:
-                    showPushingDialog();
-                    //Necessary to add some delay, as the ui will change very frequent to notice
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            PrathamSmartSync.pushUsageToServer(true);
-                        }
-                    }, 1500);
+                    showPushingDialog("Please wait...Pushing Data!");
+                    //Necessary to add some delay or the ui will change very frequent, hard to notice
+                    new Handler().postDelayed(() -> PrathamSmartSync.pushUsageToServer(true), 1500);
                     break;
                 case ASSIGN_GROUPS:
                     Intent intent = new Intent(getActivity(), Activity_AssignGroups_.class);
@@ -94,12 +92,19 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
                     PD_Utility.showFragment(getActivity(), new PullDataFragment_(), R.id.frame_attendance,
                             null, PullDataFragment.class.getSimpleName());
                     break;
+                case UPDATE_DATABASE:
+                    showSdCardDialog();
+                    break;
+                case SHOW_DB_COPYING_DIALOG:
+                    showPushingDialog("Please wait...Updating Database");
+                    break;
             }
         }
     };
 
     @AfterViews
     public void setViews() {
+        optionPresenter.setView(this);
         if (getArguments() != null) {
             int revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             int revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -119,7 +124,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.admin_options);
         int[] menus_img = {R.drawable.ic_push_data, R.drawable.ic_assign_groups, R.drawable.ic_device_usage,
-                R.drawable.ic_clear_data, R.drawable.ic_pull_data};
+                R.drawable.ic_clear_data, R.drawable.ic_pull_data, R.drawable.ic_database};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -143,23 +148,15 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushed Successfully!!");
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pushDialog.dismiss();
-                    }
-                }, 1500);
+                new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
                 push_lottie.setAnimation("error_cross.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushing Failed!!");
                 txt_push_error.setVisibility(View.VISIBLE);
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        pushDialog.dismiss();
-                    }
-                }, 1500);
+                new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.DB_FILE_UPDATED)) {
+                optionPresenter.databaseSuccessfullyUpdated();
             }
         }
     }
@@ -196,6 +193,9 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
             showClearDataDialog();
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Pull Data"))
             mHandler.sendEmptyMessage(PULL_DATA);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Update Database")) {
+//            mHandler.sendEmptyMessage(UPDATE_DATABASE); todo update database feature
+        }
     }
 
     private void showClearDataDialog() {
@@ -204,7 +204,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
                 .setMessage("Are you sure you want to clear everything ?")
                 .setIcon(R.drawable.ic_warning)
                 .setPositiveButton("Delete", (dialog, whichButton) -> {
-                    clearData();
+                    optionPresenter.clearData();
                     dialog.dismiss();
                 })
                 .setNegativeButton("Cancel", (dialog, which) -> dialog.dismiss())
@@ -213,34 +213,29 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
         clearDataDialog.getButton(AlertDialog.BUTTON_POSITIVE).setTextColor(Color.RED);
     }
 
-    @Background
-    public void clearData() {
-        villageDao.deleteAllVillages();
-        groupDao.deleteAllGroups();
-        studentDao.deleteAllStudents();
-        crLdao.deleteAllCRLs();
+    @UiThread
+    @Override
+    public void onDataCleared() {
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 
-    @Override
-    public void toggleMenuIcon() {
-
-    }
-
     @UiThread
-    public void showPushingDialog() {
-        pushDialog = new BlurPopupWindow.Builder(getContext())
-                .setContentView(R.layout.app_success_dialog)
-                .setGravity(Gravity.CENTER)
-                .setScaleRatio(0.2f)
-                .setDismissOnClickBack(true)
-                .setDismissOnTouchBackground(true)
-                .setBlurRadius(10)
-                .setTintColor(0x30000000)
-                .build();
-        push_lottie = pushDialog.findViewById(R.id.push_lottie);
-        txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
-        txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+    public void showPushingDialog(String msg) {
+        if (pushDialog == null) {
+            pushDialog = new BlurPopupWindow.Builder(getContext())
+                    .setContentView(R.layout.app_success_dialog)
+                    .setGravity(Gravity.CENTER)
+                    .setScaleRatio(0.2f)
+                    .setDismissOnClickBack(true)
+                    .setDismissOnTouchBackground(true)
+                    .setBlurRadius(10)
+                    .setTintColor(0x30000000)
+                    .build();
+            push_lottie = pushDialog.findViewById(R.id.push_lottie);
+            txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
+            txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+        }
+        txt_push_dialog_msg.setText(msg);
         pushDialog.show();
     }
 
@@ -252,11 +247,44 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == Activity.RESULT_OK) {
-                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
-                        AdminPanelFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
+                    AdminPanelFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        } else if (requestCode == SDCARD_LOCATION_CHOOSER) {
+            if (data != null && data.getData() != null) {
+                Uri treeUri = data.getData();
+                final int takeFlags = data.getFlags()
+                        & (Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
+                optionPresenter.updateDatabase(treeUri);
+                mHandler.sendEmptyMessage(SHOW_DB_COPYING_DIALOG);
             }
         }
     }
+
+    @SuppressLint("SetTextI18n")
+    private void showSdCardDialog() {
+        sd_builder = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.dialog_alert_sd_card)
+                .setGravity(Gravity.CENTER)
+                .setScaleRatio(0.2f)
+                .bindClickListener(v -> {
+                    new Handler().postDelayed(() -> {
+                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                        startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
+                    }, 1200);
+                    sd_builder.dismiss();
+                }, R.id.txt_choose_sd_card)
+                .setDismissOnClickBack(true)
+                .setDismissOnTouchBackground(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(8)
+                .setTintColor(0x30000000)
+                .build();
+        ((TextView) sd_builder.findViewById(R.id.txt_choose_sd_card)).setText("Select Sd-Card");
+        sd_builder.show();
+    }
+
 }

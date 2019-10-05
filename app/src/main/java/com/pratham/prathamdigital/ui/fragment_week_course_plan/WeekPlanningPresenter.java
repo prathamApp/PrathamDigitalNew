@@ -14,6 +14,7 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -71,7 +72,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         }
         if (!areAllCoursesVerified) {
             planningView.showVerificationButton();
-            if (courseEnrollments.size() > 0 && courseEnrollments.size() <= 5)
+            if (courseEnrollments.size() > 0)
                 courseEnrollments.add(new Model_CourseEnrollment());
         } else {
             if (courseEnrollments.size() > 0)
@@ -135,7 +136,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
             PrathamApplication.courseDao.insertCourse(courseEnrollment);
             List<Model_CourseEnrollment> coursesEnrolled = new ArrayList<>(Objects.requireNonNull(coursesPerWeek.get(week)));
             //add footer to the list for showing add more courses button
-            if (coursesEnrolled.size() > 0 && coursesEnrolled.size() <= 5)
+            if (coursesEnrolled.size() > 0)
                 coursesEnrolled.add(new Model_CourseEnrollment());
             planningView.showEnrolledList(coursesEnrolled);
         } else {
@@ -179,7 +180,8 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     public void fetchCourseChilds(Model_CourseEnrollment c_enrolled) {
         Modal_ContentDetail detail = c_enrolled.getCourseDetail();
         List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
-        planningView.showChilds(childs, detail.getNodeid());
+        Collections.sort(childs, (o1, o2) -> o1.getNodetitle().compareToIgnoreCase(o2.getNodetitle()));
+        planningView.showChilds(c_enrolled, childs, detail.getNodeid());
     }
 
     @Background

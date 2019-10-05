@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.pdf_viewer;
+package com.pratham.prathamdigital.ui.content_player.pdf_viewer;
 
 import android.content.Context;
 import android.graphics.Bitmap;

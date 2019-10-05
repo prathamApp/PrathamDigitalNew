@@ -38,18 +38,11 @@ public class RV_ExpandedCoursesDetails extends RecyclerView.Adapter<RV_ExpandedC
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
         viewHolder.txt_course_name.setText(modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodetitle());
         viewHolder.txt_course_info.setText(modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodedesc());
-        viewHolder.txt_assignment.setText(modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodetitle());
-        viewHolder.btn_course_select.setOnClickListener(v -> {
-            planningView.showDatePicker(modal_contentDetails.get(viewHolder.getAdapterPosition()), viewHolder.getAdapterPosition());
-        });
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position, @NonNull List<Object> payloads) {
-        if (payloads.isEmpty()) {
-            super.onBindViewHolder(holder, position, payloads);
-        } else {
-        }
+        viewHolder.txt_assignment.setText(modal_contentDetails.get(viewHolder.getAdapterPosition())
+                .getAssignment().replaceAll("\\\\\n", "\n"));
+        viewHolder.btn_course_select.setOnClickListener(v ->
+                planningView.showDatePicker(modal_contentDetails.get(viewHolder.getAdapterPosition()),
+                        viewHolder.getAdapterPosition()));
     }
 
     @Override

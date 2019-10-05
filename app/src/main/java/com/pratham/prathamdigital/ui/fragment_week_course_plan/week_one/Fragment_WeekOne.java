@@ -70,8 +70,6 @@ public class Fragment_WeekOne extends Fragment implements PlanningContract.weekO
     RecyclerView rv_courses_enrolled;
     @ViewById(R.id.rv_selectCourse)
     RecyclerView rv_selectCourse;
-    @ViewById(R.id.txt_week)
-    TextView txt_week;
     @ViewById(R.id.rl_sel_crs)
     RelativeLayout rl_sel_crs;
     @ViewById(R.id.rl_add_new_course)
@@ -127,7 +125,6 @@ public class Fragment_WeekOne extends Fragment implements PlanningContract.weekO
     @AfterViews
     public void init() {
         planningPresenter.setWeekOneView(this);
-        txt_week.setText("Week 1");
         planningPresenter.fetchEnrolledCourses("WEEK_1");
     }
 
@@ -377,7 +374,7 @@ public class Fragment_WeekOne extends Fragment implements PlanningContract.weekO
 
     @UiThread
     @Override
-    public void showChilds(List<Modal_ContentDetail> childs, String courseId) {
+    public void showChilds(Model_CourseEnrollment parent_course, List<Modal_ContentDetail> childs, String courseId) {
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.RECORD_AUDIO)
                 .onAccepted(permissionResult -> {
@@ -385,6 +382,7 @@ public class Fragment_WeekOne extends Fragment implements PlanningContract.weekO
                     intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
                     intent.putExtra(PD_Constant.COURSE_ID, courseId);
                     intent.putExtra(PD_Constant.WEEK, "WEEK_1");
+                    intent.putExtra(PD_Constant.COURSE_PARENT, parent_course);
                     intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
                     startActivityForResult(intent, COURSE_ACTIVITY);
                     getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);

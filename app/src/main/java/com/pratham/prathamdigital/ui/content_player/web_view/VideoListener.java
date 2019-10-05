@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.web_view;
+package com.pratham.prathamdigital.ui.content_player.web_view;
 
 public interface VideoListener {
     void showVideo(String videoPath);

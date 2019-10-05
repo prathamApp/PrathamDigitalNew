@@ -36,7 +36,7 @@ public interface PlanningContract {
 
         void playCourse(int pos, Model_CourseEnrollment c_enrolled);
 
-        void showChilds(List<Modal_ContentDetail> childs, String nodeid);
+        void showChilds(Model_CourseEnrollment parent_course, List<Modal_ContentDetail> childs, String nodeid);
 
         void verifiedSuccessfully(Model_CourseEnrollment model_courseEnrollment);
     }

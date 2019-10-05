@@ -168,14 +168,27 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
             item_course_index.setText("0" + (pos + 1));
             if (courseDetail != null) {
                 item_en_course_name.setText(courseDetail.getNodetitle());
-                item_en_course_assign.setText(courseDetail.getNodedesc());
-                item_en_course_detail.setText(courseDetail.getNodedesc());
+                item_en_course_assign.setText("Assignment:-\n" + courseDetail.getAssignment().replaceAll("\\\\n ", "\n"));
+                item_en_course_detail.setText("Description:-\n" + courseDetail.getNodedesc());
             }
-            item_en_course_dates.setText(c_Enrolled.getPlanFromDate() + " - " + c_Enrolled.getPlanToDate());
+            item_en_course_dates.setText("Course Timeline:-\n" + parseDate(c_Enrolled.getPlanFromDate()) + "  -  " + parseDate(c_Enrolled.getPlanToDate()));
             iv_delete_course.setOnClickListener(v -> planningView.deleteCourse(pos, c_Enrolled));
             iv_completed_course.setOnClickListener(v -> planningView.courseCompleted(pos, c_Enrolled));
             btn_resume.setOnClickListener(v -> planningView.playCourse(pos, c_Enrolled));
         }
+    }
+
+    private String parseDate(String date) {
+//        try {
+        String[] date_split = date.split(" ");
+//            DateFormat originalFormat = new SimpleDateFormat(" EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
+//            @SuppressLint("SimpleDateFormat") DateFormat targetFormat = new SimpleDateFormat("EEE MMM dd,yyyy");
+//            Date O_date = originalFormat.parse(date.replace("Week_1", ""));
+        return date_split[1] + " " + date_split[2] + " " + date_split[3] + "," + date_split[6];
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//            return "";
+//        }
     }
 
     public class FooterAddNewCourse extends RecyclerView.ViewHolder {

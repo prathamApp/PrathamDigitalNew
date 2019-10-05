@@ -52,5 +52,9 @@ public interface ModalContentDao {
             "union all  select s.parentid, t.level+1  from tmp t  join TableContent s on s.nodeid = t.id)\n" +
             "select s.nodetitle from tmp t join TableContent s on s.nodeid = t.id order by s.level desc")
     List<String> getAllParentsOfCourses(String node_id);
+
+    @Query("Update TableContent Set parentid='0' WHERE (parentid = 20 or parentid=1100 " +
+            "or parentid=25 or parentid=30 or parentid=35 or parentid=45 ) and content_language=:language")
+    void updateParentsFromPreviousAppVersion(String language);
 }
 

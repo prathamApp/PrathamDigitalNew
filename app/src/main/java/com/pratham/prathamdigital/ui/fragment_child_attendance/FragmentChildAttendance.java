@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
@@ -204,6 +205,10 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     @Background
     public void markAttendance(ArrayList<Modal_Student> stud) {
+        //<editor-fold desc="below code is for saving the student attendance so as to pass it to "meri dukan" game, nothing else">
+        String stu_json = new Gson().toJson(stud);
+        FastSave.getInstance().saveString(PD_Constant.PRESENT_STUDENTS, stu_json);
+        //</editor-fold>
         FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());
         ArrayList<Attendance> attendances = new ArrayList<>();
         for (Modal_Student stu : stud) {

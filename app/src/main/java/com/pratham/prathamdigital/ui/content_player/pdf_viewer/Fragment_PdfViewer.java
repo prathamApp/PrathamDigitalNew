@@ -1,14 +1,16 @@
-package com.pratham.prathamdigital.ui.pdf_viewer;
+package com.pratham.prathamdigital.ui.content_player.pdf_viewer;
 
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.pdf.BookFlipPageTransformer;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
+import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -66,7 +68,12 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
             public void onPageSelected(int i) {
                 pageSelected = i + 1;
                 if (pageSelected == bitmaps.size())
-                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).showNextButton(resId);
+                    if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                        EventMessage message = new EventMessage();
+                        message.setMessage(PD_Constant.SHOW_NEXT_BUTTON);
+                        message.setDownloadId(resId);
+                        EventBus.getDefault().post(message);
+                    }
             }
 
             @Override
@@ -93,7 +100,14 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
                 pdf_presenter.addScoreToDB(resId, startTime, pageSelected);
-                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
+                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    EventMessage message1 = new EventMessage();
+                    message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
+                    EventBus.getDefault().post(message1);
+                } else
+                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
             }
         }
     }

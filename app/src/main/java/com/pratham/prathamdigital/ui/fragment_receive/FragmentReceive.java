@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -33,13 +32,11 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
-import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ReceivedFileListAdapter;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.SharePresenter;
 import com.pratham.prathamdigital.util.HotspotUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -205,11 +202,9 @@ public class FragmentReceive extends Fragment implements ContractShare.shareView
     @UiThread
     @Override
     public void closeFTPJoin() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, 0);
-        bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
-                bundle, FragmentContent_.class.getSimpleName());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.SHOW_HOME);
+        EventBus.getDefault().post(message);
         Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();

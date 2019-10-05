@@ -30,7 +30,7 @@ import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 */
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class,
         Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class,
-        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 4, exportSchema = false)
+        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 5, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi_db";
@@ -59,7 +59,7 @@ public abstract class PrathamDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     PrathamDatabase.class, DB_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
                     .build();
         }
@@ -94,6 +94,12 @@ public abstract class PrathamDatabase extends RoomDatabase {
             database.execSQL("CREATE TABLE IF NOT EXISTS ContentProgress ('progressId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
                     "'studentId' TEXT ,'resourceId' TEXT ,'updatedDateTime' TEXT ," +
                     "'progressPercentage' TEXT ,'label' TEXT ,'sentFlag' BOOLEAN DEFAULT 0)");
+        }
+    };
+    private static Migration MIGRATION_4_5 = new Migration(4, 5) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE TableContent ADD COLUMN assignment TEXT");
         }
     };
 

@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +20,7 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
+import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -64,9 +66,11 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
     private String selectedAnswer = "";
     private Modal_AajKaSawal selectedAajKaSawal;
     private String startTime;
-    private final MediaPlayer.OnCompletionListener applauseCompletionListener = mp -> Objects.requireNonNull(getActivity()).onBackPressed();
+    private final MediaPlayer.OnCompletionListener applauseCompletionListener = mp -> checkIfCourseAndPlayNext();
     private MediaPlayer wrong_mp;
     private MediaPlayer correct_mp;
+    private boolean scoreAdded = false;
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -162,7 +166,6 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         if (selectedAnswer.equalsIgnoreCase(selectedAajKaSawal.getAnswer())) {
             correct_mp.start();
             addScoreToDB(10, false, false);
-            checkIfCourseAndPlayNext();
         } else {
             addScoreToDB(0, false, false);
             mHandler.sendEmptyMessage(HIGHLIGHT_SELECTED_ANSWER);
@@ -190,8 +193,16 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
     public void messageReceived(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
-                addScoreToDB(0, true, true);
-                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                if (!scoreAdded) addScoreToDB(0, true, true);
+                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
+                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    EventMessage message1 = new EventMessage();
+                    message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
+                    EventBus.getDefault().post(message1);
+                } else {
+                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                }
             }
         }
     }
@@ -234,6 +245,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
 
     @Background
     public void addScoreToDB(int ttlScore, boolean isSkipped, boolean isClosed) {
+        scoreAdded = true;
         String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();
         modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));

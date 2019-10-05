@@ -1,10 +1,11 @@
-package com.pratham.prathamdigital.ui.video_player;
+package com.pratham.prathamdigital.ui.content_player.video_player;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
@@ -17,8 +18,7 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
+import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -59,14 +59,6 @@ public class Fragment_VideoPlayer extends Fragment {
                 case AAJ_KA_SAWAL_FOR_THIS_VIDEO:
                     findSawalForThisVideo();
                     break;
-                case SHOW_SAWAL:
-                    Bundle aksbundle = new Bundle();
-                    aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
-                    aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
-                    aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
-                    PD_Utility.addFragment(getActivity(), new Fragment_AAJ_KA_SAWAL_(), R.id.vp_frame,
-                            aksbundle, Fragment_AAJ_KA_SAWAL.class.getSimpleName());
-                    break;
             }
         }
     };
@@ -83,11 +75,12 @@ public class Fragment_VideoPlayer extends Fragment {
                 for (Modal_AajKaSawal subjectSawal : rootAajKaSawal.getNodelist()) {
                     boolean found = false;
                     for (Modal_AajKaSawal aajKaSawal : subjectSawal.getNodelist()) {
-                        if (aajKaSawal.getResourceId().equalsIgnoreCase(resId)) {
-                            found = true;
-                            videoSawal = aajKaSawal;
-                            break;
-                        }
+                        if (aajKaSawal.getResourceId() != null && aajKaSawal.getAltnodeid() != null)
+                            if (aajKaSawal.getResourceId().equalsIgnoreCase(resId) || aajKaSawal.getAltnodeid().equalsIgnoreCase(resId)) {
+                                found = true;
+                                videoSawal = aajKaSawal;
+                                break;
+                            }
                     }
                     if (found) break;
                 }
@@ -122,6 +115,7 @@ public class Fragment_VideoPlayer extends Fragment {
         videoView.setOnCompletionListener(mp -> {
             if (videoSawal == null) {
                 if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    addScoreToDB();
                     EventMessage message = new EventMessage();
                     message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
                     message.setDownloadId(resId);
@@ -129,7 +123,15 @@ public class Fragment_VideoPlayer extends Fragment {
                 } else
                     Objects.requireNonNull(getActivity()).onBackPressed();
             } else {
-                mHandler.sendEmptyMessage(SHOW_SAWAL);
+                addScoreToDB();
+                Bundle aksbundle = new Bundle();
+                aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
+                aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
+                aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.SHOW_SAWAL);
+                message.setBundle(aksbundle);
+                EventBus.getDefault().post(message);
             }
         });
     }
@@ -151,7 +153,14 @@ public class Fragment_VideoPlayer extends Fragment {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
                 addScoreToDB();
-                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
+                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
+                    EventMessage message1 = new EventMessage();
+                    message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
+                    EventBus.getDefault().post(message1);
+                } else
+                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
             }
         }
     }

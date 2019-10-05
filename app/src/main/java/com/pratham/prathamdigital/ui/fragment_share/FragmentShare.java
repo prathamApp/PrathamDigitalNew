@@ -3,7 +3,6 @@ package com.pratham.prathamdigital.ui.fragment_share;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.res.Configuration;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
@@ -32,13 +31,11 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_ReceivingFilesThroughFTP;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
-import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FileListAdapter;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.SharePresenter;
 import com.pratham.prathamdigital.util.ConnectionUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -307,11 +304,9 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void closeFTPJoin() {
-        Bundle bundle = new Bundle();
-        bundle.putInt(PD_Constant.REVEALX, 0);
-        bundle.putInt(PD_Constant.REVEALY, 0);
-        PD_Utility.showFragment(getActivity(), new FragmentContent_(), R.id.main_frame,
-                bundle, FragmentContent_.class.getSimpleName());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.SHOW_HOME);
+        EventBus.getDefault().post(message);
         Fragment fragment = Objects.requireNonNull(getActivity()).getSupportFragmentManager().findFragmentByTag(TAG);
         if (fragment != null)
             getActivity().getSupportFragmentManager().beginTransaction().remove(fragment).commit();

@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.web_view;
+package com.pratham.prathamdigital.ui.content_player.web_view;
 
 import android.app.Activity;
 import android.content.Context;
@@ -7,10 +7,13 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.TTSService;
 import com.pratham.prathamdigital.util.Audio;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -20,6 +23,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
@@ -324,10 +330,18 @@ public class JSInterface {
     @JavascriptInterface
     public String getStudentList() {
         try {
-            JSONArray playerData = new JSONArray();
-            JSONObject playerObj;
-            //todo return student list in jsonarray string
-            return "" + playerData;
+            String stud = FastSave.getInstance().getString(PD_Constant.PRESENT_STUDENTS, "[]");
+            Type listType = new TypeToken<ArrayList<Modal_Student>>() {
+            }.getType();
+            List<Modal_Student> students = new Gson().fromJson(stud, listType);
+            JSONArray array = new JSONArray();
+            for (Modal_Student st : students) {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("StudentId", st.getStudentId());
+                jsonObject.put("StudentName", st.getFullName());
+                array.put(jsonObject);
+            }
+            return array.toString();
         } catch (Exception e) {
             e.printStackTrace();
             return "[]";

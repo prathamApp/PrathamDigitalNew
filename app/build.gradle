@@ -4,9 +4,9 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 /*Major Version : API Changes , Adding new feature , Redesign the App ,
  Increment the MAJOR after the MINOR version achieved the number 9*/
-ext.versionMajor = 1
+ext.versionMajor = 2
 /*Minor Version : While adding a functionality , minor changes like color change or icon changes*/
-ext.versionMinor = 6
+ext.versionMinor = 0
 /*Patch : Bug fixing*/
 ext.versionPatch = 0
 ext.minSdkVersion = 21
@@ -17,7 +17,7 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion 28
         versionCode generateVersionCode()
-        versionName "3.54"
+        versionName "3.6"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"

@@ -12,9 +12,6 @@ import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
@@ -24,10 +21,16 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.verticalstepperform.StepperFormListener;
+import com.pratham.prathamdigital.custom.verticalstepperform.VerticalStepperFormView;
 import com.pratham.prathamdigital.interfaces.SpeechResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.services.STTService;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_AssignmentsDescription;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_CoachComments;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_NewWords;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_TotalAssignmnetsDone;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -44,116 +47,68 @@ import java.io.File;
 import java.util.Objects;
 
 @EFragment(R.layout.fragment_course_completed)
-public class Fragment_CourseExperience extends Fragment implements SpeechResult {
+public class Fragment_CourseExperience extends Fragment implements StepperFormListener, SpeechResult {
 
-    private static final int MIC_1 = 1;
-    private static final int MIC_2 = 2;
-    private static final int MIC_3 = 3;
-    private static final int MIC_4 = 4;
     private static final int CAMERA_REQUEST = 5;
     private static final int PREFILL_EXPERIENCE_IF_ANY = 6;
-    private static int SELECTED_MIC = -1;
 
-    @ViewById(R.id.et_new_words_learnt)
-    EditText et_new_words_learnt;
-    @ViewById(R.id.et_no_of_assignments_completed)
-    EditText et_no_of_assignments_completed;
-    @ViewById(R.id.et_assignment_desc)
-    EditText et_assignment_desc;
-    @ViewById(R.id.et_coach_comments)
-    EditText et_coach_comments;
-    @ViewById(R.id.mic_1)
-    ImageView mic_1;
-    @ViewById(R.id.mic_2)
-    ImageView mic_2;
-    @ViewById(R.id.mic_3)
-    ImageView mic_3;
-    @ViewById(R.id.mic_4)
-    ImageView mic_4;
+    @ViewById(R.id.stepper_form)
+    VerticalStepperFormView stepper_form;
     @ViewById(R.id.exp_coach_image)
     SimpleDraweeView exp_coach_image;
-    @ViewById(R.id.btn_exp_done)
-    RelativeLayout btn_exp_done;
 
-    private STTService sttService;
-    private boolean isChecked=true;
     private Uri capturedImageUri;
     private Model_CourseEnrollment model_courseEnrollment;
     private BlurPopupWindow exitDialog;
+    private Step_NewWords step_newWords;
+    private Step_TotalAssignmnetsDone step_totalAssignmnetsDone;
+    private Step_AssignmentsDescription step_assignmentsDescription;
+    private Step_CoachComments step_coachComments;
+    public static STTService sttService;
 
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            isChecked = !isChecked;
-            final int[] stateSet = {android.R.attr.state_checked * (isChecked ? 1 : -1)};
-            switch (msg.what) {
-                case MIC_1:
-                    SELECTED_MIC = 1;
-                    sttService.startListening();
-                    mic_1.setImageState(stateSet, true);
-                    break;
-                case MIC_2:
-                    SELECTED_MIC = 2;
-                    sttService.startListening();
-                    mic_2.setImageState(stateSet, true);
-                    break;
-                case MIC_3:
-                    SELECTED_MIC = 3;
-                    sttService.startListening();
-                    mic_3.setImageState(stateSet, true);
-                    break;
-                case MIC_4:
-                    SELECTED_MIC = 4;
-                    sttService.startListening();
-                    mic_4.setImageState(stateSet, true);
-                    break;
-                case PREFILL_EXPERIENCE_IF_ANY:
-                    try {
-                        JSONObject jsonObject = new JSONObject(model_courseEnrollment.getCourseExperience());
-                        et_assignment_desc.setText((jsonObject.has("assignments_description")) ? jsonObject.getString("assignments_description") : "");
-                        et_coach_comments.setText((jsonObject.has("coach_comments")) ? jsonObject.getString("coach_comments") : "");
-                        et_new_words_learnt.setText((jsonObject.has("words_learnt")) ? jsonObject.getString("words_learnt") : "");
-                        et_no_of_assignments_completed.setText((jsonObject.has("assignments_completed")) ? jsonObject.getString("assignments_completed") : "");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    break;
+            if (msg.what == PREFILL_EXPERIENCE_IF_ANY) {
+                try {
+                    JSONObject jsonObject = new JSONObject(model_courseEnrollment.getCourseExperience());
+                    step_assignmentsDescription.restoreStepData((jsonObject.has("assignments_description")) ? jsonObject.getString("assignments_description") : "");
+                    step_coachComments.restoreStepData((jsonObject.has("coach_comments")) ? jsonObject.getString("coach_comments") : "");
+                    step_newWords.restoreStepData((jsonObject.has("words_learnt")) ? jsonObject.getString("words_learnt") : "");
+                    step_totalAssignmnetsDone.restoreStepData((jsonObject.has("assignments_completed")) ? jsonObject.getString("assignments_completed") : "");
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
         }
     };
 
     @AfterViews
     public void init() {
+        setUpForm();
         model_courseEnrollment = Objects.requireNonNull(getArguments()).getParcelable(PD_Constant.ENROLLED_COURSE);
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.RECORD_AUDIO)
                 .onAccepted(permissionResult -> {
-                    sttService = STTService.init(getActivity());
-                    sttService.initCallback(Fragment_CourseExperience.this);
+                    sttService = STTService.init(getContext());
+                    sttService.initCallback(this);
                     mHandler.sendEmptyMessage(PREFILL_EXPERIENCE_IF_ANY);
                 })
                 .ask();
     }
 
-    @Click(R.id.mic_1)
-    public void enableSTT1() {
-        mHandler.sendEmptyMessage(MIC_1);
-    }
-
-    @Click(R.id.mic_2)
-    public void enableSTT2() {
-        mHandler.sendEmptyMessage(MIC_2);
-    }
-
-    @Click(R.id.mic_3)
-    public void enableSTT3() {
-        mHandler.sendEmptyMessage(MIC_3);
-    }
-
-    @Click(R.id.mic_4)
-    public void enableSTT4() {
-        mHandler.sendEmptyMessage(MIC_4);
+    private void setUpForm() {
+        String[] stepTitles = getResources().getStringArray(R.array.steps_experience);
+        step_newWords = new Step_NewWords(stepTitles[0], "", "Next");
+        step_totalAssignmnetsDone = new Step_TotalAssignmnetsDone(stepTitles[1], "", "Next");
+        step_assignmentsDescription = new Step_AssignmentsDescription(stepTitles[2], "", "Next");
+        step_coachComments = new Step_CoachComments(stepTitles[3], "", "Done");
+        stepper_form
+                .setup(this, step_newWords, step_totalAssignmnetsDone,
+                        step_assignmentsDescription, step_coachComments)
+                .confirmationStepSubtitle("Please check the answer before confirm")
+                .init();
     }
 
     @Click(R.id.btn_exp_done)
@@ -167,22 +122,6 @@ public class Fragment_CourseExperience extends Fragment implements SpeechResult 
     }
 
     private void verifyDetails() {
-        if (et_new_words_learnt.getText().toString().isEmpty()) {
-            et_new_words_learnt.setError("Please fill this");
-            return;
-        }
-        if (et_no_of_assignments_completed.getText().toString().isEmpty()) {
-            et_no_of_assignments_completed.setError("Please fill this");
-            return;
-        }
-        if (et_assignment_desc.getText().toString().isEmpty()) {
-            et_assignment_desc.setError("Please fill this");
-            return;
-        }
-        if (et_coach_comments.getText().toString().isEmpty()) {
-            et_coach_comments.setError("Please fill this");
-            return;
-        }
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
         File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
         if (!imagesFolder.exists()) imagesFolder.mkdirs();
@@ -236,59 +175,76 @@ public class Fragment_CourseExperience extends Fragment implements SpeechResult 
     public void completeAndUpdateCourseInDb(String coachImage) {
         try {
             JSONObject c_exp = new JSONObject();
-            c_exp.put("words_learnt", et_new_words_learnt.getText().toString());
-            c_exp.put("assignments_completed", et_no_of_assignments_completed.getText().toString());
-            c_exp.put("assignments_description", et_assignment_desc.getText().toString());
-            c_exp.put("coach_comments", et_coach_comments.getText().toString());
+            c_exp.put("words_learnt", step_newWords.getStepData());
+            c_exp.put("assignments_completed", step_totalAssignmnetsDone.getStepData());
+            c_exp.put("assignments_description", step_assignmentsDescription.getStepData());
+            c_exp.put("coach_comments", step_coachComments.getStepData());
             c_exp.put("coach_verification_date", PD_Utility.getCurrentDateTime());
             c_exp.put("coach_image", coachImage);
             model_courseEnrollment.setCourseExperience(c_exp.toString());
             model_courseEnrollment.setCourseCompleted(true);
             model_courseEnrollment.setSentFlag(0);
             PrathamApplication.courseDao.updateCourse(model_courseEnrollment);
-//            PrathamApplication.courseDao.addExperienceToCourse(c_exp.toString(), model_courseEnrollment.getCourseId(),
-//                    model_courseEnrollment.getGroupId(), (getArguments() != null ? getArguments().getString(PD_Constant.WEEK) : "na"),
-//                    model_courseEnrollment.getLanguage());
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
     @Override
-    public void onResult(String result) {
-        switch (SELECTED_MIC) {
-            case MIC_1:
-                et_new_words_learnt.append(result);
-                break;
-            case MIC_2:
-                et_no_of_assignments_completed.append(result);
-                break;
-            case MIC_3:
-                et_assignment_desc.append(result);
-                break;
-            case MIC_4:
-                et_coach_comments.append(result);
-                break;
+    public void onCompletedForm() {
+        if (step_newWords.getStepData().isEmpty()) {
+            stepper_form.cancelFormCompletionOrCancellationAttempt();
+            stepper_form.goToStep(0, true);
+            return;
         }
+        if (step_totalAssignmnetsDone.getStepData().isEmpty()) {
+            stepper_form.cancelFormCompletionOrCancellationAttempt();
+            stepper_form.goToStep(1, true);
+            return;
+        }
+        if (step_assignmentsDescription.getStepData().isEmpty()) {
+            stepper_form.cancelFormCompletionOrCancellationAttempt();
+            stepper_form.goToStep(2, true);
+            return;
+        }
+        if (step_coachComments.getStepData().isEmpty()) {
+            stepper_form.cancelFormCompletionOrCancellationAttempt();
+            stepper_form.goToStep(3, true);
+            return;
+        }
+        completeAndUpdateCourseInDb("not verified");
+    }
+
+    @Override
+    public void onCancelledForm() {
+
+    }
+
+    @Override
+    public void onResult(String result) {
+        setDataToRespectiveStep(result);
     }
 
     @Override
     public void sttStopped() {
-        isChecked = !isChecked;
-        final int[] stateSet = {android.R.attr.state_checked * (isChecked ? 1 : -1)};
-        switch (SELECTED_MIC) {
-            case MIC_1:
-                mic_1.setImageState(stateSet, true);
+        setDataToRespectiveStep(null);
+    }
+
+    private void setDataToRespectiveStep(String result) {
+        switch (stepper_form.getOpenStepPosition()) {
+            case 0:
+                step_newWords.restoreStepData(result);
                 break;
-            case MIC_2:
-                mic_2.setImageState(stateSet, true);
+            case 1:
+                step_totalAssignmnetsDone.restoreStepData(result);
                 break;
-            case MIC_3:
-                mic_3.setImageState(stateSet, true);
+            case 2:
+                step_assignmentsDescription.restoreStepData(result);
                 break;
-            case MIC_4:
-                mic_4.setImageState(stateSet, true);
+            case 3:
+                step_coachComments.restoreStepData(result);
                 break;
         }
     }
+
 }

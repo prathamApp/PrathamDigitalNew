@@ -21,9 +21,10 @@ import butterknife.ButterKnife;
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
     private List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds;
-    private ContractOptions contractOptions;
+    private ContractOptions.optionAdapterClick contractOptions;
 
-    public GroupAdapter(Context context, List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds, ContractOptions contractOptions) {
+    public GroupAdapter(Context context, List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds,
+                        ContractOptions.optionAdapterClick contractOptions) {
         Context context1 = context;
         this.modal_totalDaysGroupsPlayeds = modal_totalDaysGroupsPlayeds;
         this.contractOptions = contractOptions;

@@ -200,6 +200,7 @@
         <item>View Statistics</item>
         <item>Clear Data</item>
         <item>Pull Data</item>
+        <item>Update Database</item>
     </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>
@@ -307,4 +308,16 @@
     <string name="cancel_dialog">CANCEL</string>
     <string name="no_internet_connection">NO INTERNET CONNECTION:( PLEASE CHECK YOUR CONNECTION</string>
     <string name="count_down_gap_string_format">Next content in %s seconds</string>
+    <!--    vertical stepper view-->
+    <string name="vertical_stepper_form_continue_button">Continue</string>
+    <string name="vertical_stepper_form_cancel_button">Cancel</string>
+    <string name="vertical_stepper_form_confirm_button">Confirm data</string>
+    <string name="vertical_stepper_form_confirmation_step_title">Confirmation</string>
+    <!--    vertical stepper view-->
+    <string-array name="steps_experience">
+        <item>What all new words did you learnt this week?</item>
+        <item>How many assignments did you completed this week?</item>
+        <item>Give a small description about the assignments.</item>
+        <item>Coach comments on groups or students work.</item>
+    </string-array>
 </resources>

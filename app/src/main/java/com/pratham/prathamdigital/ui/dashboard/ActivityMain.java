@@ -247,17 +247,16 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void showNotificationBadge(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_STARTED)) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_STARTED))
                 increaseNotificationCount(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE))
                 decreaseNotificationCount(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR)) {
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR))
                 decreaseNotificationCount(message);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.EXIT_APP)) {
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.EXIT_APP))
                 exitApp();
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_HOME)) {
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_HOME))
                 mHandler.sendEmptyMessage(MENU_HOME);
-            }
         }
     }
 

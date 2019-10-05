@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.models;
 
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.os.Bundle;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,7 @@ public class EventMessage {
     private long progress;
     private Location location;
     private Modal_FileDownloading modal_fileDownloading;
+    private Bundle bundle;
 
     public Modal_FileDownloading getModal_fileDownloading() {
         return modal_fileDownloading;
@@ -121,5 +123,13 @@ public class EventMessage {
 
     public void setPushData(String pushData) {
         this.pushData = pushData;
+    }
+
+    public Bundle getBundle() {
+        return bundle;
+    }
+
+    public void setBundle(Bundle bundle) {
+        this.bundle = bundle;
     }
 }
