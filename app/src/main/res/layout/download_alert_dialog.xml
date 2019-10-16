@@ -1,45 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/_350sdp"
-    android:layout_height="@dimen/_250sdp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
-    app:sc_shadowColor="#40444444">
+    android:layout_margin="@dimen/_50sdp"
+    app:cardBackgroundColor="@color/yellow_sand"
+    app:cardCornerRadius="@dimen/_5sdp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:padding="@dimen/_5sdp"
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/a1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/ic_alarm" />
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/ic_download_illus"
+            tools:ignore="ContentDescription" />
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/txt_download_alert"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/a1"
-            android:layout_marginTop="@dimen/_15sdp"
-            android:gravity="center"
-            android:text="@string/content_download_alert"
-            android:textColor="@color/purple"
-            android:textSize="@dimen/_23sdp" />
+            android:layout_height="match_parent"
+            android:layout_toEndOf="@id/a1"
+            android:gravity="center_vertical">
 
-        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
-            android:id="@+id/btn_okay"
-            android:layout_width="@dimen/_120sdp"
-            android:layout_height="@dimen/_35sdp"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="@dimen/_10sdp"
-            android:background="@drawable/update_button_round_bg"
-            android:elevation="@dimen/_8sdp"
-            android:gravity="center"
-            android:text="@string/Okay"
-            android:textColor="@android:color/white" />
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_download_alert"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:gravity="center"
+                android:text="@string/content_download_alert"
+                android:textColor="@color/light_orange"
+                android:textSize="@dimen/_18sdp" />
+
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                android:id="@+id/btn_okay"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:layout_below="@+id/txt_download_alert"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:background="@drawable/button_orange_selector"
+                android:elevation="@dimen/_8sdp"
+                android:text="@string/Okay"
+                android:textColor="@android:color/white" />
+        </RelativeLayout>
     </RelativeLayout>
-</com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer>
+</android.support.design.card.MaterialCardView>

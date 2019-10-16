@@ -234,7 +234,6 @@ public class BaseActivity extends AppCompatActivity {
                 .activity(CatchoTransparentActivity.class)
 //                .recipients("abc@gm.com")
                 .build();
-//        initializeDatabaseDaos();
         initializeConnectionService();
         initializeTTS();
     }
@@ -335,7 +334,6 @@ public class BaseActivity extends AppCompatActivity {
                         & (Intent.FLAG_GRANT_READ_URI_PERMISSION
                         | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
                 PrathamApplication.getInstance().getContentResolver().takePersistableUriPermission(treeUri, takeFlags);
-//                FastSave.getInstance().saveString(PD_Constant.SDCARD_URI, treeUri.toString());
                 mHandler.sendEmptyMessage(SHOW_OTG_SELECT_DIALOG);
                 new CopyDbToOTG().execute(treeUri);
             }

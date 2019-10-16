@@ -67,16 +67,18 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group");
         List<Model_CourseEnrollment> courseEnrollments = enrolledCoursesFromDb(week, groupId);
         boolean areAllCoursesVerified = true;
-        for (Model_CourseEnrollment ce : courseEnrollments) {
-            if (!ce.isCoachVerified()) areAllCoursesVerified = false;
-        }
-        if (!areAllCoursesVerified) {
-            planningView.showVerificationButton();
-            if (courseEnrollments.size() > 0)
-                courseEnrollments.add(new Model_CourseEnrollment());
-        } else {
-            if (courseEnrollments.size() > 0)
-                planningView.verifiedSuccessfully(courseEnrollments.get(0));
+        if (courseEnrollments != null) {
+            for (Model_CourseEnrollment ce : courseEnrollments) {
+                if (!ce.isCoachVerified()) areAllCoursesVerified = false;
+            }
+            if (!areAllCoursesVerified) {
+                planningView.showVerificationButton();
+                if (courseEnrollments.size() > 0)
+                    courseEnrollments.add(new Model_CourseEnrollment());
+            } else {
+                if (courseEnrollments.size() > 0)
+                    planningView.verifiedSuccessfully(courseEnrollments.get(0));
+            }
         }
         planningView.loadEnrolledCourses(courseEnrollments);
     }
@@ -85,6 +87,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         coursesPerWeek.remove(week);
         List<Model_CourseEnrollment> courseEnrollments = PrathamApplication.courseDao.
                 fetchEnrolledCourses(groupId, week, FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        if (courseEnrollments == null) return null;
         List<Model_CourseEnrollment> temp = new ArrayList<>();
         for (Model_CourseEnrollment ce : courseEnrollments) {
             ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),

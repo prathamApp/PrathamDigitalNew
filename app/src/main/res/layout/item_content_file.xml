@@ -40,34 +40,20 @@
                 android:layout_marginBottom="@dimen/_2sdp"
                 android:background="@drawable/rounded_corners">
 
-                <LinearLayout
-                    android:id="@+id/rl_file_item_option"
+                <ImageView
+                    android:id="@+id/img_download_content"
                     android:layout_width="@dimen/_30sdp"
                     android:layout_height="match_parent"
-                    android:layout_alignParentRight="true">
-
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:id="@+id/file_item_lottieview"
-                        android:layout_width="@dimen/_30sdp"
-                        android:layout_height="match_parent"
-                        android:visibility="gone"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:lottie_scale=".7" />
-
-                    <ImageView
-                        android:id="@+id/img_download_content"
-                        android:layout_width="@dimen/_30sdp"
-                        android:layout_height="match_parent"
-                        android:padding="@dimen/_3sdp"
-                        app:srcCompat="@drawable/content_download_icon" />
-                </LinearLayout>
+                    android:layout_alignParentEnd="true"
+                    android:padding="@dimen/_3sdp"
+                    app:srcCompat="@drawable/content_download_icon"
+                    tools:ignore="ContentDescription" />
 
                 <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                     android:id="@+id/file_content_desc"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_toLeftOf="@+id/rl_file_item_option"
+                    android:layout_toLeftOf="@+id/img_download_content"
                     android:gravity="center"
                     android:maxLines="2"
                     android:padding="@dimen/_2sdp"
@@ -118,7 +104,7 @@
                 android:background="@android:color/black"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                     android:layout_width="wrap_content"

@@ -9,6 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:lottie_autoPlay="true"
-        app:lottie_fileName="little_girl_jumping.json"
+        app:lottie_fileName="jumbo_typing.json"
         app:lottie_loop="true" />
 </RelativeLayout>

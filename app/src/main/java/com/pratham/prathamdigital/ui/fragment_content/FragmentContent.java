@@ -344,12 +344,14 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         download_builder.dismiss();
                     }, R.id.btn_okay)
                     .setGravity(Gravity.CENTER)
+                    .setDismissOnClickBack(true)
+                    .setDismissOnTouchBackground(true)
                     .setScaleRatio(0.2f)
                     .setBlurRadius(8)
                     .setTintColor(0x30000000)
                     .build();
             TextView tv = download_builder.findViewById(R.id.txt_download_alert);
-            tv.setText(getString(R.string.content_download_alert) + " " + PD_Constant.STORING_IN);
+            tv.append(" " + PD_Constant.STORING_IN);
             download_builder.show();
         }
     }

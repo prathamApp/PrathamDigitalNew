@@ -86,29 +86,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             super.handleMessage(msg);
             switch (msg.what) {
                 case LIGHT_ANIMATION:
-//                    ObjectAnimator objectAnimator = ObjectAnimator.ofFloat(img_splash_light, "rotation", 0f, 360f);
-//                    objectAnimator.setInterpolator(new LinearInterpolator());
-//                    objectAnimator.setDuration(7600);
-//                    objectAnimator.setRepeatCount(ValueAnimator.INFINITE);
-//                    img_splash_light.setLayerType(View.LAYER_TYPE_NONE, null);
-//                    objectAnimator.start();
                     Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pratham);
                     splash_video.setVideoURI(video);
                     splash_video.setOnCompletionListener(mp -> {
                         splashPresenter.checkPrathamCode();
-//                            new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
                     });
-//                    splash_video.setOnPreparedListener(mp -> mp.setLooping(true));
-//                    splash_video.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-//                        public void onCompletion(MediaPlayer mp) {
-//                            startNextActivity();
-//                        }
-//                    });
                     splash_video.start();
-//                    rich.setVisibility(View.VISIBLE);
-//                    final RichPath[] allPaths = rich.findAllRichPaths();
-//                    RichPathAnimator.animate(allPaths).trimPathEnd(0, 1).interpolator(new AccelerateDecelerateInterpolator()).duration(1800).start();
-//                    pingpong_view.setVisibility(View.VISIBLE);
                     break;
                 case UPDATE_DIALOG:
                     new BlurPopupWindow.Builder(mContext)

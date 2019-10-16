@@ -16,7 +16,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.facebook.drawee.interfaces.DraweeController;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -43,9 +42,9 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     @Nullable
     @BindView(R.id.file_content_image)
     SimpleDraweeView file_content_image;
-    @Nullable
-    @BindView(R.id.file_item_lottieview)
-    LottieAnimationView file_item_lottieview;
+    //    @Nullable
+//    @BindView(R.id.file_item_lottieview)
+//    LottieAnimationView file_item_lottieview;
     @Nullable
     @BindView(R.id.img_download_content)
     ImageView img_download_content;
@@ -84,8 +83,6 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             if (!PrathamApplication.isTablet) item_file_delete.setVisibility(View.VISIBLE);
             else item_file_delete.setVisibility(View.GONE);
             rl_reveal.setVisibility(View.GONE);
-            file_item_lottieview.setVisibility(View.VISIBLE);
-            img_download_content.setVisibility(View.GONE);
             if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
                 Uri imgUri;
                 if (contentItem.isOnSDCard()) {
@@ -99,11 +96,11 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                 }
             }
             if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
-                Objects.requireNonNull(file_item_lottieview).setAnimation("gaming_pad.json");
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_joystick);
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
-                Objects.requireNonNull(file_item_lottieview).setAnimation("play_button.json");
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_video);
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
-                Objects.requireNonNull(file_item_lottieview).setAnimation("book.json");
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_book);
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {
@@ -115,8 +112,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         } else {
             rl_delete_reveal.setVisibility(View.GONE);
             item_file_delete.setVisibility(View.GONE);
-            file_item_lottieview.setVisibility(View.GONE);
-            img_download_content.setVisibility(View.VISIBLE);
+            Objects.requireNonNull(img_download_content).setImageResource(R.drawable.content_download_icon);
             ImageRequest request = null;
             if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {
                 request = ImageRequestBuilder
