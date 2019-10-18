@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -14,9 +15,11 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapter.ChildViewHolder> {
 
@@ -33,7 +36,7 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     @Override
     public ChildViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater file = LayoutInflater.from(parent.getContext());
-        View v = file.inflate(R.layout.item_course_details, parent, false);
+        View v = file.inflate(R.layout.item_course_detail_file, parent, false);
         return new ChildViewHolder(v);
     }
 
@@ -43,7 +46,13 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
         Uri imgUri = Uri.fromFile(new File(
                 PrathamApplication.pradigiPath + "/PrathamImages/" + childs.get(i).getNodeimage()));
         childViewHolder.course_child_image.setImageURI(imgUri);
-        childViewHolder.play_content.setOnClickListener(v -> courseDetailAdapterClick.onChildItemClicked(childs.get(i)));
+        if (childs.get(i).getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
+            Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_joystick);
+        else if (childs.get(i).getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
+            Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_video);
+        else if (childs.get(i).getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
+            Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_book);
+        childViewHolder.itemView.setOnClickListener(v -> courseDetailAdapterClick.onChildItemClicked(childs.get(i)));
     }
 
     @Override
@@ -54,13 +63,13 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
     class ChildViewHolder extends RecyclerView.ViewHolder {
         SimpleDraweeView course_child_image;
         TextView course_child_title;
-        TextView play_content;
+        ImageView img_content_type;
 
         ChildViewHolder(@NonNull View itemView) {
             super(itemView);
             course_child_image = itemView.findViewById(R.id.course_child_image);
             course_child_title = itemView.findViewById(R.id.course_child_title);
-            play_content = itemView.findViewById(R.id.play_content);
+            img_content_type = itemView.findViewById(R.id.img_content_type);
         }
     }
 }

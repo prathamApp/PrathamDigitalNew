@@ -4,6 +4,7 @@
     android:id="@+id/root_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/ic_course_bkgd"
     android:fillViewport="true">
 
     <RelativeLayout
@@ -14,20 +15,16 @@
             android:id="@+id/card_course_header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_30sdp"
-            android:layout_marginEnd="@dimen/_30sdp"
-            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_margin="@dimen/_10sdp"
             android:minHeight="@dimen/_80sdp"
             android:orientation="horizontal"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/mustord_yellow"
             app:cardCornerRadius="@dimen/_10sdp"
-            app:cardElevation="@dimen/_10sdp">
+            app:cardElevation="@dimen/_15sdp">
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/course_detail_bkgd">
+                android:layout_height="match_parent">
 
                 <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/course_image"
@@ -47,9 +44,10 @@
                     android:layout_height="@dimen/_70sdp"
                     android:layout_alignParentEnd="true"
                     android:layout_margin="@dimen/_5sdp"
+                    android:layout_centerVertical="true"
                     app:lottie_autoPlay="true"
-                    app:lottie_loop="true"
                     app:lottie_fileName="play_button.json"
+                    app:lottie_loop="true"
                     app:lottie_scale=".7" />
 
                 <LinearLayout
@@ -67,28 +65,28 @@
                         android:id="@+id/course_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/yellow_sand"
+                        android:textColor="@android:color/black"
                         android:textSize="@dimen/_15sdp" />
 
                     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                         android:id="@+id/course_detail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black_20"
                         android:textSize="@dimen/_13sdp" />
 
                     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                         android:id="@+id/course_assign"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black_20"
                         android:textSize="@dimen/_13sdp" />
 
                     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                         android:id="@+id/course_dates"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/white"
+                        android:textColor="@color/black_20"
                         android:textSize="@dimen/_13sdp" />
                 </LinearLayout>
             </RelativeLayout>
@@ -98,15 +96,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/card_course_header"
-            android:layout_marginStart="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_30sdp"
-            android:layout_marginBottom="@dimen/_30sdp"
+            android:layout_margin="@dimen/_10sdp"
             android:minHeight="@dimen/_80sdp"
             android:orientation="horizontal"
-            app:cardBackgroundColor="@color/white"
+            app:cardBackgroundColor="@color/trans_ghost_white"
             app:cardCornerRadius="@dimen/_10sdp"
-            app:cardElevation="@dimen/_10sdp">
+            app:cardElevation="0dp">
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/rv_course_childs"

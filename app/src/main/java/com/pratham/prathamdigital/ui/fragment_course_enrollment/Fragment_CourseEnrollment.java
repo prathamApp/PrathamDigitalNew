@@ -15,10 +15,6 @@ public class Fragment_CourseEnrollment extends Fragment {
 
     @ViewById(R.id.vp_course)
     ViewPager vp_course;
-//    @ViewById(R.id.iv_next_week)
-//    ImageView iv_next_week;
-//    @ViewById(R.id.iv_previous_week)
-//    ImageView iv_previous_week;
 
     @AfterViews
     public void init() {

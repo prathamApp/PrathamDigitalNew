@@ -283,7 +283,7 @@ public class ReadContentDbFromSdCard {
 
     @UiThread
     public void onPostExecute(Boolean copied) {
-        if (db_file.getAbsolutePath().contains("storage/emulated/0"))
+        if (db_file != null && db_file.getAbsolutePath().contains("storage/emulated/0"))
             db_file.delete();
         if (copied)
             interface_copying.successCopyingExisting(folder_file.getAbsolutePath());

@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.fragment_week_course_plan;
+package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
 import android.view.View;
 

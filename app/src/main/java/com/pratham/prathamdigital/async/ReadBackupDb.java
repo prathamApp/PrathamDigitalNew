@@ -29,7 +29,7 @@ public class ReadBackupDb extends AsyncTask<String, String, Boolean> {
         try {
             File db_file = new File(Environment.getExternalStorageDirectory() + "/" + PrathamDatabase.DB_NAME);
             if (db_file.exists()) {
-                SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READONLY);
+                SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
                 if (db == null) return false;
                 try {
                     Cursor att_cursor = db.rawQuery("SELECT * FROM Attendance where sentFlag = 0", null);

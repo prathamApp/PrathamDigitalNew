@@ -87,7 +87,6 @@ public class PrathamApplication extends Application {
         Fresco.initialize(this);
         FastSave.init(getApplicationContext());
         initializeDatabaseDaos();
-//       copyBackupDb();
         bubble_mp = MediaPlayer.create(this, R.raw.bubble_pop);
         setPradigiPath();
         wiseF = new WiseFy.Brains(getApplicationContext()).logging(true).getSmarts();

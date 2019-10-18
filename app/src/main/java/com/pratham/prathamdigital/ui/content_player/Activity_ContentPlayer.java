@@ -2,6 +2,7 @@ package com.pratham.prathamdigital.ui.content_player;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.TextView;
 
@@ -52,6 +53,8 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
 
     @Click(R.id.close_content_player)
     public void setClose() {
+        if (txt_next_countdown.getVisibility() == View.VISIBLE)
+            txt_next_countdown.cancel();
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.CLOSE_CONTENT_PLAYER);
         EventBus.getDefault().post(message);
@@ -152,6 +155,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
         txt_next_countdown.setVisibility(View.VISIBLE);
         txt_next_countdown.reSet();
         txt_next_countdown.start();
+        new Handler().postDelayed(() -> txt_next_countdown.setVisibility(View.GONE), 6000);
     }
 
     @UiThread

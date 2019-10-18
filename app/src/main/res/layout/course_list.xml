@@ -12,9 +12,9 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/rv_selectCourse"
-        android:layout_below="@+id/tv_sel_course"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_sel_course" />
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:id="@+id/tv_sel_course"
@@ -31,25 +31,46 @@
         android:id="@+id/ll_no_data"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="#FDD5DC"
+        android:background="@color/white"
         android:orientation="vertical"
         android:visibility="gone">
 
         <ImageView
+            android:id="@+id/img_no_data"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            app:srcCompat="@drawable/no_data_to_show" />
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_centerVertical="true"
+            app:srcCompat="@drawable/no_data_to_show"
+            tools:ignore="ContentDescription" />
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_centerHorizontal="true"
-            android:layout_margin="@dimen/_5sdp"
-            android:text="No Courses to show"
-            android:textColor="#E54D5A"
-            android:textSize="@dimen/_18sdp"
-            tools:ignore="HardcodedText" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:layout_toEndOf="@+id/img_no_data">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_no_data"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/_5sdp"
+                android:gravity="center"
+                android:text="No Courses to show. \nPlease download"
+                android:textColor="#FE564F"
+                android:textSize="@dimen/_18sdp"
+                tools:ignore="HardcodedText" />
+
+            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                android:id="@+id/btn_goto_home"
+                android:layout_width="@dimen/_120sdp"
+                android:layout_height="@dimen/_35sdp"
+                android:background="@drawable/button_orange_selector"
+                android:elevation="@dimen/_8sdp"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:text="@string/Okay"
+                android:textColor="@android:color/white" />
+        </LinearLayout>
     </RelativeLayout>
 </RelativeLayout>

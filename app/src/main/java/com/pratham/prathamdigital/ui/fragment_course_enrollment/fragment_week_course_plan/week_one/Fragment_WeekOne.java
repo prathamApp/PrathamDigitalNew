@@ -1,4 +1,4 @@
-package com.pratham.prathamdigital.ui.fragment_week_course_plan.week_one;
+package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.week_one;
 
 import android.Manifest;
 import android.animation.Animator;
@@ -33,15 +33,16 @@ import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.view_animators.Animate;
 import com.pratham.prathamdigital.custom.view_animators.Techniques;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseExperience;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseExperience_;
-import com.pratham.prathamdigital.ui.fragment_week_course_plan.PlanningContract;
-import com.pratham.prathamdigital.ui.fragment_week_course_plan.RV_CourseAdapter;
-import com.pratham.prathamdigital.ui.fragment_week_course_plan.RV_SelectCourseAdapter;
-import com.pratham.prathamdigital.ui.fragment_week_course_plan.WeekPlanningPresenter;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.PlanningContract;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.RV_CourseAdapter;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.RV_SelectCourseAdapter;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.WeekPlanningPresenter;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -51,6 +52,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -388,5 +390,12 @@ public class Fragment_WeekOne extends Fragment implements PlanningContract.weekO
                     getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                 })
                 .ask();
+    }
+
+    @Click(R.id.btn_goto_home)
+    public void setGotoHome() {
+        EventMessage msg = new EventMessage();
+        msg.setMessage(PD_Constant.SHOW_HOME);
+        EventBus.getDefault().post(msg);
     }
 }

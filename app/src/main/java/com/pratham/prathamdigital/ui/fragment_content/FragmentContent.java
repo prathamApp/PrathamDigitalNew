@@ -290,8 +290,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
             if (contentAdapter == null) {
                 mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
             }
-            contentAdapter.submitList(content);
             rv_content.smoothScrollToPosition(0);
+            contentAdapter.submitList(content);
             rv_content.scheduleLayoutAnimation();
         } else {
             showNoConnectivity();
@@ -343,6 +343,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         onDownloadClicked(position, contentDetail, reveal_view, startView);
                         download_builder.dismiss();
                     }, R.id.btn_okay)
+                    .bindClickListener(v -> download_builder.dismiss(), R.id.txt_download_cancel)
                     .setGravity(Gravity.CENTER)
                     .setDismissOnClickBack(true)
                     .setDismissOnTouchBackground(true)

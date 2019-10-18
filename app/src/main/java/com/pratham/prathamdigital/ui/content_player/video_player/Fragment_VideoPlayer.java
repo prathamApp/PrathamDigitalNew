@@ -113,9 +113,9 @@ public class Fragment_VideoPlayer extends Fragment {
             videoDuration = videoView.getDuration();
         });
         videoView.setOnCompletionListener(mp -> {
+            addScoreToDB();
             if (videoSawal == null) {
                 if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    addScoreToDB();
                     EventMessage message = new EventMessage();
                     message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
                     message.setDownloadId(resId);
@@ -123,7 +123,6 @@ public class Fragment_VideoPlayer extends Fragment {
                 } else
                     Objects.requireNonNull(getActivity()).onBackPressed();
             } else {
-                addScoreToDB();
                 Bundle aksbundle = new Bundle();
                 aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
                 aksbundle.putString(PD_Constant.RESOURSE_ID, resId);

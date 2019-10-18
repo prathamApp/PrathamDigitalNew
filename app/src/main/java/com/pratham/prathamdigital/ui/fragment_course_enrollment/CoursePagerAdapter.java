@@ -5,7 +5,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.pratham.prathamdigital.ui.fragment_week_course_plan.week_one.Fragment_WeekOne_;
+import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.week_one.Fragment_WeekOne_;
 
 public class CoursePagerAdapter extends FragmentPagerAdapter {
 

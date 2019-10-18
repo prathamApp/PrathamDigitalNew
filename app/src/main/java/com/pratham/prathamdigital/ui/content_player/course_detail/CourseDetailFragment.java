@@ -19,7 +19,6 @@ import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
 import com.pratham.prathamdigital.util.PD_Constant;
-import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -52,17 +51,21 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @SuppressLint("SetTextI18n")
     @AfterViews
     public void init() {
-        root_detail.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
         Model_CourseEnrollment enrollment = Objects.requireNonNull(getArguments()).getParcelable(PD_Constant.COURSE_PARENT);
         Uri imgUri = Uri.fromFile(new File(
                 PrathamApplication.pradigiPath + "/PrathamImages/" +
                         Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
         course_image.setImageURI(imgUri);
         course_name.setText(enrollment.getCourseDetail().getNodetitle());
-        course_detail.setText(enrollment.getCourseDetail().getNodedesc());
-        course_assign.setText(enrollment.getCourseDetail().getNodedesc());
-        course_dates.setText(enrollment.getPlanFromDate() + " " + enrollment.getPlanToDate());
+        course_detail.setText("Description:-\n" + enrollment.getCourseDetail().getNodedesc());
+        course_assign.setText("Assignment:-\n" + enrollment.getCourseDetail().getAssignment());
+        course_dates.setText("Course Timeline:-\n" + parseDate(enrollment.getPlanFromDate()) + "  -  " + parseDate(enrollment.getPlanToDate()));
         initializeAdapter();
+    }
+
+    private String parseDate(String date) {
+        String[] date_split = date.split(" ");
+        return date_split[1] + " " + date_split[2] + " " + date_split[3] + "," + date_split[6];
     }
 
     @Override

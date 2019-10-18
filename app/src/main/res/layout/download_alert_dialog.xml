@@ -11,8 +11,8 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:padding="@dimen/_5sdp"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:padding="@dimen/_5sdp">
 
         <ImageView
             android:id="@+id/a1"
@@ -22,17 +22,17 @@
             app:srcCompat="@drawable/ic_download_illus"
             tools:ignore="ContentDescription" />
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toEndOf="@id/a1"
-            android:gravity="center_vertical">
+            android:gravity="center"
+            android:orientation="vertical">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/txt_download_alert"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_15sdp"
                 android:gravity="center"
                 android:text="@string/content_download_alert"
                 android:textColor="@color/light_orange"
@@ -42,13 +42,21 @@
                 android:id="@+id/btn_okay"
                 android:layout_width="@dimen/_120sdp"
                 android:layout_height="@dimen/_35sdp"
-                android:layout_below="@+id/txt_download_alert"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_marginTop="@dimen/_15sdp"
                 android:background="@drawable/button_orange_selector"
                 android:elevation="@dimen/_8sdp"
                 android:text="@string/Okay"
                 android:textColor="@android:color/white" />
-        </RelativeLayout>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_download_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:gravity="center"
+                android:text="@string/cancel"
+                android:textColor="@android:color/black"
+                android:textSize="@dimen/_18sdp" />
+        </LinearLayout>
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>
