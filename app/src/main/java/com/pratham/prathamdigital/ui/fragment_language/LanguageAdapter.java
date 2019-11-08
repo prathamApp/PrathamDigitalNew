@@ -15,9 +15,6 @@ import com.pratham.prathamdigital.models.Modal_Language;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
     private final ArrayList<Modal_Language> datalist;
     private final ContractLanguage contractLanguage;
@@ -80,12 +77,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_language)
         TextView tv_language;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            tv_language = itemView.findViewById(R.id.tv_language);
         }
     }
 }

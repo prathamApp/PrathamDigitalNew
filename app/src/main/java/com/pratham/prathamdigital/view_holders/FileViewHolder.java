@@ -32,57 +32,51 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import java.io.File;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class FileViewHolder extends RecyclerView.ViewHolder {
     @Nullable
-    @BindView(R.id.rl_reveal)
-    public RelativeLayout rl_reveal;
+    RelativeLayout rl_reveal;
     @Nullable
-    @BindView(R.id.file_content_image)
     SimpleDraweeView file_content_image;
-    //    @Nullable
-//    @BindView(R.id.file_item_lottieview)
-//    LottieAnimationView file_item_lottieview;
     @Nullable
-    @BindView(R.id.img_download_content)
     ImageView img_download_content;
     @Nullable
-    @BindView(R.id.item_file_delete)
     ImageView item_file_delete;
     @Nullable
-    @BindView(R.id.rl_download)
     RelativeLayout rl_download;
     @Nullable
-    @BindView(R.id.file_content_desc)
     TextView file_content_desc;
     @Nullable
-    @BindView(R.id.content_card_file)
     RelativeLayout content_card_file;
     @Nullable
-    @BindView(R.id.rl_delete_reveal)
     LinearLayout rl_delete_reveal;
     @Nullable
-    @BindView(R.id.file_del_yes)
     Button file_del_yes;
     @Nullable
-    @BindView(R.id.file_del_no)
     Button file_del_no;
     private final ContentContract.contentClick contentClick;
 
     public FileViewHolder(View view, final ContentContract.contentClick contentClick) {
         super(view);
-        ButterKnife.bind(this, view);
+        rl_reveal = view.findViewById(R.id.rl_reveal);
+        file_content_image = view.findViewById(R.id.file_content_image);
+        img_download_content = view.findViewById(R.id.img_download_content);
+        item_file_delete = view.findViewById(R.id.item_file_delete);
+        rl_download = view.findViewById(R.id.rl_download);
+        file_content_desc = view.findViewById(R.id.file_content_desc);
+        content_card_file = view.findViewById(R.id.content_card_file);
+        rl_delete_reveal = view.findViewById(R.id.rl_delete_reveal);
+        file_del_yes = view.findViewById(R.id.file_del_yes);
+        file_del_no = view.findViewById(R.id.file_del_no);
         this.contentClick = contentClick;
     }
 
     public void setContentItem(Modal_ContentDetail contentItem, int pos) {
         Objects.requireNonNull(file_content_desc).setText(contentItem.getNodetitle());
         if (contentItem.isDownloaded()) {
-            if (!PrathamApplication.isTablet) item_file_delete.setVisibility(View.VISIBLE);
-            else item_file_delete.setVisibility(View.GONE);
-            rl_reveal.setVisibility(View.GONE);
+            if (!PrathamApplication.isTablet)
+                Objects.requireNonNull(item_file_delete).setVisibility(View.VISIBLE);
+            else Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
+            Objects.requireNonNull(rl_reveal).setVisibility(View.GONE);
             if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
                 Uri imgUri;
                 if (contentItem.isOnSDCard()) {
@@ -104,14 +98,14 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {
-                rl_delete_reveal.setVisibility(View.INVISIBLE);
+                Objects.requireNonNull(rl_delete_reveal).setVisibility(View.INVISIBLE);
                 new Handler().postDelayed(() -> reveal(rl_delete_reveal, item_file_delete), 200);
             });
             Objects.requireNonNull(file_del_yes).setOnClickListener(v -> contentClick.deleteContent(pos, contentItem));
             Objects.requireNonNull(file_del_no).setOnClickListener(v -> unreveal(rl_delete_reveal, item_file_delete));
         } else {
-            rl_delete_reveal.setVisibility(View.GONE);
-            item_file_delete.setVisibility(View.GONE);
+            Objects.requireNonNull(rl_delete_reveal).setVisibility(View.GONE);
+            Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
             Objects.requireNonNull(img_download_content).setImageResource(R.drawable.content_download_icon);
             ImageRequest request = null;
             if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {
@@ -132,14 +126,14 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                         .build();
                 file_content_image.setController(controller);
             }
-            Drawable background = rl_download.getBackground();
+            Drawable background = Objects.requireNonNull(rl_download).getBackground();
             if (background instanceof GradientDrawable) {
                 int color = PD_Utility.getRandomColorGradient();
                 ((GradientDrawable) background).setColor(color);
-                rl_reveal.setBackgroundColor(color);
+                Objects.requireNonNull(rl_reveal).setBackgroundColor(color);
             }
             rl_download.setOnClickListener(v -> {
-                rl_reveal.setVisibility(View.INVISIBLE);
+                if (rl_reveal != null) rl_reveal.setVisibility(View.INVISIBLE);
                 contentClick.onDownloadClicked(pos, contentItem, rl_reveal, rl_download);
             });
             Objects.requireNonNull(content_card_file).setOnClickListener(null);

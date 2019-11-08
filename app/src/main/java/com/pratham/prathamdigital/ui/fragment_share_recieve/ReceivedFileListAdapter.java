@@ -19,9 +19,6 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileListAdapter.FileViewHolder> {
     private final Context context;
     private final AsyncListDiffer<Modal_ReceivingFilesThroughFTP> mDiffer;
@@ -81,19 +78,18 @@ public class ReceivedFileListAdapter extends RecyclerView.Adapter<ReceivedFileLi
     }
 
     class FileViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.receive_content_parts)
         TextView receive_content_parts;
-        @BindView(R.id.receive_content_title)
         TextView receive_content_title;
-        @BindView(R.id.receive_lottie_view)
         LottieAnimationView receive_lottie_view;
-        @BindView(R.id.img_recieve_file)
         ImageView img_recieve_file;
         Modal_ReceivingFilesThroughFTP files;
 
         FileViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            receive_content_parts = itemView.findViewById(R.id.receive_content_parts);
+            receive_content_title = itemView.findViewById(R.id.receive_content_title);
+            receive_lottie_view = itemView.findViewById(R.id.receive_lottie_view);
+            img_recieve_file = itemView.findViewById(R.id.img_recieve_file);
         }
 
         void setFiles(Modal_ReceivingFilesThroughFTP files) {

@@ -15,9 +15,6 @@ import com.pratham.prathamdigital.ui.fragment_admin_options.ContractOptions;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
 
     private List<Modal_TotalDaysGroupsPlayed> modal_totalDaysGroupsPlayeds;
@@ -62,16 +59,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.stat_grp_name)
         TextView stat_grp_name;
-        @BindView(R.id.stat_grp_date)
         TextView stat_grp_date;
-        @BindView(R.id.item_grp_card)
         MaterialCardView item_grp_card;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            stat_grp_name = itemView.findViewById(R.id.stat_grp_name);
+            stat_grp_date = itemView.findViewById(R.id.stat_grp_date);
+            item_grp_card = itemView.findViewById(R.id.item_grp_card);
         }
     }
 }

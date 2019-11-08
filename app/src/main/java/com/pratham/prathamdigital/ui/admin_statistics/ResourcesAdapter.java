@@ -12,9 +12,6 @@ import com.pratham.prathamdigital.models.Modal_ResourcePlayedByGroups;
 
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class ResourcesAdapter extends RecyclerView.Adapter<ResourcesAdapter.ViewHolder> {
 
     private List<Modal_ResourcePlayedByGroups> datalist;
@@ -42,12 +39,12 @@ public class ResourcesAdapter extends RecyclerView.Adapter<ResourcesAdapter.View
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.stat_res_name)
+
         TextView stat_res_name;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            stat_res_name = itemView.findViewById(R.id.stat_res_name);
         }
     }
 }

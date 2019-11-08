@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.CheckBox;
 import android.widget.GridLayout;
 import android.widget.ImageButton;
@@ -17,26 +18,18 @@ import com.pratham.prathamdigital.models.Village;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
-
 public class SelectVillageDialog extends Dialog {
 
-    @BindView(R.id.txt_clear_changes)
-    TextView clear_changes;
-    @BindView(R.id.btn_close)
     ImageButton btn_close;
-    @BindView(R.id.txt_message)
+    TextView clear_changes;
     TextView txt_message_village;
-    @BindView(R.id.flowLayout)
+    TextView txt_ok;
     GridLayout flowLayout;
 
     private final Context context;
     private final List<Village> villageList;
     private final List<CheckBox> checkBoxes = new ArrayList<>();
-    private final VillageSelectListener villageSelectListener;
+    private VillageSelectListener villageSelectListener = null;
 
 
     SelectVillageDialog(@NonNull Context context, VillageSelectListener villageSelectListener, List tempList) {
@@ -52,7 +45,16 @@ public class SelectVillageDialog extends Dialog {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.select_village_dialog);
-        ButterKnife.bind(this);
+        clear_changes = findViewById(R.id.txt_clear_changes);
+        btn_close = findViewById(R.id.btn_close);
+        txt_message_village = findViewById(R.id.txt_message);
+        txt_ok = findViewById(R.id.txt_ok);
+        flowLayout = findViewById(R.id.flowLayout);
+        // initialize clicks
+        btn_close.setOnClickListener(closeClickListener);
+        clear_changes.setOnClickListener(changeClickListener);
+        txt_ok.setOnClickListener(okClickListener);
+
         setCanceledOnTouchOutside(false);
         setCancelable(false);
         txt_message_village.setText("Select Village");
@@ -70,21 +72,13 @@ public class SelectVillageDialog extends Dialog {
         }
     }
 
-
-    @OnClick(R.id.btn_close)
-    public void closeDialog() {
-        dismiss();
-    }
-
-    @OnClick(R.id.txt_clear_changes)
-    public void clearChanges() {
+    private View.OnClickListener closeClickListener = v -> dismiss();
+    private View.OnClickListener changeClickListener = v -> {
         for (int i = 0; i < checkBoxes.size(); i++) {
             checkBoxes.get(i).setChecked(false);
         }
-    }
-
-    @OnClick(R.id.txt_ok)
-    public void ok() {
+    };
+    private View.OnClickListener okClickListener = v -> {
         ArrayList<String> villageIDList = new ArrayList();
         for (int i = 0; i < checkBoxes.size(); i++) {
             if (checkBoxes.get(i).isChecked()) {
@@ -93,7 +87,6 @@ public class SelectVillageDialog extends Dialog {
         }
         villageSelectListener.getSelectedItems(villageIDList);
         dismiss();
-    }
-
+    };
 }
 

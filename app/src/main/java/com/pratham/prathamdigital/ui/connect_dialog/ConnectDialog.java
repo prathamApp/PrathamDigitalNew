@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -37,31 +38,17 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 import static com.pratham.prathamdigital.PrathamApplication.wiseF;
 
 public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
 
     private static final String TAG = ConnectDialog.class.getSimpleName();
-    private Context context;
-    @BindView(R.id.wifi_list)
     RecyclerView wifi_list;
-    //    @BindView(R.id.refresh)
-//    LottieAnimationView refresh;
-    @BindView(R.id.dialog_txt)
     TextView dialog_txt;
-    @BindView(R.id.rl_enter_password)
     RelativeLayout rl_enter_password;
-    @BindView(R.id.rl_connect_option)
     RelativeLayout rl_connect_option;
-    @BindView(R.id.rl_progress)
     RelativeLayout rl_progress;
-    @BindView(R.id.et_wifi_pass)
     EditText et_wifi_pass;
-    @BindView(R.id.wifi_back)
     ImageView wifi_back;
 
     private String ssid;
@@ -69,13 +56,35 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
     private ArrayList<String> wifi_result;
     private OnWifiConnected onWifiConnected;
 
-//    public ConnectDialog(@NonNull Context context) {
-//        super(context);
-//    }
-
     public ConnectDialog(@NonNull Context context, OnWifiConnected connected) {
         super(context);
         this.onWifiConnected = connected;
+    }
+
+    @SuppressLint("MissingPermission")
+    @Nullable
+    @Override
+    protected View createContentView(ViewGroup parent) {
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connecction, parent, false);
+        mHandler = new Handler();
+        wifi_list = view.findViewById(R.id.wifi_list);
+        dialog_txt = view.findViewById(R.id.dialog_txt);
+        rl_enter_password = view.findViewById(R.id.rl_enter_password);
+        rl_connect_option = view.findViewById(R.id.rl_connect_option);
+        rl_progress = view.findViewById(R.id.rl_progress);
+        et_wifi_pass = view.findViewById(R.id.et_wifi_pass);
+        wifi_back = view.findViewById(R.id.wifi_back);
+        Button btn_connect_wifi = view.findViewById(R.id.btn_connect_wifi);
+        Button btn_try_again = view.findViewById(R.id.btn_try_again);
+        ImageView wifi_refresh = view.findViewById(R.id.wifi_refresh);
+        btn_connect_wifi.setOnClickListener(v -> setBtnConnectWifi());
+        btn_try_again.setOnClickListener(v -> setTryButton());
+        wifi_refresh.setOnClickListener(v -> setRefresh());
+        wifi_back.setOnClickListener(v -> setWifiBack());
+        this.isDismissOnTouchBackground();
+        this.isDismissOnClickBack();
+        new Handler().postDelayed(() -> mHandler.sendEmptyMessage(2), 300);
+        return view;
     }
 
     @SuppressLint("HandlerLeak")
@@ -118,13 +127,7 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
                         @SuppressLint("PrivateApi") Class<?> statusbarManager = Class.forName("android.app.StatusBarManager");
                         Method showsb = statusbarManager.getMethod("expand");
                         showsb.invoke(sbservice);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (NoSuchMethodException e) {
-                        e.printStackTrace();
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    } catch (InvocationTargetException e) {
+                    } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
                     break;
@@ -168,19 +171,6 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
             mHandler.sendEmptyMessage(1);
         }
     };
-
-    @SuppressLint("MissingPermission")
-    @Nullable
-    @Override
-    protected View createContentView(ViewGroup parent) {
-        View view = LayoutInflater.from(getContext()).inflate(R.layout.dialog_connecction, parent, false);
-        ButterKnife.bind(this, view);
-        mHandler = new Handler();
-        this.isDismissOnTouchBackground();
-        this.isDismissOnClickBack();
-        new Handler().postDelayed(() -> mHandler.sendEmptyMessage(2), 300);
-        return view;
-    }
 
     private void addOpenNetwork(String ssid) {
         PrathamApplication.wiseF.addOpenNetwork(ssid, new AddNetworkCallbacks() {
@@ -276,7 +266,6 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         }
     }
 
-    @OnClick(R.id.btn_connect_wifi)
     public void setBtnConnectWifi() {
         PrathamApplication.bubble_mp.start();
         if (!PD_Utility.checkWhetherConnectedToSelectedNetwork(PrathamApplication.getInstance(), ssid)) {
@@ -290,7 +279,6 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         }
     }
 
-    @OnClick(R.id.btn_try_again)
     public void setTryButton() {
         PrathamApplication.bubble_mp.start();
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork())
@@ -301,13 +289,11 @@ public class ConnectDialog extends BlurPopupWindow implements ConnectInterface {
         }
     }
 
-    @OnClick(R.id.wifi_refresh)
     public void setRefresh() {
         PrathamApplication.bubble_mp.start();
         mHandler.sendEmptyMessage(2);
     }
 
-    @OnClick(R.id.wifi_back)
     public void setWifiBack() {
         rl_connect_option.setVisibility(GONE);
         rl_enter_password.setVisibility(GONE);

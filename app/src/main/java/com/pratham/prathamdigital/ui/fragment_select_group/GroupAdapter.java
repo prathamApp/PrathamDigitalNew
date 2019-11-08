@@ -18,9 +18,6 @@ import com.pratham.prathamdigital.models.Modal_Groups;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> {
     private final Context context;
     private final ContractGroup contractGroup;
@@ -81,16 +78,15 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.group_card)
         MaterialCardView group_card;
-        @BindView(R.id.group_name)
         TextView group_name;
-        @BindView(R.id.img_grp_selected)
         ImageView img_grp_selected;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            group_card = itemView.findViewById(R.id.group_card);
+            group_name = itemView.findViewById(R.id.group_name);
+            img_grp_selected = itemView.findViewById(R.id.img_grp_selected);
         }
     }
 }

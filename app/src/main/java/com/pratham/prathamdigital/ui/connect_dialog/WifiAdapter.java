@@ -13,9 +13,6 @@ import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     private final ArrayList<String> datalist;
     private final Context context;
@@ -51,12 +48,11 @@ public class WifiAdapter extends RecyclerView.Adapter<WifiAdapter.ViewHolder> {
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.txt_wifi_name)
         TextView txt_wifi_name;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            txt_wifi_name = itemView.findViewById(R.id.txt_wifi_name);
         }
     }
 }

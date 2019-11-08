@@ -2,7 +2,6 @@ package com.pratham.prathamdigital.ui.download_list;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +18,6 @@ import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.util.List;
 import java.util.Objects;
-
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapter.DownloadViewHolder> {
     private final DowloadContract dowloadContract;
@@ -88,25 +84,19 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
 
     class DownloadViewHolder extends RecyclerView.ViewHolder {
 
-        @Nullable
-        @BindView(R.id.number_progress)
         NumberProgressBar number_progress;
-        @Nullable
-        @BindView(R.id.download_content_title)
         TextView content_title;
-        @Nullable
-        @BindView(R.id.download_remaining_time)
         TextView download_remaining_time;
-        @Nullable
-        @BindView(R.id.download_file_view)
         ImageView download_file_view;
-        @Nullable
-        @BindView(R.id.download_delete)
         ImageView download_delete;
 
         DownloadViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            number_progress=itemView.findViewById(R.id.number_progress);
+            content_title=itemView.findViewById(R.id.download_content_title);
+            download_remaining_time=itemView.findViewById(R.id.download_remaining_time);
+            download_file_view=itemView.findViewById(R.id.download_file_view);
+            download_delete=itemView.findViewById(R.id.download_delete);
         }
     }
 }

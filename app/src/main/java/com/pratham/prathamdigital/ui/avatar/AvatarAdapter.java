@@ -12,9 +12,6 @@ import com.pratham.prathamdigital.R;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder> {
 
     private final ArrayList<String> datalist;
@@ -43,12 +40,11 @@ public class AvatarAdapter extends RecyclerView.Adapter<AvatarAdapter.ViewHolder
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.lottie_avatar)
         LottieAnimationView lottie_avatar;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            lottie_avatar = itemView.findViewById(R.id.lottie_avatar);
         }
     }
 }

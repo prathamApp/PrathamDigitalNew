@@ -20,9 +20,6 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class ChildAdapter extends RecyclerView.Adapter {
     private static final int ADD_CHILD = 1;
     private static final int TAB_CHILD = 2;
@@ -129,37 +126,34 @@ public class ChildAdapter extends RecyclerView.Adapter {
     }
 
     class ChildHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.child_card_name)
         MaterialCardView child_card_name;
-        @BindView(R.id.child_shape)
         ShapeOfView child_shape;
-        @BindView(R.id.child_name)
         TextView child_name;
-        @BindView(R.id.child_avatar)
         ImageView child_avatar;
 
         ChildHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            child_card_name = itemView.findViewById(R.id.child_card_name);
+            child_shape = itemView.findViewById(R.id.child_shape);
+            child_name = itemView.findViewById(R.id.child_name);
+            child_avatar = itemView.findViewById(R.id.child_avatar);
         }
     }
 
     class SmartChildHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.child_avatar)
         LottieAnimationView smart_child_avatar;
-        @BindView(R.id.smart_child_name)
         TextView smart_child_name;
 
         SmartChildHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            smart_child_avatar = itemView.findViewById(R.id.child_avatar);
+            smart_child_name = itemView.findViewById(R.id.smart_child_name);
         }
     }
 
     class AddChildHolder extends RecyclerView.ViewHolder {
         AddChildHolder(@NonNull View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
         }
     }
 }

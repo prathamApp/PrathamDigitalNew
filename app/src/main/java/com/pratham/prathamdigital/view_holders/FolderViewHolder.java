@@ -25,28 +25,24 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import java.io.File;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class FolderViewHolder extends RecyclerView.ViewHolder {
     @Nullable
-    @BindView(R.id.folder_content_image)
     SimpleDraweeView folder_content_image;
     @Nullable
-    @BindView(R.id.folder_title)
     TextView folder_title;
     @Nullable
-    @BindView(R.id.folder_content_desc)
     TextView folder_content_desc;
     @Nullable
-    @BindView(R.id.content_card)
     LabelView content_card;
 
     private final ContentContract.contentClick contentClick;
 
     public FolderViewHolder(View itemView, final ContentContract.contentClick contentClick) {
         super(itemView);
-        ButterKnife.bind(this, itemView);
+        folder_content_image = itemView.findViewById(R.id.folder_content_image);
+        folder_title = itemView.findViewById(R.id.folder_title);
+        folder_content_desc = itemView.findViewById(R.id.folder_content_desc);
+        content_card = itemView.findViewById(R.id.content_card);
         this.contentClick = contentClick;
     }
 

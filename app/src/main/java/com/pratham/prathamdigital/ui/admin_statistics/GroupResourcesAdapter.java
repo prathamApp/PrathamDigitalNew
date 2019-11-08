@@ -18,9 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class GroupResourcesAdapter extends RecyclerView.Adapter<GroupResourcesAdapter.ViewHolder> {
 
     private HashMap<String, List<Modal_ResourcePlayedByGroups>> modal_resourcePlayedByGroups;
@@ -62,14 +59,13 @@ public class GroupResourcesAdapter extends RecyclerView.Adapter<GroupResourcesAd
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.stat_date)
         TextView stat_date;
-        @BindView(R.id.rv_stat_resource)
         RecyclerView rv_stat_resource;
 
         ViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            stat_date = itemView.findViewById(R.id.stat_date);
+            rv_stat_resource = itemView.findViewById(R.id.rv_stat_resource);
         }
     }
 }

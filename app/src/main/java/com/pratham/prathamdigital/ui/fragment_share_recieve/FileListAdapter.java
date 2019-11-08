@@ -21,9 +21,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileViewHolder> {
     private final ContractShare.shareView shareView;
     private final AsyncListDiffer<File_Model> mDiffer;
@@ -80,16 +77,15 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
     }
 
     class FileViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.share_content_image)
         SimpleDraweeView share_content_image;
-        @BindView(R.id.share_title)
         TextView share_title;
 
         File_Model file_model;
 
         FileViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            share_content_image = itemView.findViewById(R.id.share_content_image);
+            share_title = itemView.findViewById(R.id.share_title);
         }
 
         void setFile_model(File_Model file_model, int pos) {

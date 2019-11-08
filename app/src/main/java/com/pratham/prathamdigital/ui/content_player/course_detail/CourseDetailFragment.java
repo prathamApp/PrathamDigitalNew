@@ -52,9 +52,15 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @AfterViews
     public void init() {
         Model_CourseEnrollment enrollment = Objects.requireNonNull(getArguments()).getParcelable(PD_Constant.COURSE_PARENT);
-        Uri imgUri = Uri.fromFile(new File(
-                PrathamApplication.pradigiPath + "/PrathamImages/" +
-                        Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
+        Uri imgUri;
+        if (enrollment.getCourseDetail().isOnSDCard())
+            imgUri = Uri.fromFile(new File(
+                    PrathamApplication.contentSDPath + "/PrathamImages/" +
+                            Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
+        else
+            imgUri = Uri.fromFile(new File(
+                    PrathamApplication.pradigiPath + "/PrathamImages/" +
+                            Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
         course_image.setImageURI(imgUri);
         course_name.setText(enrollment.getCourseDetail().getNodetitle());
         course_detail.setText("Description:-\n" + enrollment.getCourseDetail().getNodedesc());

@@ -14,13 +14,6 @@ import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 
 import java.util.ArrayList;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-/**
- * Created by HP on 01-08-2017.
- */
-
 public class RV_OptionsAdapter extends RecyclerView.Adapter<RV_OptionsAdapter.NormalItemViewHolder> {
 
     private final ArrayList<Modal_NavigationMenu> menus;
@@ -62,14 +55,13 @@ public class RV_OptionsAdapter extends RecyclerView.Adapter<RV_OptionsAdapter.No
     }
 
     public class NormalItemViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.txt_option_name)
         TextView txt_option_name;
-        @BindView(R.id.img_option)
         ImageView img_option;
 
         NormalItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            txt_option_name = itemView.findViewById(R.id.txt_option_name);
+            img_option = itemView.findViewById(R.id.img_option);
         }
     }
 }

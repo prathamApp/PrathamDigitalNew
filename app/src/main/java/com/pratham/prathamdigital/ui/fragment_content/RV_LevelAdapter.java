@@ -16,13 +16,6 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import java.util.List;
 import java.util.Objects;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-
-/**
- * Created by HP on 01-08-2017.
- */
-
 public class RV_LevelAdapter extends RecyclerView.Adapter {
 
     private static final int LAST_ITEM = 1;
@@ -118,23 +111,21 @@ public class RV_LevelAdapter extends RecyclerView.Adapter {
         return mDiffer.getCurrentList().size();
     }
 
-    public class NormalItemViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.level_name)
+    class NormalItemViewHolder extends RecyclerView.ViewHolder {
         TextView l_name;
 
         NormalItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            l_name = itemView.findViewById(R.id.level_name);
         }
     }
 
-    public class LastItemViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.last_level_name)
+    class LastItemViewHolder extends RecyclerView.ViewHolder {
         TextView last_level_name;
 
         LastItemViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(this, itemView);
+            last_level_name = itemView.findViewById(R.id.last_level_name);
         }
     }
 }

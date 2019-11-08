@@ -42,9 +42,15 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
 
     @Override
     public void onBindViewHolder(@NonNull ChildViewHolder childViewHolder, int i) {
+        i = childViewHolder.getAdapterPosition();
         childViewHolder.course_child_title.setText(childs.get(i).getNodetitle());
-        Uri imgUri = Uri.fromFile(new File(
-                PrathamApplication.pradigiPath + "/PrathamImages/" + childs.get(i).getNodeimage()));
+        Uri imgUri;
+        if (childs.get(i).isOnSDCard())
+            imgUri = Uri.fromFile(new File(
+                    PrathamApplication.contentSDPath + "/PrathamImages/" + childs.get(i).getNodeimage()));
+        else
+            imgUri = Uri.fromFile(new File(
+                    PrathamApplication.pradigiPath + "/PrathamImages/" + childs.get(i).getNodeimage()));
         childViewHolder.course_child_image.setImageURI(imgUri);
         if (childs.get(i).getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
             Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_joystick);
@@ -52,7 +58,8 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseDetailAdapte
             Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_video);
         else if (childs.get(i).getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
             Objects.requireNonNull(childViewHolder.img_content_type).setImageResource(R.drawable.ic_book);
-        childViewHolder.itemView.setOnClickListener(v -> courseDetailAdapterClick.onChildItemClicked(childs.get(i)));
+        childViewHolder.itemView.setOnClickListener(v ->
+                courseDetailAdapterClick.onChildItemClicked(childs.get(childViewHolder.getAdapterPosition())));
     }
 
     @Override
