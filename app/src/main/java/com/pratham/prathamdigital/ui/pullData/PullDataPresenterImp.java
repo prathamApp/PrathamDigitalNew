@@ -20,7 +20,6 @@ import com.pratham.prathamdigital.models.RaspProgram;
 import com.pratham.prathamdigital.models.RaspStudent;
 import com.pratham.prathamdigital.models.RaspVillage;
 import com.pratham.prathamdigital.models.Village;
-import com.pratham.prathamdigital.util.APIs;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.Background;
@@ -38,6 +37,11 @@ import static com.pratham.prathamdigital.PrathamApplication.groupDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.PrathamApplication.villageDao;
+import static com.pratham.prathamdigital.util.PD_Constant.KOLIBRI_STATE;
+import static com.pratham.prathamdigital.util.PD_Constant.KOLIBRI_VILLAGE;
+import static com.pratham.prathamdigital.util.PD_Constant.SERVER_STATE;
+import static com.pratham.prathamdigital.util.PD_Constant.SERVER_STATECODE;
+import static com.pratham.prathamdigital.util.PD_Constant.SERVER_VILLAGE;
 
 /**
  * Created by PEF on 20/11/2018.
@@ -100,10 +104,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         this.selectedProgram = selectedProgram;
         String url;
         if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            url = APIs.pullVillagesKolibriURL + selectedProgram + APIs.KOLIBRI_STATE + selectedBlock;
+            url = PD_Constant.URL.pullVillagesKolibriURL.toString() + selectedProgram + KOLIBRI_STATE + selectedBlock;
             pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_BLOCK, url);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            url = APIs.pullVillagesServerURL + selectedProgram + APIs.SERVER_STATE + selectedBlock;
+            url = PD_Constant.URL.pullVillagesServerURL.toString() + selectedProgram + SERVER_STATE + selectedBlock;
             pd_apiRequest.pullFromInternet(PD_Constant.SERVER_BLOCK, url);
         }
     }
@@ -124,12 +128,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         String url;
         if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             for (String id : villageIDList) {
-                url = APIs.pullStudentsKolibriURL + selectedProgram + APIs.KOLIBRI_VILLAGE + id;
+                url = PD_Constant.URL.pullStudentsKolibriURL.toString() + selectedProgram + KOLIBRI_VILLAGE + id;
                 pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_STU, url);
             }
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             for (String id : villageIDList) {
-                url = APIs.pullStudentsServerURL + selectedProgram + APIs.SERVER_VILLAGE + id;
+                url = PD_Constant.URL.pullStudentsServerURL.toString() + selectedProgram + SERVER_VILLAGE + id;
                 pd_apiRequest.pullFromInternet(PD_Constant.SERVER_STU, url);
             }
         }
@@ -142,12 +146,12 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
             String urlgroup;
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 for (String id : villageIDList) {
-                    urlgroup = APIs.pullGroupsKolibriURL + selectedProgram + APIs.KOLIBRI_VILLAGE + id;
+                    urlgroup = PD_Constant.URL.pullGroupsKolibriURL.toString() + selectedProgram + KOLIBRI_VILLAGE + id;
                     pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_GRP, urlgroup);
                 }
             } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
                 for (String id : villageIDList) {
-                    urlgroup = APIs.pullGroupsServerURL + selectedProgram + APIs.SERVER_VILLAGE + id;
+                    urlgroup = PD_Constant.URL.pullGroupsServerURL.toString() + selectedProgram + SERVER_VILLAGE + id;
                     pd_apiRequest.pullFromInternet(PD_Constant.SERVER_GRP, urlgroup);
                 }
             }
@@ -158,10 +162,10 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         if (groupCount >= villageIDList.size()) {
             String crlURL;
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-                crlURL = APIs.pullCrlsKolibriURL + selectedProgram + APIs.KOLIBRI_STATE + selectedBlock;
+                crlURL = PD_Constant.URL.pullCrlsKolibriURL.toString() + selectedProgram + KOLIBRI_STATE + selectedBlock;
                 pd_apiRequest.pullFromKolibri(PD_Constant.KOLIBRI_CRL, crlURL);
             } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-                crlURL = APIs.pullCrlsServerURL + selectedProgram + APIs.SERVER_STATECODE + selectedBlock;
+                crlURL = PD_Constant.URL.pullCrlsServerURL.toString() + selectedProgram + SERVER_STATECODE + selectedBlock;
                 pd_apiRequest.pullFromInternet(PD_Constant.SERVER_CRL, crlURL);
             }
         }

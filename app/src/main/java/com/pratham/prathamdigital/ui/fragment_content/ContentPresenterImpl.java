@@ -139,7 +139,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     JSONObject object = new JSONObject();
                     object.put("username", "pratham");
                     object.put("password", "pratham");
-                    pd_apiRequest.getacilityIdfromRaspberry(PD_Constant.FACILITY_ID, PD_Constant.RASP_IP + "/api/session/", object);
+                    pd_apiRequest.getacilityIdfromRaspberry(PD_Constant.FACILITY_ID, PD_Constant.URL.RASPBERRY_FACILITY_URL.toString(), object);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

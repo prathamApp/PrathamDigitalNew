@@ -202,6 +202,11 @@ public class PD_Constant {
 
     public static final String LANGUAGE = "language";
     public static final String GOOGLE_ID = "google_id";
+    public static final String KOLIBRI_STATE = ",state:";
+    public static final String SERVER_STATE = "&state=";
+    public static final String KOLIBRI_VILLAGE = ",villageid:";
+    public static final String SERVER_VILLAGE = "&villageId=";
+    public static final String SERVER_STATECODE = "&statecode=";
 
     public enum URL {
 
@@ -211,13 +216,22 @@ public class PD_Constant {
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
-        BROWSE_RASPBERRY_URL(RASP_IP + "/api/contentnode?parent="),
+        BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
+        RASPBERRY_FACILITY_URL(RASP_IP + "/api/content/session/"),
         //        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
-        GET_RASPBERRY_HEADER(RASP_IP + "/api/channel/"),
+        GET_RASPBERRY_HEADER(RASP_IP + "/api/content/channel/"),
         POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         AAJ_KA_SAWAL_URL("http://rpi.prathamskills.org/aajkasawaal/"),
         PULL_PROGRAMS("http://swap.prathamcms.org/api/program"),
+        pullVillagesKolibriURL(RASP_IP + "/pratham/datastore/?table_name=village&filter_name=programid:"),
+        pullVillagesServerURL("http://www.hlearning.openiscool.org/api/village/get?programId="),
+        pullGroupsKolibriURL(RASP_IP + "/pratham/datastore/?table_name=group&filter_name=programid:"),
+        pullGroupsServerURL("http://www.devtab.openiscool.org/api/Group?programid="),
+        pullStudentsKolibriURL(RASP_IP + "/pratham/datastore/?table_name=student&filter_name=programid:"),
+        pullCrlsKolibriURL(RASP_IP + "/pratham/datastore/?table_name=Crl&filter_name=programid:"),
+        pullStudentsServerURL("http://www.devtab.openiscool.org/api/student?programid="),
+        pullCrlsServerURL("http://www.swap.prathamcms.org/api/UserList?programId="),
         DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
 
         private final String name;

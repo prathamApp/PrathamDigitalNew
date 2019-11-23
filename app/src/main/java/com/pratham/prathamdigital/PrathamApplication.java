@@ -45,6 +45,7 @@ public class PrathamApplication extends Application {
      * Check Todo
      * Check Catcho in BaseActivity
      * Check baseUrl in PDConstant
+     * Confirm the new raspberry url with Balaji
      * increase version before generating signed apk otherwise "app not installed"
      */
     public static final boolean isTablet = false;
