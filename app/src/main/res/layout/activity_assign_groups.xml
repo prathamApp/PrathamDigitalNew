@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#FFFFFF">
 
     <RelativeLayout
@@ -20,31 +20,6 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_att_back_white" />
-
-        <!-- <LinearLayout
-             android:id="@+id/assign_clear_data"
-             android:layout_width="wrap_content"
-             android:layout_height="match_parent"
-             android:layout_alignParentEnd="true"
-             android:layout_marginRight="@dimen/_10sdp"
-             android:orientation="vertical"
-             android:weightSum="1">
-
-             <ImageView
-                 android:layout_width="@dimen/_30sdp"
-                 android:layout_height="0dp"
-                 android:layout_gravity="center"
-                 android:layout_weight=".5"
-                 android:src="@android:drawable/stat_notify_error" />
-
-             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                 android:layout_width="wrap_content"
-                 android:layout_height="0dp"
-                 android:layout_weight=".5"
-                 android:gravity="center"
-                 android:text="Clear Data"
-                 android:textColor="@color/white" />
-         </LinearLayout>-->
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:layout_width="wrap_content"

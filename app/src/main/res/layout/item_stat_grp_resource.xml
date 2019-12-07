@@ -16,7 +16,6 @@
             android:id="@+id/stat_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="aksjdaksjdaskdj"
             android:textColor="@color/dark_grey"
             android:textSize="@dimen/_12sdp" />
 

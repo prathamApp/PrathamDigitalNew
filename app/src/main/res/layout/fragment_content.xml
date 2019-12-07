@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.pratham.prathamdigital.custom.CircularRevelLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/circular_content_reveal"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true"
     android:focusable="true">
 
-    <RelativeLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+    <RelativeLayout
         android:id="@+id/frag_content_bkgd"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/april">
+        android:background="@drawable/december">
 
         <include layout="@layout/layout_network_error" />
         <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
@@ -37,7 +39,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="@dimen/_5sdp"
-                android:text="No connection" />
+                android:text="No connection"
+                android:textColor="@color/dark_blue"
+                tools:ignore="HardcodedText" />
 
             <ImageView
                 android:id="@+id/iv_wifi_status"
