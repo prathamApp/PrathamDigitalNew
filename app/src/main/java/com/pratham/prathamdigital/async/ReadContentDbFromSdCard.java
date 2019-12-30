@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
@@ -54,31 +55,33 @@ public class ReadContentDbFromSdCard {
     public void doInBackground(Interface_copying _interface_copying) {
         try {
             this.interface_copying = _interface_copying;
-            ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
-            if (sdPath.size() > 0) {
+            if (FastSave.getInstance().getBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true)) {
+                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
                 folder_file = new File(sdPath.get(0) + "/" + PD_Constant.PRADIGI_FOLDER + "/" +
                         FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-                if (folder_file.exists()) {
-                    if (dbFilePresentInAssets()) {
-                        //the df file stored in asset folder is the updated one
-                        AssetManager assetManager = context.getResources().getAssets();
-                        InputStream inputStream = assetManager.open(PrathamDatabase.DB_NAME
-                                + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-                        db_file = copyDbFileToInternal(null, inputStream);
+            } else {
+                folder_file = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRADIGI_FOLDER
+                        + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            }
+            if (folder_file.exists()) {
+                if (dbFilePresentInAssets()) {
+                    //the df file stored in asset folder is the updated one
+                    AssetManager assetManager = context.getResources().getAssets();
+                    InputStream inputStream = assetManager.open(PrathamDatabase.DB_NAME
+                            + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                    db_file = copyDbFileToInternal(null, inputStream);
+                    startDatabaseCloning();
+                    onPostExecute(true);
+                } else {
+                    //else continue with the db file stored in sd-card
+                    db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
+                    if (db_file.exists()) {
+                        db_file = copyDbFileToInternal(db_file, null);
                         startDatabaseCloning();
                         onPostExecute(true);
-                    } else {
-                        //else continue with the db file stored in sd-card
-                        db_file = new File(folder_file.getAbsolutePath(), PrathamDatabase.DB_NAME);
-                        if (db_file.exists()) {
-                            db_file = copyDbFileToInternal(db_file, null);
-                            startDatabaseCloning();
-                            onPostExecute(true);
-                        } else
-                            onPostExecute(false);
-                    }
-                } else
-                    onPostExecute(false);
+                    } else
+                        onPostExecute(false);
+                }
             } else
                 onPostExecute(false);
         } catch (Exception e) {

@@ -10,16 +10,18 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CountDownTextView;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments;
+import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments_;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment_;
+import com.pratham.prathamdigital.ui.content_player.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
+import com.pratham.prathamdigital.ui.content_player.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
 import com.pratham.prathamdigital.ui.content_player.pdf_viewer.Fragment_PdfViewer;
 import com.pratham.prathamdigital.ui.content_player.pdf_viewer.Fragment_PdfViewer_;
 import com.pratham.prathamdigital.ui.content_player.video_player.Fragment_VideoPlayer;
 import com.pratham.prathamdigital.ui.content_player.video_player.Fragment_VideoPlayer_;
 import com.pratham.prathamdigital.ui.content_player.web_view.Fragment_WebView;
 import com.pratham.prathamdigital.ui.content_player.web_view.Fragment_WebView_;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
-import com.pratham.prathamdigital.ui.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -51,6 +53,12 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
         contentPlayerPresenter.categorizeIntent(getIntent());
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        contentPlayerPresenter.setView(this);
+    }
+
     @Click(R.id.close_content_player)
     public void setClose() {
         if (txt_next_countdown.getVisibility() == View.VISIBLE)
@@ -80,20 +88,33 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                 contentPlayerPresenter.showNextContent(message.getDownloadId());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.PLAY_COURSE)) {
                 contentPlayerPresenter.resumeCourse();
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_SAWAL)) {
-                PD_Utility.showFragment(Activity_ContentPlayer.this, new Fragment_AAJ_KA_SAWAL_(), R.id.content_player_frame,
-                        message.getBundle(), Fragment_AAJ_KA_SAWAL.class.getSimpleName());
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.ADD_VIDEO_PROGRESS_AND_SHOW_SAWAL)) {
+                contentPlayerPresenter.addContentProgress(message.getDownloadId());
+                PD_Utility.showFragment(Activity_ContentPlayer.this, new Fragment_AAJ_KA_SAWAL_(),
+                        R.id.content_player_frame, message.getBundle(), Fragment_AAJ_KA_SAWAL.class.getSimpleName());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.PLAY_SPECIFIC_COURSE_CONTENT)) {
                 contentPlayerPresenter.playSpecificCourseContent(message.getDownloadId());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_COURSE_DETAIL)) {
                 hideNextButton();
-                init();
+                getSupportFragmentManager().popBackStackImmediate(CourseDetailFragment.class.getSimpleName(), 0);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_NEXT_BUTTON)) {
                 pdfResId = message.getDownloadId();
                 if (contentPlayerPresenter.hasNextContentInQueue())
                     pdf_play_next.setVisibility(View.VISIBLE);
-                else
+                else {
+                    contentPlayerPresenter.addContentProgress(pdfResId);
                     pdf_play_next.setVisibility(View.GONE);
+                }
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.OPEN_ASSIGNMENTS)) {
+                PD_Utility.showFragment(Activity_ContentPlayer.this, new Fragment_Assignments_(),
+                        R.id.content_player_frame, message.getBundle(), Fragment_Assignments.class.getSimpleName());
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.ASSIGNMENT_SUBMITTED)) {
+                closeContentPlayer();
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CHECK_COURSE_COMPLETION)) {
+                if (contentPlayerPresenter.getCourse().getCourse_status().equalsIgnoreCase(PD_Constant.COURSE_COMPLETED)) {
+                    message.setMessage(PD_Constant.COURSE_COMPLETED);
+                    EventBus.getDefault().post(message);
+                }
             }
         }
     }
@@ -112,10 +133,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     @Click(R.id.pdf_play_next)
     public void setPdf_play_next() {
         pdf_play_next.setVisibility(View.GONE);
-        EventMessage message = new EventMessage();
-        message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
-        message.setDownloadId(pdfResId);
-        messageReceived(message);
+        contentPlayerPresenter.showNextContent(pdfResId);
     }
 
     @UiThread

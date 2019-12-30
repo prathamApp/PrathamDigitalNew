@@ -3,7 +3,6 @@ package com.pratham.prathamdigital.ui.content_player.web_view;
 import android.annotation.SuppressLint;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -12,7 +11,6 @@ import android.webkit.WebViewClient;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
-import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.AfterViews;
@@ -103,8 +101,6 @@ public class Fragment_WebView extends Fragment implements VideoListener {
                 rs.gc();
                 rs.freeMemory();
                 if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
-                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     EventMessage message1 = new EventMessage();
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);

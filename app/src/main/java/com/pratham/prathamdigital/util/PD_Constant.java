@@ -7,10 +7,20 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String CHECK_COURSE_COMPLETION = "check_course_completion";
+    public static final String COURSE_NOT_VERIFIED = "course_not_verified";
+    public static final String FEEDBACK_GIVEN = "feedback_given";
+    public static final String COURSE_COMPLETED = "course_completed";
+    public static final String ASSIGNMENT_SUBMITTED = "assignment_submitted";
+    public static final String READ_CONTENT_FROM_SDCARD = "read_content_from_sdcard";
+    public static final String OPEN_ASSIGNMENTS = "open_assignments";
+    public static final String NEW_COURSE_ENROLLED = "new_course_enrolled";
+    public static final String PRATHAM_BACKUPS = "PrathamBackups";
+    public static final String SHOW_NEW_COURSES = "SHOW_NEW_COURSES";
     public static final String SHOW_NEXT_BUTTON = "show_next_button";
     public static final String PLAY_SPECIFIC_COURSE_CONTENT = "play_specific_course_content";
     public static final String SHOW_COURSE_DETAIL = "show_course_detail";
-    public static final String SHOW_SAWAL = "show_sawal";
+    public static final String ADD_VIDEO_PROGRESS_AND_SHOW_SAWAL = "add_video_progress_and_show_sawal";
     public static final String PLAY_COURSE = "play_course";
     public static final String COURSE_PARENT = "course_parent";
     public static final String DB_FILE_UPDATED = "db_file_updated";

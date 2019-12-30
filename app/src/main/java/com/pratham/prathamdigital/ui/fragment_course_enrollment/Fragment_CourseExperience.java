@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.view.SimpleDraweeView;
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -26,6 +27,7 @@ import com.pratham.prathamdigital.custom.verticalstepperform.VerticalStepperForm
 import com.pratham.prathamdigital.interfaces.SpeechResult;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
+import com.pratham.prathamdigital.models.Model_CourseExperience;
 import com.pratham.prathamdigital.services.STTService;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_AssignmentsDescription;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.course_experience_steps.Step_CoachComments;
@@ -40,8 +42,6 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.File;
 import java.util.Objects;
@@ -71,15 +71,12 @@ public class Fragment_CourseExperience extends Fragment implements StepperFormLi
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             if (msg.what == PREFILL_EXPERIENCE_IF_ANY) {
-                try {
-                    JSONObject jsonObject = new JSONObject(model_courseEnrollment.getCourseExperience());
-                    step_assignmentsDescription.restoreStepData((jsonObject.has("assignments_description")) ? jsonObject.getString("assignments_description") : "");
-                    step_coachComments.restoreStepData((jsonObject.has("coach_comments")) ? jsonObject.getString("coach_comments") : "");
-                    step_newWords.restoreStepData((jsonObject.has("words_learnt")) ? jsonObject.getString("words_learnt") : "");
-                    step_totalAssignmnetsDone.restoreStepData((jsonObject.has("assignments_completed")) ? jsonObject.getString("assignments_completed") : "");
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+                Model_CourseExperience courseExperience = new Gson().fromJson(
+                        model_courseEnrollment.getCourseExperience(), Model_CourseExperience.class);
+                step_assignmentsDescription.restoreStepData(courseExperience.getAssignments_description());
+                step_coachComments.restoreStepData(courseExperience.getCoach_comments());
+                step_newWords.restoreStepData(courseExperience.getWords_learnt());
+                step_totalAssignmnetsDone.restoreStepData(courseExperience.getAssignments_completed());
             }
         }
     };
@@ -173,21 +170,22 @@ public class Fragment_CourseExperience extends Fragment implements StepperFormLi
 
     @Background
     public void completeAndUpdateCourseInDb(String coachImage) {
-        try {
-            JSONObject c_exp = new JSONObject();
-            c_exp.put("words_learnt", step_newWords.getStepData());
-            c_exp.put("assignments_completed", step_totalAssignmnetsDone.getStepData());
-            c_exp.put("assignments_description", step_assignmentsDescription.getStepData());
-            c_exp.put("coach_comments", step_coachComments.getStepData());
-            c_exp.put("coach_verification_date", PD_Utility.getCurrentDateTime());
-            c_exp.put("coach_image", coachImage);
-            model_courseEnrollment.setCourseExperience(c_exp.toString());
-            model_courseEnrollment.setCourseCompleted(true);
-            model_courseEnrollment.setSentFlag(0);
-            PrathamApplication.courseDao.updateCourse(model_courseEnrollment);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        Gson gson = new Gson();
+        Model_CourseExperience courseExperience = gson.fromJson(
+                model_courseEnrollment.getCourseExperience(), Model_CourseExperience.class);
+        courseExperience.setWords_learnt(step_newWords.getStepData());
+        courseExperience.setAssignments_completed(step_totalAssignmnetsDone.getStepData());
+        courseExperience.setAssignments_description(step_assignmentsDescription.getStepData());
+        courseExperience.setCoach_comments(step_coachComments.getStepData());
+        courseExperience.setCoach_verification_date(PD_Utility.getCurrentDateTime());
+        courseExperience.setCoach_image(coachImage);
+        if (!coachImage.equalsIgnoreCase("not verified"))
+            courseExperience.setStatus(PD_Constant.FEEDBACK_GIVEN);
+
+        model_courseEnrollment.setCourseExperience(gson.toJson(courseExperience));
+        model_courseEnrollment.setCourseCompleted(true);
+        model_courseEnrollment.setSentFlag(0);
+        PrathamApplication.courseDao.updateCourse(model_courseEnrollment);
     }
 
     @Override

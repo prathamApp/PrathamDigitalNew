@@ -3,14 +3,12 @@ package com.pratham.prathamdigital.ui.content_player.pdf_viewer;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.pdf.BookFlipPageTransformer;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
-import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -30,14 +28,15 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
 
     private static MediaPlayer page_flip_mp;
     private static ArrayList<Bitmap> bitmaps;
+    @ViewById(R.id.pdf_curl_view)
+    ViewPager pdf_curl_view;
 
     @Bean(PDF_PresenterImpl.class)
     PDFContract.pdfPresenter pdf_presenter;
-    @ViewById(R.id.pdf_curl_view)
-    ViewPager pdf_curl_view;
     private String startTime;
     private String resId;
     private int pageSelected = 1;
+    private boolean isScoreAdded = false;
 
     @AfterViews
     public void initialize() {
@@ -67,13 +66,16 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
             @Override
             public void onPageSelected(int i) {
                 pageSelected = i + 1;
-                if (pageSelected == bitmaps.size())
+                if (pageSelected == bitmaps.size()) {
+                    pdf_presenter.addScoreToDB(resId, startTime, pageSelected);
+                    isScoreAdded = true;
                     if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
                         EventMessage message = new EventMessage();
                         message.setMessage(PD_Constant.SHOW_NEXT_BUTTON);
                         message.setDownloadId(resId);
                         EventBus.getDefault().post(message);
                     }
+                }
             }
 
             @Override
@@ -99,10 +101,8 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
     public void messageReceived(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
-                pdf_presenter.addScoreToDB(resId, startTime, pageSelected);
+                if (!isScoreAdded) pdf_presenter.addScoreToDB(resId, startTime, pageSelected);
                 if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
-                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     EventMessage message1 = new EventMessage();
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);

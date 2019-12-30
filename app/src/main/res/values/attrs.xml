@@ -205,9 +205,6 @@
     <declare-styleable name="ElasticView">
         <attr name="flexibility" format="float" />
     </declare-styleable>
-    <declare-styleable name="PerseiLayout">
-        <attr name="menu_height" format="integer" />
-    </declare-styleable>
     <declare-styleable name="ScalingLayout">
         <attr name="radiusFactor" format="float" />
     </declare-styleable>
@@ -434,5 +431,128 @@
         <attr name="form_allow_non_linear_navigation" format="boolean" />
         <attr name="form_allow_step_opening_on_header_click" format="boolean" />
         <attr name="form_alpha_of_disabled_elements" format="float" />
+    </declare-styleable>
+    <declare-styleable name="SegmentTabLayout">
+        <!-- indicator -->
+        <attr name="tl_indicator_color" format="color" />
+        <attr name="tl_indicator_height" format="dimension" />
+        <attr name="tl_indicator_margin_left" format="dimension" />
+        <attr name="tl_indicator_margin_top" format="dimension" />
+        <attr name="tl_indicator_margin_right" format="dimension" />
+        <attr name="tl_indicator_margin_bottom" format="dimension" />
+        <attr name="tl_indicator_corner_radius" format="dimension" />
+        <attr name="tl_indicator_anim_enable" format="boolean" />
+        <attr name="tl_indicator_anim_duration" format="integer" />
+        <attr name="tl_indicator_bounce_enable" format="boolean" />
+
+        <!-- divider -->
+        <attr name="tl_divider_color" format="color" />
+        <attr name="tl_divider_width" format="dimension" />
+        <attr name="tl_divider_padding" format="dimension" />
+
+        <!-- tab -->
+        <attr name="tl_tab_padding" format="dimension" />
+        <attr name="tl_tab_space_equal" format="boolean" />
+        <attr name="tl_tab_width" format="dimension" />
+
+        <!-- title -->
+        <attr name="tl_textSize" format="dimension" />
+        <attr name="tl_textSelectSize" format="dimension" />
+        <attr name="tl_textSelectColor" format="color" />
+        <attr name="tl_textUnselectedColor" format="color" />
+        <attr name="tl_textBold" format="boolean" />
+        <attr name="tl_textAllCaps" format="boolean" />
+
+        <attr name="tl_bar_color" format="color" />
+        <attr name="tl_bar_stroke_color" format="color" />
+        <attr name="tl_bar_stroke_width" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="MsgView">
+        <attr name="mv_backgroundColor" format="color" />
+        <attr name="mv_cornerRadius" format="dimension" />
+        <attr name="mv_strokeWidth" format="dimension" />
+        <attr name="mv_strokeColor" format="color" />
+        <attr name="mv_isRadiusHalfHeight" format="boolean" />
+        <attr name="mv_isWidthHeightEqual" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="ShadowLayout">
+        <attr name="sl_shadowed" format="boolean" />
+        <attr name="sl_shadow_distance" format="dimension" />
+        <attr name="sl_shadow_angle" format="integer" />
+        <attr name="sl_shadow_radius" format="dimension" />
+        <attr name="sl_shadow_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="StepProgressBar">
+        <attr name="step" format="integer" />
+        <attr name="step_max" format="integer" />
+        <attr name="stepDoneColor" format="color|reference" />
+        <attr name="stepUndoneColor" format="color|reference" />
+        <attr name="stepMargin" format="dimension" />
+    </declare-styleable>
+    <declare-styleable name="verticaltextview">
+        <attr name="direction">
+            <enum name="uptodown" value="0" />
+            <enum name="downtoup" value="1" />
+            <enum name="lefttoright" value="2" />
+            <enum name="righttoleft" value="3" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="ShimmerFrameLayout">
+        <attr name="shimmer_clip_to_children" format="boolean" />
+        <attr name="shimmer_colored" format="boolean" />
+        <attr name="shimmer_base_color" format="color" />
+        <attr name="shimmer_highlight_color" format="color" />
+        <attr name="shimmer_base_alpha" format="float" />
+        <attr name="shimmer_highlight_alpha" format="float" />
+        <attr name="shimmer_auto_start" format="boolean" />
+        <attr name="shimmer_duration" format="integer" />
+        <attr name="shimmer_repeat_count" format="integer" />
+        <attr name="shimmer_repeat_delay" format="integer" />
+        <attr name="shimmer_repeat_mode" format="enum">
+            <enum name="restart" value="1" />
+            <enum name="reverse" value="2" />
+        </attr>
+        <attr name="shimmer_start_delay" format="integer" />
+        <attr name="shimmer_direction" format="enum">
+            <enum name="left_to_right" value="0" />
+            <enum name="top_to_bottom" value="1" />
+            <enum name="right_to_left" value="2" />
+            <enum name="bottom_to_top" value="3" />
+        </attr>
+        <attr name="shimmer_dropoff" format="float" />
+        <attr name="shimmer_fixed_width" format="dimension" />
+        <attr name="shimmer_fixed_height" format="dimension" />
+        <attr name="shimmer_intensity" format="float" />
+        <attr name="shimmer_width_ratio" format="float" />
+        <attr name="shimmer_height_ratio" format="float" />
+        <attr name="shimmer_shape" format="enum">
+            <enum name="linear" value="0" />
+            <enum name="radial" value="1" />
+        </attr>
+        <attr name="shimmer_tilt" format="float" />
+    </declare-styleable>
+    <declare-styleable name="StickySwitch">
+        <attr name="ss_leftIcon" format="reference|integer" />
+        <attr name="ss_leftText" format="reference|string" />
+        <attr name="ss_rightIcon" format="reference|integer" />
+        <attr name="ss_rightText" format="reference|string" />
+        <attr name="ss_iconSize" format="reference|dimension" />
+        <attr name="ss_iconPadding" format="reference|dimension" />
+        <attr name="ss_textSize" format="reference|dimension" />
+        <attr name="ss_selectedTextSize" format="reference|dimension" />
+        <attr name="ss_switchColor" format="reference|color" />
+        <attr name="ss_sliderBackgroundColor" format="reference|color" />
+        <attr name="ss_textColor" format="reference|color" />
+        <attr name="ss_animationDuration" format="reference|integer" />
+
+        <attr name="ss_animationType" format="enum">
+            <enum name="line" value="0" />
+            <enum name="curved" value="1" />
+        </attr>
+        <attr name="ss_textVisibility" format="enum">
+            <enum name="visible" value="0" />
+            <enum name="invisible" value="1" />
+            <enum name="gone" value="2" />
+        </attr>
     </declare-styleable>
 </resources>

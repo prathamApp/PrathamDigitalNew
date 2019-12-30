@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_crash">
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/txt_crash_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:text="Something went wrong!!"
+        android:textColor="@color/dark_blue"
+        android:textSize="@dimen/_20sdp"
+        tools:ignore="HardcodedText" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txt_crash_1"
+        android:layout_centerHorizontal="true"
+        android:text="Sorry about that. Press the report button to send the error to us."
+        android:textColor="@color/light_orange"
+        android:textSize="@dimen/_12sdp"
+        tools:ignore="HardcodedText" />
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        android:id="@+id/btn_report"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/button_orange_selector"
+        android:text="Send Report"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        tools:ignore="HardcodedText" />
+</RelativeLayout>

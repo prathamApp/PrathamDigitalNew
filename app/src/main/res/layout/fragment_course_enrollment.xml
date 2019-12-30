@@ -1,11 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/frag_enroll_bkgd"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/course_enrollment_bkgd">
+    android:clickable="true"
+    android:focusable="true">
 
-    <android.support.v4.view.ViewPager
+    <com.pratham.prathamdigital.custom.ShadowLayout
+        android:id="@+id/tab_shadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        app:sl_shadow_angle="35"
+        app:sl_shadow_distance="5dp"
+        app:sl_shadow_radius="5dp"
+        app:sl_shadowed="true">
+
+        <com.pratham.prathamdigital.custom.tab_bar.segmentTabLayout.SegmentTabLayout
+            android:id="@+id/tab_course"
+            android:layout_width="@dimen/_230sdp"
+            android:layout_height="@dimen/_40sdp"
+            app:tl_bar_color="@color/white"
+            app:tl_bar_stroke_width="0dp"
+            app:tl_indicator_anim_enable="true"
+            app:tl_indicator_color="#224BE6"
+            app:tl_indicator_corner_radius="@dimen/_20sdp"
+            app:tl_tab_space_equal="true"
+            app:tl_textSelectColor="@color/white"
+            app:tl_textUnselectedColor="#224BE6" />
+    </com.pratham.prathamdigital.custom.ShadowLayout>
+
+    <com.pratham.prathamdigital.custom.CustomSwipeableViewPager
         android:id="@+id/vp_course"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tab_shadow" />
 </RelativeLayout>

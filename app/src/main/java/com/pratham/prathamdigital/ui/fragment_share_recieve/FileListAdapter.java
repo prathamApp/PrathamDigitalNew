@@ -91,7 +91,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         void setFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
-                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.externalContentPath
                         + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             else
                 share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.pradigiPath
@@ -108,7 +108,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.FileVi
         void updateFile_model(File_Model file_model, int pos) {
             this.file_model = file_model;
             if (file_model.getDetail().isOnSDCard())
-                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.contentSDPath
+                share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.externalContentPath
                         + "/PrathamImages/" + file_model.getDetail().getNodeimage())));
             else
                 share_content_image.setImageURI(Uri.fromFile(new File(PrathamApplication.pradigiPath +

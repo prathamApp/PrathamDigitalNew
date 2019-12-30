@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
-import android.support.design.card.MaterialCardView;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
 import android.support.v4.widget.SlidingPaneLayout;
@@ -103,7 +102,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @ViewById(R.id.rv_drawer)
     RecyclerView rv_drawer;
     @ViewById(R.id.main_nav)
-    MaterialCardView main_nav;
+    RelativeLayout main_nav;
 
     private boolean isChecked;
     private BlurPopupWindow exitDialog;

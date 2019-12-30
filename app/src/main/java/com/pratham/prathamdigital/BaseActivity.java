@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -17,7 +16,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
-import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
 
@@ -108,6 +106,10 @@ public class BaseActivity extends AppCompatActivity {
                     EventBus.getDefault().post(message);
                     break;
                 case HIDE_SYSTEM_UI:
+                    getWindow().setFlags(
+                            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                            WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+//                    requestWindowFeature(Window.FEATURE_NO_TITLE);
                     getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                             WindowManager.LayoutParams.FLAG_FULLSCREEN);
                     getWindow().getDecorView().setSystemUiVisibility(
@@ -221,18 +223,13 @@ public class BaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-        getWindow().setFlags(
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
         mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         super.onCreate(savedInstanceState);
-        //Utility initialized for shuffeling the color codes
+        //Utility initialized for shuffling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
-                .activity(CatchoTransparentActivity.class)
-//                .recipients("abc@gm.com")
+//                .activity(CatchoTransparentActivity.class)
+                .recipients("abc@gm.com")
                 .build();
         initializeConnectionService();
         initializeTTS();
@@ -267,6 +264,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
         merlin.bind();
         mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
         BackupDatabase.backup(this);
@@ -282,7 +280,7 @@ public class BaseActivity extends AppCompatActivity {
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
-        mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
+//        mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
     }
 
     @Subscribe

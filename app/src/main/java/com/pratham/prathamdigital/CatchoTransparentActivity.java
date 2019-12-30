@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
+import com.pratham.prathamdigital.custom.ProcessPhoenix;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -18,6 +19,7 @@ public class CatchoTransparentActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_crash_report);
         CatchoError error = (CatchoError) getIntent().getSerializableExtra(Catcho.ERROR);
         Modal_Log log = new Modal_Log();
         log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
@@ -28,6 +30,6 @@ public class CatchoTransparentActivity extends AppCompatActivity {
         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         log.setDeviceId(PD_Utility.getDeviceSerialID());
         logDao.insertLog(log);
-        finishAffinity();
+        findViewById(R.id.btn_report).setOnClickListener(v -> ProcessPhoenix.triggerRebirth(CatchoTransparentActivity.this));
     }
 }

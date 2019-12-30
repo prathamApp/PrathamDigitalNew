@@ -27,7 +27,7 @@ public class ReadBackupDb extends AsyncTask<String, String, Boolean> {
     @Override
     protected Boolean doInBackground(String... strings) {
         try {
-            File db_file = new File(Environment.getExternalStorageDirectory() + "/" + PrathamDatabase.DB_NAME);
+            File db_file = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + PrathamDatabase.DB_NAME);
             if (db_file.exists()) {
                 SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
                 if (db == null) return false;

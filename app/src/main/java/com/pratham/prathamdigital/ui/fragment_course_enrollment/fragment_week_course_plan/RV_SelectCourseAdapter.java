@@ -1,7 +1,10 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
+import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,8 +13,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.expansionpanel.ExpansionLayout;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,12 +25,12 @@ public class RV_SelectCourseAdapter extends RecyclerView.Adapter<RV_SelectCourse
     private HashMap<String, List<Modal_ContentDetail>> courses;
     private List<String> courses_names;
     private Context context;
-    private PlanningContract.weekOnePlanningView planningView;
+    private PlanningContract.newCoursesView newCoursesView;
 
     public RV_SelectCourseAdapter(Context context, HashMap<String, List<Modal_ContentDetail>> courses,
-                                  PlanningContract.weekOnePlanningView planningView) {
+                                  PlanningContract.newCoursesView newCoursesView) {
         this.context = context;
-        this.planningView = planningView;
+        this.newCoursesView = newCoursesView;
         this.courses = courses;
         courses_names = new ArrayList<>(courses.keySet());
     }
@@ -42,13 +45,18 @@ public class RV_SelectCourseAdapter extends RecyclerView.Adapter<RV_SelectCourse
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
+        Drawable background = viewHolder.exp_header_name.getBackground();
+        int color = PD_Utility.getRandomColorGradient();
+        ((GradientDrawable) background).setColor(color);
         viewHolder.exp_header_name.setText(courses_names.get(viewHolder.getAdapterPosition()));
-        viewHolder.expansionLayout.collapse(true);
         RV_ExpandedCoursesDetails expandedCoursesDetails = new RV_ExpandedCoursesDetails(context,
-                courses.get(courses_names.get(viewHolder.getAdapterPosition())), planningView);
+                courses.get(courses_names.get(viewHolder.getAdapterPosition())), newCoursesView, color, viewHolder.getAdapterPosition());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false);
         viewHolder.rv_exp_course_details.setLayoutManager(linearLayoutManager);
         viewHolder.rv_exp_course_details.setAdapter(expandedCoursesDetails);
+        viewHolder.root_select_item.setOnClickListener(v -> {
+            newCoursesView.moveToCenter(viewHolder.getAdapterPosition());
+        });
     }
 
     @Override
@@ -67,13 +75,13 @@ public class RV_SelectCourseAdapter extends RecyclerView.Adapter<RV_SelectCourse
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView exp_header_name;
         RecyclerView rv_exp_course_details;
-        ExpansionLayout expansionLayout;
+        MaterialCardView root_select_item;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             exp_header_name = itemView.findViewById(R.id.exp_header_name);
             rv_exp_course_details = itemView.findViewById(R.id.rv_exp_course_details);
-            expansionLayout = itemView.findViewById(R.id.expansionLayout);
+            root_select_item = itemView.findViewById(R.id.root_select_item);
         }
     }
 }

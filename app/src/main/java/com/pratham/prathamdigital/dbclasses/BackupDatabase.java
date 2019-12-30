@@ -18,15 +18,13 @@ public class BackupDatabase {
 
     public static void backup(Context mContext) {
         try {
-            File sd = Environment.getExternalStorageDirectory();
+            deletePreviousDbs();
+            File sd = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS);
+            if (!sd.exists()) sd.mkdir();
             if (sd.canWrite()) {
                 File currentDB = mContext.getDatabasePath(DB_NAME);
                 File parentPath = currentDB.getParentFile();
                 for (File f : parentPath.listFiles()) {
-                    if (f.getName().contains("PrathamDB")) {
-                        f.delete();
-                        break;
-                    }
                     File temp = new File(sd, f.getName());
                     if (!temp.exists()) temp.createNewFile();
                     FileChannel src = new FileInputStream(f).getChannel();
@@ -40,6 +38,14 @@ public class BackupDatabase {
             }
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void deletePreviousDbs() {
+        File sd = Environment.getExternalStorageDirectory();
+        for (File f : sd.listFiles()) {
+            if (f.getName().contains(DB_NAME))
+                f.delete();
         }
     }
 }

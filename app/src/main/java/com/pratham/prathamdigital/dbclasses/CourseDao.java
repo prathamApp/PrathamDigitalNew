@@ -23,7 +23,7 @@ public interface CourseDao {
     Model_CourseEnrollment checkIfCourseEnrolled(String course_Id, String grp_id, String week);
 
     @Query("Select * from COURSEENROLLED where groupId=:grp_id " +
-            "and planFromDate LIKE '%' || :week || '%' and language=:language and courseCompleted=0")
+            "and planFromDate LIKE '%' || :week || '%' and language=:language")
     List<Model_CourseEnrollment> fetchEnrolledCourses(String grp_id, String week, String language);
 
     @Query("Delete from CourseEnrolled WHERE  courseId=:nodeId and groupId=:grpId and planFromDate LIKE " +

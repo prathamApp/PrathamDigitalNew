@@ -38,10 +38,6 @@ public class RV_OptionsAdapter extends RecyclerView.Adapter<RV_OptionsAdapter.No
     public void onBindViewHolder(@NonNull NormalItemViewHolder holder, int i) {
         holder.txt_option_name.setText(menus.get(holder.getAdapterPosition()).getMenu_name());
         holder.img_option.setImageResource(menus.get(holder.getAdapterPosition()).getMenuImage());
-//        if (menus.get(holder.getAdapterPosition()).isIsselected())
-//            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_selected_round_bkgd));
-//        else
-//            holder.txt_menu_name.setBackground(context.getResources().getDrawable(R.drawable.navigation_menu_unselected_round_bkgd));
         holder.itemView.setOnClickListener(v -> contractMenu.menuClicked(holder.getAdapterPosition(), menus.get(holder.getAdapterPosition()), holder.itemView));
     }
 

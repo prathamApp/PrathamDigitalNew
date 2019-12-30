@@ -197,7 +197,7 @@ public class CopyExistingJSONS {
                                     detail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
                                 filename = detail.getResourcepath();
                         detail.setDownloaded(true);
-                        if (PrathamApplication.contentExistOnSD) detail.setOnSDCard(true);
+                        if (PrathamApplication.externalContentExists) detail.setOnSDCard(true);
                         else detail.setOnSDCard(false);
                     }
                     modalContentDao.addContentList(tempContents);

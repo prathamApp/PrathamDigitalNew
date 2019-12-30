@@ -262,6 +262,12 @@ public class PD_Utility {
                     .add(frame, mFragment, TAG)
                     .addToBackStack(TAG)
                     .commit();
+        } else if (mActivity instanceof Activity_ContentPlayer) {
+            ((Activity_ContentPlayer) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
         }
     }
 
@@ -1396,7 +1402,7 @@ public class PD_Utility {
         final View dialogView = View.inflate(context, R.layout.sunbaby_dialog, null);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setWeekOneView(dialogView);
+        builder.setEnrolledView(dialogView);
         final AlertDialog dialog = builder.create();
         dialog.setCanceledOnTouchOutside(false);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -1658,7 +1664,7 @@ public class PD_Utility {
                 if (!file.exists())
                     file.createNewFile();
                 file.delete();
-                PD_Constant.STORING_IN = "Internal Storage";
+                PD_Constant.STORING_IN = "SD-Card";
                 return intDir[1].getAbsolutePath();
             } catch (Exception e) {
                 e.printStackTrace();

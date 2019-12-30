@@ -3,22 +3,53 @@ package com.pratham.prathamdigital.ui.fragment_course_enrollment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
+import android.widget.RelativeLayout;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.tab_bar.segmentTabLayout.OnTabSelectListener;
+import com.pratham.prathamdigital.custom.tab_bar.segmentTabLayout.SegmentTabLayout;
+import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 @EFragment(R.layout.fragment_course_enrollment)
 public class Fragment_CourseEnrollment extends Fragment {
 
     @ViewById(R.id.vp_course)
     ViewPager vp_course;
+    @ViewById(R.id.frag_enroll_bkgd)
+    RelativeLayout frag_enroll_bkgd;
+    @ViewById(R.id.tab_course)
+    SegmentTabLayout tab_course;
 
     @AfterViews
     public void init() {
+        frag_enroll_bkgd.setBackground(PD_Utility.getDrawableAccordingToMonth(getActivity()));
+        initializeTabs();
         new Handler().postDelayed(this::initializePagerAdapter, 200);
+    }
+
+    private void initializeTabs() {
+        String[] mTitles = {"Enrolled Courses", "New Courses"};
+        tab_course.setTabData(mTitles);
+        tab_course.setOnTabSelectListener(new OnTabSelectListener() {
+            @Override
+            public void onTabSelect(int position) {
+                vp_course.setCurrentItem(position);
+            }
+
+            @Override
+            public void onTabReselect(int position) {
+
+            }
+        });
     }
 
     private void initializePagerAdapter() {
@@ -27,46 +58,30 @@ public class Fragment_CourseEnrollment extends Fragment {
 //        vp_course.setPadding(100, 30, 100, 30);
 //        vp_course.setPageMargin(30);
         vp_course.setAdapter(coursePagerAdapter);
-       /* vp_course.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-
-            }
-
-            @Override
-            public void onPageSelected(int i) {
-                switch (i) {
-                    case 0:
-                        iv_previous_week.setVisibility(View.GONE);
-                        iv_next_week.setVisibility(View.VISIBLE);
-                        break;
-                    case 1:
-                    case 2:
-                        iv_previous_week.setVisibility(View.VISIBLE);
-                        iv_next_week.setVisibility(View.VISIBLE);
-                        break;
-                    case 3:
-                        iv_previous_week.setVisibility(View.VISIBLE);
-                        iv_next_week.setVisibility(View.GONE);
-                        break;
-                }
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int i) {
-
-            }
-        });*/
     }
 
-    /*@Click(R.id.iv_next_week)
-    public void setNext() {
-        vp_course.setCurrentItem(vp_course.getCurrentItem() + 1);
-
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
     }
 
-    @Click(R.id.iv_previous_week)
-    public void setPrevious() {
-        vp_course.setCurrentItem(vp_course.getCurrentItem() - 1);
-    }*/
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    @UiThread
+    @Subscribe
+    public void msgReceived(EventMessage eventMessage) {
+        if (eventMessage != null)
+            if (eventMessage.getMessage().equalsIgnoreCase(PD_Constant.SHOW_NEW_COURSES)) {
+                vp_course.setCurrentItem(1);
+                tab_course.setCurrentTab(1);
+            } else if (eventMessage.getMessage().equalsIgnoreCase(PD_Constant.NEW_COURSE_ENROLLED)) {
+                vp_course.setCurrentItem(0);
+                tab_course.setCurrentTab(0);
+            }
+    }
 }

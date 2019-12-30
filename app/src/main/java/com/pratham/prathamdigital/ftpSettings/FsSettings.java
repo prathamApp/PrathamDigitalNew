@@ -108,8 +108,8 @@ public class FsSettings {
 
     public static File getDefaultChrootDir() {
         File chrootDir;
-        if (PrathamApplication.contentExistOnSD) {
-            chrootDir = new File(PrathamApplication.contentSDPath);
+        if (PrathamApplication.externalContentExists) {
+            chrootDir = new File(PrathamApplication.externalContentPath);
         } else {
             chrootDir = new File(PrathamApplication.pradigiPath);
         }

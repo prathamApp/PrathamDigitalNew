@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.widget.VideoView;
 
 import com.google.gson.Gson;
@@ -18,7 +17,6 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
-import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -49,9 +47,10 @@ public class Fragment_VideoPlayer extends Fragment {
     private String resId;
     private long videoDuration = 0;
     private Modal_AajKaSawal videoSawal = null;
+    private boolean isScoreAdded = false;
+
     @SuppressLint("HandlerLeak")
-    private final
-    Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -128,8 +127,9 @@ public class Fragment_VideoPlayer extends Fragment {
                 aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
                 aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
                 EventMessage message = new EventMessage();
-                message.setMessage(PD_Constant.SHOW_SAWAL);
+                message.setMessage(PD_Constant.ADD_VIDEO_PROGRESS_AND_SHOW_SAWAL);
                 message.setBundle(aksbundle);
+                message.setDownloadId(resId);
                 EventBus.getDefault().post(message);
             }
         });
@@ -151,10 +151,8 @@ public class Fragment_VideoPlayer extends Fragment {
     public void messageReceived(EventMessage message) {
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
-                addScoreToDB();
+                if (!isScoreAdded) addScoreToDB();
                 if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack(
-                            CourseDetailFragment.class.getSimpleName(), FragmentManager.POP_BACK_STACK_INCLUSIVE);
                     EventMessage message1 = new EventMessage();
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);
@@ -166,6 +164,7 @@ public class Fragment_VideoPlayer extends Fragment {
 
     @Background
     public void addScoreToDB() {
+        isScoreAdded = true;
         String endTime = PD_Utility.getCurrentDateTime();
         Modal_Score modalScore = new Modal_Score();
         modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));

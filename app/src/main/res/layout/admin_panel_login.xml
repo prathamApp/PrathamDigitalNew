@@ -26,31 +26,43 @@
             android:layout_marginStart="@dimen/_200sdp"
             android:orientation="vertical">
 
-            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
-                android:id="@+id/userName"
+            <com.pratham.prathamdigital.custom.ShadowLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_margin="@dimen/_5sdp"
-                android:background="@drawable/edittext_bkgd"
-                android:gravity="center"
-                android:hint="Username"
-                android:imeOptions="actionNext"
-                android:maxLines="1"
-                android:singleLine="true" />
+                android:layout_height="wrap_content"
+                app:sl_shadow_radius="@dimen/_3sdp"
+                app:sl_shadowed="true">
 
-            <com.pratham.prathamdigital.custom.edittexts.IndieEditText
-                android:id="@+id/password"
+                <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                    android:id="@+id/userName"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@drawable/edittext_bkgd"
+                    android:gravity="center"
+                    android:hint="Username"
+                    android:imeOptions="actionNext"
+                    android:maxLines="1"
+                    android:singleLine="true" />
+            </com.pratham.prathamdigital.custom.ShadowLayout>
+
+            <com.pratham.prathamdigital.custom.ShadowLayout
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_50sdp"
-                android:layout_margin="@dimen/_5sdp"
-                android:background="@drawable/edittext_bkgd"
-                android:gravity="center"
-                android:hint="Password"
-                android:imeOptions="actionDone"
-                android:inputType="textWebPassword"
-                android:maxLines="1"
-                android:singleLine="true"
-                tools:ignore="HardcodedText" />
+                android:layout_height="wrap_content"
+                app:sl_shadow_radius="@dimen/_3sdp"
+                app:sl_shadowed="true">
+
+                <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_50sdp"
+                    android:background="@drawable/edittext_bkgd"
+                    android:gravity="center"
+                    android:hint="Password"
+                    android:imeOptions="actionDone"
+                    android:inputType="textWebPassword"
+                    android:maxLines="1"
+                    android:singleLine="true"
+                    tools:ignore="HardcodedText" />
+            </com.pratham.prathamdigital.custom.ShadowLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -72,18 +84,6 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 tools:ignore="HardcodedText" />
-
-            <!--<com.pratham.prathamdigital.custom.buttons.IndieFlowerButton-->
-            <!--android:id="@+id/btn_push_data"-->
-            <!--android:layout_width="@dimen/_150sdp"-->
-            <!--android:layout_height="@dimen/_40sdp"-->
-            <!--android:layout_marginStart="@dimen/_10sdp"-->
-            <!--android:background="@drawable/button_orange_selector"-->
-            <!--android:text="Push Data"-->
-            <!--android:textAllCaps="false"-->
-            <!--android:textColor="@color/white"-->
-            <!--tools:ignore="HardcodedText" />-->
-
         </LinearLayout>
 
         <ImageView

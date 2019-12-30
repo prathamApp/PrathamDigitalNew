@@ -1,113 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_detail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/ic_course_bkgd"
-    android:fillViewport="true">
+    android:weightSum="1">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <android.support.design.card.MaterialCardView
+        android:id="@+id/card_course_header"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/_5sdp"
+        android:layout_weight=".3"
+        app:cardBackgroundColor="@color/dark_blue"
+        app:cardCornerRadius="@dimen/_10sdp"
+        app:cardElevation="@dimen/_5sdp">
 
-        <android.support.design.card.MaterialCardView
-            android:id="@+id/card_course_header"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_10sdp"
-            android:minHeight="@dimen/_80sdp"
-            android:orientation="horizontal"
-            app:cardBackgroundColor="@color/mustord_yellow"
-            app:cardCornerRadius="@dimen/_10sdp"
-            app:cardElevation="@dimen/_15sdp">
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/ll_btns"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="@dimen/_5sdp"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                    android:id="@+id/play_all_content_serially"
+                    android:layout_width="@dimen/_140sdp"
+                    android:layout_height="@dimen/_35sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:background="@drawable/button_orange_selector"
+                    android:gravity="center"
+                    android:text="Play all"
+                    android:textColor="@color/white"
+                    tools:ignore="HardcodedText" />
+
+                <com.pratham.prathamdigital.custom.shimmer_view.ShimmerFrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:shimmer_auto_start="true"
+                    app:shimmer_base_alpha="0.5"
+                    app:shimmer_direction="left_to_right"
+                    app:shimmer_duration="2500"
+                    app:shimmer_repeat_mode="restart">
+
+                    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                        android:id="@+id/btn_submit_assignment"
+                        android:layout_width="@dimen/_140sdp"
+                        android:layout_height="@dimen/_35sdp"
+                        android:background="@drawable/button_blue_selector"
+                        android:gravity="center"
+                        android:text="Submit Assignment"
+                        android:textColor="@color/white"
+                        android:visibility="gone"
+                        tools:ignore="HardcodedText" />
+                </com.pratham.prathamdigital.custom.shimmer_view.ShimmerFrameLayout>
+            </LinearLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content"
+                android:layout_above="@+id/ll_btns"
+                android:layout_alignParentTop="true"
+                android:layout_margin="@dimen/_5sdp">
 
-                <com.facebook.drawee.view.SimpleDraweeView
-                    android:id="@+id/course_image"
-                    android:layout_width="@dimen/_70sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    app:actualImageScaleType="centerInside"
-                    app:placeholderImageScaleType="centerInside"
-                    app:roundedCornerRadius="@dimen/_35sdp"
-                    app:roundingBorderColor="@color/white"
-                    app:roundingBorderWidth="@dimen/_1sdp" />
-
-                <com.airbnb.lottie.LottieAnimationView
-                    android:id="@+id/course_lottie"
-                    android:layout_width="@dimen/_70sdp"
-                    android:layout_height="@dimen/_70sdp"
-                    android:layout_alignParentEnd="true"
-                    android:layout_margin="@dimen/_5sdp"
-                    android:layout_centerVertical="true"
-                    app:lottie_autoPlay="true"
-                    app:lottie_fileName="play_button.json"
-                    app:lottie_loop="true"
-                    app:lottie_scale=".7" />
-
-                <LinearLayout
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/course_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_marginStart="@dimen/_10sdp"
-                    android:layout_toStartOf="@+id/course_lottie"
-                    android:layout_toEndOf="@+id/course_image"
-                    android:gravity="center_vertical"
-                    android:minHeight="@dimen/_80sdp"
-                    android:orientation="vertical">
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/_25sdp"
+                    app:autoSizeMinTextSize="@dimen/_3sdp"
+                    app:autoSizeTextType="uniform"
+                    tools:ignore="RelativeOverlap" />
 
-                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                        android:id="@+id/course_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@android:color/black"
-                        android:textSize="@dimen/_15sdp" />
-
-                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                        android:id="@+id/course_detail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black_20"
-                        android:textSize="@dimen/_13sdp" />
-
-                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                        android:id="@+id/course_assign"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black_20"
-                        android:textSize="@dimen/_13sdp" />
-
-                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                        android:id="@+id/course_dates"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black_20"
-                        android:textSize="@dimen/_13sdp" />
-                </LinearLayout>
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/course_detail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/course_name"
+                    android:textColor="@color/white"
+                    app:autoSizeMinTextSize="@dimen/_3sdp"
+                    app:autoSizeTextType="uniform"
+                    tools:ignore="RelativeOverlap" />
             </RelativeLayout>
-        </android.support.design.card.MaterialCardView>
+        </RelativeLayout>
+    </android.support.design.card.MaterialCardView>
 
-        <android.support.design.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/card_course_header"
-            android:layout_margin="@dimen/_10sdp"
-            android:minHeight="@dimen/_80sdp"
-            android:orientation="horizontal"
-            app:cardBackgroundColor="@color/trans_ghost_white"
-            app:cardCornerRadius="@dimen/_10sdp"
-            app:cardElevation="0dp">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_course_childs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:nestedScrollingEnabled="false" />
-        </android.support.design.card.MaterialCardView>
-    </RelativeLayout>
-</android.support.v4.widget.NestedScrollView>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_course_childs"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".7" />
+</LinearLayout>

@@ -27,6 +27,24 @@ public class Model_CourseEnrollment implements Parcelable, Comparable {
     private String coachVerificationDate;
     @SerializedName("courseExperience")
     private String courseExperience;
+    @SerializedName("courseCompleted")
+    private boolean courseCompleted;
+    @SerializedName("coachImage")
+    private String coachImage;
+    @SerializedName("language")
+    private String language;
+    @SerializedName("sentFlag")
+    private int sentFlag;
+    @Ignore
+    private boolean isProgressCompleted = false;
+    @Ignore
+    private Modal_ContentDetail courseDetail;
+    @Ignore
+    private String course_status;
+
+    public Model_CourseEnrollment() {
+    }
+
     public static final Creator<Model_CourseEnrollment> CREATOR = new Creator<Model_CourseEnrollment>() {
         @Override
         public Model_CourseEnrollment createFromParcel(Parcel in) {
@@ -38,21 +56,6 @@ public class Model_CourseEnrollment implements Parcelable, Comparable {
             return new Model_CourseEnrollment[size];
         }
     };
-    @SerializedName("courseCompleted")
-    private boolean courseCompleted;
-    @SerializedName("coachImage")
-    private String coachImage;
-    @SerializedName("language")
-    private String language;
-    @Ignore
-    private Modal_ContentDetail courseDetail;
-    @SerializedName("sentFlag")
-    private int sentFlag;
-    @Ignore
-    private boolean isProgressCompleted = false;
-
-    public Model_CourseEnrollment() {
-    }
 
     protected Model_CourseEnrollment(Parcel in) {
         c_autoID = in.readInt();
@@ -69,6 +72,15 @@ public class Model_CourseEnrollment implements Parcelable, Comparable {
         coachImage = in.readString();
         isProgressCompleted = in.readByte() != 0;
         language = in.readString();
+        course_status = in.readString();
+    }
+
+    public String getCourse_status() {
+        return course_status;
+    }
+
+    public void setCourse_status(String course_status) {
+        this.course_status = course_status;
     }
 
     public int getC_autoID() {
@@ -204,6 +216,7 @@ public class Model_CourseEnrollment implements Parcelable, Comparable {
         dest.writeString(coachImage);
         dest.writeByte((byte) (isProgressCompleted ? 1 : 0));
         dest.writeString(language);
+        dest.writeString(course_status);
     }
 
     @Override

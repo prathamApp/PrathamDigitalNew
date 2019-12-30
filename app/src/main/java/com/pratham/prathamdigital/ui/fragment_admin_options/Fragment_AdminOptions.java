@@ -22,9 +22,11 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
+import com.pratham.prathamdigital.custom.animated_switch.StickySwitch;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
@@ -57,7 +59,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
     private static final int PUSH_DATA = 1;
     private static final int ASSIGN_GROUPS = 2;
     private static final int PULL_DATA = 3;
-    private static final int UPDATE_DATABASE = 4;
+    private static final int CHANGE_CONTENT_FOLDER = 4;
     private static final int SDCARD_LOCATION_CHOOSER = 5;
     private static final int SHOW_DB_COPYING_DIALOG = 6;
     @ViewById(R.id.rv_admin_options)
@@ -92,8 +94,8 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
                     PD_Utility.showFragment(getActivity(), new PullDataFragment_(), R.id.frame_attendance,
                             null, PullDataFragment.class.getSimpleName());
                     break;
-                case UPDATE_DATABASE:
-                    showSdCardDialog();
+                case CHANGE_CONTENT_FOLDER:
+                    showFolderChangeDialog();
                     break;
                 case SHOW_DB_COPYING_DIALOG:
                     showPushingDialog("Please wait...Updating Database");
@@ -193,9 +195,8 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
             showClearDataDialog();
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Pull Data"))
             mHandler.sendEmptyMessage(PULL_DATA);
-        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Update Database")) {
-//            mHandler.sendEmptyMessage(UPDATE_DATABASE); todo update database feature
-        }
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Change Content Folder"))
+            mHandler.sendEmptyMessage(CHANGE_CONTENT_FOLDER);
     }
 
     private void showClearDataDialog() {
@@ -264,27 +265,31 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
     }
 
     @SuppressLint("SetTextI18n")
-    private void showSdCardDialog() {
+    private void showFolderChangeDialog() {
         sd_builder = new BlurPopupWindow.Builder(getActivity())
-                .setContentView(R.layout.dialog_alert_sd_card)
+                .setContentView(R.layout.dialog_change_content_folder)
                 .setGravity(Gravity.CENTER)
                 .setScaleRatio(0.2f)
-                .bindClickListener(v -> {
-                    new Handler().postDelayed(() -> {
-                        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
-                        intent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-                        startActivityForResult(intent, SDCARD_LOCATION_CHOOSER);
-                    }, 1200);
-                    sd_builder.dismiss();
-                }, R.id.txt_choose_sd_card)
                 .setDismissOnClickBack(true)
-                .setDismissOnTouchBackground(false)
+                .setDismissOnTouchBackground(true)
                 .setScaleRatio(0.2f)
                 .setBlurRadius(8)
                 .setTintColor(0x30000000)
                 .build();
-        ((TextView) sd_builder.findViewById(R.id.txt_choose_sd_card)).setText("Select Sd-Card");
         sd_builder.show();
+        StickySwitch folder_switch = sd_builder.findViewById(R.id.folder_switch);
+        boolean isChecked = FastSave.getInstance().getBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true);
+        if (isChecked)
+            folder_switch.setDirection(StickySwitch.Direction.RIGHT, true);
+        else
+            folder_switch.setDirection(StickySwitch.Direction.LEFT, true);
+        folder_switch.setOnSelectedChangeListener((direction, text) -> {
+            if (direction == StickySwitch.Direction.RIGHT)
+                FastSave.getInstance().saveBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true);
+            else
+                FastSave.getInstance().saveBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, false);
+            new Handler().postDelayed(() -> sd_builder.dismiss(), 700);
+        });
     }
 
 }

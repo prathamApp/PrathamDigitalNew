@@ -2,117 +2,142 @@
 <android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:id="@+id/root_course"
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="@dimen/_200sdp"
     android:layout_margin="@dimen/_3sdp"
-    android:minHeight="@dimen/_60sdp"
     android:orientation="horizontal"
-    app:cardBackgroundColor="@color/blue_btn_bg_color"
-    app:cardCornerRadius="@dimen/_5sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_8sdp"
     app:cardElevation="@dimen/_5sdp">
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:background="@android:color/transparent">
 
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/item_course_index"
+            android:layout_width="@dimen/_30sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/rounded_course_index_bkgd"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/_20sdp" />
+
         <RelativeLayout
-            android:id="@+id/rl_options"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:gravity="center"
             android:padding="@dimen/_5sdp">
 
             <ImageView
-                android:id="@+id/iv_completed_course"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginEnd="@dimen/_3sdp"
-                android:contentDescription="Completed"
-                android:scaleType="centerInside"
-                android:visibility="gone"
-                app:srcCompat="@drawable/ic_tick"
-                tools:ignore="HardcodedText" />
-
-            <ImageView
                 android:id="@+id/iv_delete_course"
-                android:layout_width="@dimen/_40sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:layout_marginStart="@dimen/_3sdp"
-                android:layout_toEndOf="@+id/iv_completed_course"
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:layout_alignParentEnd="true"
                 android:background="@drawable/delete_item_bkgd_yes"
                 android:contentDescription="Delete"
                 android:scaleType="center"
                 app:srcCompat="@drawable/ic_delete_file"
                 tools:ignore="HardcodedText" />
 
-            <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
-                android:id="@+id/btn_resume"
-                android:layout_width="@dimen/_120sdp"
-                android:layout_height="@dimen/_40sdp"
-                android:background="@drawable/button_orange_selector"
-                android:text="View"
-                android:textColor="@color/white"
-                android:textSize="@dimen/_13sdp"
-                android:visibility="gone"
-                tools:ignore="HardcodedText" />
+            <RelativeLayout
+                android:id="@+id/item_view_course"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true">
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/txt_course_action"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/click_here_round_bkgd"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:paddingTop="@dimen/_5sdp"
+                    android:paddingEnd="@dimen/_15sdp"
+                    android:paddingBottom="@dimen/_5sdp"
+                    android:text="View"
+                    android:textColor="@color/dark_grey"
+                    android:textSize="@dimen/_10sdp"
+                    tools:ignore="HardcodedText" />
+
+                <ImageView
+                    android:layout_width="@dimen/_25sdp"
+                    android:layout_height="@dimen/_25sdp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="@dimen/_32sdp"
+                    android:layout_marginTop="@dimen/_8sdp"
+                    android:rotation="-35"
+                    app:srcCompat="@drawable/ic_click"
+                    tools:ignore="ContentDescription" />
+            </RelativeLayout>
+
         </RelativeLayout>
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/item_course_index"
-            android:layout_width="@dimen/_30sdp"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="@dimen/_5sdp"
-            android:background="@drawable/rounded_course_index_bkgd"
-            android:gravity="center"
-            android:minHeight="@dimen/_50sdp"
-            android:textColor="@color/material_blue_grey_80"
-            android:textSize="@dimen/_20sdp" />
-
         <RelativeLayout
+            android:id="@+id/item_footer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_margin="@dimen/_5sdp"
-            android:layout_toStartOf="@+id/rl_options"
-            android:layout_toEndOf="@+id/item_course_index"
-            android:background="@android:color/transparent"
-            android:minHeight="@dimen/_50sdp">
+            android:layout_alignParentBottom="true"
+            android:layout_marginStart="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"
+            android:layout_marginBottom="@dimen/_5sdp">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/item_course_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:drawableStart="@drawable/ic_tick"
+                android:drawablePadding="@dimen/_3sdp"
+                android:gravity="center_vertical"
+                android:textColor="@color/white"
+                android:visibility="gone"
+                tools:ignore="RelativeOverlap" />
+
+            <com.pratham.prathamdigital.custom.StepProgressBar
+                android:id="@+id/item_step_bar"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_10sdp"
+                android:layout_below="@id/item_course_status"
+                android:layout_marginTop="@dimen/_3sdp"
+                android:gravity="center_vertical"
+                app:step="0"
+                app:stepDoneColor="@color/white"
+                app:stepMargin="@dimen/_5sdp"
+                app:stepUndoneColor="@color/dark_grey"
+                app:step_max="4" />
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/item_footer"
+            android:layout_below="@+id/item_course_index"
+            android:layout_margin="@dimen/_3sdp"
+            android:orientation="vertical"
+            android:weightSum="1">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_name"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/red"
-                android:textSize="@dimen/_16sdp" />
+                android:layout_height="0dp"
+                android:layout_weight=".2"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_25sdp" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_detail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_en_course_name"
-                android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_11sdp" />
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:id="@+id/item_en_course_assign"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_en_course_detail"
-                android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_11sdp" />
-
-            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                android:id="@+id/item_en_course_dates"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/item_en_course_assign"
-                android:textColor="@color/material_blue_grey_80"
-                android:textSize="@dimen/_11sdp" />
-        </RelativeLayout>
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight=".8"
+                android:gravity="start"
+                android:textColor="@color/white"
+                app:autoSizeMinTextSize="@dimen/_3sdp"
+                app:autoSizeTextType="uniform" />
+        </LinearLayout>
     </RelativeLayout>
 </android.support.design.card.MaterialCardView>

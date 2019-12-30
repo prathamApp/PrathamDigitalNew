@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/ic_course_bkgd"
+    android:clickable="true"
+    android:focusable="true">
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        android:id="@+id/btn_submit"
+        android:layout_width="@dimen/_140sdp"
+        android:layout_height="@dimen/_35sdp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="@dimen/_5sdp"
+        android:background="@drawable/button_blue_selector"
+        android:gravity="center"
+        android:text="Submit Assignment"
+        android:textColor="@color/white"
+        android:visibility="visible"
+        tools:ignore="HardcodedText" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_assignments"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/btn_submit" />
+
+</RelativeLayout>

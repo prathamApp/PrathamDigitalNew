@@ -2,10 +2,12 @@ package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_c
 
 import android.content.Context;
 
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
+import com.pratham.prathamdigital.models.Model_CourseExperience;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -22,7 +24,8 @@ import java.util.Objects;
 @EBean
 public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPresenter {
     private Context context;
-    private PlanningContract.weekOnePlanningView planningView;
+    private PlanningContract.enrolledView planningView;
+    private PlanningContract.newCoursesView newCoursesView;
     private HashMap<String, List<Model_CourseEnrollment>> coursesPerWeek = new HashMap<>();
 
     public WeekPlanningPresenter(Context context) {
@@ -30,8 +33,13 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     }
 
     @Override
-    public void setWeekOneView(PlanningContract.weekOnePlanningView planningView) {
+    public void setEnrolledView(PlanningContract.enrolledView planningView) {
         this.planningView = planningView;
+    }
+
+    @Override
+    public void setNewCoursesView(PlanningContract.newCoursesView newCoursesView) {
+        this.newCoursesView = newCoursesView;
     }
 
     @Background
@@ -58,7 +66,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
                 courses.put(courseParent, courseChilds);
             }
         }
-        planningView.loadCourses(courses);
+        newCoursesView.loadCourses(courses);
     }
 
     @Background
@@ -69,7 +77,9 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         boolean areAllCoursesVerified = true;
         if (courseEnrollments != null) {
             for (Model_CourseEnrollment ce : courseEnrollments) {
-                if (!ce.isCoachVerified()) areAllCoursesVerified = false;
+                ce.setCourse_status(readCourseStatusFromExperience(ce));
+                if (ce.getCourse_status().equalsIgnoreCase(PD_Constant.COURSE_NOT_VERIFIED))
+                    areAllCoursesVerified = false;
             }
             if (!areAllCoursesVerified) {
                 planningView.showVerificationButton();
@@ -81,6 +91,11 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
             }
         }
         planningView.loadEnrolledCourses(courseEnrollments);
+    }
+
+    private String readCourseStatusFromExperience(Model_CourseEnrollment ce) {
+        Model_CourseExperience courseExperience = new Gson().fromJson(ce.getCourseExperience(), Model_CourseExperience.class);
+        return courseExperience.getStatus();
     }
 
     private List<Model_CourseEnrollment> enrolledCoursesFromDb(String week, String groupId) {
@@ -118,7 +133,19 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
             Model_CourseEnrollment courseEnrollment = new Model_CourseEnrollment();
             courseEnrollment.setCoachVerificationDate("");
             courseEnrollment.setCoachVerified(false);
-            courseEnrollment.setCourseExperience("");
+            //add experience as json object string in db
+            Model_CourseExperience model_courseExperience = new Model_CourseExperience();
+            model_courseExperience.setAssignments(null);
+            model_courseExperience.setWords_learnt("");
+            model_courseExperience.setAssignments_completed("");
+            model_courseExperience.setAssignments_description("");
+            model_courseExperience.setCoach_comments("");
+            model_courseExperience.setCoach_verification_date("");
+            model_courseExperience.setCoach_image("");
+            model_courseExperience.setAssignment_submission_date(PD_Utility.getCurrentDateTime());
+            model_courseExperience.setStatus(PD_Constant.COURSE_NOT_VERIFIED);
+
+            courseEnrollment.setCourseExperience(new Gson().toJson(model_courseExperience));
             courseEnrollment.setCourseDetail(selectedCourse);
             courseEnrollment.setCourseId(selectedCourse.getNodeid());
             courseEnrollment.setGroupId(groupId);
@@ -137,14 +164,10 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
             }
             coursesPerWeek.put(week, enrollments);
             PrathamApplication.courseDao.insertCourse(courseEnrollment);
-            List<Model_CourseEnrollment> coursesEnrolled = new ArrayList<>(Objects.requireNonNull(coursesPerWeek.get(week)));
-            //add footer to the list for showing add more courses button
-            if (coursesEnrolled.size() > 0)
-                coursesEnrolled.add(new Model_CourseEnrollment());
-            planningView.showEnrolledList(coursesEnrolled);
+            newCoursesView.courseAdded();
         } else {
             //course is already added in that particular week
-            planningView.courseAlreadySelected();
+            newCoursesView.courseAlreadySelected();
         }
     }
 
@@ -164,18 +187,25 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
 
     @Background
     @Override
-    public void markCoursesVerified(String week, String imagePath) {
-        List<Model_CourseEnrollment> enrollments = enrolledCoursesFromDb(week,
-                FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+    public void markCoursesVerified(List<Model_CourseEnrollment> enrollments, String imagePath) {
         for (Model_CourseEnrollment mce : enrollments) {
-            if (mce.getCourseId() != null) {
+            if (mce != null && mce.getCourseId() != null) {
                 mce.setCoachVerified(true);
                 mce.setCoachImage(imagePath);
                 mce.setCoachVerificationDate(PD_Utility.getCurrentDateTime());
+                mce.setCourseExperience(updateCourseStatusInExperience(mce));
+                mce.setCourse_status(readCourseStatusFromExperience(mce));
                 PrathamApplication.courseDao.updateCourse(mce);
             }
         }
         planningView.loadEnrolledCourses(enrollments);
+    }
+
+    private String updateCourseStatusInExperience(Model_CourseEnrollment ce) {
+        Gson gson = new Gson();
+        Model_CourseExperience courseExperience = gson.fromJson(ce.getCourseExperience(), Model_CourseExperience.class);
+        courseExperience.setStatus(PD_Constant.COURSE_ENROLLED);
+        return gson.toJson(courseExperience);
     }
 
     @Background
@@ -185,18 +215,5 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
         Collections.sort(childs, (o1, o2) -> o1.getNodetitle().compareToIgnoreCase(o2.getNodetitle()));
         planningView.showChilds(c_enrolled, childs, detail.getNodeid());
-    }
-
-    @Background
-    @Override
-    public void checkProgress(String week, String courseId) {
-        List<Model_CourseEnrollment> enrollments = coursesPerWeek.get(week);
-        for (Model_CourseEnrollment en : Objects.requireNonNull(enrollments)) {
-            if (isCourseProgressCompleted(en, week))
-                en.setProgressCompleted(true);
-            else
-                en.setProgressCompleted(false);
-        }
-        planningView.loadEnrolledCourses(enrollments);
     }
 }

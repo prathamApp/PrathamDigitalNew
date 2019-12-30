@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.AsyncListDiffer;
@@ -9,13 +8,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
+import com.pratham.prathamdigital.view_holders.EnrolledCoursesHolder;
+import com.pratham.prathamdigital.view_holders.FooterAddNewCourse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +22,10 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
 
     private static final int NORMAL_CONTENT = 1;
     private static final int FOOTER_CONTENT = 2;
-    private PlanningContract.weekOnePlanningView planningView;
+    private PlanningContract.enrolledView planningView;
     private final AsyncListDiffer<Model_CourseEnrollment> mDiffer;
 
-    public RV_CourseAdapter(Context context, PlanningContract.weekOnePlanningView planningView) {
+    RV_CourseAdapter(Context context, PlanningContract.enrolledView planningView) {
         DiffUtil.ItemCallback<Model_CourseEnrollment> diffcallback = new DiffUtil.ItemCallback<Model_CourseEnrollment>() {
             @Override
             public boolean areItemsTheSame(@NonNull Model_CourseEnrollment detail, @NonNull Model_CourseEnrollment t1) {
@@ -44,7 +41,6 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
         mDiffer = new AsyncListDiffer<>(this, diffcallback);
         Context context1 = context;
         this.planningView = planningView;
-//        this.coursesEnrolled = coursesEnrolled;
     }
 
     @Override
@@ -61,11 +57,11 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
             case NORMAL_CONTENT:
                 LayoutInflater inflater = LayoutInflater.from(parent.getContext());
                 View v = inflater.inflate(R.layout.item_course_enroll, parent, false);
-                return new RV_CourseAdapter.EnrolledCoursesHolder(v);
+                return new EnrolledCoursesHolder(v);
             case FOOTER_CONTENT:
                 LayoutInflater inflater2 = LayoutInflater.from(parent.getContext());
                 View v2 = inflater2.inflate(R.layout.item_footer_add_new_course, parent, false);
-                return new RV_CourseAdapter.FooterAddNewCourse(v2);
+                return new FooterAddNewCourse(v2);
             default:
                 return null;
         }
@@ -76,7 +72,8 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
         switch (viewHolder.getItemViewType()) {
             case NORMAL_CONTENT:
                 EnrolledCoursesHolder enrolledCoursesHolder = (EnrolledCoursesHolder) viewHolder;
-                enrolledCoursesHolder.setView(enrolledCoursesHolder.getAdapterPosition(), mDiffer.getCurrentList().get(enrolledCoursesHolder.getAdapterPosition()));
+                enrolledCoursesHolder.setView(enrolledCoursesHolder.getAdapterPosition(),
+                        mDiffer.getCurrentList().get(enrolledCoursesHolder.getAdapterPosition()), planningView);
                 break;
             case FOOTER_CONTENT:
                 FooterAddNewCourse footerAddNewCourse = (FooterAddNewCourse) viewHolder;
@@ -93,9 +90,7 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
             switch (viewHolder.getItemViewType()) {
                 case NORMAL_CONTENT:
                     EnrolledCoursesHolder enrolledCoursesHolder = (EnrolledCoursesHolder) viewHolder;
-                    enrolledCoursesHolder.iv_delete_course.setVisibility(View.GONE);
-                    enrolledCoursesHolder.iv_completed_course.setVisibility(View.GONE);
-                    enrolledCoursesHolder.btn_resume.setVisibility(View.VISIBLE);
+                    enrolledCoursesHolder.updateView();
                     break;
                 case FOOTER_CONTENT:
                     FooterAddNewCourse footerAddNewCourse = (FooterAddNewCourse) viewHolder;
@@ -110,12 +105,12 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
         return mDiffer.getCurrentList().size();
     }
 
-    public void updateData(List<Model_CourseEnrollment> coursesEnrolled) {
+    void updateData(List<Model_CourseEnrollment> coursesEnrolled) {
         mDiffer.submitList(null);
         mDiffer.submitList(coursesEnrolled);
     }
 
-    public void removeItem(int pos) {
+    void removeItem(int pos) {
         List<Model_CourseEnrollment> lst = new ArrayList<>(getData());
         lst.remove(pos);
         updateData(lst);
@@ -123,86 +118,5 @@ public class RV_CourseAdapter extends RecyclerView.Adapter {
 
     public List<Model_CourseEnrollment> getData() {
         return mDiffer.getCurrentList();
-    }
-
-    public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
-        TextView item_course_index;
-        TextView item_en_course_name;
-        TextView item_en_course_detail;
-        TextView item_en_course_assign;
-        TextView item_en_course_dates;
-        ImageView iv_delete_course;
-        ImageView iv_completed_course;
-        Button btn_resume;
-
-        EnrolledCoursesHolder(@NonNull View itemView) {
-            super(itemView);
-            item_course_index = itemView.findViewById(R.id.item_course_index);
-            item_en_course_name = itemView.findViewById(R.id.item_en_course_name);
-            item_en_course_detail = itemView.findViewById(R.id.item_en_course_detail);
-            item_en_course_assign = itemView.findViewById(R.id.item_en_course_assign);
-            item_en_course_dates = itemView.findViewById(R.id.item_en_course_dates);
-            iv_delete_course = itemView.findViewById(R.id.iv_delete_course);
-            iv_completed_course = itemView.findViewById(R.id.iv_completed_course);
-            btn_resume = itemView.findViewById(R.id.btn_resume);
-        }
-
-        @SuppressLint("SetTextI18n")
-        public void setView(int pos, Model_CourseEnrollment c_Enrolled) {
-            Modal_ContentDetail courseDetail = c_Enrolled.getCourseDetail();
-            if (c_Enrolled.isCoachVerified()) {
-                if (c_Enrolled.isProgressCompleted()) {
-                    iv_delete_course.setVisibility(View.GONE);
-                    iv_completed_course.setVisibility(View.VISIBLE);
-                    btn_resume.setVisibility(View.GONE);
-                } else {
-                    iv_delete_course.setVisibility(View.GONE);
-                    iv_completed_course.setVisibility(View.GONE);
-                    btn_resume.setVisibility(View.VISIBLE);
-                }
-            } else {
-                iv_delete_course.setVisibility(View.VISIBLE);
-                iv_completed_course.setVisibility(View.GONE);
-                btn_resume.setVisibility(View.GONE);
-            }
-            item_course_index.setText("0" + (pos + 1));
-            if (courseDetail != null) {
-                item_en_course_name.setText(courseDetail.getNodetitle());
-                item_en_course_assign.setText("Assignment:-\n" + courseDetail.getAssignment().replaceAll("\\\\n ", "\n"));
-                item_en_course_detail.setText("Description:-\n" + courseDetail.getNodedesc());
-            }
-            item_en_course_dates.setText("Course Timeline:-\n" + parseDate(c_Enrolled.getPlanFromDate()) + "  -  " + parseDate(c_Enrolled.getPlanToDate()));
-            iv_delete_course.setOnClickListener(v -> planningView.deleteCourse(pos, c_Enrolled));
-            iv_completed_course.setOnClickListener(v -> planningView.courseCompleted(pos, c_Enrolled));
-            btn_resume.setOnClickListener(v -> planningView.playCourse(pos, c_Enrolled));
-        }
-    }
-
-    private String parseDate(String date) {
-//        try {
-        String[] date_split = date.split(" ");
-//            DateFormat originalFormat = new SimpleDateFormat(" EEE MMM dd HH:mm:ss z yyyy", Locale.ENGLISH);
-//            @SuppressLint("SimpleDateFormat") DateFormat targetFormat = new SimpleDateFormat("EEE MMM dd,yyyy");
-//            Date O_date = originalFormat.parse(date.replace("Week_1", ""));
-        return date_split[1] + " " + date_split[2] + " " + date_split[3] + "," + date_split[6];
-//        } catch (ParseException e) {
-//            e.printStackTrace();
-//            return "";
-//        }
-    }
-
-    public class FooterAddNewCourse extends RecyclerView.ViewHolder {
-        Button footer_add_new_course;
-
-        FooterAddNewCourse(@NonNull View itemView) {
-            super(itemView);
-            footer_add_new_course = itemView.findViewById(R.id.footer_add_new_course);
-        }
-
-        public void setView(int adapterPosition, PlanningContract.weekOnePlanningView planningView) {
-            footer_add_new_course.setOnClickListener(v -> {
-                planningView.addAnotherCourse(footer_add_new_course);
-            });
-        }
     }
 }

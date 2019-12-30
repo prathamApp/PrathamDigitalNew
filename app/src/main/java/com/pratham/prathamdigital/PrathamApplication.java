@@ -11,6 +11,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.facebook.drawee.backends.pipeline.Fresco;
 import com.isupatches.wisefy.WiseFy;
 import com.pratham.prathamdigital.async.ReadBackupDb;
+import com.pratham.prathamdigital.custom.ProcessPhoenix;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.AttendanceDao;
 import com.pratham.prathamdigital.dbclasses.CRLdao;
@@ -50,8 +51,8 @@ public class PrathamApplication extends Application {
      */
     public static final boolean isTablet = false;
     public static boolean useSatelliteGPS = false;
-    public static boolean contentExistOnSD = false;
-    public static String contentSDPath = "";
+    public static boolean externalContentExists = false;
+    public static String externalContentPath = "";
     public static AttendanceDao attendanceDao;
     public static CRLdao crLdao;
     public static GroupDao groupDao;
@@ -75,6 +76,8 @@ public class PrathamApplication extends Application {
         if (mInstance == null) {
             mInstance = this;
         }
+        //To check if your application is inside the Phoenix process to skip initialization
+        if (ProcessPhoenix.isPhoenixProcess(this)) return;
         //this way the VM ignores the file URI exposure. if commented, the camera crashes on open
         StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
         StrictMode.setVmPolicy(builder.build());
@@ -115,8 +118,8 @@ public class PrathamApplication extends Application {
     }
 
     public void setExistingSDContentPath(String path) {
-        contentExistOnSD = true;
-        contentSDPath = path;
+        externalContentExists = true;
+        externalContentPath = path;
     }
 
     private void initializeDatabaseDaos() {

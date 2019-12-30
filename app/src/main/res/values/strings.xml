@@ -200,7 +200,7 @@
         <item>View Statistics</item>
         <item>Clear Data</item>
         <item>Pull Data</item>
-        <item>Update Database</item>
+        <item>Change Content Folder</item>
     </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>
@@ -313,6 +313,7 @@
     <string name="vertical_stepper_form_cancel_button">Cancel</string>
     <string name="vertical_stepper_form_confirm_button">Confirm data</string>
     <string name="vertical_stepper_form_confirmation_step_title">Confirmation</string>
+    <string name="selection_count">%1$d/%2$d</string>
     <!--    vertical stepper view-->
     <string-array name="steps_experience">
         <item>What all new words did you learnt this week?</item>

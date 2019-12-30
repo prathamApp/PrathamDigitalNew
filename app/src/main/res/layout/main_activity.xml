@@ -22,44 +22,30 @@
             android:layout_height="match_parent"
             android:background="#0d000000" />
 
-        <android.support.design.card.MaterialCardView
-            android:id="@+id/main_nav"
-            android:layout_width="@dimen/_40sdp"
-            android:layout_height="@dimen/_40sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            app:cardBackgroundColor="@color/dark_blue"
-            app:cardCornerRadius="@dimen/_20sdp"
-            app:cardElevation="@dimen/_6sdp">
+        <com.pratham.prathamdigital.custom.ShadowLayout
+            android:id="@+id/tab_shadow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:sl_shadow_angle="35"
+            app:sl_shadow_distance="5dp"
+            app:sl_shadow_radius="5dp"
+            app:sl_shadowed="true">
 
-            <ImageView
-                android:id="@+id/main_hamburger"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="@dimen/_6sdp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/asl_pathmorph_drawer" />
-        </android.support.design.card.MaterialCardView>
+            <RelativeLayout
+                android:id="@+id/main_nav"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:background="@drawable/navigation_menu_round_bkgd">
 
-        <!--<ImageView-->
-        <!--android:id="@+id/pradigi_icon"-->
-        <!--android:layout_width="@dimen/_50sdp"-->
-        <!--android:layout_height="@dimen/_50sdp"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginStart="@dimen/_5sdp"-->
-        <!--android:layout_marginTop="@dimen/_5sdp"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--android:src="@drawable/pratham_logo" />-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/pradigi_exit"-->
-        <!--android:layout_width="@dimen/_40sdp"-->
-        <!--android:layout_height="@dimen/_40sdp"-->
-        <!--android:layout_alignParentEnd="true"-->
-        <!--android:layout_marginTop="@dimen/_5sdp"-->
-        <!--android:layout_marginEnd="@dimen/_5sdp"-->
-        <!--android:elevation="@dimen/_10sdp"-->
-        <!--app:srcCompat="@drawable/ic_exit" />-->
+                <ImageView
+                    android:id="@+id/main_hamburger"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/_6sdp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/asl_pathmorph_drawer" />
+            </RelativeLayout>
+        </com.pratham.prathamdigital.custom.ShadowLayout>
 
         <RelativeLayout
             android:id="@+id/download_badge"

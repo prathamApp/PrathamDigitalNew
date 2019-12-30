@@ -2,8 +2,10 @@ package com.pratham.prathamdigital.ui.content_player;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 
 public interface ContentPlayerContract {
     interface contentPlayerView {
@@ -34,9 +36,21 @@ public interface ContentPlayerContract {
         void playSpecificCourseContent(String contentId);
 
         boolean hasNextContentInQueue();
+
+        void addContentProgress(String pdfResId);
+
+        Model_CourseEnrollment getCourse();
     }
 
     interface courseDetailAdapterClick {
         void onChildItemClicked(Modal_ContentDetail modal_contentDetail);
+    }
+
+    interface assignment_submission {
+        void addFileClicked(int adapterPosition);
+
+        void onFilePreviewClicked(String file_path);
+
+        void deleteFile(View itemView, int selfPosition, int position);
     }
 }

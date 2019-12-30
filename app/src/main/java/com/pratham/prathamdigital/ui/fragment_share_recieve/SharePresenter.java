@@ -315,8 +315,8 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             String dirPath;
             String imgDirPath;
             if (detail.isOnSDCard()) {
-                dirPath = PrathamApplication.contentSDPath;
-                imgDirPath = PrathamApplication.contentSDPath;
+                dirPath = PrathamApplication.externalContentPath;
+                imgDirPath = PrathamApplication.externalContentPath;
             } else {
                 dirPath = PrathamApplication.pradigiPath;
                 imgDirPath = PrathamApplication.pradigiPath;

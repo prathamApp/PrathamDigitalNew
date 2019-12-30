@@ -1,14 +1,13 @@
 package com.pratham.prathamdigital.ui.content_player.course_detail;
 
 import android.annotation.SuppressLint;
-import android.net.Uri;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.RecyclerView;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
-import com.facebook.drawee.view.SimpleDraweeView;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
@@ -27,46 +26,44 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
-import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
 @EFragment(R.layout.fragment_course_detail)
 public class CourseDetailFragment extends Fragment implements ContentPlayerContract.courseDetailAdapterClick {
-    @ViewById(R.id.root_detail)
-    NestedScrollView root_detail;
+
     @ViewById(R.id.rv_course_childs)
     RecyclerView rv_course_childs;
-    @ViewById(R.id.course_image)
-    SimpleDraweeView course_image;
     @ViewById(R.id.course_name)
     TextView course_name;
     @ViewById(R.id.course_detail)
     TextView course_detail;
-    @ViewById(R.id.course_assign)
-    TextView course_assign;
-    @ViewById(R.id.course_dates)
-    TextView course_dates;
+    @ViewById(R.id.btn_submit_assignment)
+    Button btn_submit_assignment;
+
+    CourseDetailAdapter adapter;
+    private Model_CourseEnrollment enrollment;
+    private List<Modal_ContentDetail> childs;
 
     @SuppressLint("SetTextI18n")
     @AfterViews
     public void init() {
-        Model_CourseEnrollment enrollment = Objects.requireNonNull(getArguments()).getParcelable(PD_Constant.COURSE_PARENT);
-        Uri imgUri;
-        if (enrollment.getCourseDetail().isOnSDCard())
-            imgUri = Uri.fromFile(new File(
-                    PrathamApplication.contentSDPath + "/PrathamImages/" +
-                            Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
-        else
-            imgUri = Uri.fromFile(new File(
-                    PrathamApplication.pradigiPath + "/PrathamImages/" +
-                            Objects.requireNonNull(enrollment).getCourseDetail().getNodeimage()));
-        course_image.setImageURI(imgUri);
+        enrollment = Objects.requireNonNull(getArguments()).getParcelable(PD_Constant.COURSE_PARENT);
         course_name.setText(enrollment.getCourseDetail().getNodetitle());
-        course_detail.setText("Description:-\n" + enrollment.getCourseDetail().getNodedesc());
-        course_assign.setText("Assignment:-\n" + enrollment.getCourseDetail().getAssignment());
-        course_dates.setText("Course Timeline:-\n" + parseDate(enrollment.getPlanFromDate()) + "  -  " + parseDate(enrollment.getPlanToDate()));
+        course_detail.setText(enrollment.getCourseDetail().getNodedesc());
         initializeAdapter();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        checkCourseCompletetionStatus();
+    }
+
+    private void checkCourseCompletetionStatus() {
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.CHECK_COURSE_COMPLETION);
+        EventBus.getDefault().post(message);
     }
 
     private String parseDate(String date) {
@@ -74,22 +71,18 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         return date_split[1] + " " + date_split[2] + " " + date_split[3] + "," + date_split[6];
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        init();
-    }
-
     private void initializeAdapter() {
-        List<Modal_ContentDetail> childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
-        CourseDetailAdapter adapter = new CourseDetailAdapter(getActivity(), childs, this);
+        if (childs == null || childs.isEmpty())
+            childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
+        adapter = new CourseDetailAdapter(getActivity(), this);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
         rv_course_childs.setLayoutManager(flexboxLayoutManager);
         rv_course_childs.setAdapter(adapter);
+        adapter.submitList(childs);
     }
 
-    @Click(R.id.course_lottie)
+    @Click(R.id.play_all_content_serially)
     public void playCourse() {
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.PLAY_COURSE);
@@ -120,9 +113,21 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @Subscribe
     public void messageReceived(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER))
                 ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
-            }
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.COURSE_COMPLETED))
+                btn_submit_assignment.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Click(R.id.btn_submit_assignment)
+    public void openAssignments() {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PD_Constant.ENROLLED_COURSE, enrollment);
+        bundle.putString(PD_Constant.OPEN_ASSIGNMENTS, enrollment.getCourseDetail().getAssignment());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.OPEN_ASSIGNMENTS);
+        message.setBundle(bundle);
+        EventBus.getDefault().post(message);
     }
 }

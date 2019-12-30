@@ -1,13 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.pratham.prathamdigital.custom.buttons.IndieFlowerButton xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/footer_add_new_course"
-    android:layout_width="@dimen/_150sdp"
-    android:layout_height="@dimen/_35sdp"
-    android:layout_gravity="center_horizontal"
-    android:layout_margin="@dimen/_5sdp"
-    android:background="@drawable/button_orange_selector"
-    android:gravity="center"
-    android:text="+ New Course"
-    android:textColor="@color/white"
-    tools:ignore="HardcodedText" />
+    android:layout_width="@dimen/_220sdp"
+    android:layout_height="@dimen/_200sdp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_8sdp"
+    app:cardElevation="@dimen/_5sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/ic_add_new_course"
+            tools:ignore="ContentDescription" />
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/footer_add_new_course"
+            android:layout_width="@dimen/_120sdp"
+            android:layout_height="@dimen/_35sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="center_horizontal"
+            android:layout_margin="@dimen/_5sdp"
+            android:background="@drawable/button_orange_selector"
+            android:gravity="center"
+            android:text="+ New Course"
+            android:textColor="@color/white"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+</android.support.design.card.MaterialCardView>

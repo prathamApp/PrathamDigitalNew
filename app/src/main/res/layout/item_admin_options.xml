@@ -25,6 +25,8 @@
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/_5sdp"
+            android:autoSizeMinTextSize="@dimen/_5sdp"
+            android:autoSizeTextType="uniform"
             android:gravity="center"
             android:maxLines="2"
             android:padding="@dimen/_3sdp"

@@ -1,12 +1,16 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.NonNull;
 import android.support.design.card.MaterialCardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.R;
@@ -17,12 +21,17 @@ import java.util.List;
 public class RV_ExpandedCoursesDetails extends RecyclerView.Adapter<RV_ExpandedCoursesDetails.ViewHolder> {
 
     private List<Modal_ContentDetail> modal_contentDetails;
-    private PlanningContract.weekOnePlanningView planningView;
+    private PlanningContract.newCoursesView newCoursesView;
+    private Context context;
+    private int color;
+    private int parentPos;
 
     public RV_ExpandedCoursesDetails(Context context, List<Modal_ContentDetail> modal_contentDetails,
-                                     PlanningContract.weekOnePlanningView planningView) {
-        Context context1 = context;
-        this.planningView = planningView;
+                                     PlanningContract.newCoursesView newCoursesView, int color, int parentPos) {
+        this.context = context;
+        this.color = color;
+        this.parentPos = parentPos;
+        this.newCoursesView = newCoursesView;
         this.modal_contentDetails = modal_contentDetails;
     }
 
@@ -34,17 +43,24 @@ public class RV_ExpandedCoursesDetails extends RecyclerView.Adapter<RV_ExpandedC
         return new RV_ExpandedCoursesDetails.ViewHolder(v);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
+        Drawable background = viewHolder.iv_select_course.getBackground();
+        ((GradientDrawable) background).setColor(color);
         viewHolder.txt_course_name.setText(modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodetitle());
-        if (modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodedesc() != null)
-            viewHolder.txt_course_info.setText(modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodedesc());
-        if (modal_contentDetails.get(viewHolder.getAdapterPosition()).getAssignment() != null)
-            viewHolder.txt_assignment.setText(modal_contentDetails.get(viewHolder.getAdapterPosition())
-                    .getAssignment().replaceAll("\\\\\n", "\n"));
+        Drawable dIcon = context.getResources().getDrawable(R.drawable.ic_next);
+        int margin = dIcon.getIntrinsicWidth() + 10;
+        if (modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodedesc() != null) {
+//            String asgnmt = "";
+//            if (modal_contentDetails.get(viewHolder.getAdapterPosition()).getAssignment() != null)
+//                asgnmt = "\n" + modal_contentDetails.get(viewHolder.getAdapterPosition())
+//                        .getAssignment().replaceAll("\\\\\n", "\n");
+            String dscrptn = modal_contentDetails.get(viewHolder.getAdapterPosition()).getNodedesc();
+            viewHolder.txt_course_info.setText(dscrptn /*+ asgnmt*/);
+        }
         viewHolder.btn_course_select.setOnClickListener(v ->
-                planningView.showDatePicker(modal_contentDetails.get(viewHolder.getAdapterPosition()),
-                        viewHolder.getAdapterPosition()));
+                newCoursesView.showDatePicker(modal_contentDetails.get(viewHolder.getAdapterPosition()), parentPos));
     }
 
     @Override
@@ -55,14 +71,14 @@ public class RV_ExpandedCoursesDetails extends RecyclerView.Adapter<RV_ExpandedC
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView txt_course_name;
         TextView txt_course_info;
-        TextView txt_assignment;
+        ImageView iv_select_course;
         MaterialCardView btn_course_select;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_course_name = itemView.findViewById(R.id.txt_course_name);
             txt_course_info = itemView.findViewById(R.id.txt_course_info);
-            txt_assignment = itemView.findViewById(R.id.txt_assignment);
+            iv_select_course = itemView.findViewById(R.id.iv_select_course);
             btn_course_select = itemView.findViewById(R.id.btn_course_select);
         }
     }

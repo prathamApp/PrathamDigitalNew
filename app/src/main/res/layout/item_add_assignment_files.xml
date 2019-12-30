@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/add_assignment_file"
+    android:layout_width="@dimen/_70sdp"
+    android:layout_height="@dimen/_70sdp"
+    android:layout_margin="@dimen/_5sdp"
+    android:background="@drawable/child_attendance_bkgd"
+    android:clickable="true"
+    android:focusable="true">
+
+    <ImageView
+        android:layout_width="@dimen/_40sdp"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="@dimen/_5sdp"
+        android:scaleType="center"
+        app:srcCompat="@drawable/ic_add_child" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="@dimen/_5sdp"
+        android:text="Add"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_15sdp"
+        tools:ignore="HardcodedText" />
+</RelativeLayout>

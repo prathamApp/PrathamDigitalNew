@@ -35,7 +35,7 @@ public class EmptyHolder extends RecyclerView.ViewHolder {
                 Uri imgUri;
                 if (contentDetail.isOnSDCard())
                     imgUri = Uri.fromFile(new File(
-                            PrathamApplication.contentSDPath + "/PrathamImages/" + contentDetail.getNodeimage()));
+                            PrathamApplication.externalContentPath + "/PrathamImages/" + contentDetail.getNodeimage()));
                 else
                     imgUri = Uri.fromFile(new File(
                             PrathamApplication.pradigiPath + "/PrathamImages/" + contentDetail.getNodeimage()));

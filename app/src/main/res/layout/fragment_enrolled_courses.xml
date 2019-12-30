@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/transparent">
+
+    <include layout="@layout/layout_add_new_course" />
+
+    <RelativeLayout
+        android:id="@+id/rl_enrolled_courses"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <RelativeLayout
+            android:id="@+id/rl_verify_coach"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_45sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="@dimen/_3sdp"
+            android:background="@drawable/button_orange_selector"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/coach_image"
+                android:layout_width="@dimen/_34sdp"
+                android:layout_height="@dimen/_34sdp"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:visibility="gone"
+                app:roundedCornerRadius="@dimen/_17sdp"
+                app:roundingBorderColor="@color/white"
+                app:roundingBorderWidth="@dimen/_1sdp" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/txt_verify_status"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_centerInParent="true"
+                android:layout_toEndOf="@+id/coach_image"
+                android:drawableStart="@drawable/ic_exclamation_mark"
+                android:drawablePadding="@dimen/_10sdp"
+                android:gravity="center"
+                android:text="Verify By Coach"
+                android:textColor="@color/white"
+                android:textSize="@dimen/_15sdp"
+                tools:ignore="HardcodedText" />
+
+        </RelativeLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_courses_enrolled"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/rl_verify_coach"
+            android:layout_margin="@dimen/_3sdp"
+            android:layoutAnimation="@anim/grid_layout_animation_from_bottom" />
+    </RelativeLayout>
+</RelativeLayout>

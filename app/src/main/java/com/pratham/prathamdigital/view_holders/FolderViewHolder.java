@@ -58,7 +58,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
             Uri imgUri;
             if (contentItem.isOnSDCard()) {
                 imgUri = Uri.fromFile(new File(
-                        PrathamApplication.contentSDPath + "/PrathamImages/" + contentItem.getNodeimage()));
+                        PrathamApplication.externalContentPath + "/PrathamImages/" + contentItem.getNodeimage()));
                 Objects.requireNonNull(folder_content_image).setImageURI(imgUri);
             } else {
                 imgUri = Uri.fromFile(new File(

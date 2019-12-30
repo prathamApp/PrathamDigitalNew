@@ -15,7 +15,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 import android.widget.VideoView;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
@@ -50,10 +49,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 //    ImageView img_splash_light;
     @ViewById(R.id.splash_video)
     VideoView splash_video;
-    @ViewById(R.id.avatar_view)
-    LottieAnimationView pingpong_view;
-//    @ViewById(R.id.rich)
-//    RichPathView rich;
 
     @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
