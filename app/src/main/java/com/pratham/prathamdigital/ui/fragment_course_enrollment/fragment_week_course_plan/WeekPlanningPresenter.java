@@ -105,14 +105,17 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         if (courseEnrollments == null) return null;
         List<Model_CourseEnrollment> temp = new ArrayList<>();
         for (Model_CourseEnrollment ce : courseEnrollments) {
-            ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),
-                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
-            ce.setProgressCompleted(isCourseProgressCompleted(ce, week));
-            temp.add(ce);
+            Model_CourseExperience courseExperience = new Gson().fromJson(ce.getCourseExperience(), Model_CourseExperience.class);
+            if (!courseExperience.getStatus().equalsIgnoreCase(PD_Constant.FEEDBACK_GIVEN)) {
+                ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),
+                        FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
+                ce.setProgressCompleted(isCourseProgressCompleted(ce, week));
+                temp.add(ce);
+            }
         }
         if (temp.size() > 0)
             coursesPerWeek.put(week, temp);
-        return courseEnrollments;
+        return temp;
     }
 
     private boolean isCourseProgressCompleted(Model_CourseEnrollment ce, String week) {
@@ -188,7 +191,9 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     @Background
     @Override
     public void markCoursesVerified(List<Model_CourseEnrollment> enrollments, String imagePath) {
-        for (Model_CourseEnrollment mce : enrollments) {
+        List<Model_CourseEnrollment> temp = new ArrayList<>(enrollments);
+        temp.remove(temp.size() - 1); //to remove the null item i.e footer item
+        for (Model_CourseEnrollment mce : temp) {
             if (mce != null && mce.getCourseId() != null) {
                 mce.setCoachVerified(true);
                 mce.setCoachImage(imagePath);
@@ -198,7 +203,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
                 PrathamApplication.courseDao.updateCourse(mce);
             }
         }
-        planningView.loadEnrolledCourses(enrollments);
+        planningView.loadEnrolledCourses(temp);
     }
 
     private String updateCourseStatusInExperience(Model_CourseEnrollment ce) {

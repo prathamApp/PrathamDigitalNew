@@ -49,7 +49,7 @@ public class PrathamApplication extends Application {
      * Confirm the new raspberry url with Balaji
      * increase version before generating signed apk otherwise "app not installed"
      */
-    public static final boolean isTablet = false;
+    public static final boolean isTablet = true;
     public static boolean useSatelliteGPS = false;
     public static boolean externalContentExists = false;
     public static String externalContentPath = "";
