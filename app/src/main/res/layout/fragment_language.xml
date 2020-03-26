@@ -11,7 +11,7 @@
         android:layout_height="match_parent"
         android:background="@drawable/language_gradient_three">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_language"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

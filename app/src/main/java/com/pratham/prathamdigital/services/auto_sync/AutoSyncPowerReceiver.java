@@ -2,7 +2,8 @@ package com.pratham.prathamdigital.services.auto_sync;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.content.WakefulBroadcastReceiver;
+
+import androidx.legacy.content.WakefulBroadcastReceiver;
 
 import java.util.Objects;
 

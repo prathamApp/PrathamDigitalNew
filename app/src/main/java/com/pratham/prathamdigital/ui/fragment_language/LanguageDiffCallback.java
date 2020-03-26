@@ -1,7 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_language;
 
-import android.support.annotation.Nullable;
-import android.support.v7.util.DiffUtil;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.DiffUtil;
 
 import com.pratham.prathamdigital.models.Modal_Language;
 

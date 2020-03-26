@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
@@ -55,14 +54,14 @@ public class ReadContentDbFromSdCard {
     public void doInBackground(Interface_copying _interface_copying) {
         try {
             this.interface_copying = _interface_copying;
-            if (FastSave.getInstance().getBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true)) {
-                ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
-                folder_file = new File(sdPath.get(0) + "/" + PD_Constant.PRADIGI_FOLDER + "/" +
-                        FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-            } else {
+//            if (FastSave.getInstance().getBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true)) {
+            ArrayList<String> sdPath = FileUtils.getExtSdCardPaths(context);
+            folder_file = new File(sdPath.get(0) + "/" + PD_Constant.PRADIGI_FOLDER + "/" +
+                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            /*} else {
                 folder_file = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRADIGI_FOLDER
                         + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
-            }
+            }*/
             if (folder_file.exists()) {
                 if (dbFilePresentInAssets()) {
                     //the df file stored in asset folder is the updated one
@@ -150,113 +149,116 @@ public class ReadContentDbFromSdCard {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        //populate villages
-        try {
-            Cursor village_cursor = db.rawQuery("SELECT * FROM Village", null);
-            List<Modal_Village> villages = new ArrayList<>();
-            if (village_cursor.moveToFirst()) {
-                while (!village_cursor.isAfterLast()) {
-                    Modal_Village vill = new Modal_Village();
-                    vill.setVillageId(village_cursor.getInt(village_cursor.getColumnIndex("VillageId")));
-                    vill.setVillageCode(village_cursor.getString(village_cursor.getColumnIndex("VillageCode")));
-                    vill.setVillageName(village_cursor.getString(village_cursor.getColumnIndex("VillageName")));
-                    vill.setBlock(village_cursor.getString(village_cursor.getColumnIndex("Block")));
-                    vill.setDistrict(village_cursor.getString(village_cursor.getColumnIndex("District")));
-                    vill.setState(village_cursor.getString(village_cursor.getColumnIndex("State")));
-                    vill.setCRLId(village_cursor.getString(village_cursor.getColumnIndex("CRLId")));
-                    villages.add(vill);
-                    village_cursor.moveToNext();
+        if (FastSave.getInstance().getBoolean(PD_Constant.READ_DATA_FROM_DB, false)) {
+            //populate villages
+            try {
+                Cursor village_cursor = db.rawQuery("SELECT * FROM Village", null);
+                List<Modal_Village> villages = new ArrayList<>();
+                if (village_cursor.moveToFirst()) {
+                    while (!village_cursor.isAfterLast()) {
+                        Modal_Village vill = new Modal_Village();
+                        vill.setVillageId(village_cursor.getInt(village_cursor.getColumnIndex("VillageId")));
+                        vill.setVillageCode(village_cursor.getString(village_cursor.getColumnIndex("VillageCode")));
+                        vill.setVillageName(village_cursor.getString(village_cursor.getColumnIndex("VillageName")));
+                        vill.setBlock(village_cursor.getString(village_cursor.getColumnIndex("Block")));
+                        vill.setDistrict(village_cursor.getString(village_cursor.getColumnIndex("District")));
+                        vill.setState(village_cursor.getString(village_cursor.getColumnIndex("State")));
+                        vill.setCRLId(village_cursor.getString(village_cursor.getColumnIndex("CRLId")));
+                        villages.add(vill);
+                        village_cursor.moveToNext();
+                    }
                 }
+                villageDao.insertAllVillages(villages);
+                village_cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            villageDao.insertAllVillages(villages);
-            village_cursor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //populate crls
-        try {
-            Cursor crl_cursor = db.rawQuery("SELECT * FROM CRL", null);
-            List<Modal_Crl> crls = new ArrayList<>();
-            if (crl_cursor.moveToFirst()) {
-                while (!crl_cursor.isAfterLast()) {
-                    Modal_Crl crl = new Modal_Crl();
-                    crl.setCRLId(crl_cursor.getString(crl_cursor.getColumnIndex("CRLId")));
-                    crl.setRoleId(crl_cursor.getString(crl_cursor.getColumnIndex("RoleId")));
-                    crl.setRoleName(crl_cursor.getString(crl_cursor.getColumnIndex("RoleName")));
-                    crl.setProgramId(crl_cursor.getString(crl_cursor.getColumnIndex("ProgramId")));
-                    crl.setProgramName(crl_cursor.getString(crl_cursor.getColumnIndex("ProgramName")));
-                    crl.setState(crl_cursor.getString(crl_cursor.getColumnIndex("State")));
-                    crl.setFirstName(crl_cursor.getString(crl_cursor.getColumnIndex("FirstName")));
-                    crl.setLastName(crl_cursor.getString(crl_cursor.getColumnIndex("LastName")));
-                    crl.setMobile(crl_cursor.getString(crl_cursor.getColumnIndex("Mobile")));
-                    crl.setEmail(crl_cursor.getString(crl_cursor.getColumnIndex("Email")));
-                    crl.setBlock(crl_cursor.getString(crl_cursor.getColumnIndex("Block")));
-                    crl.setDistrict(crl_cursor.getString(crl_cursor.getColumnIndex("District")));
-                    crl.setUserName(crl_cursor.getString(crl_cursor.getColumnIndex("UserName")));
-                    crl.setPassword(crl_cursor.getString(crl_cursor.getColumnIndex("Password")));
-                    crls.add(crl);
-                    crl_cursor.moveToNext();
+            //populate crls
+            try {
+                Cursor crl_cursor = db.rawQuery("SELECT * FROM CRL", null);
+                List<Modal_Crl> crls = new ArrayList<>();
+                if (crl_cursor.moveToFirst()) {
+                    while (!crl_cursor.isAfterLast()) {
+                        Modal_Crl crl = new Modal_Crl();
+                        crl.setCRLId(crl_cursor.getString(crl_cursor.getColumnIndex("CRLId")));
+                        crl.setRoleId(crl_cursor.getString(crl_cursor.getColumnIndex("RoleId")));
+                        crl.setRoleName(crl_cursor.getString(crl_cursor.getColumnIndex("RoleName")));
+                        crl.setProgramId(crl_cursor.getString(crl_cursor.getColumnIndex("ProgramId")));
+                        crl.setProgramName(crl_cursor.getString(crl_cursor.getColumnIndex("ProgramName")));
+                        crl.setState(crl_cursor.getString(crl_cursor.getColumnIndex("State")));
+                        crl.setFirstName(crl_cursor.getString(crl_cursor.getColumnIndex("FirstName")));
+                        crl.setLastName(crl_cursor.getString(crl_cursor.getColumnIndex("LastName")));
+                        crl.setMobile(crl_cursor.getString(crl_cursor.getColumnIndex("Mobile")));
+                        crl.setEmail(crl_cursor.getString(crl_cursor.getColumnIndex("Email")));
+                        crl.setBlock(crl_cursor.getString(crl_cursor.getColumnIndex("Block")));
+                        crl.setDistrict(crl_cursor.getString(crl_cursor.getColumnIndex("District")));
+                        crl.setUserName(crl_cursor.getString(crl_cursor.getColumnIndex("UserName")));
+                        crl.setPassword(crl_cursor.getString(crl_cursor.getColumnIndex("Password")));
+                        crls.add(crl);
+                        crl_cursor.moveToNext();
+                    }
                 }
+                crLdao.insertAllCRL(crls);
+                crl_cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            crLdao.insertAllCRL(crls);
-            crl_cursor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //populate groups
-        try {
-            Cursor grp_cursor = db.rawQuery("SELECT * FROM Groups", null);
-            List<Modal_Groups> groups = new ArrayList<>();
-            if (grp_cursor.moveToFirst()) {
-                while (!grp_cursor.isAfterLast()) {
-                    Modal_Groups grp = new Modal_Groups();
-                    grp.setGroupId(grp_cursor.getString(grp_cursor.getColumnIndex("GroupId")));
-                    grp.setGroupName(grp_cursor.getString(grp_cursor.getColumnIndex("GroupName")));
-                    grp.setVillageId(grp_cursor.getString(grp_cursor.getColumnIndex("VillageId")));
-                    grp.setProgramId(grp_cursor.getInt(grp_cursor.getColumnIndex("ProgramId")));
-                    grp.setGroupCode(grp_cursor.getString(grp_cursor.getColumnIndex("GroupCode")));
-                    grp.setSchoolName(grp_cursor.getString(grp_cursor.getColumnIndex("SchoolName")));
-                    grp.setVIllageName(grp_cursor.getString(grp_cursor.getColumnIndex("VIllageName")));
-                    grp.setDeviceId(grp_cursor.getString(grp_cursor.getColumnIndex("DeviceId")));
-                    groups.add(grp);
-                    grp_cursor.moveToNext();
+            //populate groups
+            try {
+                Cursor grp_cursor = db.rawQuery("SELECT * FROM Groups", null);
+                List<Modal_Groups> groups = new ArrayList<>();
+                if (grp_cursor.moveToFirst()) {
+                    while (!grp_cursor.isAfterLast()) {
+                        Modal_Groups grp = new Modal_Groups();
+                        grp.setGroupId(grp_cursor.getString(grp_cursor.getColumnIndex("GroupId")));
+                        grp.setGroupName(grp_cursor.getString(grp_cursor.getColumnIndex("GroupName")));
+                        grp.setVillageId(grp_cursor.getString(grp_cursor.getColumnIndex("VillageId")));
+                        grp.setProgramId(grp_cursor.getInt(grp_cursor.getColumnIndex("ProgramId")));
+                        grp.setGroupCode(grp_cursor.getString(grp_cursor.getColumnIndex("GroupCode")));
+                        grp.setSchoolName(grp_cursor.getString(grp_cursor.getColumnIndex("SchoolName")));
+                        grp.setVIllageName(grp_cursor.getString(grp_cursor.getColumnIndex("VIllageName")));
+                        grp.setDeviceId(grp_cursor.getString(grp_cursor.getColumnIndex("DeviceId")));
+                        groups.add(grp);
+                        grp_cursor.moveToNext();
+                    }
                 }
+                groupDao.insertAllGroups(groups);
+                grp_cursor.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            groupDao.insertAllGroups(groups);
-            grp_cursor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //populate students
-        try {
-            Cursor stu_cursor = db.rawQuery("SELECT * FROM Students", null);
-            List<Modal_Student> students = new ArrayList<>();
-            if (stu_cursor.moveToFirst()) {
-                while (!stu_cursor.isAfterLast()) {
-                    Modal_Student stu = new Modal_Student();
-                    stu.setGroupId(stu_cursor.getString(stu_cursor.getColumnIndex("GroupId")));
-                    stu.setStudentId(stu_cursor.getString(stu_cursor.getColumnIndex("StudentId")));
-                    stu.setFirstName(stu_cursor.getString(stu_cursor.getColumnIndex("FirstName")));
-                    stu.setMiddleName(stu_cursor.getString(stu_cursor.getColumnIndex("MiddleName")));
-                    stu.setLastName(stu_cursor.getString(stu_cursor.getColumnIndex("LastName")));
-                    stu.setStud_Class(stu_cursor.getString(stu_cursor.getColumnIndex("Stud_Class")));
-                    stu.setStud_Class(stu_cursor.getString(stu_cursor.getColumnIndex("Stud_Class")));
-                    stu.setAge(stu_cursor.getString(stu_cursor.getColumnIndex("Age")));
-                    stu.setGender(stu_cursor.getString(stu_cursor.getColumnIndex("Gender")));
-                    if (stu.getFirstName() == null || stu.getFirstName().isEmpty())
-                        stu.setFullName(stu_cursor.getString(stu_cursor.getColumnIndex("FullName")));
-                    else
-                        stu.setFullName(stu.getFirstName() + " " + stu.getMiddleName() + " " + stu.getLastName());
-                    stu.setSentFlag(1);
-                    //                    stu.setGroupName();
-                    students.add(stu);
-                    stu_cursor.moveToNext();
+            //populate students
+            try {
+                Cursor stu_cursor = db.rawQuery("SELECT * FROM Students", null);
+                List<Modal_Student> students = new ArrayList<>();
+                if (stu_cursor.moveToFirst()) {
+                    while (!stu_cursor.isAfterLast()) {
+                        Modal_Student stu = new Modal_Student();
+                        stu.setGroupId(stu_cursor.getString(stu_cursor.getColumnIndex("GroupId")));
+                        stu.setStudentId(stu_cursor.getString(stu_cursor.getColumnIndex("StudentId")));
+                        stu.setFirstName(stu_cursor.getString(stu_cursor.getColumnIndex("FirstName")));
+                        stu.setMiddleName(stu_cursor.getString(stu_cursor.getColumnIndex("MiddleName")));
+                        stu.setLastName(stu_cursor.getString(stu_cursor.getColumnIndex("LastName")));
+                        stu.setStud_Class(stu_cursor.getString(stu_cursor.getColumnIndex("Stud_Class")));
+                        stu.setStud_Class(stu_cursor.getString(stu_cursor.getColumnIndex("Stud_Class")));
+                        stu.setAge(stu_cursor.getString(stu_cursor.getColumnIndex("Age")));
+                        stu.setGender(stu_cursor.getString(stu_cursor.getColumnIndex("Gender")));
+                        if (stu.getFirstName() == null || stu.getFirstName().isEmpty())
+                            stu.setFullName(stu_cursor.getString(stu_cursor.getColumnIndex("FullName")));
+                        else
+                            stu.setFullName(stu.getFirstName() + " " + stu.getMiddleName() + " " + stu.getLastName());
+                        stu.setSentFlag(1);
+                        //                    stu.setGroupName();
+                        students.add(stu);
+                        stu_cursor.moveToNext();
+                    }
                 }
+                studentDao.insertAllStudents(students);
+                stu_cursor.close();
+                FastSave.getInstance().saveBoolean(PD_Constant.READ_DATA_FROM_DB, false);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            studentDao.insertAllStudents(students);
-            stu_cursor.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 

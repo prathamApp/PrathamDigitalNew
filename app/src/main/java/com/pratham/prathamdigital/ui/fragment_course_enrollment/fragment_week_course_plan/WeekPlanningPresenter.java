@@ -1,11 +1,15 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Model_ContentProgress;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.models.Model_CourseExperience;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -14,6 +18,11 @@ import com.pratham.prathamdigital.util.PD_Utility;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -130,9 +139,15 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     @Override
     public void addCourseToDb(String week, Modal_ContentDetail selectedCourse, Calendar startDate, Calendar endDate) {
         String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group");
-        Model_CourseEnrollment isCourseAlreadyEnrolled = PrathamApplication.courseDao.
-                checkIfCourseEnrolled(selectedCourse.getNodeid(), groupId, week);
-        if (isCourseAlreadyEnrolled == null) {
+        List<Model_CourseEnrollment> courseEnrollments = enrolledCoursesFromDb(week, groupId);
+        boolean isCourseAlreadyEnrolled = false;
+        for (Model_CourseEnrollment cen : Objects.requireNonNull(courseEnrollments)) {
+            if (selectedCourse.getNodeid().equalsIgnoreCase(cen.getCourseDetail().getNodeid())) {
+                isCourseAlreadyEnrolled = true;
+                break;
+            }
+        }
+        if (!isCourseAlreadyEnrolled) {
             Model_CourseEnrollment courseEnrollment = new Model_CourseEnrollment();
             courseEnrollment.setCoachVerificationDate("");
             courseEnrollment.setCoachVerified(false);
@@ -190,7 +205,7 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
 
     @Background
     @Override
-    public void markCoursesVerified(List<Model_CourseEnrollment> enrollments, String imagePath) {
+    public void markCoursesVerified(List<Model_CourseEnrollment> enrollments, String imagePath, String week) {
         List<Model_CourseEnrollment> temp = new ArrayList<>(enrollments);
         temp.remove(temp.size() - 1); //to remove the null item i.e footer item
         for (Model_CourseEnrollment mce : temp) {
@@ -201,6 +216,17 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
                 mce.setCourseExperience(updateCourseStatusInExperience(mce));
                 mce.setCourse_status(readCourseStatusFromExperience(mce));
                 PrathamApplication.courseDao.updateCourse(mce);
+
+                //update Course Progress
+                String stuid = FastSave.getInstance().getString(PD_Constant.GROUPID, "NA");
+                Model_ContentProgress contentProgress = PrathamApplication.contentProgressDao.getCourse(stuid, mce.getCourseId(), week);
+                if (contentProgress != null) {
+                    //that means the course was finished earlier, the course is getting enrolled again.
+                    contentProgress.setLabel("");
+                    contentProgress.setProgressPercentage("0");
+                    contentProgress.setSentFlag(false);
+                    PrathamApplication.contentProgressDao.updateProgress(contentProgress);
+                }
             }
         }
         planningView.loadEnrolledCourses(temp);
@@ -220,5 +246,28 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
         List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
         Collections.sort(childs, (o1, o2) -> o1.getNodetitle().compareToIgnoreCase(o2.getNodetitle()));
         planningView.showChilds(c_enrolled, childs, detail.getNodeid());
+    }
+
+    @Background
+    @Override
+    public void savePhoto(Intent data) {
+        Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+        File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
+        if (!imagesFolder.exists()) imagesFolder.mkdirs();
+        File image = new File(imagesFolder, FastSave.getInstance().getString(PD_Constant.SESSIONID, "na") + "_WEEK_1.jpg");
+        Uri capturedImageUri = PD_Utility.getImageUri(PrathamApplication.getInstance(), Objects.requireNonNull(photo));
+        String filePath = PD_Utility.getRealPathFromURI(capturedImageUri, PrathamApplication.getInstance());
+        //copy file to another directory
+        try {
+            FileChannel src = new FileInputStream(filePath).getChannel();
+            FileChannel dst = new FileOutputStream(image).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        capturedImageUri = Uri.fromFile(image);
+        planningView.updateCoachPhoto(capturedImageUri);
     }
 }

@@ -1,7 +1,7 @@
 package com.pratham.prathamdigital.ui.download_list;
 
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.bottomsheet.SuperBottomSheetFragment;

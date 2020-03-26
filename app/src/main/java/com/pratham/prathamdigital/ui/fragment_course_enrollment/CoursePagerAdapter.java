@@ -1,9 +1,9 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment;
 
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.Fragment_EnrolledCourses_;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.Fragment_NewCourses_;

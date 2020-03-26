@@ -2,11 +2,12 @@ package com.pratham.prathamdigital.ui.content_player.web_view;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
-import android.support.v4.app.Fragment;
 import android.view.View;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+
+import androidx.fragment.app.Fragment;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;

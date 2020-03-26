@@ -2,8 +2,9 @@ package com.pratham.prathamdigital.custom.file_picker;
 
 import android.content.Context;
 import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v4.content.FileProvider;
+
+import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import com.pratham.prathamdigital.BuildConfig;
 

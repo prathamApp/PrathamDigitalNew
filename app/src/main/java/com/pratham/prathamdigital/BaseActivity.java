@@ -11,13 +11,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.gson.Gson;
@@ -228,8 +229,8 @@ public class BaseActivity extends AppCompatActivity {
         //Utility initialized for shuffling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
         Catcho.Builder(this)
-//                .activity(CatchoTransparentActivity.class)
-                .recipients("abc@gm.com")
+                .activity(CatchoTransparentActivity.class)
+//                .recipients("abc@gm.com")
                 .build();
         initializeConnectionService();
         initializeTTS();

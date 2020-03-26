@@ -20,7 +20,7 @@
             android:orientation="horizontal"
             android:weightSum="1">
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/internal_card"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_100sdp"
@@ -55,9 +55,9 @@
                         app:progressRadius="@dimen/_3sdp" />
 
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
 
-            <android.support.design.card.MaterialCardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/external_card"
                 android:layout_width="0dp"
                 android:layout_height="@dimen/_100sdp"
@@ -91,10 +91,10 @@
                         app:progress="2"
                         app:progressRadius="@dimen/_3sdp" />
                 </LinearLayout>
-            </android.support.design.card.MaterialCardView>
+            </com.google.android.material.card.MaterialCardView>
         </LinearLayout>
 
-        <android.support.design.card.MaterialCardView
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="@dimen/_150sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_alignParentBottom="true"
@@ -110,6 +110,6 @@
                 android:layout_gravity="center"
                 android:text="Import Data"
                 android:textColor="@color/white" />
-        </android.support.design.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

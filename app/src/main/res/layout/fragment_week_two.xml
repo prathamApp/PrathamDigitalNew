@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_card_courses"
     android:layout_width="match_parent"
@@ -22,7 +22,7 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/_25sdp" />
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_courses_enrolled"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -38,9 +38,9 @@
         android:focusable="true"
         android:visibility="gone">
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_selectCourse"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
     </RelativeLayout>
-</android.support.design.card.MaterialCardView>
+</com.google.android.material.card.MaterialCardView>

@@ -6,12 +6,12 @@ import android.animation.ObjectAnimator
 import android.annotation.TargetApi
 import android.content.Context
 import android.os.Build
-import android.support.v4.view.ViewCompat
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewAnimationUtils
 import android.widget.FrameLayout
+import androidx.core.view.ViewCompat
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 import com.pratham.prathamdigital.R
 import kotlin.properties.Delegates
 

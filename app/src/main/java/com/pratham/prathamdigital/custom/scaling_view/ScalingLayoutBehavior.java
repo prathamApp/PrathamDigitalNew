@@ -1,11 +1,12 @@
 package com.pratham.prathamdigital.custom.scaling_view;
 
 import android.content.Context;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
+
+import com.google.android.material.appbar.AppBarLayout;
 import com.pratham.prathamdigital.R;
 
 public class ScalingLayoutBehavior extends CoordinatorLayout.Behavior<ScalingLayout> {

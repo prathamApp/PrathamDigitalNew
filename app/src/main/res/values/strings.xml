@@ -200,7 +200,7 @@
         <item>View Statistics</item>
         <item>Clear Data</item>
         <item>Pull Data</item>
-        <item>Change Content Folder</item>
+        <item>Read village data from DB</item>
     </string-array>
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>

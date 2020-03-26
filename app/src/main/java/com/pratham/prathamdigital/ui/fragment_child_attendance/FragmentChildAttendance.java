@@ -1,18 +1,24 @@
 package com.pratham.prathamdigital.ui.fragment_child_attendance;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -21,6 +27,8 @@ import com.pratham.prathamdigital.custom.CircularRevelLayout;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
+import com.pratham.prathamdigital.custom.imageviews.FrescoFaceDetector;
+import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.Modal_Session;
@@ -39,6 +47,11 @@ import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -51,6 +64,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
 
     private static final String TAG = FragmentChildAttendance.class.getSimpleName();
     private static final int INITIALIZE_STUDENTS = 1;
+    private static final int CAMERA_REQUEST = 2;
+
     @ViewById(R.id.chid_attendance_reveal)
     CircularRevelLayout chid_attendance_reveal;
     @ViewById(R.id.rv_child)
@@ -67,9 +82,9 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     private int revealX;
     private int revealY;
     private String groupID = "";
+    private String stud_id;
     @SuppressLint("HandlerLeak")
-    private final
-    Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -99,8 +114,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @AfterViews
     public void initialize() {
         chid_attendance_reveal.setListener(this);
-//        if (PrathamApplication.isTablet) btn_talk.setVisibility(View.GONE);
-//        else btn_talk.setVisibility(View.VISIBLE);
+        FrescoFaceDetector.initialize(getActivity());
         if (getArguments() != null) {
             revealX = getArguments().getInt(PD_Constant.REVEALX, 0);
             revealY = getArguments().getInt(PD_Constant.REVEALY, 0);
@@ -130,6 +144,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     @Override
     public void childItemClicked(Modal_Student stud, int position) {
         PrathamApplication.bubble_mp.start();
+//        ttsService.play(stud.getFullName());
         for (Modal_Student stu : students) {
             if (stu.getStudentId().equalsIgnoreCase(stud.getStudentId())) {
                 if (stu.isChecked()) stu.setChecked(false);
@@ -266,4 +281,59 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
     }*/
+
+    @Override
+    public void openCamera(String std_id) {
+        this.stud_id = std_id;
+        KotlinPermissions.with(Objects.requireNonNull(getActivity()))
+                .permissions(Manifest.permission.CAMERA)
+                .onAccepted(permissionResult -> {
+                    Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+//                    cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, capturedImageUri);
+                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
+                })
+                .ask();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+            copyPhotoAndUpdateList(getActivity(), photo, stud_id);
+        }
+    }
+
+    @Background
+    public void copyPhotoAndUpdateList(FragmentActivity activity, Bitmap photo, String stud_id) {
+        File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.ATTENDANCE_IMAGE_FOLDER);
+        if (!imagesFolder.exists()) imagesFolder.mkdirs();
+        File image = new File(imagesFolder, stud_id + ".jpg");
+        Uri capturedImageUri = PD_Utility.getImageUri(Objects.requireNonNull(getActivity()), Objects.requireNonNull(photo));
+        String filePath = PD_Utility.getRealPathFromURI(capturedImageUri, getActivity());
+        //copy file to another directory
+        try {
+            FileChannel src = new FileInputStream(filePath).getChannel();
+            FileChannel dst = new FileOutputStream(image).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        capturedImageUri = Uri.fromFile(image);
+        updateChildList(capturedImageUri);
+    }
+
+    @UiThread
+    public void updateChildList(Uri capturedImageUri) {
+        childAdapter.updateItem(stud_id, capturedImageUri);
+        PrathamApplication.studentDao.updateStudentAvatar(stud_id, capturedImageUri.getPath());
+    }
+
+    @Override
+    public void onDestroy() {
+        FrescoFaceDetector.releaseDetector();
+        super.onDestroy();
+    }
 }

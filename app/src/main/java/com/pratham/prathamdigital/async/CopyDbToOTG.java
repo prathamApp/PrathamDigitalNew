@@ -2,7 +2,9 @@ package com.pratham.prathamdigital.async;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.provider.DocumentFile;
+import android.util.Log;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -12,6 +14,7 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 
 import static com.pratham.prathamdigital.dbclasses.PrathamDatabase.DB_NAME;
@@ -37,24 +40,55 @@ public class CopyDbToOTG extends AsyncTask {
                 DocumentFile file = thisTabletFolder.findFile(f.getName());
                 if (file != null) file.delete();
                 file = thisTabletFolder.createFile("image", f.getName());
-                OutputStream out = PrathamApplication.getInstance().getContentResolver().openOutputStream(file.getUri());
-                FileInputStream in = new FileInputStream(f.getAbsolutePath());
-                byte[] buffer = new byte[1024];
-                int read;
-                while ((read = in.read(buffer)) != -1) {
-                    out.write(buffer, 0, read);
-                }
-                in.close();
-                // You have now copied the file
-                out.flush();
-                out.close();
+                copyyFile(file, f);
             }
+
+            //copy helper folder
+            File internal_helper = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
+            copyActivityData(internal_helper, thisTabletFolder);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
+    private void copyActivityData(File activityPhotosFile, DocumentFile parentFolder) {
+        DocumentFile currentFolder = parentFolder.findFile(activityPhotosFile.getName());
+        if (currentFolder == null)
+            currentFolder = parentFolder.createDirectory(activityPhotosFile.getName());
+        File[] files = activityPhotosFile.listFiles();
+        for (File file : files) {
+            if (file.isDirectory()) {
+                Log.d("Files", "\nDirectory : " + file.getName());
+                copyActivityData(file, currentFolder);
+            } else {
+                Log.d("Files", "\nFile : " + file.getName());
+                DocumentFile dFile = currentFolder.createFile("image", file.getName());
+                if (dFile != null) {
+                    copyyFile(dFile, file);
+                }
+            }
+        }
+    }
+
+    private void copyyFile(DocumentFile outputFile, File inputFile) {
+        try {
+            OutputStream out = PrathamApplication.getInstance().getContentResolver().openOutputStream(outputFile.getUri());
+            FileInputStream in = new FileInputStream(inputFile.getAbsolutePath());
+            byte[] buffer = new byte[1024];
+            int read;
+            while ((read = in.read(buffer)) != -1) {
+                out.write(buffer, 0, read);
+            }
+            in.close();
+            out.flush();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     protected void onPostExecute(Object o) {

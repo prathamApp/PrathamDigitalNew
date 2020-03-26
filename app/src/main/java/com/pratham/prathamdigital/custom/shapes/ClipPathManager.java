@@ -1,8 +1,10 @@
 package com.pratham.prathamdigital.custom.shapes;
+
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.Nullable;
 
 public class ClipPathManager implements ClipManager {
 

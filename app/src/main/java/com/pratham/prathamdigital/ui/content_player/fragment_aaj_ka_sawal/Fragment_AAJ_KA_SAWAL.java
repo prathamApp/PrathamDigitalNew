@@ -4,12 +4,13 @@ import android.annotation.SuppressLint;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Message;
-import android.support.design.card.MaterialCardView;
-import android.support.v4.app.Fragment;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+
+import com.google.android.material.card.MaterialCardView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;

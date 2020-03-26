@@ -12,21 +12,6 @@ import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.annotation.ColorInt
-import android.support.annotation.DrawableRes
-import android.support.annotation.LayoutRes
-import android.support.annotation.StringRes
-import android.support.v4.util.Pools
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.PointerIconCompat
-import android.support.v4.view.ViewCompat
-import android.support.v4.view.ViewPager
-import android.support.v4.view.animation.FastOutLinearInInterpolator
-import android.support.v4.view.animation.FastOutSlowInInterpolator
-import android.support.v4.widget.TextViewCompat
-import android.support.v7.app.ActionBar
-import android.support.v7.content.res.AppCompatResources
-import android.support.v7.widget.TooltipCompat
 import android.text.Layout
 import android.text.TextUtils
 import android.util.AttributeSet
@@ -40,6 +25,21 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.annotation.DrawableRes
+import androidx.annotation.LayoutRes
+import androidx.annotation.StringRes
+import androidx.appcompat.app.ActionBar
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.TooltipCompat
+import androidx.core.util.Pools
+import androidx.core.view.PointerIconCompat
+import androidx.core.view.ViewCompat
+import androidx.core.widget.TextViewCompat
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
 import com.pratham.prathamdigital.R
 import java.lang.ref.WeakReference
 import java.util.*
@@ -1280,14 +1280,14 @@ class TouchableTabLayout constructor(context: Context,
                 // If there isn't a custom view, we'll us our own in-built layouts
                 if (mIconView == null) {
                     val iconView = LayoutInflater.from(context)
-                            .inflate(android.support.design.R.layout.design_layout_tab_icon,
+                            .inflate(R.layout.design_layout_tab_icon,
                                     this, false) as ImageView
                     addView(iconView, 0)
                     mIconView = iconView
                 }
                 if (mTextView == null) {
                     val textView = LayoutInflater.from(context)
-                            .inflate(android.support.design.R.layout.design_layout_tab_text,
+                            .inflate(R.layout.design_layout_tab_text,
                                     this, false) as TextView
                     addView(textView)
                     mTextView = textView

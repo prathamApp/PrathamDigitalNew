@@ -2,8 +2,9 @@ package com.pratham.prathamdigital.custom.shapes;
 
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public interface ClipManager {
     @NonNull

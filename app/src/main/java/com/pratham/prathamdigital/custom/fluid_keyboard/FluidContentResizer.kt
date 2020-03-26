@@ -3,8 +3,8 @@ package com.pratham.prathamdigital.custom.fluid_keyboard
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.app.Activity
-import android.support.v4.view.animation.FastOutSlowInInterpolator
 import android.view.View
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator
 
 object FluidContentResizer {
 

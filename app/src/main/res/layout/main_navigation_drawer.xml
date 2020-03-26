@@ -16,7 +16,7 @@
         android:layout_height="@dimen/_50sdp"
         android:gravity="center">
 
-        <android.support.design.card.MaterialCardView
+        <com.google.android.material.card.MaterialCardView
             android:id="@+id/drawer_profile_card"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
@@ -30,7 +30,7 @@
                 android:layout_height="match_parent"
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true" />
-        </android.support.design.card.MaterialCardView>
+        </com.google.android.material.card.MaterialCardView>
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/drawer_profile_name"
@@ -49,7 +49,7 @@
             android:textColor="@android:color/black" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_drawer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

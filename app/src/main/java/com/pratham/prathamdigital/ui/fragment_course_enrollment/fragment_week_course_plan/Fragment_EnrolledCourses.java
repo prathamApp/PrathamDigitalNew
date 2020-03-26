@@ -8,20 +8,19 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.facebook.drawee.view.SimpleDraweeView;
-import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
@@ -66,7 +65,6 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
     @Bean(WeekPlanningPresenter.class)
     PlanningContract.weekOnePlanningPresenter planningPresenter;
     RV_CourseAdapter adapter;
-    private Uri capturedImageUri;
 
 
     @SuppressLint("SetTextI18n")
@@ -135,7 +133,7 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
     @Override
     public void verifiedSuccessfully(Model_CourseEnrollment model_courseEnrollment) {
         if (model_courseEnrollment != null) {
-            capturedImageUri = Uri.fromFile(new File(model_courseEnrollment.getCoachImage()));
+            Uri capturedImageUri = Uri.fromFile(new File(model_courseEnrollment.getCoachImage()));
             coach_image.setImageURI(capturedImageUri);
             coach_image.setVisibility(View.VISIBLE);
         }
@@ -151,11 +149,6 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
                 .permissions(Manifest.permission.CAMERA)
                 .onAccepted(permissionResult -> {
                     Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                    File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
-                    if (!imagesFolder.exists()) imagesFolder.mkdirs();
-                    File image = new File(imagesFolder, FastSave.getInstance().getString(PD_Constant.SESSIONID, "na") + "_WEEK_1.jpg");
-                    capturedImageUri = Uri.fromFile(image);
-                    cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, capturedImageUri);
                     startActivityForResult(cameraIntent, CAMERA_REQUEST);
                 })
                 .ask();
@@ -166,14 +159,18 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             coach_image.setVisibility(View.VISIBLE);
-            coach_image.setImageURI(capturedImageUri);
-            planningPresenter.markCoursesVerified(adapter.getData(),
-                    PD_Utility.getRealPathFromURI(capturedImageUri, Objects.requireNonNull(getActivity())));
-            verifiedSuccessfully(null);
-        } else if (requestCode == COURSE_ACTIVITY && resultCode == Activity.RESULT_OK) {
+            planningPresenter.savePhoto(data);
+        } else if (requestCode == COURSE_ACTIVITY && resultCode == Activity.RESULT_OK)
             planningPresenter.fetchEnrolledCourses("WEEK_1");
-//            planningPresenter.checkProgress("WEEK_1", data.getStringExtra(PD_Constant.COURSE_ID));
-        }
+    }
+
+    @UiThread
+    @Override
+    public void updateCoachPhoto(Uri capturedImageUri) {
+        coach_image.setImageURI(capturedImageUri);
+        planningPresenter.markCoursesVerified(adapter.getData(),
+                PD_Utility.getRealPathFromURI(capturedImageUri, Objects.requireNonNull(getActivity())), "WEEK_1");
+        verifiedSuccessfully(null);
     }
 
     @Override

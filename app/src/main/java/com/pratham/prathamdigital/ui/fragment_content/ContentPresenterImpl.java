@@ -3,8 +3,9 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;

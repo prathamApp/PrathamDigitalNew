@@ -6,15 +6,15 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.CallSuper
-import android.support.annotation.ColorInt
-import android.support.annotation.Dimension
-import android.support.annotation.UiThread
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetDialogFragment
-import android.support.v4.content.ContextCompat
 import android.util.TypedValue
 import android.view.*
+import androidx.annotation.CallSuper
+import androidx.annotation.ColorInt
+import androidx.annotation.Dimension
+import androidx.annotation.UiThread
+import androidx.core.content.ContextCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.pratham.prathamdigital.R
 
 abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {

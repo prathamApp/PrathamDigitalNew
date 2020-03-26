@@ -2,9 +2,10 @@ package com.pratham.prathamdigital.custom.scaling_view;
 
 import android.graphics.Outline;
 import android.os.Build;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+
+import androidx.annotation.RequiresApi;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class ScalingLayoutOutlineProvider extends ViewOutlineProvider {

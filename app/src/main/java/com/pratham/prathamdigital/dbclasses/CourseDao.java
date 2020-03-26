@@ -1,10 +1,10 @@
 package com.pratham.prathamdigital.dbclasses;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
 
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 
@@ -17,10 +17,6 @@ public interface CourseDao {
 
     @Query("Select * from COURSEENROLLED where sentFlag=0")
     List<Model_CourseEnrollment> fetchUnpushedCourses();
-
-    @Query("Select * from COURSEENROLLED where courseId=:course_Id and groupId=:grp_id " +
-            "and planFromDate LIKE '%' || :week || '%' and coachVerified=0")
-    Model_CourseEnrollment checkIfCourseEnrolled(String course_Id, String grp_id, String week);
 
     @Query("Select * from COURSEENROLLED where groupId=:grp_id " +
             "and planFromDate LIKE '%' || :week || '%' and language=:language")

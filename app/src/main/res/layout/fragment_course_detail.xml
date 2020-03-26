@@ -8,7 +8,7 @@
     android:background="@drawable/ic_course_bkgd"
     android:weightSum="1">
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/card_course_header"
         android:layout_width="0dp"
         android:layout_height="match_parent"
@@ -92,9 +92,9 @@
                     tools:ignore="RelativeOverlap" />
             </RelativeLayout>
         </RelativeLayout>
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 
-    <android.support.v7.widget.RecyclerView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_course_childs"
         android:layout_width="0dp"
         android:layout_height="match_parent"

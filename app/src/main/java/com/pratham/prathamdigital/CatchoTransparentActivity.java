@@ -1,8 +1,9 @@
 package com.pratham.prathamdigital;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.pratham.prathamdigital.custom.ProcessPhoenix;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;

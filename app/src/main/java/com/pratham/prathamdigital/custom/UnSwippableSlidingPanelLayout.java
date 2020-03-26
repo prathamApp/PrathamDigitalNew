@@ -1,10 +1,11 @@
 package com.pratham.prathamdigital.custom;
 
 import android.content.Context;
-import android.support.v4.widget.SlidingPaneLayout;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
+
+import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 public class UnSwippableSlidingPanelLayout extends SlidingPaneLayout {
     public UnSwippableSlidingPanelLayout(Context context) {

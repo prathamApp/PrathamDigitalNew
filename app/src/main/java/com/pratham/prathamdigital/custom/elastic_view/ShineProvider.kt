@@ -1,8 +1,8 @@
 package com.pratham.prathamdigital.custom.elastic_view
 
 import android.graphics.*
-import android.support.v4.content.ContextCompat
 import android.view.View
+import androidx.core.content.ContextCompat
 import com.pratham.prathamdigital.R
 
 internal class ShineProvider(parentView: View) : CentrePointProvider(parentView) {

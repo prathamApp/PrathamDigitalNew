@@ -5,22 +5,34 @@ import android.graphics.Canvas;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 
-public class IndieFlowerTextView extends android.support.v7.widget.AppCompatTextView {
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.util.PD_Constant;
+
+public class IndieFlowerTextView extends androidx.appcompat.widget.AppCompatTextView {
     public IndieFlowerTextView(Context context) {
         super(context);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
+        Typeface face = null;
+        if (FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI).equalsIgnoreCase(PD_Constant.ORIYA))
+            face = Typeface.createFromAsset(context.getAssets(), "fonts/oriya.ttf");
+        else face = Typeface.createFromAsset(context.getAssets(), "fonts/Fred.ttf");
         this.setTypeface(face);
     }
 
     public IndieFlowerTextView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
+        Typeface face = null;
+        if (FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI).equalsIgnoreCase(PD_Constant.ORIYA))
+            face = Typeface.createFromAsset(context.getAssets(), "fonts/oriya.ttf");
+        else face = Typeface.createFromAsset(context.getAssets(), "fonts/Fred.ttf");
         this.setTypeface(face);
     }
 
     public IndieFlowerTextView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        Typeface face = Typeface.createFromAsset(context.getAssets(), "fonts/FredokaOne.ttf");
+        Typeface face = null;
+        if (FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI).equalsIgnoreCase(PD_Constant.ORIYA))
+            face = Typeface.createFromAsset(context.getAssets(), "fonts/oriya.ttf");
+        else face = Typeface.createFromAsset(context.getAssets(), "fonts/Fred.ttf");
         this.setTypeface(face);
     }
 

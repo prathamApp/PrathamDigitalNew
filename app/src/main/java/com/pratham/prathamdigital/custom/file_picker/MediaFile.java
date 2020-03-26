@@ -1,8 +1,10 @@
 package com.pratham.prathamdigital.custom.file_picker;
+
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.support.annotation.IntDef;
+
+import androidx.annotation.IntDef;
 
 public class MediaFile implements Parcelable {
     public static final int TYPE_FILE = 0;

@@ -6,21 +6,21 @@ import android.content.DialogInterface.OnCancelListener
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.ColorInt
-import android.support.annotation.LayoutRes
-import android.support.design.widget.BottomSheetBehavior
-import android.support.design.widget.BottomSheetBehavior.BottomSheetCallback
-import android.support.design.widget.BottomSheetBehavior.State
-import android.support.design.widget.CoordinatorLayout
-import android.support.v4.view.AccessibilityDelegateCompat
-import android.support.v4.view.ViewCompat
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat
-import android.support.v7.app.AppCompatDialog
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
 import android.widget.FrameLayout
+import androidx.annotation.ColorInt
+import androidx.annotation.LayoutRes
+import androidx.appcompat.app.AppCompatDialog
+import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.view.AccessibilityDelegateCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.android.material.bottomsheet.BottomSheetBehavior.State
 import com.pratham.prathamdigital.R
 
 internal class SuperBottomSheetDialog : AppCompatDialog {

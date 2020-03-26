@@ -5,9 +5,9 @@ import android.content.res.Configuration
 import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.os.Build
-import android.support.annotation.ColorInt
 import android.util.TypedValue
 import android.view.View
+import androidx.annotation.ColorInt
 import com.pratham.prathamdigital.R
 
 //region NULL

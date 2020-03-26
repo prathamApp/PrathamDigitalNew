@@ -1,9 +1,10 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment;
 
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
 import android.widget.RelativeLayout;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.tab_bar.segmentTabLayout.OnTabSelectListener;

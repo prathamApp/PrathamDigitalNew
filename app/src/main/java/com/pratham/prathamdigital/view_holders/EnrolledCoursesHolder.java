@@ -1,16 +1,16 @@
 package com.pratham.prathamdigital.view_holders;
 
 import android.annotation.SuppressLint;
-import android.support.annotation.NonNull;
-import android.support.design.card.MaterialCardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.android.material.card.MaterialCardView;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.StepProgressBar;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan.PlanningContract;
@@ -21,7 +21,6 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
     private TextView item_course_index;
     private TextView item_en_course_name;
     private TextView item_en_course_detail;
-    private StepProgressBar item_step_bar;
     private ImageView iv_delete_course;
     private RelativeLayout item_view_course;
     private TextView item_course_status;
@@ -37,7 +36,7 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
         iv_delete_course = itemView.findViewById(R.id.iv_delete_course);
         item_course_status = itemView.findViewById(R.id.item_course_status);
         txt_course_action = itemView.findViewById(R.id.txt_course_action);
-        item_step_bar = itemView.findViewById(R.id.item_step_bar);
+//        item_step_bar = itemView.findViewById(R.id.item_step_bar);
         root_course = itemView.findViewById(R.id.root_course);
     }
 
@@ -52,11 +51,9 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
                 iv_delete_course.setVisibility(View.VISIBLE);
                 item_view_course.setVisibility(View.GONE);
                 item_course_status.setVisibility(View.GONE);
-                item_step_bar.setStep(0);
                 item_view_course.setOnClickListener(null);
                 break;
             case PD_Constant.COURSE_ENROLLED:
-                item_step_bar.setStep(1);
                 iv_delete_course.setVisibility(View.GONE);
                 item_view_course.setVisibility(View.VISIBLE);
                 item_course_status.setVisibility(View.VISIBLE);
@@ -65,7 +62,6 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
                 item_view_course.setOnClickListener(onClickListener);
                 break;
             case PD_Constant.COURSE_COMPLETED:
-                item_step_bar.setStep(2);
                 iv_delete_course.setVisibility(View.GONE);
                 item_view_course.setVisibility(View.VISIBLE);
                 item_course_status.setVisibility(View.VISIBLE);
@@ -74,7 +70,6 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
                 item_view_course.setOnClickListener(onClickListener);
                 break;
             case PD_Constant.ASSIGNMENT_SUBMITTED:
-                item_step_bar.setStep(3);
                 iv_delete_course.setVisibility(View.GONE);
                 item_view_course.setVisibility(View.VISIBLE);
                 item_course_status.setVisibility(View.VISIBLE);
@@ -83,7 +78,6 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
                 item_view_course.setOnClickListener(v -> planningView.provideFeedback(pos, c_Enrolled));
                 break;
             case PD_Constant.FEEDBACK_GIVEN:
-                item_step_bar.setStep(4);
                 iv_delete_course.setVisibility(View.GONE);
                 item_view_course.setVisibility(View.VISIBLE);
                 item_course_status.setVisibility(View.VISIBLE);

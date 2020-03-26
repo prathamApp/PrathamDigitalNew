@@ -1,6 +1,6 @@
 package com.pratham.prathamdigital.ui.fragment_share_recieve;
 
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 
 import com.pratham.prathamdigital.models.File_Model;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;

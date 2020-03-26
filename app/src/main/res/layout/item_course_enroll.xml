@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_course"
@@ -77,45 +77,35 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/item_footer"
-            android:layout_width="match_parent"
+        <com.pratham.prathamdigital.custom.shimmer_view.ShimmerFrameLayout
+            android:id="@+id/shimmering_status"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:layout_marginBottom="@dimen/_5sdp">
+            android:layout_margin="@dimen/_3sdp"
+            app:shimmer_auto_start="true"
+            app:shimmer_base_alpha="0.5"
+            app:shimmer_direction="left_to_right"
+            app:shimmer_duration="1500"
+            app:shimmer_repeat_mode="restart">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_course_status"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_3sdp"
                 android:drawableStart="@drawable/ic_tick"
                 android:drawablePadding="@dimen/_3sdp"
                 android:gravity="center_vertical"
                 android:textColor="@color/white"
+                android:textSize="@dimen/_12sdp"
                 android:visibility="gone"
                 tools:ignore="RelativeOverlap" />
-
-            <com.pratham.prathamdigital.custom.StepProgressBar
-                android:id="@+id/item_step_bar"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_10sdp"
-                android:layout_below="@id/item_course_status"
-                android:layout_marginTop="@dimen/_3sdp"
-                android:gravity="center_vertical"
-                app:step="0"
-                app:stepDoneColor="@color/white"
-                app:stepMargin="@dimen/_5sdp"
-                app:stepUndoneColor="@color/dark_grey"
-                app:step_max="4" />
-        </RelativeLayout>
+        </com.pratham.prathamdigital.custom.shimmer_view.ShimmerFrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/item_footer"
+            android:layout_above="@+id/shimmering_status"
             android:layout_below="@+id/item_course_index"
             android:layout_margin="@dimen/_3sdp"
             android:orientation="vertical"
@@ -127,7 +117,9 @@
                 android:layout_height="0dp"
                 android:layout_weight=".2"
                 android:textColor="@color/white"
-                android:textSize="@dimen/_25sdp" />
+                android:textSize="@dimen/_25sdp"
+                app:autoSizeMinTextSize="@dimen/_3sdp"
+                app:autoSizeTextType="uniform" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/item_en_course_detail"
@@ -140,4 +132,4 @@
                 app:autoSizeTextType="uniform" />
         </LinearLayout>
     </RelativeLayout>
-</android.support.design.card.MaterialCardView>
+</com.google.android.material.card.MaterialCardView>

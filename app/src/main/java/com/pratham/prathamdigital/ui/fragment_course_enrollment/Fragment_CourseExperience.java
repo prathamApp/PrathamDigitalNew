@@ -4,15 +4,18 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.Fragment;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.facebook.drawee.view.SimpleDraweeView;
@@ -40,10 +43,15 @@ import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
+import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Objects;
 
 @EFragment(R.layout.fragment_course_completed)
@@ -57,7 +65,6 @@ public class Fragment_CourseExperience extends Fragment implements StepperFormLi
     @ViewById(R.id.exp_coach_image)
     SimpleDraweeView exp_coach_image;
 
-    private Uri capturedImageUri;
     private Model_CourseEnrollment model_courseEnrollment;
     private BlurPopupWindow exitDialog;
     private Step_NewWords step_newWords;
@@ -120,12 +127,6 @@ public class Fragment_CourseExperience extends Fragment implements StepperFormLi
 
     private void verifyDetails() {
         Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
-        if (!imagesFolder.exists()) imagesFolder.mkdirs();
-        File image = new File(imagesFolder, FastSave.getInstance().getString(PD_Constant.SESSIONID, "na") +
-                (getArguments() != null ? getArguments().getString(PD_Constant.WEEK) : "na") + "_exp.jpg");
-        capturedImageUri = Uri.fromFile(image);
-        cameraIntent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, capturedImageUri);
         startActivityForResult(cameraIntent, CAMERA_REQUEST);
     }
 
@@ -134,10 +135,38 @@ public class Fragment_CourseExperience extends Fragment implements StepperFormLi
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             exp_coach_image.setVisibility(View.VISIBLE);
-            exp_coach_image.setImageURI(capturedImageUri);
-            completeAndUpdateCourseInDb(PD_Utility.getRealPathFromURI(capturedImageUri, Objects.requireNonNull(getActivity())));
-            new Handler().postDelayed(this::showKeepItUpDialog, 500);
+            copyPhotoAndUpdateList(getActivity(), data);
         }
+    }
+
+    @Background
+    public void copyPhotoAndUpdateList(FragmentActivity activity, Intent data) {
+        Bitmap photo = (Bitmap) Objects.requireNonNull(data.getExtras()).get("data");
+        File imagesFolder = new File(PrathamApplication.pradigiPath, PD_Constant.HELPER_FOLDER);
+        if (!imagesFolder.exists()) imagesFolder.mkdirs();
+        File image = new File(imagesFolder, FastSave.getInstance().getString(PD_Constant.SESSIONID, "na") +
+                (getArguments() != null ? getArguments().getString(PD_Constant.WEEK) : "na") + "_exp.jpg");
+        Uri capturedImageUri = PD_Utility.getImageUri(Objects.requireNonNull(getActivity()), Objects.requireNonNull(photo));
+        String filePath = PD_Utility.getRealPathFromURI(capturedImageUri, getActivity());
+        //copy file to another directory
+        try {
+            FileChannel src = new FileInputStream(filePath).getChannel();
+            FileChannel dst = new FileOutputStream(image).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        capturedImageUri = Uri.fromFile(image);
+        updateCoachPhoto(capturedImageUri);
+    }
+
+    @UiThread
+    public void updateCoachPhoto(Uri capturedImageUri) {
+        exp_coach_image.setImageURI(capturedImageUri);
+        completeAndUpdateCourseInDb(PD_Utility.getRealPathFromURI(capturedImageUri, Objects.requireNonNull(getActivity())));
+        new Handler().postDelayed(this::showKeepItUpDialog, 500);
     }
 
     @SuppressLint("SetTextI18n")

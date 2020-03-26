@@ -9,7 +9,8 @@ import android.net.NetworkInfo;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
+
+import androidx.core.content.ContextCompat;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.ContractShare;

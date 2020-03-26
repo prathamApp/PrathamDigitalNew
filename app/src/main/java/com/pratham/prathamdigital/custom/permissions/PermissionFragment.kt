@@ -1,8 +1,8 @@
 package com.pratham.prathamdigital.custom.permissions
 
 import android.content.pm.PackageManager
-import android.support.v4.app.Fragment
 import android.util.Log
+import androidx.fragment.app.Fragment
 import java.util.*
 import java.util.concurrent.ConcurrentLinkedQueue
 

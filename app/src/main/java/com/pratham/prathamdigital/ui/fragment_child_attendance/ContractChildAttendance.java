@@ -11,5 +11,7 @@ public interface ContractChildAttendance {
         void moveToDashboardOnChildClick(Modal_Student student, int position, View v);
 
         void addChild(View itemView);
+
+        void openCamera(String stud_id);
     }
 }

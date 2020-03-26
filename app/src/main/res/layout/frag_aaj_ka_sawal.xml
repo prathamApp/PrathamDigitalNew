@@ -99,7 +99,7 @@
                     android:gravity="center"
                     android:orientation="vertical">
 
-                    <android.support.design.card.MaterialCardView
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_option_one"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
@@ -131,9 +131,9 @@
                                 android:text="जब हवा ठंडी होती है"
                                 android:textColor="@color/white" />
                         </LinearLayout>
-                    </android.support.design.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <android.support.design.card.MaterialCardView
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_option_two"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
@@ -165,9 +165,9 @@
                                 android:text="तापमान से घनत्व में कोई परिवर्तन नहीं होता है"
                                 android:textColor="@color/white" />
                         </LinearLayout>
-                    </android.support.design.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <android.support.design.card.MaterialCardView
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_option_three"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_35sdp"
@@ -199,9 +199,9 @@
                                 android:text="पता नहीं"
                                 android:textColor="@color/white" />
                         </LinearLayout>
-                    </android.support.design.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
 
-                    <android.support.design.card.MaterialCardView
+                    <com.google.android.material.card.MaterialCardView
                         android:id="@+id/card_option_four"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/_40sdp"
@@ -233,7 +233,7 @@
                                 android:text="जब हवा गर्म होती है"
                                 android:textColor="@color/white" />
                         </LinearLayout>
-                    </android.support.design.card.MaterialCardView>
+                    </com.google.android.material.card.MaterialCardView>
                 </LinearLayout>
             </RelativeLayout>
         </LinearLayout>

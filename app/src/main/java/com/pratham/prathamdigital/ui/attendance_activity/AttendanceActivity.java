@@ -2,8 +2,9 @@ package com.pratham.prathamdigital.ui.attendance_activity;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
 import android.view.Gravity;
+
+import androidx.fragment.app.Fragment;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;

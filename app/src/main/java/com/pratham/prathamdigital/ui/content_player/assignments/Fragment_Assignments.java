@@ -2,11 +2,12 @@ package com.pratham.prathamdigital.ui.content_player.assignments;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -19,6 +20,7 @@ import com.pratham.prathamdigital.custom.file_picker.MediaFile;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Model_Assignment;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
@@ -36,6 +38,11 @@ import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -97,6 +104,7 @@ public class Fragment_Assignments extends Fragment implements ContentPlayerContr
 
     @Background
     public void addAssignmentEntryInDB() {
+        copyAssignmentFilesToInternal();
         Gson gson = new Gson();
         Model_CourseExperience model_courseExperience = gson.fromJson(
                 enrolledCourse.getCourseExperience(), Model_CourseExperience.class);
@@ -109,6 +117,35 @@ public class Fragment_Assignments extends Fragment implements ContentPlayerContr
         enrolledCourse.setSentFlag(0);
         PrathamApplication.courseDao.updateCourse(enrolledCourse);
         closeView();
+    }
+
+    private void copyAssignmentFilesToInternal() {
+        File studentFolder = new File(PrathamApplication.pradigiPath + "/" + PD_Constant.HELPER_FOLDER,
+                FastSave.getInstance().getString(PD_Constant.GROUPID, "no_ids"));
+        if (!studentFolder.exists()) studentFolder.mkdirs();
+        File courseFolder = new File(studentFolder.getAbsolutePath(), enrolledCourse.getCourseDetail().getNodetitle());
+        if (!courseFolder.exists()) courseFolder.mkdirs();
+        for (Model_Assignment agmt : assignmentAdapter.getItems()) {
+            ArrayList<String> files = agmt.getAssignment_files();
+            for (String f : files) {
+                if (f != null) {
+                    File assignment_file = new File(f);
+                    File temp = new File(courseFolder, assignment_file.getName());
+                    if (!temp.exists()) {
+                        try {
+                            temp.createNewFile();
+                            FileChannel src = new FileInputStream(assignment_file).getChannel();
+                            FileChannel dst = new FileOutputStream(temp).getChannel();
+                            dst.transferFrom(src, 0, src.size());
+                            src.close();
+                            dst.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @UiThread

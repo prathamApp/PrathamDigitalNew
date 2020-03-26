@@ -4,8 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.StrictMode;
-import android.support.multidex.MultiDex;
-import android.support.v7.app.AppCompatDelegate;
+
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.multidex.MultiDex;
 
 import com.androidnetworking.AndroidNetworking;
 import com.facebook.drawee.backends.pipeline.Fresco;
@@ -30,6 +31,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -112,9 +114,15 @@ public class PrathamApplication extends Application {
     }
 
     public void setPradigiPath() {
-        pradigiPath = PD_Utility.getInternalPath(this) + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
-        File f = new File(pradigiPath);
-        if (!f.exists()) f.mkdirs();
+        try {
+            pradigiPath = PD_Utility.getInternalPath(this) + "/" + FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
+            File f = new File(pradigiPath);
+            if (!f.exists()) f.mkdirs();
+            File nmFile = new File(pradigiPath, ".nomedia");
+            if (!nmFile.exists()) nmFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void setExistingSDContentPath(String path) {

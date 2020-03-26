@@ -1,16 +1,19 @@
 package com.pratham.prathamdigital.ui.fragment_language;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
-import android.support.v7.util.DiffUtil;
-import android.support.v7.widget.RecyclerView;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.DiffUtil;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Language;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +21,11 @@ import java.util.List;
 public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHolder> {
     private final ArrayList<Modal_Language> datalist;
     private final ContractLanguage contractLanguage;
+    private Context context;
 
     public LanguageAdapter(Context context, ArrayList<Modal_Language> datalist, ContractLanguage contractLanguage) {
         this.datalist = datalist;
-        Context context1 = context;
+        this.context = context;
         this.contractLanguage = contractLanguage;
     }
 
@@ -37,6 +41,10 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
     public void onBindViewHolder(@NonNull ViewHolder viewHolder, int pos) {
         pos = viewHolder.getAdapterPosition();
         viewHolder.tv_language.setText(datalist.get(pos).getLanguage());
+        if (datalist.get(pos).getMain_language().equalsIgnoreCase(PD_Constant.ORIYA))
+            viewHolder.tv_language.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/oriya.ttf"));
+        else
+            viewHolder.tv_language.setTypeface(Typeface.createFromAsset(context.getAssets(), "fonts/Fred.ttf"));
         if (datalist.get(pos).isIsselected())
             viewHolder.tv_language.setSelected(true);
         else
@@ -50,7 +58,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
             super.onBindViewHolder(holder, position, payloads);
         } else {
             Modal_Language language = (Modal_Language) payloads.get(0);
-            holder.tv_language.setText(language.getLanguage());
             if (language.isIsselected())
                 holder.tv_language.setSelected(true);
             else
@@ -63,7 +70,6 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.ViewHo
         final DiffUtil.DiffResult diffResult = DiffUtil.calculateDiff(diffCallback);
         this.datalist.clear();
         this.datalist.addAll(languages);
-//        this.datalist = languages;
         diffResult.dispatchUpdatesTo(this);
     }
 

@@ -34,9 +34,10 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.SystemClock;
-import android.support.v4.app.TaskStackBuilder;
 import android.text.Html;
 import android.util.Log;
+
+import androidx.core.app.TaskStackBuilder;
 
 import com.google.android.gms.location.ActivityRecognition;
 import com.google.android.gms.location.ActivityRecognitionClient;

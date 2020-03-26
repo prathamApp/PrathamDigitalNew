@@ -15,7 +15,7 @@
         app:srcCompat="@drawable/ic_video_cancel"
         tools:ignore="ContentDescription" />
 
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="@dimen/_10sdp"
@@ -64,5 +64,5 @@
             android:textSize="@dimen/_13sdp"
             android:visibility="gone"
             tools:ignore="HardcodedText" />
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

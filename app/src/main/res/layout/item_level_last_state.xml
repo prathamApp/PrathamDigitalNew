@@ -6,7 +6,7 @@
     android:layout_height="@dimen/_30sdp"
     android:background="@drawable/breadcrumd_right_bottom_round_bkgd">
 
-    <android.support.design.card.MaterialCardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    <com.google.android.material.card.MaterialCardView xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:id="@+id/card_view_inner"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -24,5 +24,5 @@
             android:gravity="center"
             android:maxLines="1"
             android:textColor="#A77D82" />
-    </android.support.design.card.MaterialCardView>
+    </com.google.android.material.card.MaterialCardView>
 </RelativeLayout>

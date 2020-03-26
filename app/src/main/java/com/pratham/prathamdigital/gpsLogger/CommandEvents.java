@@ -20,7 +20,7 @@
 package com.pratham.prathamdigital.gpsLogger;
 
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 public class CommandEvents {
     /**

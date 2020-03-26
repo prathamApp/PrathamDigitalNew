@@ -2,10 +2,10 @@ package com.pratham.prathamdigital.custom.elastic_view
 
 import android.content.Context
 import android.graphics.Canvas
-import android.support.design.card.MaterialCardView
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.ViewPropertyAnimator
+import com.google.android.material.card.MaterialCardView
 import com.pratham.prathamdigital.R
 
 

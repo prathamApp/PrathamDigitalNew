@@ -1,7 +1,9 @@
 package com.pratham.prathamdigital.custom.file_picker;
+
 import android.content.Context;
-import android.support.v7.widget.AppCompatImageView;
 import android.util.AttributeSet;
+
+import androidx.appcompat.widget.AppCompatImageView;
 
 public class SquareImage extends AppCompatImageView {
     public SquareImage(Context context) {

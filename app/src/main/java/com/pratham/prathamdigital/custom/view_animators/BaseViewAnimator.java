@@ -3,9 +3,10 @@ package com.pratham.prathamdigital.custom.view_animators;
 import android.animation.Animator;
 import android.animation.AnimatorSet;
 import android.animation.ValueAnimator;
-import android.support.v4.view.ViewCompat;
 import android.view.View;
 import android.view.animation.Interpolator;
+
+import androidx.core.view.ViewCompat;
 
 public abstract class BaseViewAnimator {
 

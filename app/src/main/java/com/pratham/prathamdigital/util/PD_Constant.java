@@ -1,18 +1,19 @@
 package com.pratham.prathamdigital.util;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 public class PD_Constant {
 
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String ATTENDANCE_IMAGE_FOLDER = "attendance_image_folder";
     public static final String CHECK_COURSE_COMPLETION = "check_course_completion";
     public static final String COURSE_NOT_VERIFIED = "course_not_verified";
     public static final String FEEDBACK_GIVEN = "feedback_given";
     public static final String COURSE_COMPLETED = "course_completed";
     public static final String ASSIGNMENT_SUBMITTED = "assignment_submitted";
-    public static final String READ_CONTENT_FROM_SDCARD = "read_content_from_sdcard";
+    public static final String READ_DATA_FROM_DB = "read_data_from_db";
     public static final String OPEN_ASSIGNMENTS = "open_assignments";
     public static final String NEW_COURSE_ENROLLED = "new_course_enrolled";
     public static final String PRATHAM_BACKUPS = "PrathamBackups";
@@ -199,7 +200,7 @@ public class PD_Constant {
     static String GUJARATI = "Gujarati";
     static String PUNJABI = "Punjabi";
     static String TAMIL = "Tamil";
-    static String ODIYA = "Odiya";
+    public static String ORIYA = "Odiya";
     static String MALAYALAM = "Malayalam";
     static String ASSAMESE = "Assamese";
     static String URDU = "Urdu";

@@ -1,10 +1,10 @@
 package com.pratham.prathamdigital.dbclasses;
 
-import android.arch.persistence.room.Dao;
-import android.arch.persistence.room.Insert;
-import android.arch.persistence.room.OnConflictStrategy;
-import android.arch.persistence.room.Query;
-import android.arch.persistence.room.Update;
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.OnConflictStrategy;
+import androidx.room.Query;
+import androidx.room.Update;
 
 import com.pratham.prathamdigital.models.Modal_Student;
 
@@ -39,8 +39,8 @@ public interface StudentDao {
     @Query("update Students set sentFlag=1 where StudentId=:s_id")
     void updateSentStudentFlags(String s_id);
 
-    @Query("select FullName from Students where StudentID = :studentID")
-    String getStudentName(String studentID);
+    @Query("update Students set avatarName=:avatar_path where StudentId=:studentID")
+    void updateStudentAvatar(String studentID, String avatar_path);
 
     @Query("SELECT * FROM Students WHERE GroupId=:gID")
     List<Modal_Student> getGroupwiseStudents(String gID);

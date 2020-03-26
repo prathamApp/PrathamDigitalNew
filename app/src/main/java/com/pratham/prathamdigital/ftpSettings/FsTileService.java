@@ -7,8 +7,9 @@ import android.content.IntentFilter;
 import android.os.Build;
 import android.service.quicksettings.Tile;
 import android.service.quicksettings.TileService;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
+
+import androidx.annotation.RequiresApi;
 
 import com.pratham.prathamdigital.R;
 

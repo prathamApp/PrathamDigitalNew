@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/child_view"
-    android:layout_width="@dimen/_120sdp"
-    android:layout_height="@dimen/_110sdp"
+    android:layout_width="@dimen/_110sdp"
+    android:layout_height="wrap_content"
     android:layout_margin="@dimen/_5sdp">
 
-    <com.pratham.prathamdigital.custom.shapes.ShapeOfView
-        android:id="@+id/child_shape"
-        android:layout_width="@dimen/_60sdp"
+    <com.facebook.drawee.view.SimpleDraweeView
+        android:id="@+id/child_avatar"
+        android:layout_width="@dimen/_70sdp"
         android:layout_height="@dimen/_70sdp"
         android:layout_centerHorizontal="true"
-        android:clickable="false"
-        android:elevation="@dimen/_6sdp"
-        android:focusable="false"
-        app:shape_clip_drawable="@drawable/ic_boy_seven">
+        android:layout_marginTop="@dimen/_5sdp"
+        app:placeholderImage="@drawable/ic_girl_eight"
+        app:placeholderImageScaleType="fitCenter"
+        app:roundedCornerRadius="@dimen/_30sdp"
+        app:roundingBorderColor="@color/white"
+        app:roundingBorderWidth="@dimen/_1sdp" />
 
-        <ImageView
-            android:id="@+id/child_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="fitXY"
-            app:srcCompat="@drawable/ic_boy_seven" />
-    </com.pratham.prathamdigital.custom.shapes.ShapeOfView>
-
-    <android.support.design.card.MaterialCardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/child_card_name"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_40sdp"
-        android:layout_below="@+id/child_shape"
+        android:layout_height="@dimen/_30sdp"
+        android:layout_below="@+id/child_avatar"
         android:clickable="false"
         android:focusable="false"
         app:cardBackgroundColor="@android:color/transparent"
@@ -44,7 +39,40 @@
             android:gravity="center"
             android:maxLines="2"
             android:padding="@dimen/_3sdp"
-            android:text="asdasdasdasdasasdasdasasdasdasdad"
-            android:textColor="@android:color/black" />
-    </android.support.design.card.MaterialCardView>
+            android:text="asdasasasasasasasass"
+            android:textColor="@android:color/black"
+            app:autoSizeMinTextSize="@dimen/_3sdp"
+            app:autoSizeTextType="uniform" />
+    </com.google.android.material.card.MaterialCardView>
+
+    <RelativeLayout
+        android:id="@+id/btn_click_photo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/click_here_round_bkgd"
+            android:gravity="center"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:text="Click Photo"
+            android:textColor="@color/dark_grey"
+            android:textSize="@dimen/_8sdp"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:layout_width="@dimen/_20sdp"
+            android:layout_height="@dimen/_20sdp"
+            android:layout_marginStart="@dimen/_48sdp"
+            android:rotation="-35"
+            app:srcCompat="@drawable/ic_click"
+            tools:ignore="ContentDescription" />
+    </RelativeLayout>
+
+
 </RelativeLayout>

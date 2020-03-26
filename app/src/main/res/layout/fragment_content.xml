@@ -16,7 +16,7 @@
 
         <include layout="@layout/layout_network_error" />
         <!--this explicit margin is given, if in case upper views are gone, the list should not be distorted-->
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_content"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -51,7 +51,7 @@
                 app:srcCompat="@drawable/ic_no_wifi" />
         </LinearLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_level"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"

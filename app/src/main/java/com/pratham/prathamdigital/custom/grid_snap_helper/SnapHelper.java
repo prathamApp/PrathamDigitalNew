@@ -1,13 +1,14 @@
 package com.pratham.prathamdigital.custom.grid_snap_helper;
 
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.LinearSmoothScroller;
-import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Scroller;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.LinearSmoothScroller;
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class SnapHelper extends RecyclerView.OnFlingListener {
 
@@ -53,7 +54,7 @@ public abstract class SnapHelper extends RecyclerView.OnFlingListener {
     }
 
     /**
-     * Attaches the {@link android.support.v7.widget.SnapHelper} to the provided RecyclerView, by calling
+     * Attaches the {@link androidx.recyclerview.widget.SnapHelper} to the provided RecyclerView, by calling
      * {@link RecyclerView#setOnFlingListener(RecyclerView.OnFlingListener)}.
      * You can call this method with {@code null} to detach it from the current RecyclerView.
      *
@@ -205,7 +206,7 @@ public abstract class SnapHelper extends RecyclerView.OnFlingListener {
      * Override this method to snap to a particular point within the target view or the container
      * view on any axis.
      * <p>
-     * This method is called when the {@link android.support.v7.widget.SnapHelper} has intercepted a fling and it needs
+     * This method is called when the {@link androidx.recyclerview.widget.SnapHelper} has intercepted a fling and it needs
      * to know the exact distance required to scroll by in order to snap to the target view.
      *
      * @param layoutManager the {@link RecyclerView.LayoutManager} associated with the attached
@@ -222,9 +223,9 @@ public abstract class SnapHelper extends RecyclerView.OnFlingListener {
     /**
      * Override this method to provide a particular target view for snapping.
      * <p>
-     * This method is called when the {@link android.support.v7.widget.SnapHelper} is ready to start snapping and requires
+     * This method is called when the {@link androidx.recyclerview.widget.SnapHelper} is ready to start snapping and requires
      * a target view to snap to. It will be explicitly called when the scroll state becomes idle
-     * after a scroll. It will also be called when the {@link android.support.v7.widget.SnapHelper} is preparing to snap
+     * after a scroll. It will also be called when the {@link androidx.recyclerview.widget.SnapHelper} is preparing to snap
      * after a fling and requires a reference view from the current set of child views.
      * <p>
      * If this method returns {@code null}, SnapHelper will not snap to any view.

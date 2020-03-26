@@ -2,8 +2,9 @@ package com.pratham.prathamdigital.ui.content_player.pdf_viewer;
 
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
+
+import androidx.fragment.app.Fragment;
+import androidx.viewpager.widget.ViewPager;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.pdf.BookFlipPageTransformer;

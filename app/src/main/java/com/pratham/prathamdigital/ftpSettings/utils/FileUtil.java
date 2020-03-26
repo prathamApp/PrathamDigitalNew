@@ -9,9 +9,10 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
-import android.support.annotation.NonNull;
-import android.support.v4.provider.DocumentFile;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.documentfile.provider.DocumentFile;
 
 import com.pratham.prathamdigital.ftpSettings.FsSettings;
 

@@ -2,11 +2,12 @@ package com.pratham.prathamdigital.custom;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.GridLayoutAnimationController;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentGridLayoutManager;
 

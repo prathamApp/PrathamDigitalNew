@@ -2,7 +2,8 @@ package com.pratham.prathamdigital.async;
 
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.support.v4.provider.DocumentFile;
+
+import androidx.documentfile.provider.DocumentFile;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;

@@ -146,8 +146,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
 
     @Background
     public void addProgress(String resID) {
-        String stuid;
-        stuid = FastSave.getInstance().getString(PD_Constant.GROUPID, "NA");
+        String stuid = FastSave.getInstance().getString(PD_Constant.GROUPID, "NA");
         Model_ContentProgress contentProgress = PrathamApplication.contentProgressDao.getCourse(stuid, courseId, course_week);
         if (contentProgress != null) {
             if (!contentProgress.getLabel().toLowerCase().contains(resID.toLowerCase())) {

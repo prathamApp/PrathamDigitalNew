@@ -35,13 +35,6 @@ import android.os.Environment;
 import android.os.StatFs;
 import android.provider.MediaStore;
 import android.provider.Settings;
-import android.support.annotation.ColorInt;
-import android.support.annotation.IntRange;
-import android.support.v4.app.Fragment;
-import android.support.v4.view.animation.FastOutLinearInInterpolator;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.text.format.Formatter;
 import android.util.Base64;
@@ -61,6 +54,14 @@ import android.view.animation.OvershootInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
+
+import androidx.annotation.ColorInt;
+import androidx.annotation.IntRange;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.interpolator.view.animation.FastOutLinearInInterpolator;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -291,7 +292,7 @@ public class PD_Utility {
             lang = "pa";
         if (lang.equalsIgnoreCase("Tamil"))
             lang = "ta";
-        if (lang.equalsIgnoreCase("Odiya"))
+        if (lang.equalsIgnoreCase("Oriya"))
             lang = "or";
         if (lang.equalsIgnoreCase("Malayalam"))
             lang = "ml";
@@ -1144,6 +1145,13 @@ public class PD_Utility {
         }
     }
 
+    public static Uri getImageUri(Context context, Bitmap photo) {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photo, "Title", null);
+        return Uri.parse(path);
+    }
+
     /**
      * calculates age from birth date
      *
@@ -1737,7 +1745,7 @@ public class PD_Utility {
         else if (langcode.equalsIgnoreCase("ta"))
             langcode = PD_Constant.TAMIL;
         else if (langcode.equalsIgnoreCase("or"))
-            langcode = PD_Constant.ODIYA;
+            langcode = PD_Constant.ORIYA;
         else if (langcode.equalsIgnoreCase("ml"))
             langcode = PD_Constant.MALAYALAM;
         else if (langcode.equalsIgnoreCase("as"))

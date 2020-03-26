@@ -5,13 +5,14 @@ import android.animation.TimeInterpolator;
 import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.os.Build;
-import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AnticipateInterpolator;
 import android.view.animation.DecelerateInterpolator;
+
+import androidx.annotation.NonNull;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;

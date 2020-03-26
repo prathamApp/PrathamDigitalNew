@@ -482,13 +482,6 @@
         <attr name="sl_shadow_radius" format="dimension" />
         <attr name="sl_shadow_color" format="color" />
     </declare-styleable>
-    <declare-styleable name="StepProgressBar">
-        <attr name="step" format="integer" />
-        <attr name="step_max" format="integer" />
-        <attr name="stepDoneColor" format="color|reference" />
-        <attr name="stepUndoneColor" format="color|reference" />
-        <attr name="stepMargin" format="dimension" />
-    </declare-styleable>
     <declare-styleable name="verticaltextview">
         <attr name="direction">
             <enum name="uptodown" value="0" />
@@ -531,28 +524,12 @@
         </attr>
         <attr name="shimmer_tilt" format="float" />
     </declare-styleable>
-    <declare-styleable name="StickySwitch">
-        <attr name="ss_leftIcon" format="reference|integer" />
-        <attr name="ss_leftText" format="reference|string" />
-        <attr name="ss_rightIcon" format="reference|integer" />
-        <attr name="ss_rightText" format="reference|string" />
-        <attr name="ss_iconSize" format="reference|dimension" />
-        <attr name="ss_iconPadding" format="reference|dimension" />
-        <attr name="ss_textSize" format="reference|dimension" />
-        <attr name="ss_selectedTextSize" format="reference|dimension" />
-        <attr name="ss_switchColor" format="reference|color" />
-        <attr name="ss_sliderBackgroundColor" format="reference|color" />
-        <attr name="ss_textColor" format="reference|color" />
-        <attr name="ss_animationDuration" format="reference|integer" />
-
-        <attr name="ss_animationType" format="enum">
-            <enum name="line" value="0" />
-            <enum name="curved" value="1" />
-        </attr>
-        <attr name="ss_textVisibility" format="enum">
-            <enum name="visible" value="0" />
-            <enum name="invisible" value="1" />
-            <enum name="gone" value="2" />
-        </attr>
+    <declare-styleable name="RevealSwitch">
+        <attr name="setEnabled" format="boolean" />
+        <attr name="setEnabledTrackColor" format="color" />
+        <attr name="setDisabledTrackColor" format="color" />
+        <attr name="setAnimationDuration" format="integer" />
+        <attr name="showBorder" format="boolean" />
+        <attr name="borderColor" format="color" />
     </declare-styleable>
 </resources>

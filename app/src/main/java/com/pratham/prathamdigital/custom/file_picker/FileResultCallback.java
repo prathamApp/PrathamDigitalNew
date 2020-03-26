@@ -1,6 +1,6 @@
 package com.pratham.prathamdigital.custom.file_picker;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 

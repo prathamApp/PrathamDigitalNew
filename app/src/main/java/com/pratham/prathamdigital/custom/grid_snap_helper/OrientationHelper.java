@@ -1,9 +1,10 @@
 package com.pratham.prathamdigital.custom.grid_snap_helper;
 
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public abstract class OrientationHelper {
 

@@ -1,8 +1,9 @@
 package com.pratham.prathamdigital.custom.file_picker;
 
 import android.graphics.Rect;
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 public class DividerItemDecoration extends RecyclerView.ItemDecoration {
     private int spacing;

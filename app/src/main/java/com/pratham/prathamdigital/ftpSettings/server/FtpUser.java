@@ -1,6 +1,6 @@
 package com.pratham.prathamdigital.ftpSettings.server;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import com.pratham.prathamdigital.ftpSettings.FsSettings;
 

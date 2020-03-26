@@ -1,5 +1,7 @@
 package com.pratham.prathamdigital.ui.fragment_course_enrollment.fragment_week_course_plan;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -31,6 +33,8 @@ public interface PlanningContract {
         void verifiedSuccessfully(Model_CourseEnrollment model_courseEnrollment);
 
         void provideFeedback(int pos, Model_CourseEnrollment c_enrolled);
+
+        void updateCoachPhoto(Uri capturedImageUri);
     }
 
     interface newCoursesView {
@@ -60,8 +64,10 @@ public interface PlanningContract {
 
         void deleteCourse(Model_CourseEnrollment c_enrolled, String week_1);
 
-        void markCoursesVerified(List<Model_CourseEnrollment> week_1, String imagePath);
+        void markCoursesVerified(List<Model_CourseEnrollment> week_1, String imagePath, String week);
 
         void fetchCourseChilds(Model_CourseEnrollment c_enrolled);
+
+        void savePhoto(Intent data);
     }
 }

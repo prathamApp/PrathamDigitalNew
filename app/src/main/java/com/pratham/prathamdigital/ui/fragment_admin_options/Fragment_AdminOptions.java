@@ -9,24 +9,23 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.TextView;
+
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
-import com.pratham.prathamdigital.custom.animated_switch.StickySwitch;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
@@ -59,7 +58,6 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
     private static final int PUSH_DATA = 1;
     private static final int ASSIGN_GROUPS = 2;
     private static final int PULL_DATA = 3;
-    private static final int CHANGE_CONTENT_FOLDER = 4;
     private static final int SDCARD_LOCATION_CHOOSER = 5;
     private static final int SHOW_DB_COPYING_DIALOG = 6;
     @ViewById(R.id.rv_admin_options)
@@ -69,10 +67,10 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
 
     @Bean(AdminOptionsPresenter.class)
     ContractOptions.optionPresenter optionPresenter;
-    BlurPopupWindow pushDialog;
-    LottieAnimationView push_lottie;
-    TextView txt_push_dialog_msg;
-    TextView txt_push_error;
+    private BlurPopupWindow pushDialog;
+    private LottieAnimationView push_lottie;
+    private TextView txt_push_dialog_msg;
+    private TextView txt_push_error;
     private BlurPopupWindow sd_builder;
 
     @SuppressLint("HandlerLeak")
@@ -93,9 +91,6 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
                 case PULL_DATA:
                     PD_Utility.showFragment(getActivity(), new PullDataFragment_(), R.id.frame_attendance,
                             null, PullDataFragment.class.getSimpleName());
-                    break;
-                case CHANGE_CONTENT_FOLDER:
-                    showFolderChangeDialog();
                     break;
                 case SHOW_DB_COPYING_DIALOG:
                     showPushingDialog("Please wait...Updating Database");
@@ -195,8 +190,6 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
             showClearDataDialog();
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Pull Data"))
             mHandler.sendEmptyMessage(PULL_DATA);
-        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Change Content Folder"))
-            mHandler.sendEmptyMessage(CHANGE_CONTENT_FOLDER);
     }
 
     private void showClearDataDialog() {
@@ -263,33 +256,4 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
             }
         }
     }
-
-    @SuppressLint("SetTextI18n")
-    private void showFolderChangeDialog() {
-        sd_builder = new BlurPopupWindow.Builder(getActivity())
-                .setContentView(R.layout.dialog_change_content_folder)
-                .setGravity(Gravity.CENTER)
-                .setScaleRatio(0.2f)
-                .setDismissOnClickBack(true)
-                .setDismissOnTouchBackground(true)
-                .setScaleRatio(0.2f)
-                .setBlurRadius(8)
-                .setTintColor(0x30000000)
-                .build();
-        sd_builder.show();
-        StickySwitch folder_switch = sd_builder.findViewById(R.id.folder_switch);
-        boolean isChecked = FastSave.getInstance().getBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true);
-        if (isChecked)
-            folder_switch.setDirection(StickySwitch.Direction.RIGHT, true);
-        else
-            folder_switch.setDirection(StickySwitch.Direction.LEFT, true);
-        folder_switch.setOnSelectedChangeListener((direction, text) -> {
-            if (direction == StickySwitch.Direction.RIGHT)
-                FastSave.getInstance().saveBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, true);
-            else
-                FastSave.getInstance().saveBoolean(PD_Constant.READ_CONTENT_FROM_SDCARD, false);
-            new Handler().postDelayed(() -> sd_builder.dismiss(), 700);
-        });
-    }
-
 }
