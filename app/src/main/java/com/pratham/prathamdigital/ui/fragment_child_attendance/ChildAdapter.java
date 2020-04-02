@@ -188,7 +188,7 @@ public class ChildAdapter extends RecyclerView.Adapter {
 
         SmartChildHolder(@NonNull View itemView) {
             super(itemView);
-            smart_child_avatar = itemView.findViewById(R.id.smart_child_avatar);
+            smart_child_avatar = itemView.findViewById(R.id.smart_lottie_child_avatar);
             smart_child_name = itemView.findViewById(R.id.smart_child_name);
         }
     }

@@ -43,6 +43,7 @@
     <color name="dark_grey">#333333</color>
     <color name="light_grey">#bbbbbb</color>
     <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
     <color name="selected_color">#ffffaa</color>
     <color name="selected_font_color">#999933</color>
     <color name="deselected_color">#aaffaa</color>

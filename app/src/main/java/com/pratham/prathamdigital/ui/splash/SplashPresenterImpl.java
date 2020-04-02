@@ -17,8 +17,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.FirebaseAuth;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
@@ -128,6 +126,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
+/*
     @Background
     public void firebaseAuthWithGoogle(AuthCredential credential) {
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
@@ -141,6 +140,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                     }
                 });
     }
+*/
 
     @Background
     @Override
