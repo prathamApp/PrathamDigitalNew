@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Gravity;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -27,6 +26,8 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView;
+import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
@@ -53,7 +54,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private static final int ENTER_CODE_QR_DIALOG = 7;
 
     @ViewById(R.id.splash_video)
-    VideoView splash_video;
+    CustomExoPlayerView splash_video;
 
     @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
@@ -64,6 +65,9 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private EditText et_qr_code;
     private String noti_key = null;
     private String noti_value = null;
+    private boolean playerLoaded = false;
+    private boolean ended = false;
+
     private final TextWatcher codeTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -89,21 +93,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             super.handleMessage(msg);
             switch (msg.what) {
                 case LIGHT_ANIMATION:
-                    Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.pratham);
-                    splash_video.setVideoURI(video);
-                    splash_video.setOnCompletionListener(mp -> {
-                        splashPresenter.checkPrathamCode();
-                    });
-                    splash_video.start();
-                    //Read intent till the video completes
-                    if (getIntent().getExtras() != null) {
-                        for (String key : getIntent().getExtras().keySet()) {
-                            if (key.equalsIgnoreCase("key"))//the key received from notification data
-                                noti_key = getIntent().getExtras().getString(key);
-                            else if (key.equalsIgnoreCase("value"))//the value received from notification data
-                                noti_value = getIntent().getExtras().getString(key);
-                        }
-                    }
+                    loadVideo();
                     break;
                 case UPDATE_DIALOG:
                     new BlurPopupWindow.Builder(mContext)
@@ -178,6 +168,50 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         }
     };
 
+    private void loadVideo() {
+        splash_video.setSourceFromRawFolder(R.raw.pratham);
+        splash_video.setExoPlayerCallBack(new ExoPlayerCallBack() {
+            @Override
+            public void onError() {
+                //nothing here
+            }
+
+            @Override
+            public void onStart() {
+                PrathamSmartSync.pushUsageToServer(false);
+                playerLoaded = true;
+                //Read intent till the video completes
+                if (getIntent().getExtras() != null)
+                    for (String key : getIntent().getExtras().keySet())
+                        if (key.equalsIgnoreCase("key"))//the key received from notification data
+                            noti_key = getIntent().getExtras().getString(key);
+                        else if (key.equalsIgnoreCase("value"))//the value received from notification data
+                            noti_value = getIntent().getExtras().getString(key);
+            }
+
+            @Override
+            public void onEnded() {
+                //this method is called more than once? No reason.
+                if (!ended)
+                    splashPresenter.checkPrathamCode();
+                ended = true;
+            }
+        });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        splash_video.pausePlayer();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (playerLoaded && !splash_video.getPlayer().isPlaying())
+            splash_video.setPlayWhenReady(true);
+    }
+
     @AfterViews
     public void initializeViews() {
         mContext = this;
@@ -198,7 +232,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             splashPresenter.startGpsTimer();
         else
             splashPresenter.checkIfContentinSDCard();
-        PrathamSmartSync.pushUsageToServer(false);
     }
 
     @UiThread

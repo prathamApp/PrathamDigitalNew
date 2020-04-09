@@ -44,6 +44,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
+import com.google.android.exoplayer2.upstream.RawResourceDataSource;
 import com.pratham.prathamdigital.R;
 
 import java.util.HashMap;
@@ -279,6 +280,32 @@ public class CustomExoPlayerView extends LinearLayout implements View.OnClickLis
                 simpleExoPlayer.prepare(mediaSource, true, false);
             }
         }
+    }
+
+    public void setSourceFromRawFolder(int rawResId) {
+        MediaSource mediaSource = buildMediaSourceFromAssets(rawResId);
+        if (simpleExoPlayer != null) {
+            showProgress();
+            simpleExoPlayer.prepare(mediaSource, true, false);
+        }
+    }
+
+    private MediaSource buildMediaSourceFromAssets(int rawResourceId) {
+        Uri uri = RawResourceDataSource.buildRawResourceUri(rawResourceId);
+        DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(
+                context,
+                PublicValues.KEY_USER_AGENT,
+                null
+        );
+        // Produces Extractor instances for parsing the media data.
+        ExtractorsFactory extractorsFactory = new DefaultExtractorsFactory();
+        // The MediaSource represents the media to be played.
+        return new ExtractorMediaSource(
+                uri,
+                dataSourceFactory,
+                extractorsFactory,
+                null,
+                null);
     }
 
     private MediaSource buildMediaSource(String source, HashMap<String, String> extraHeaders) {

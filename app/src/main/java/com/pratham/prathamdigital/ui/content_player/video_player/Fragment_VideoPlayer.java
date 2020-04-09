@@ -153,6 +153,19 @@ public class Fragment_VideoPlayer extends Fragment {
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        videoView.pausePlayer();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!videoView.getPlayer().isPlaying())
+            videoView.getPlayer().setPlayWhenReady(true);
+    }
+
+    @Override
     public void onStart() {
         super.onStart();
         EventBus.getDefault().register(this);
