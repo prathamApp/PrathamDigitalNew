@@ -104,7 +104,7 @@ public class Fragment_VideoPlayer extends Fragment {
         if (getArguments().getString(PD_Constant.YOUTUBE_LINK) != null) {
             videoPath = Objects.requireNonNull(getArguments()).getString(PD_Constant.YOUTUBE_LINK);
             resId = videoPath;
-            new YouTubeExtractor(getActivity()) {
+            new YouTubeExtractor(Objects.requireNonNull(getActivity())) {
                 @Override
                 protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
                     if (ytFiles != null) initializePlayer(ytFiles.get(22).getUrl());
