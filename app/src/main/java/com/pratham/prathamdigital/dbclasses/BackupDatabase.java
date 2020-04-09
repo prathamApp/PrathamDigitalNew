@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.dbclasses;
 import android.content.Context;
 import android.os.Environment;
 
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.greenrobot.eventbus.EventBus;
@@ -34,7 +35,9 @@ public class BackupDatabase {
                     dst.close();
                 }
             } else {
-                EventBus.getDefault().post(PD_Constant.WRITE_PERMISSION);
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.WRITE_PERMISSION);
+                EventBus.getDefault().post(message);
             }
         } catch (Exception e) {
             e.printStackTrace();

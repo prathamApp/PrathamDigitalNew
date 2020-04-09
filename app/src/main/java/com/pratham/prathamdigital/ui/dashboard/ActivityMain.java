@@ -42,6 +42,7 @@ import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
@@ -83,9 +84,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_SHARE_APP = 5;
     private static final int MENU_EXIT = 6;
     private static final int MENU_HOME = 7;
-    private static final int SHOW_MENU_WITH_DEEP_LINK = 8;
+    private static final int SHOW_MENU = 8;
     private static final int CHECK_AAJ_KA_SAWAL = 11;
     private static final int MENU_COURSES = 12;
+    private static final int SHOW_YOU_TUBE_VIDEO = 13;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -108,6 +110,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private boolean isChecked;
     private BlurPopupWindow exitDialog;
     private DownloadListFragment_ downloadListFragment_;
+    private String noti_key;
+    private String noti_value;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -115,7 +119,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             switch (msg.what) {
-                case SHOW_MENU_WITH_DEEP_LINK:
+                case SHOW_MENU:
                     Bundle bundle = new Bundle();
                     if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
                         bundle.putBoolean(PD_Constant.DEEP_LINK, true);
@@ -212,6 +216,13 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         downloadAajKaSawal(aksUrl, filename);
                     }
                     break;
+                case SHOW_YOU_TUBE_VIDEO:
+                    Intent intent = new Intent(ActivityMain.this, Activity_ContentPlayer_.class);
+                    intent.putExtra(PD_Constant.CONTENT_TYPE, noti_key);
+                    intent.putExtra(PD_Constant.CONTENT, noti_value);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
+                    break;
             }
         }
     };
@@ -219,7 +230,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
-        mHandler.sendEmptyMessage(SHOW_MENU_WITH_DEEP_LINK);
+        mHandler.sendEmptyMessage(SHOW_MENU);
         mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
     }
 
@@ -373,27 +384,34 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 //    };
 
     private void showIntro() {
-        new SpotlightView.Builder(ActivityMain.this)
-                .introAnimationDuration(400)
-                .enableRevealAnimation(true)
-                .performClick(true)
-                .fadeinTextDuration(400)
-                .headingTvColor(Color.parseColor("#eb273f"))
-                .headingTvSize(32)
-                .headingTvText("Open Menu")
-                .subHeadingTvColor(Color.parseColor("#ffffff"))
-                .subHeadingTvSize(16)
-                .subHeadingTvText("Click here and Open Menu")
-                .maskColor(Color.parseColor("#dc000000"))
-                .target(main_nav)
-                .lineAnimDuration(400)
-                .lineAndArcColor(Color.parseColor("#eb273f"))
-                .dismissOnTouch(true)
-                .dismissOnBackPress(true)
-                .enableDismissAfterShown(true)
-//                .setListener(spotlightListener)
-                .usageId(PD_Constant.PRADIGI_ICON) //UNIQUE ID
-                .show();
+        if (!FastSave.getInstance().getBoolean(PD_Constant.INTRO_SHOWN, false))
+            new SpotlightView.Builder(ActivityMain.this)
+                    .introAnimationDuration(400)
+                    .enableRevealAnimation(true)
+                    .performClick(true)
+                    .fadeinTextDuration(400)
+                    .headingTvColor(Color.parseColor("#eb273f"))
+                    .headingTvSize(32)
+                    .headingTvText("Open Menu")
+                    .subHeadingTvColor(Color.parseColor("#ffffff"))
+                    .subHeadingTvSize(16)
+                    .subHeadingTvText("Click here and Open Menu")
+                    .maskColor(Color.parseColor("#dc000000"))
+                    .target(main_nav)
+                    .lineAnimDuration(400)
+                    .lineAndArcColor(Color.parseColor("#eb273f"))
+                    .dismissOnTouch(true)
+                    .dismissOnBackPress(true)
+                    .enableDismissAfterShown(true)
+                    .setListener(spotlightViewId -> FastSave.getInstance().saveBoolean(PD_Constant.INTRO_SHOWN, true))
+                    .usageId(PD_Constant.PRADIGI_ICON) //UNIQUE ID
+                    .show();
+        if (getIntent().getStringExtra(PD_Constant.PUSH_NOTI_KEY) != null &&
+                getIntent().getStringExtra(PD_Constant.PUSH_NOTI_VALUE) != null) {
+            noti_key = getIntent().getStringExtra(PD_Constant.PUSH_NOTI_KEY);
+            noti_value = getIntent().getStringExtra(PD_Constant.PUSH_NOTI_VALUE);
+            mHandler.sendEmptyMessage(SHOW_YOU_TUBE_VIDEO);
+        }
     }
 
     @Override
@@ -457,5 +475,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Override
     public void onPanelClosed(@NonNull View view) {
         outer_area.setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getStringExtra(PD_Constant.PUSH_NOTI_KEY) != null && intent.getStringExtra(PD_Constant.PUSH_NOTI_VALUE) != null) {
+            noti_key = intent.getStringExtra(PD_Constant.PUSH_NOTI_KEY);
+            noti_value = intent.getStringExtra(PD_Constant.PUSH_NOTI_VALUE);
+            mHandler.sendEmptyMessage(SHOW_YOU_TUBE_VIDEO);
+        }
     }
 }

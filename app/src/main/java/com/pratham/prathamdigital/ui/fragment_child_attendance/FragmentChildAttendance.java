@@ -31,9 +31,11 @@ import com.pratham.prathamdigital.custom.imageviews.FrescoFaceDetector;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -46,6 +48,8 @@ import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.Touch;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -74,8 +78,6 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     Button btn_attendance_next;
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
-//    @ViewById(R.id.btn_talk)
-//    Button btn_talk;
 
     private ChildAdapter childAdapter;
     private ArrayList<Modal_Student> students = new ArrayList<>();
@@ -83,6 +85,9 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     private int revealY;
     private String groupID = "";
     private String stud_id;
+    private String noti_key;
+    private String noti_value;
+
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -162,11 +167,15 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         view.getLocationOnScreen(outLocation);
         outLocation[0] += view.getWidth() / 2;
         Bundle bundle = new Bundle();
+        if (doesArgumentContainsNotificationData()) {
+            bundle.putString(PD_Constant.PUSH_NOTI_KEY, noti_key);
+            bundle.putString(PD_Constant.PUSH_NOTI_VALUE, noti_value);
+        }
         bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
         bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
         bundle.putBoolean(PD_Constant.SHOW_BACK, true);
         PD_Utility.addFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
-                bundle, Fragment_SelectAvatar_.class.getSimpleName());
+                bundle, Fragment_SelectAvatar.class.getSimpleName());
     }
 
     @Override
@@ -252,6 +261,10 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
         }
+        if (doesArgumentContainsNotificationData()) {
+            mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_KEY, noti_key);
+            mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_VALUE, noti_value);
+        }
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
@@ -335,5 +348,41 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     public void onDestroy() {
         FrescoFaceDetector.releaseDetector();
         super.onDestroy();
+    }
+
+    @Subscribe
+    public void onMessageReceived(EventMessage message) {
+        if (message != null)
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.NOTIFICATION_RECIEVED)) {
+                Bundle bundle = message.getBundle();
+                noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
+                noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+            }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        EventBus.getDefault().unregister(this);
+        super.onStop();
+    }
+
+    private boolean doesArgumentContainsNotificationData() {
+        if (noti_key != null && noti_value != null)
+            return true; //that means the values are newly assigned in @Subscribe, when a new notification arrives.
+        // if not, then we are continuing with the previous one, if exists.
+        if (getArguments() != null && getArguments().getString(PD_Constant.PUSH_NOTI_KEY) != null &&
+                getArguments().getString(PD_Constant.PUSH_NOTI_VALUE) != null) {
+            noti_key = getArguments().getString(PD_Constant.PUSH_NOTI_KEY);
+            noti_value = getArguments().getString(PD_Constant.PUSH_NOTI_VALUE);
+            return true;
+        }
+        //No notification received
+        return false;
     }
 }

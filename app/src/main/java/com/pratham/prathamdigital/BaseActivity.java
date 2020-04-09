@@ -16,6 +16,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -70,6 +71,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final int SHOW_OTG_SELECT_DIALOG = 11;
     private static final int HIDE_OTG_TRANSFER_DIALOG_SUCCESS = 12;
     private static final int HIDE_OTG_TRANSFER_DIALOG_FAILED = 13;
+    private static final int SHOW_PERMISSION_DIALOG = 14;
 
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
@@ -127,18 +129,29 @@ public class BaseActivity extends AppCompatActivity {
                             .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .onAccepted(permissionResult -> {
                                 BackupDatabase.backup(BaseActivity.this);
+                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
+                            })
+                            .onDenied(permissionResult -> {
+                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
+                            })
+                            .onForeverDenied(permissionResult -> {
+                                Toast.makeText(BaseActivity.this, "Kindly grant storage permission and restart the app", Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
                 case GET_LOCATION_PERMISSION:
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.ACCESS_COARSE_LOCATION,
-                                    Manifest.permission.ACCESS_FINE_LOCATION,
-                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                    Manifest.permission.READ_PHONE_STATE)
+                                    Manifest.permission.ACCESS_FINE_LOCATION)
                             .onAccepted(permissionResult -> {
                                 new LocationService(BaseActivity.this).checkLocation();
-                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
+                                mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+                            })
+                            .onDenied(permissionResult -> {
+                                mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+                            })
+                            .onForeverDenied(permissionResult -> {
+                                Toast.makeText(BaseActivity.this, "Kindly grant location permission and restart the app", Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
@@ -152,6 +165,12 @@ public class BaseActivity extends AppCompatActivity {
                                     statusObj.setValue(Build.getSerial());
                                     statusDao.insert(statusObj);
                                 }
+                                EventMessage msg1 = new EventMessage();
+                                msg1.setMessage(PD_Constant.PERMISSIONS_GRANTED);
+                                EventBus.getDefault().post(msg1);
+                            })
+                            .onForeverDenied(permissionResult -> {
+                                Toast.makeText(BaseActivity.this, "Kindly grant phone permission and restart the app", Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
@@ -277,7 +296,6 @@ public class BaseActivity extends AppCompatActivity {
         super.onResume();
         mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
         merlin.bind();
-        mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
         BackupDatabase.backup(this);
     }
 
@@ -292,13 +310,6 @@ public class BaseActivity extends AppCompatActivity {
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
 //        mHandler.sendEmptyMessage(HIDE_SYSTEM_UI);
-    }
-
-    @Subscribe
-    public void requestStoragePermission(final String permission) {
-        if (permission.equalsIgnoreCase(PD_Constant.WRITE_PERMISSION)) {
-            mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
-        }
     }
 
     @Subscribe
@@ -329,6 +340,10 @@ public class BaseActivity extends AppCompatActivity {
                 mHandler.sendEmptyMessage(HIDE_OTG_TRANSFER_DIALOG_SUCCESS);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BACKUP_DB_NOT_COPIED)) {
                 mHandler.sendEmptyMessage(HIDE_OTG_TRANSFER_DIALOG_FAILED);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CHECK_PERMISSIONS)) {
+                mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.WRITE_PERMISSION)) {
+                mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
             }
         }
     }

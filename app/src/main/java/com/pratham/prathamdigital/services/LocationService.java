@@ -65,7 +65,6 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                 .config(builder.build())
                 .start(location -> {
                     Modal_Status statusObj = new Modal_Status();
-
                     statusObj.statusKey = "Latitude";
                     statusObj.value = String.valueOf(location.getLatitude());
                     statusDao.insert(statusObj);
@@ -79,7 +78,6 @@ public class LocationService implements GoogleApiClient.ConnectionCallbacks, Goo
                     Date gdate = new Date(location.getTime());
                     statusObj.value = format.format(gdate);
                     statusDao.insert(statusObj);
-
                     Log.d(TAG, "onLocationUpdated:" + location.getLatitude() + ":::" + location.getLongitude());
                 });
     }

@@ -4,7 +4,8 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.widget.VideoView;
+import android.util.SparseArray;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -12,12 +13,15 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.media_controller.PlayerControlView;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView;
+import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
-import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
+import com.pratham.prathamdigital.services.youtube_extractor.VideoMeta;
+import com.pratham.prathamdigital.services.youtube_extractor.YouTubeExtractor;
+import com.pratham.prathamdigital.services.youtube_extractor.YtFile;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -38,17 +42,21 @@ public class Fragment_VideoPlayer extends Fragment {
 
     private static final int AAJ_KA_SAWAL_FOR_THIS_VIDEO = 1;
     private static final int SHOW_SAWAL = 2;
+    private static final int SHOW_NEXT_CONTENT_OF_THE_COURSE = 3;
+    private static final int CLOSE_CONTENT_PLAYER_ACTIVITY = 4;
+    private static final int BACK_TO_COURSE_DETAIL = 5;
     @ViewById(R.id.videoView)
-    VideoView videoView;
-    @ViewById(R.id.player_control_view)
-    PlayerControlView player_control_view;
+    CustomExoPlayerView videoView;
+//    @ViewById(R.id.player_control_view)
+//    PlayerControlView player_control_view;
 
     private String videoPath;
     private String startTime = "no_resource";
     private String resId;
     private long videoDuration = 0;
     private Modal_AajKaSawal videoSawal = null;
-    private boolean isScoreAdded = false;
+    private boolean initialized = false;
+    private boolean isVideoEnded = false;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -59,9 +67,140 @@ public class Fragment_VideoPlayer extends Fragment {
                 case AAJ_KA_SAWAL_FOR_THIS_VIDEO:
                     findSawalForThisVideo();
                     break;
+                case SHOW_NEXT_CONTENT_OF_THE_COURSE:
+                    EventMessage message = new EventMessage();
+                    message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
+                    message.setDownloadId(resId);
+                    EventBus.getDefault().post(message);
+                    break;
+                case CLOSE_CONTENT_PLAYER_ACTIVITY:
+                    EventMessage eventMessage1 = new EventMessage();
+                    eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+                    EventBus.getDefault().post(eventMessage1);
+                    break;
+                case SHOW_SAWAL:
+                    Bundle aksbundle = new Bundle();
+                    aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
+                    aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
+                    aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
+                    EventMessage eventMessage = new EventMessage();
+                    eventMessage.setMessage(PD_Constant.ADD_VIDEO_PROGRESS_AND_SHOW_SAWAL);
+                    eventMessage.setBundle(aksbundle);
+                    eventMessage.setDownloadId(resId);
+                    EventBus.getDefault().post(eventMessage);
+                    break;
+                case BACK_TO_COURSE_DETAIL:
+                    EventMessage message1 = new EventMessage();
+                    message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
+                    EventBus.getDefault().post(message1);
+                    break;
             }
         }
     };
+
+    @SuppressLint("StaticFieldLeak")
+    @AfterViews
+    public void initialize() {
+        if (getArguments().getString(PD_Constant.YOUTUBE_LINK) != null) {
+            videoPath = Objects.requireNonNull(getArguments()).getString(PD_Constant.YOUTUBE_LINK);
+            resId = videoPath;
+            new YouTubeExtractor(getActivity()) {
+                @Override
+                protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
+                    if (ytFiles != null) initializePlayer(ytFiles.get(22).getUrl());
+                }
+            }.extract(videoPath, true, true);
+        } else {
+            videoPath = Objects.requireNonNull(getArguments()).getString("videoPath");
+            resId = getArguments().getString("resId");
+            mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
+            initializePlayer(videoPath);
+        }
+    }
+
+    private void initializePlayer(String videoPath) {
+        videoView.setSource(videoPath);
+        videoView.setExoPlayerCallBack(new ExoPlayerCallBack() {
+            @Override
+            public void onError() {
+                Toast.makeText(getActivity(), "error", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onStart() {
+                if (!initialized) {
+                    startTime = PD_Utility.getCurrentDateTime();
+                    videoDuration = videoView.getPlayer().getDuration();
+                    initialized = true;
+                }
+            }
+
+            @Override
+            public void onEnded() {
+                if (!isVideoEnded) {
+                    addScoreToDB();
+                    if (videoSawal == null)
+                        if (Objects.requireNonNull(getArguments()).getBoolean("isCourse"))
+                            mHandler.sendEmptyMessage(SHOW_NEXT_CONTENT_OF_THE_COURSE);
+                        else
+                            mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
+                    else
+                        mHandler.sendEmptyMessage(SHOW_SAWAL);
+                    isVideoEnded = true;
+                }
+            }
+        });
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Subscribe
+    public void messageReceived(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
+                addScoreToDB();
+                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                    mHandler.sendEmptyMessage(BACK_TO_COURSE_DETAIL);
+                } else
+                    mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
+            }
+        }
+    }
+
+    @Background
+    public void addScoreToDB() {
+        String endTime = PD_Utility.getCurrentDateTime();
+        Modal_Score modalScore = new Modal_Score();
+        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        if (PrathamApplication.isTablet) {
+            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+            modalScore.setStudentID("");
+        } else {
+            modalScore.setGroupID("");
+            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+        }
+        modalScore.setDeviceID(PD_Utility.getDeviceID());
+        modalScore.setResourceID(resId);
+        modalScore.setQuestionId(0);
+        modalScore.setScoredMarks((int) PD_Utility.getTimeDifference(startTime, endTime));
+        modalScore.setTotalMarks((int) videoDuration);
+        modalScore.setStartDateTime(startTime);
+        modalScore.setEndDateTime(endTime);
+        modalScore.setLevel(0);
+        modalScore.setLabel("_");
+        modalScore.setSentFlag(0);
+        scoreDao.insert(modalScore);
+    }
 
     @Background
     public void findSawalForThisVideo() {
@@ -88,104 +227,5 @@ public class Fragment_VideoPlayer extends Fragment {
         } catch (JsonSyntaxException e) {
             e.printStackTrace();
         }
-    }
-
-    @AfterViews
-    public void initialize() {
-        videoPath = Objects.requireNonNull(getArguments()).getString("videoPath");
-        resId = getArguments().getString("resId");
-        mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
-        initializePlayer(videoPath);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    private void initializePlayer(String videoPath) {
-        videoView.setVideoPath(videoPath);
-        videoView.setMediaController(player_control_view.getMediaControllerWrapper());
-        videoView.start();
-        videoView.setOnPreparedListener(mp -> {
-            startTime = PD_Utility.getCurrentDateTime();
-            player_control_view.show();
-            videoDuration = videoView.getDuration();
-        });
-        videoView.setOnCompletionListener(mp -> {
-            addScoreToDB();
-            if (videoSawal == null) {
-                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    EventMessage message = new EventMessage();
-                    message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
-                    message.setDownloadId(resId);
-                    EventBus.getDefault().post(message);
-                } else
-                    Objects.requireNonNull(getActivity()).onBackPressed();
-            } else {
-                Bundle aksbundle = new Bundle();
-                aksbundle.putParcelable(PD_Constant.AKS_QUESTION, videoSawal);
-                aksbundle.putString(PD_Constant.RESOURSE_ID, resId);
-                aksbundle.putBoolean("isCourse", getArguments().getBoolean("isCourse"));
-                EventMessage message = new EventMessage();
-                message.setMessage(PD_Constant.ADD_VIDEO_PROGRESS_AND_SHOW_SAWAL);
-                message.setBundle(aksbundle);
-                message.setDownloadId(resId);
-                EventBus.getDefault().post(message);
-            }
-        });
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Subscribe
-    public void messageReceived(EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
-                if (!isScoreAdded) addScoreToDB();
-                if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
-                    EventMessage message1 = new EventMessage();
-                    message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
-                    EventBus.getDefault().post(message1);
-                } else
-                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
-            }
-        }
-    }
-
-    @Background
-    public void addScoreToDB() {
-        isScoreAdded = true;
-        String endTime = PD_Utility.getCurrentDateTime();
-        Modal_Score modalScore = new Modal_Score();
-        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        if (PrathamApplication.isTablet) {
-            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-            modalScore.setStudentID("");
-        } else {
-            modalScore.setGroupID("");
-            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
-        }
-        modalScore.setDeviceID(PD_Utility.getDeviceID());
-        modalScore.setResourceID(resId);
-        modalScore.setQuestionId(0);
-        modalScore.setScoredMarks((int) PD_Utility.getTimeDifference(startTime, endTime));
-        modalScore.setTotalMarks((int) videoDuration);
-        modalScore.setStartDateTime(startTime);
-        modalScore.setEndDateTime(endTime);
-        modalScore.setLevel(0);
-        modalScore.setLabel("_");
-        modalScore.setSentFlag(0);
-        scoreDao.insert(modalScore);
     }
 }

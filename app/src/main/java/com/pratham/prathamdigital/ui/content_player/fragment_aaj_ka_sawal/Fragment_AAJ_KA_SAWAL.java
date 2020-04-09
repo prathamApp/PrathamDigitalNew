@@ -19,7 +19,6 @@ import com.pratham.prathamdigital.custom.view_animator.ViewAnimator;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
-import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -39,6 +38,7 @@ import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 @EFragment(R.layout.frag_aaj_ka_sawal)
 public class Fragment_AAJ_KA_SAWAL extends Fragment {
     private static final int HIGHLIGHT_SELECTED_ANSWER = 3;
+    private static final int CLOSE_CONTENT_PLAYER_ACTIVITY = 4;
     @ViewById(R.id.aks_reveal)
     CircularRevelLayout aks_reveal;
     @ViewById(R.id.aaj_txt_question)
@@ -75,28 +75,35 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
-            if (msg.what == HIGHLIGHT_SELECTED_ANSWER) {
-                wrong_mp.start();
-                if (txt_option_one.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
-                    ViewAnimator.animate(card_option_one)
-                            .flash()
-                            .duration(350)
-                            .start();
-                else if (txt_option_two.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
-                    ViewAnimator.animate(card_option_two)
-                            .flash()
-                            .duration(350)
-                            .start();
-                else if (txt_option_three.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
-                    ViewAnimator.animate(card_option_three)
-                            .flash()
-                            .duration(350)
-                            .start();
-                else if (txt_option_four.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
-                    ViewAnimator.animate(card_option_four)
-                            .flash()
-                            .duration(350)
-                            .start();
+            switch (msg.what) {
+                case HIGHLIGHT_SELECTED_ANSWER:
+                    wrong_mp.start();
+                    if (txt_option_one.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
+                        ViewAnimator.animate(card_option_one)
+                                .flash()
+                                .duration(350)
+                                .start();
+                    else if (txt_option_two.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
+                        ViewAnimator.animate(card_option_two)
+                                .flash()
+                                .duration(350)
+                                .start();
+                    else if (txt_option_three.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
+                        ViewAnimator.animate(card_option_three)
+                                .flash()
+                                .duration(350)
+                                .start();
+                    else if (txt_option_four.getText().toString().equalsIgnoreCase(selectedAajKaSawal.getAnswer()))
+                        ViewAnimator.animate(card_option_four)
+                                .flash()
+                                .duration(350)
+                                .start();
+                    break;
+                case CLOSE_CONTENT_PLAYER_ACTIVITY:
+                    EventMessage eventMessage1 = new EventMessage();
+                    eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+                    EventBus.getDefault().post(eventMessage1);
+                    break;
             }
         }
     };
@@ -113,7 +120,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
             showQuestion(Objects.requireNonNull(getArguments().getParcelable(PD_Constant.AKS_QUESTION)));
             resid = getArguments().getString(PD_Constant.RESOURSE_ID);
         } else {
-            Objects.requireNonNull(getActivity()).onBackPressed();
+            mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
         }
         aks_reveal.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
@@ -152,7 +159,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
             message.setDownloadId(resid);
             EventBus.getDefault().post(message);
         } else
-            Objects.requireNonNull(getActivity()).onBackPressed();
+            mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
     }
 
     @Click(R.id.aaj_okay)
@@ -194,7 +201,7 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);
                 } else {
-                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                    mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
                 }
             }
         }

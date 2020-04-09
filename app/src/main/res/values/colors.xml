@@ -37,6 +37,7 @@
     <color name="lavender">#D8D2E1</color>
     <color name="charcoal">#34435E</color>
     <color name="trans_charcoal">#e134435e</color>
+    <color name="light_brown">#FBF5EE</color>
 
     <!--//chips-->
     <color name="chip">#333</color>

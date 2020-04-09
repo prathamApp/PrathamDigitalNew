@@ -7,6 +7,14 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
 
+    public static final String NOTIFICATION_RECIEVED = "notification_recieved";
+    public static final String YOUTUBE_LINK = "youtube";
+    public static final String INTRO_SHOWN = "intro_shown";
+    public static final String CLOSE_CONTENT_ACTIVITY = "close_content_activity";
+    public static final String PUSH_NOTI_VALUE = "push_noti_value";
+    public static final String PUSH_NOTI_KEY = "push_noti_key";
+    public static final String PERMISSIONS_GRANTED = "permissions_granted";
+    public static final String CHECK_PERMISSIONS = "check_permissions";
     public static final String ATTENDANCE_IMAGE_FOLDER = "attendance_image_folder";
     public static final String CHECK_COURSE_COMPLETION = "check_course_completion";
     public static final String COURSE_NOT_VERIFIED = "course_not_verified";

@@ -115,6 +115,8 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                     message.setMessage(PD_Constant.COURSE_COMPLETED);
                     EventBus.getDefault().post(message);
                 }
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_ACTIVITY)) {
+                closeContentPlayer();
             }
         }
     }

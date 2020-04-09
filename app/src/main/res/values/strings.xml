@@ -321,4 +321,10 @@
         <item>Give a small description about the assignments.</item>
         <item>Coach comments on groups or students work.</item>
     </string-array>
+    <string name="permissions_head"><b>PraDigi uses the following permissions to enhance learning experience:</b></string>
+    <string name="permissions">
+        <b><i><font color="#FF3A41">LOCATION:</font></i></b> Customize content for regional languages\n<b><i>
+        <font color="#FF3A41">CAMERA:</font></i></b> Interactive courses where learners can share assignments\n<b><i>
+        <font color="#FF3A41">STORAGE:</font></i></b> To save the content and enable offline access\n<b><i>
+        <font color="#FF3A41">RECORD_AUDIO:</font></i></b> Using speech recognition for advanced \n reading exercises</string>
 </resources>

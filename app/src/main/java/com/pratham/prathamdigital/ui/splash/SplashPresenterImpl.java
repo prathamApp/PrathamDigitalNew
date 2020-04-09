@@ -146,8 +146,10 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Override
     public void checkStudentList() {
         if (studentDao.getStudentsCount() > 0) {
+            //tablet mode
             splashview.redirectToDashboard();
         } else {
+            //smartphone mode
             splashview.redirectToAvatar();
         }
     }
@@ -283,13 +285,15 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void failedCopyingExisting() {
-        checkStudentList();
+//        checkStudentList();
+        splashview.checkPermissions();
     }
 
     @Override
     public void successCopyingExisting(String absolutePath) {
         PrathamApplication.getInstance().setExistingSDContentPath(absolutePath);
-        checkStudentList();
+        splashview.checkPermissions();
+//        checkStudentList();
     }
 
     @Background
@@ -351,7 +355,6 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.setValue(value);
         }
         statusDao.insert(statusObj);
-        checkIfContentinSDCard();
     }
 
     @Override

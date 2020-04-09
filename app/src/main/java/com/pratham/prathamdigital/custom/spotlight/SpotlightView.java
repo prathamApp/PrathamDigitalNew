@@ -39,7 +39,6 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat;
 
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.util.ArrayList;
@@ -303,9 +302,6 @@ public class SpotlightView extends FrameLayout {
      */
     private void show(final Activity activity) {
 
-        if (/*preferencesManager.isDisplayed(usageId)*/ FastSave.getInstance().getBoolean(usageId, false))
-            return;
-
         ((ViewGroup) activity.getWindow().getDecorView()).addView(this);
 
         setReady(true);
@@ -337,7 +333,6 @@ public class SpotlightView extends FrameLayout {
      * Dissmiss view with reverse animation
      */
     private void dismiss() {
-        FastSave.getInstance().saveBoolean(usageId, true);
 //        preferencesManager.setDisplayed(usageId);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (isRevealAnimationEnabled)

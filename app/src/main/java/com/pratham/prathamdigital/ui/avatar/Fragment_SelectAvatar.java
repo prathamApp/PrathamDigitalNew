@@ -91,6 +91,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     };
     private int revealX;
     private int revealY;
+    private String noti_key;
+    private String noti_value;
 
     @Background
     public void initializeAvatars() {
@@ -188,9 +190,27 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
         }
+        if (doesArgumentContainsNotificationData()) {
+            mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_KEY, noti_key);
+            mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_VALUE, noti_value);
+        }
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
+    }
+
+    private boolean doesArgumentContainsNotificationData() {
+        if (noti_key != null && noti_value != null)
+            return true; //that means the values are newly assigned in @Subscribe, when a new notification arrives.
+        // if not, then we are continuing with the previous one, if exists.
+        if (getArguments() != null && getArguments().getString(PD_Constant.PUSH_NOTI_KEY) != null &&
+                getArguments().getString(PD_Constant.PUSH_NOTI_VALUE) != null) {
+            noti_key = getArguments().getString(PD_Constant.PUSH_NOTI_KEY);
+            noti_value = getArguments().getString(PD_Constant.PUSH_NOTI_VALUE);
+            return true;
+        }
+        //no notification received
+        return false;
     }
 
     private void markAttendance(Modal_Student stud) {
@@ -243,6 +263,11 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         if (message != null)
             if (message.getMessage().equalsIgnoreCase(PD_Constant.LANGUAGE))
                 txt_sel_language.setText(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.NOTIFICATION_RECIEVED)) {
+                Bundle bundle = message.getBundle();
+                noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
+                noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+            }
     }
 
     @Override

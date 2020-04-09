@@ -6,17 +6,26 @@
     android:clickable="true"
     android:focusable="true">
 
-    <com.pratham.prathamdigital.custom.FullScreenVideoView
+    <com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView
         android:id="@+id/videoView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:andexo_play_when_ready="true"
+        app:andexo_resize_mode="Fill"
+        android:keepScreenOn="true"
+        app:andexo_show_controller="true" />
 
-    <com.pratham.prathamdigital.custom.media_controller.PlayerControlView
-        android:id="@+id/player_control_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        app:pcv_fast_forward_ms="1000"
-        app:pcv_fast_rewind_ms="500"
-        app:pcv_show_timeout_ms="5000" />
+    <!--    <com.pratham.prathamdigital.custom.FullScreenVideoView-->
+    <!--        android:id="@+id/videoView"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent" />-->
+
+    <!--    <com.pratham.prathamdigital.custom.media_controller.PlayerControlView-->
+    <!--        android:id="@+id/player_control_view"-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_alignParentBottom="true"-->
+    <!--        app:pcv_fast_forward_ms="1000"-->
+    <!--        app:pcv_fast_rewind_ms="500"-->
+    <!--        app:pcv_show_timeout_ms="5000" />-->
 </RelativeLayout>

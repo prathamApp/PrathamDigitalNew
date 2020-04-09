@@ -17,8 +17,14 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
-import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
+import com.pratham.prathamdigital.ui.splash.ActivitySplash_;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
     private static final String TAG = "MyFirebaseMsgService";
@@ -51,23 +57,24 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
 
+        String key = "";
+        String value = "";
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
-
-            if (/* Check if data needs to be processed by long running job */ true) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
-                handleNow();
+            try {
+                JSONObject jsonData = new JSONObject(remoteMessage.getData());
+                if (jsonData.has("key")) key = jsonData.getString("key");
+                if (jsonData.has("value")) value = jsonData.getString("value");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
 
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification(remoteMessage.getNotification().getBody());
+            sendNotification(remoteMessage.getNotification().getBody(), key, value);
         }
 
         // Also if you intend on generating your own notifications as a result of a received FCM
@@ -95,27 +102,6 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
     // [END on_new_token]
 
     /**
-     * Schedule a job using FirebaseJobDispatcher.
-     */
-    private void scheduleJob() {
-        // [START dispatch_job]
-//        FirebaseJobDispatcher dispatcher = new FirebaseJobDispatcher(new GooglePlayDriver(this));
-//        Job myJob = dispatcher.newJobBuilder()
-//                .setService(MyJobService.class)
-//                .setTag("my-job-tag")
-//                .build();
-//        dispatcher.schedule(myJob);
-        // [END dispatch_job]
-    }
-
-    /**
-     * Handle time allotted to BroadcastReceivers.
-     */
-    private void handleNow() {
-        Log.d(TAG, "Short lived task is done.");
-    }
-
-    /**
      * Persist token to third-party servers.
      * <p>
      * Modify this method to associate the user's FCM InstanceID token with any server-side account
@@ -131,18 +117,29 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
      * Create and show a simple notification containing the received FCM message.
      *
      * @param messageBody FCM message body received.
+     * @param key
+     * @param value
      */
-    private void sendNotification(String messageBody) {
+    private void sendNotification(String messageBody, String key, String value) {
         Log.d("sendNotification::", messageBody);
         try {
             FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Intent intent = new Intent(this, AttendanceActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        Intent intent = null;
+        if (PD_Utility.isActivityRunning(ActivitySplash_.class))
+            intent = new Intent(this, ActivitySplash_.class);
+        else if (PD_Utility.isActivityRunning(AttendanceActivity_.class))
+            intent = new Intent(this, AttendanceActivity_.class);
+        else if (PD_Utility.isActivityRunning(ActivityMain_.class))
+            intent = new Intent(this, ActivityMain_.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.putExtra(PD_Constant.PUSH_NOTI_KEY, key);
+        intent.putExtra(PD_Constant.PUSH_NOTI_VALUE, value);
+        Log.d(TAG, "sendNotification::" + key + "::" + value);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+                PendingIntent.FLAG_UPDATE_CURRENT);
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
@@ -153,6 +150,7 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
                         .setContentTitle(getString(R.string.fcm_message))
                         .setContentText(messageBody)
                         .setAutoCancel(true)
+                        .setShowWhen(true)
                         .setSound(defaultSoundUri)
                         .setContentIntent(pendingIntent);
 

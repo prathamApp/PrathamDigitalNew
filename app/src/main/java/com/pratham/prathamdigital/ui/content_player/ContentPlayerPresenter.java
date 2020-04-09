@@ -60,13 +60,15 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                 bundlePdf(contentDetail, false);
             } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
-                bundleVideo(contentDetail, false);
+                bundleVideo(contentDetail, false, null);
             } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.GAME)) {
                 Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
                 bundleGame(contentDetail, false);
             } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.COURSE)) {
                 setCourse(intent);
                 bundleCourse(intent);
+            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.YOUTUBE_LINK)) {
+                bundleVideo(null, false, intent.getStringExtra(PD_Constant.CONTENT));
             }
         }
     }
@@ -92,17 +94,21 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         contentPlayerView.showGame(gBundle);
     }
 
-    private void bundleVideo(Modal_ContentDetail vidContentDetail, boolean isCourse) {
+    private void bundleVideo(Modal_ContentDetail vidContentDetail, boolean isCourse, String youtube_link) {
         Bundle vidBundle = new Bundle();
         String vid_path;
-        if (vidContentDetail.isOnSDCard())
-            vid_path = PrathamApplication.externalContentPath + "/PrathamVideo/" + vidContentDetail.getResourcepath();
-        else
-            vid_path = pradigiPath + "/PrathamVideo/" + vidContentDetail.getResourcepath();
-        vidBundle.putString("videoPath", vid_path);
-        vidBundle.putString("videoTitle", vidContentDetail.getNodetitle());
-        vidBundle.putString("resId", vidContentDetail.getAltnodeid());
+        if (vidContentDetail != null) {
+            if (vidContentDetail.isOnSDCard())
+                vid_path = PrathamApplication.externalContentPath + "/PrathamVideo/" + vidContentDetail.getResourcepath();
+            else
+                vid_path = pradigiPath + "/PrathamVideo/" + vidContentDetail.getResourcepath();
+            vidBundle.putString("videoPath", vid_path);
+            vidBundle.putString("videoTitle", vidContentDetail.getNodetitle());
+            vidBundle.putString("resId", vidContentDetail.getAltnodeid());
+        }
         vidBundle.putBoolean("isCourse", isCourse);
+        if (youtube_link != null && !youtube_link.isEmpty())
+            vidBundle.putString(PD_Constant.YOUTUBE_LINK, youtube_link);
         contentPlayerView.showVideo(vidBundle);
     }
 
@@ -126,7 +132,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.PDF)) {
                 bundlePdf(coursePlayingQueue.get(0), true);
             } else if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.VIDEO)) {
-                bundleVideo(coursePlayingQueue.get(0), true);
+                bundleVideo(coursePlayingQueue.get(0), true, null);
             } else if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.GAME)) {
                 bundleGame(coursePlayingQueue.get(0), true);
             }

@@ -13,8 +13,6 @@ public interface SplashContract {
 
         void redirectToAvatar();
 
-        void redirectToAttendance();
-
         void signInUsingGoogle();
 
         void googleSignInFailed();
@@ -22,6 +20,8 @@ public interface SplashContract {
         void loadSplash();
 
         void showEnterPrathamCodeDialog();
+
+        void checkPermissions();
     }
 
     interface splashPresenter {

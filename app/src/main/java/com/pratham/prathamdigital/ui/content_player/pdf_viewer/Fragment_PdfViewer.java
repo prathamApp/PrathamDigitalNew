@@ -9,7 +9,6 @@ import androidx.viewpager.widget.ViewPager;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.pdf.BookFlipPageTransformer;
 import com.pratham.prathamdigital.models.EventMessage;
-import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -52,7 +51,7 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
     @Override
     public void recievedBitmaps(ArrayList<Bitmap> bits) {
         bitmaps = bits;
-        PDFPagerAdapter pagerAdapter = new PDFPagerAdapter(getActivity(), bitmaps);
+        PDFPagerAdapter pagerAdapter = new PDFPagerAdapter(Objects.requireNonNull(getActivity()), bitmaps);
         pdf_curl_view.setAdapter(pagerAdapter);
         pdf_curl_view.setClipToPadding(false);
         BookFlipPageTransformer transformer = new BookFlipPageTransformer();
@@ -107,8 +106,11 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
                     EventMessage message1 = new EventMessage();
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);
-                } else
-                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                } else {
+                    EventMessage eventMessage1 = new EventMessage();
+                    eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+                    EventBus.getDefault().post(eventMessage1);
+                }
             }
         }
     }

@@ -1,9 +1,12 @@
 package com.pratham.prathamdigital.ui.splash;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.Editable;
@@ -15,6 +18,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -33,6 +37,7 @@ import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 
 @EActivity(R.layout.splash_activity)
@@ -46,8 +51,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private static final int REDIRECT_TO_AVATAR = 5;
     private static final int REDIRECT_TO_ATTENDANCE = 6;
     private static final int ENTER_CODE_QR_DIALOG = 7;
-    //    @ViewById(R.id.img_splash_light)
-//    ImageView img_splash_light;
+
     @ViewById(R.id.splash_video)
     VideoView splash_video;
 
@@ -56,7 +60,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private Context mContext;
     private GoogleApiClient mGoogleApiClient;
     private BlurPopupWindow dialog_code;
+    private BlurPopupWindow dialog_permission;
     private EditText et_qr_code;
+    private String noti_key = null;
+    private String noti_value = null;
     private final TextWatcher codeTextWatcher = new TextWatcher() {
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -88,6 +95,15 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                         splashPresenter.checkPrathamCode();
                     });
                     splash_video.start();
+                    //Read intent till the video completes
+                    if (getIntent().getExtras() != null) {
+                        for (String key : getIntent().getExtras().keySet()) {
+                            if (key.equalsIgnoreCase("key"))//the key received from notification data
+                                noti_key = getIntent().getExtras().getString(key);
+                            else if (key.equalsIgnoreCase("value"))//the value received from notification data
+                                noti_value = getIntent().getExtras().getString(key);
+                        }
+                    }
                     break;
                 case UPDATE_DIALOG:
                     new BlurPopupWindow.Builder(mContext)
@@ -134,6 +150,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                         intent.putExtra(PD_Constant.DEEP_LINK, true);
                         intent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
                     }
+                    if (noti_key != null && noti_value != null) {
+                        intent.putExtra(PD_Constant.PUSH_NOTI_KEY, noti_key);
+                        intent.putExtra(PD_Constant.PUSH_NOTI_VALUE, noti_value);
+                    }
                     intent.putExtra(PD_Constant.STUDENT_ADDED, true);
                     startActivity(intent);
                     overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -145,14 +165,12 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
                         intent2.putExtra(PD_Constant.DEEP_LINK, true);
                         intent2.putExtra(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
                     }
+                    if (noti_key != null && noti_value != null) {
+                        intent2.putExtra(PD_Constant.PUSH_NOTI_KEY, noti_key);
+                        intent2.putExtra(PD_Constant.PUSH_NOTI_VALUE, noti_value);
+                    }
                     intent2.putExtra(PD_Constant.STUDENT_ADDED, false);
                     startActivity(intent2);
-                    overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                    finishAfterTransition();
-                    break;
-                case REDIRECT_TO_ATTENDANCE:
-                    Intent intent3 = new Intent(ActivitySplash.this, AttendanceActivity_.class);
-                    startActivity(intent3);
                     overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
                     finishAfterTransition();
                     break;
@@ -177,9 +195,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     public void loadSplash() {
         if (PrathamApplication.useSatelliteGPS)
-//                                signInUsingGoogle();
             splashPresenter.startGpsTimer();
-////                            else
         else
             splashPresenter.checkIfContentinSDCard();
         PrathamSmartSync.pushUsageToServer(false);
@@ -216,12 +232,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         mhandler.sendEmptyMessage(REDIRECT_TO_AVATAR);
     }
 
-    @UiThread
-    @Override
-    public void redirectToAttendance() {
-        mhandler.sendEmptyMessage(REDIRECT_TO_ATTENDANCE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -247,6 +257,45 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         if (message != null) {
             if (message.getMessage().equalsIgnoreCase(PD_Constant.LOCATION_CHANGED))
                 splashPresenter.onLocationChanged(message.getLocation());
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.PERMISSIONS_GRANTED))
+                splashPresenter.checkStudentList();
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.NOTIFICATION_RECIEVED)) {
+                Toast.makeText(mContext, "message recieved", Toast.LENGTH_SHORT).show();
+                Bundle bundle = message.getBundle();
+                if (bundle.containsKey(PD_Constant.PUSH_NOTI_KEY) && bundle.containsKey(PD_Constant.PUSH_NOTI_VALUE)) {
+                    Toast.makeText(mContext, "values assigned", Toast.LENGTH_SHORT).show();
+                    noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
+                    noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void checkPermissions() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            dialog_permission = new BlurPopupWindow.Builder(ActivitySplash.this)
+                    .setContentView(R.layout.permission_detail_dialog)
+                    .bindClickListener(v -> {
+                        EventMessage message = new EventMessage();
+                        message.setMessage(PD_Constant.CHECK_PERMISSIONS);
+                        EventBus.getDefault().post(message);
+                        dialog_permission.dismiss();
+                    }, R.id.btn_perm_okay)
+                    .setGravity(Gravity.CENTER)
+                    .setDismissOnClickBack(false)
+                    .setDismissOnTouchBackground(false)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(8)
+                    .setTintColor(0x30000000)
+                    .build();
+            dialog_permission.show();
+        } else {
+            splashPresenter.checkStudentList();
         }
     }
 }

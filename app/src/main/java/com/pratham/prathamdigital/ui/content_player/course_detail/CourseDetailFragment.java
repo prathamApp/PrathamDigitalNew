@@ -16,7 +16,6 @@ import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
-import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
 import com.pratham.prathamdigital.util.PD_Constant;
 
@@ -114,9 +113,11 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @Subscribe
     public void messageReceived(EventMessage message) {
         if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER))
-                ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
-            else if (message.getMessage().equalsIgnoreCase(PD_Constant.COURSE_COMPLETED))
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.CLOSE_CONTENT_PLAYER)) {
+                EventMessage eventMessage1 = new EventMessage();
+                eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+                EventBus.getDefault().post(eventMessage1);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.COURSE_COMPLETED))
                 btn_submit_assignment.setVisibility(View.VISIBLE);
         }
     }

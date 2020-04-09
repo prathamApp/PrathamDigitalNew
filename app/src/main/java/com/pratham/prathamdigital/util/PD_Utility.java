@@ -1095,6 +1095,16 @@ public class PD_Utility {
         return false;
     }
 
+    public static Boolean isActivityRunning(Class activityClass) {
+        ActivityManager activityManager = (ActivityManager) PrathamApplication.getInstance().getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningTaskInfo> tasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
+        for (ActivityManager.RunningTaskInfo task : tasks) {
+            if (activityClass.getCanonicalName().equalsIgnoreCase(task.baseActivity.getClassName()))
+                return true;
+        }
+        return false;
+    }
+
     public static int getCurrentDPI(Context mContext) {
         DisplayMetrics dm = mContext.getResources().getDisplayMetrics();
         int densityDpi = dm.densityDpi;

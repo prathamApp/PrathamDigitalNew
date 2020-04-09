@@ -11,7 +11,6 @@ import androidx.fragment.app.Fragment;
 
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.EventMessage;
-import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.AfterViews;
@@ -105,8 +104,11 @@ public class Fragment_WebView extends Fragment implements VideoListener {
                     EventMessage message1 = new EventMessage();
                     message1.setMessage(PD_Constant.SHOW_COURSE_DETAIL);
                     EventBus.getDefault().post(message1);
-                } else
-                    ((Activity_ContentPlayer) Objects.requireNonNull(getActivity())).closeContentPlayer();
+                } else {
+                    EventMessage eventMessage1 = new EventMessage();
+                    eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+                    EventBus.getDefault().post(eventMessage1);
+                }
             }
         }
     }
@@ -118,8 +120,11 @@ public class Fragment_WebView extends Fragment implements VideoListener {
             message.setMessage(PD_Constant.SHOW_NEXT_CONTENT);
             message.setDownloadId(resId);
             EventBus.getDefault().post(message);
-        } else
-            Objects.requireNonNull(getActivity()).onBackPressed();
+        } else {
+            EventMessage eventMessage1 = new EventMessage();
+            eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
+            EventBus.getDefault().post(eventMessage1);
+        }
     }
 }
 
