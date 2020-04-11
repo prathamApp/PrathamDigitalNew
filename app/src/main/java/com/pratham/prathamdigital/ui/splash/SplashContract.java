@@ -1,9 +1,6 @@
 package com.pratham.prathamdigital.ui.splash;
 
-import android.content.Intent;
 import android.location.Location;
-
-import com.google.android.gms.common.api.GoogleApiClient;
 
 public interface SplashContract {
     interface splashview {
@@ -13,9 +10,9 @@ public interface SplashContract {
 
         void redirectToAvatar();
 
-        void signInUsingGoogle();
+//        void signInUsingGoogle();
 
-        void googleSignInFailed();
+//        void googleSignInFailed();
 
         void loadSplash();
 
@@ -33,13 +30,13 @@ public interface SplashContract {
 
         void checkStudentList();
 
-        void validateSignIn(Intent data);
+//        void validateSignIn(Intent data);
 
         void checkVersion(String latestVersion);
 
         void clearPreviousBuildData();
 
-        GoogleApiClient configureSignIn();
+//        GoogleApiClient configureSignIn();
 
         void onLocationChanged(Location location);
 

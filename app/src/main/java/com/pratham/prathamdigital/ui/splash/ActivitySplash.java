@@ -19,13 +19,11 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
-import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView;
 import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -40,6 +38,8 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+
+//import com.google.android.gms.auth.api.Auth;
 
 @EActivity(R.layout.splash_activity)
 public class ActivitySplash extends BaseActivity implements SplashContract.splashview {
@@ -240,7 +240,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         mhandler.sendEmptyMessage(UPDATE_DIALOG);
     }
 
-    @Override
+    /*@Override
     public void signInUsingGoogle() {
         if (!FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false)) {
             if (mGoogleApiClient == null) {
@@ -251,7 +251,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         } else {
             splashPresenter.checkIfContentinSDCard();
         }
-    }
+    }*/
 
     @UiThread
     @Override
@@ -270,7 +270,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == GOOGLE_SIGN_IN) {
 //            if (resultCode == RESULT_OK)
-            splashPresenter.validateSignIn(data);
+//            splashPresenter.validateSignIn(data);
         } else {
             // Google Sign In failed, update UI appropriately
             Log.d(TAG, "Login Unsuccessful.");
@@ -278,12 +278,14 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         }
     }
 
+/*
     @UiThread
     @Override
     public void googleSignInFailed() {
         Toast.makeText(mContext, "Error connecting to Google. Please check your Internet connection or try with different ID", Toast.LENGTH_SHORT).show();
         signInUsingGoogle();
     }
+*/
 
     @Subscribe
     public void onMessageReceived(EventMessage message) {

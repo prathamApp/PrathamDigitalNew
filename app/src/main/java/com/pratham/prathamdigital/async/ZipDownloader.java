@@ -44,6 +44,59 @@ public class ZipDownloader {
     PD_ApiRequest pd_apiRequest;
     private String filename;
 
+    ZipDownloader(Context context) {
+        Context context1 = context;
+    }
+
+    public void initialize(ContentContract.contentPresenter contentPresenter, String url,
+                           String foldername, String f_name, Modal_ContentDetail contentDetail,
+                           ArrayList<Modal_ContentDetail> levelContents) {
+        this.filename = f_name;
+        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
+    }
+
+    /*Creating folder in internal.
+     *That internal might be of android internal or sdcard internal (if available and writable)
+     * */
+    @Background
+    public void createFolderAndStartDownload(String url, String foldername, String f_name,
+                                             Modal_ContentDetail contentDetail,
+                                             ContentContract.contentPresenter contentPresenter,
+                                             ArrayList<Modal_ContentDetail> levelContents) {
+        File mydir;
+        mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
+        if (!mydir.exists()) mydir.mkdirs();
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
+                f_name = f_name.substring(0, f_name.lastIndexOf("."));
+                File temp_dir = new File(mydir.getAbsolutePath() + "/" + f_name);
+                if (!temp_dir.exists()) temp_dir.mkdirs();
+                mydir = temp_dir;
+            }
+        }
+        Log.d("internal_file", mydir.getAbsolutePath());
+
+        Modal_Download modal_download = new Modal_Download();
+        modal_download.setUrl(url);
+        modal_download.setDir_path(mydir.getAbsolutePath());
+        modal_download.setF_name(filename);
+        modal_download.setFolder_name(foldername);
+        modal_download.setContent(contentDetail);
+        modal_download.setContentPresenter(contentPresenter);
+        modal_download.setLevelContents(levelContents);
+
+        //download Thumbnail image first
+        downloadImages(modal_download, modal_download.getLevelContents());
+        DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
+                .setFilename(modal_download.getF_name())
+                // the minimal interval millisecond for callback progress
+                .setMinIntervalMillisCallbackProcess(30)
+                .build();
+        task.setTag(modal_download);
+        task.enqueue(listener);
+        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
+    }
+
     private com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {
         @Override
         protected void started(@NonNull DownloadTask task) {
@@ -90,80 +143,6 @@ public class ZipDownloader {
         }
     };
 
-    public void initialize(ContentContract.contentPresenter contentPresenter, String url,
-                           String foldername, String f_name, Modal_ContentDetail contentDetail,
-                           ArrayList<Modal_ContentDetail> levelContents) {
-        this.filename = f_name;
-        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
-    }
-
-    ZipDownloader(Context context) {
-        Context context1 = context;
-    }
-
-    private static void downloadImage(String url, String filename) {
-        File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
-        if (!dir.exists()) dir.mkdirs();
-        AndroidNetworking.download(url, dir.getAbsolutePath(), filename)
-                .setPriority(Priority.HIGH)
-                .setExecutor(Executors.newSingleThreadExecutor())
-                .build()
-                .startDownload(new DownloadListener() {
-                    @Override
-                    public void onDownloadComplete() {
-                        Log.d("image::", "DownloadComplete");
-                    }
-
-                    @Override
-                    public void onError(ANError anError) {
-                        Log.d("image::", "Not Downloaded");
-                    }
-                });
-    }
-
-    /*Creating folder in internal.
-     *That internal might be of android internal or sdcard internal (if available and writable)
-     * */
-    private void createFolderAndStartDownload(String url, String foldername, String f_name,
-                                              Modal_ContentDetail contentDetail,
-                                              ContentContract.contentPresenter contentPresenter,
-                                              ArrayList<Modal_ContentDetail> levelContents) {
-        File mydir;
-        mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
-        if (!mydir.exists()) mydir.mkdirs();
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
-                f_name = f_name.substring(0, f_name.lastIndexOf("."));
-                File temp_dir = new File(mydir.getAbsolutePath() + "/" + f_name);
-                if (!temp_dir.exists()) temp_dir.mkdirs();
-                mydir = temp_dir;
-            }
-        }
-        Log.d("internal_file", mydir.getAbsolutePath());
-
-        Modal_Download modal_download = new Modal_Download();
-        modal_download.setUrl(url);
-        modal_download.setDir_path(mydir.getAbsolutePath());
-        modal_download.setF_name(filename);
-        modal_download.setFolder_name(foldername);
-        modal_download.setContent(contentDetail);
-        modal_download.setContentPresenter(contentPresenter);
-        modal_download.setLevelContents(levelContents);
-//        pd_apiRequest.downloadContentFromServer(modal_download);
-//        AsyncTask task = new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
-//        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), null);
-        //download Thumbnail image first
-        dowloadImages(modal_download, modal_download.getLevelContents());
-        DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
-                .setFilename(modal_download.getF_name())
-                // the minimal interval millisecond for callback progress
-                .setMinIntervalMillisCallbackProcess(30)
-                .build();
-        task.setTag(modal_download);
-        task.enqueue(listener);
-        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
-    }
-
     private void notifyError(Modal_Download modal_download) {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FAST_DOWNLOAD_ERROR);
@@ -171,39 +150,6 @@ public class ZipDownloader {
         EventBus.getDefault().post(msg);
     }
 
-    /*private void createOverSdCardAndStartDownload(String url, String foldername, String f_name,
-                                                  Modal_ContentDetail contentDetail,
-                                                  ContentContract.contentPresenter contentPresenter,
-                                                  ArrayList<Modal_ContentDetail> levelContents) {
-        String path = FastSave.getInstance().getString(PD_Constant.SDCARD_PATH, "");
-        if (path.isEmpty())
-            return;
-        DocumentFile documentFile = DocumentFile.fromFile(new File(path));
-        if (documentFile.findFile("/Pratham" + foldername) != null)
-            documentFile = documentFile.findFile("/Pratham" + foldername);
-        else
-            documentFile = documentFile.createDirectory("/Pratham" + foldername);
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
-            if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
-                f_name = f_name.substring(0, f_name.lastIndexOf("."));
-                if (documentFile != null) {
-                    if (documentFile.findFile(f_name) != null)
-                        documentFile = documentFile.findFile(f_name);
-                    else
-                        documentFile = documentFile.createDirectory(f_name);
-                }
-            }
-        }
-        Modal_Download modal_download = new Modal_Download();
-        modal_download.setUrl(url);
-        modal_download.setDir_path(FileUtils.getPath(PrathamApplication.getInstance(), documentFile != null ? documentFile.getUri() : null));
-        modal_download.setF_name(filename);
-        modal_download.setFolder_name(foldername);
-        modal_download.setContent(contentDetail);
-        modal_download.setContentPresenter(contentPresenter);
-        modal_download.setLevelContents(levelContents);
-        new DownloadingTask().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, modal_download);
-    }*/
     @Background
     public void updateProgress(Modal_Download modal_download, long totalBytes, long bytesDownloaded) {
         Modal_FileDownloading modal_fileDownloading = new Modal_FileDownloading();
@@ -274,7 +220,7 @@ public class ZipDownloader {
         EventBus.getDefault().post(msg);
     }
 
-    private void dowloadImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
+    private void downloadImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
         for (Modal_ContentDetail detail : levelContents) {
             if (detail.getNodeserverimage() != null) {
                 String f_name = detail.getNodeserverimage()
@@ -287,6 +233,26 @@ public class ZipDownloader {
                     .substring(modal_download.getContent().getNodeserverimage().lastIndexOf('/') + 1);
             downloadImage(modal_download.getContent().getNodeserverimage(), f_name);
         }
+    }
+
+    private static void downloadImage(String url, String filename) {
+        File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
+        if (!dir.exists()) dir.mkdirs();
+        AndroidNetworking.download(url, dir.getAbsolutePath(), filename)
+                .setPriority(Priority.HIGH)
+                .setExecutor(Executors.newSingleThreadExecutor())
+                .build()
+                .startDownload(new DownloadListener() {
+                    @Override
+                    public void onDownloadComplete() {
+                        Log.d("image::", "DownloadComplete");
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        Log.d("image::", "Not Downloaded");
+                    }
+                });
     }
 }
 

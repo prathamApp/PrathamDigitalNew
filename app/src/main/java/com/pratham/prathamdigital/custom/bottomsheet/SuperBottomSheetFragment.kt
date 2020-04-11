@@ -73,10 +73,10 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
         dialog.run {
             setCancelable(propertyIsSheetCancelable)
             val isCancelableOnTouchOutside = propertyIsSheetCancelable && propertyIsSheetCancelableOnTouchOutside
-            setCanceledOnTouchOutside(isCancelableOnTouchOutside)
+            this?.setCanceledOnTouchOutside(isCancelableOnTouchOutside)
         }
         // Set window properties
-        dialog.window.runIfNotNull {
+        dialog?.window.runIfNotNull {
             setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             setDimAmount(propertyDim)
             if (supportsStatusBarColor) {
@@ -103,8 +103,8 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
     @UiThread
     private fun iniBottomSheetUiComponents() {
         // Store views references
-        sheetContainer = dialog.findViewById(R.id.super_bottom_sheet)
-        sheetTouchOutsideContainer = dialog.findViewById(R.id.touch_outside)
+        sheetContainer = dialog!!.findViewById(R.id.super_bottom_sheet)
+        sheetTouchOutsideContainer = dialog!!.findViewById(R.id.touch_outside)
         // Set the bottom sheet radius
         sheetContainer.setBackgroundColor(getBackgroundColor())
         sheetContainer.setCornerRadius(propertyCornerRadius)
@@ -156,7 +156,7 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 if (newState == BottomSheetBehavior.STATE_HIDDEN) {
                     setStatusBarColor(1f)
-                    dialog.cancel()
+                    dialog!!.cancel()
                 }
             }
 
@@ -192,7 +192,7 @@ abstract class SuperBottomSheetFragment : BottomSheetDialogFragment() {
             return
         }
         val color = calculateColor(propertyStatusBarColor, dim)
-        dialog.window!!.statusBarColor = color
+        dialog!!.window!!.statusBarColor = color
     }
 
     //endregion

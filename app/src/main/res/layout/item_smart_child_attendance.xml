@@ -6,13 +6,13 @@
     android:clickable="true"
     android:focusable="true">
 
-    <com.pratham.prathamdigital.custom.elastic_view.ElasticView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/smart_child_view"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_80sdp"
         android:layout_centerHorizontal="true"
-        android:elevation="@dimen/_10sdp"
-        app:cardCornerRadius="@dimen/_20sdp">
+        app:cardCornerRadius="@dimen/_20sdp"
+        app:cardElevation="@dimen/_5sdp">
 
         <com.airbnb.lottie.LottieAnimationView
             android:id="@+id/smart_lottie_child_avatar"
@@ -24,7 +24,7 @@
             android:scaleType="centerInside"
             app:lottie_autoPlay="true"
             app:lottie_loop="true" />
-    </com.pratham.prathamdigital.custom.elastic_view.ElasticView>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:id="@+id/smart_child_name"
@@ -37,6 +37,5 @@
         android:gravity="center"
         android:paddingLeft="@dimen/_5sdp"
         android:paddingRight="@dimen/_5sdp"
-        android:text="akjdaksjdasd"
         android:textColor="@color/black" />
 </RelativeLayout>

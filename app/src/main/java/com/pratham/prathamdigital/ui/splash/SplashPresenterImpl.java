@@ -1,7 +1,6 @@
 package com.pratham.prathamdigital.ui.splash;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -9,16 +8,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
-
-import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.auth.api.signin.GoogleSignInResult;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.pratham.prathamdigital.PrathamApplication;
-import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.async.ReadContentDbFromSdCard;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.interfaces.Interface_copying;
@@ -35,7 +25,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -44,7 +33,7 @@ import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EBean
 public class SplashPresenterImpl implements SplashContract.splashPresenter,
-        GoogleApiClient.OnConnectionFailedListener, Interface_copying {
+        /*GoogleApiClient.OnConnectionFailedListener,*/ Interface_copying {
     private static final String TAG = SplashPresenterImpl.class.getSimpleName();
     private final Context context;
     private final SplashContract.splashview splashview;
@@ -79,7 +68,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
     }
 
-    @Override
+   /* @Override
     public GoogleApiClient configureSignIn() {
         // Configure sign-in to request the user’s basic profile like name and email
         GoogleSignInOptions options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -88,17 +77,19 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
                 .build();
         // Build a GoogleApiClient with access to GoogleSignIn.API and the options above.
         return new GoogleApiClient.Builder(context)
-                .enableAutoManage((ActivitySplash) context, this /* OnConnectionFailedListener */)
+                .enableAutoManage((ActivitySplash) context, this *//* OnConnectionFailedListener *//*)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, options)
                 .build();
-    }
+    }*/
 
+/*
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed: google sign in failed");
     }
+*/
 
-    @Background
+/*    @Background
     @Override
     public void validateSignIn(Intent data) {
         GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
@@ -124,7 +115,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         } else {
             splashview.googleSignInFailed();
         }
-    }
+    }*/
 
 /*
     @Background
