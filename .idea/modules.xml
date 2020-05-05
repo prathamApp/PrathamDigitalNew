@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidProjects-PrathamDigitalNew.iml" filepath="$PROJECT_DIR$/AndroidProjects-PrathamDigitalNew.iml" group="PrathamDigitalNew" />
       <module fileurl="file://$PROJECT_DIR$/.idea/PrathamDigitalNew.iml" filepath="$PROJECT_DIR$/.idea/PrathamDigitalNew.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/PrathamDigitalNew-app.iml" filepath="$PROJECT_DIR$/app/PrathamDigitalNew-app.iml" group="PrathamDigitalNew/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

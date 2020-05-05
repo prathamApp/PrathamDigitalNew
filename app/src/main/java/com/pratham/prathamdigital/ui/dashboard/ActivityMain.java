@@ -18,6 +18,7 @@ import android.view.animation.ScaleAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
@@ -51,6 +52,8 @@ import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseE
 import com.pratham.prathamdigital.ui.fragment_course_enrollment.Fragment_CourseEnrollment_;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage;
 import com.pratham.prathamdigital.ui.fragment_language.FragmentLanguage_;
+import com.pratham.prathamdigital.ui.fragment_profile.Profile_Fragment;
+import com.pratham.prathamdigital.ui.fragment_profile.Profile_Fragment_;
 import com.pratham.prathamdigital.ui.fragment_receive.FragmentReceive_;
 import com.pratham.prathamdigital.ui.fragment_share.FragmentShare_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
@@ -88,6 +91,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int CHECK_AAJ_KA_SAWAL = 11;
     private static final int MENU_COURSES = 12;
     private static final int SHOW_YOU_TUBE_VIDEO = 13;
+    private static final int SHOW_PROFILE = 14;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -243,6 +247,14 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     "avatars/dino_dance.json"));
         drawer_profile_name.setText(FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, "No Name"));
         initializeMenu();
+    }
+
+    @Click(R.id.drawer_profile_lottie)
+    public void showProfile(){
+        if (main_sliding_drawer.isOpen())
+            main_sliding_drawer.closePane();
+        PD_Utility.showFragment(ActivityMain.this, new Profile_Fragment_(), R.id.main_frame,
+                null, Profile_Fragment.class.getSimpleName());
     }
 
     @Click(R.id.download_badge)
