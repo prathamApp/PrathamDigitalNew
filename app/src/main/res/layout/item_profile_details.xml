@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginRight="@dimen/_20sdp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/date"
+            android:layout_width="@dimen/_45sdp"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/red"
+            android:layout_marginTop="@dimen/_12sdp"
+            android:paddingEnd="@dimen/_5sdp"
+            android:text="44/44"/>
+
+        <LinearLayout
+            android:id="@+id/ll_stepper"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <View
+                android:id="@+id/iv_upper_view"
+                android:layout_width="2dp"
+                android:layout_height="20dp"
+                android:background="@color/dark_yellow"/>
+
+            <ImageView
+                android:id="@+id/iv_circle"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:srcCompat="@drawable/yellowcircle" />
+
+            <View
+                android:id="@+id/iv_lower_view"
+                android:layout_width="2dp"
+                android:layout_height="match_parent"
+                android:background="@color/dark_yellow"/>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_details"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:gravity="center">
+
+            <RelativeLayout
+                android:id="@+id/rl_right"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical|top"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/_10sdp">
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:id="@+id/activityPerformed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical|top"
+                    android:text="Activity Performed"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/black"/>
+
+                <RelativeLayout
+                    android:id="@+id/rl_expandeble"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp"
+                    android:layout_marginBottom="@dimen/_10sdp"
+                    android:layout_below="@+id/activityPerformed">
+
+                    <ImageView
+                        android:id="@+id/icon1"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_video"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:padding="@dimen/_2sdp"/>
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/vidCnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:textSize="18sp"
+                        android:textColor="@color/oslo_grey"
+                        android:layout_toEndOf="@+id/icon1"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+
+                    <ImageView
+                        android:id="@+id/icon2"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_joystick"
+                        android:layout_toEndOf="@+id/vidCnt"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:padding="@dimen/_2sdp"/>
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/gameCnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:textSize="18sp"
+                        android:textColor="@color/oslo_grey"
+                        android:layout_toEndOf="@+id/icon2"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+
+                    <ImageView
+                        android:id="@+id/icon3"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/ic_book"
+                        android:layout_toEndOf="@+id/gameCnt"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:padding="@dimen/_2sdp"/>
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/pdfCnt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="20"
+                        android:textColor="@color/oslo_grey"
+                        android:textSize="18sp"
+                        android:layout_toEndOf="@+id/icon3"
+                        android:layout_marginTop="@dimen/_5sdp"/>
+
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

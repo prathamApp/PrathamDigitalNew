@@ -6,9 +6,11 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
+import com.pratham.prathamdigital.models.Modal_JoinScoreContentTable;
 import com.pratham.prathamdigital.models.Modal_ResourcePlayedByGroups;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_TotalDaysGroupsPlayed;
+import com.pratham.prathamdigital.models.Modal_dateWiseResourceCount;
 
 import java.util.List;
 
@@ -49,4 +51,20 @@ public interface ScoreDao {
 
     @Query("Select distinct REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(REPLACE(substr(startdatetime,1,instr(startdatetime,' ')),'01','1'),'02','2'),'03','3'),'04','4'),'05','5'),'06','6'),'07','7'),'08','8'),'09','9') as dates,sc.resourceid,tc.nodetitle,at.groupid,g.groupname from Score sc inner join TableContent tc on tc.resourceid=sc.resourceid inner join Attendance at on sc.sessionid=at.sessionid inner join Groups g on at.groupid=g.groupid where length(startdatetime)>5 and at.groupid=:grpId")
     List<Modal_ResourcePlayedByGroups> getRecourcesPlayedByGroups(String grpId);
+
+    //Query for getting Total Resource Count
+    @Query("SELECT Score.StudentID as studentId, TableContent.resourcetype as resourceType, count(TableContent.resourceType) as totalCount\n" +
+            "FROM Score, TableContent\n" +
+            "WHERE Score.resourceid = TableContent.resourceid\n" +
+            "and Score.StudentID=:studentid\n" +
+            "GROUP BY TableContent.resourceType")
+    List<Modal_JoinScoreContentTable> getUsedResources(String studentid);
+
+    //Query for getting DateWise Resource Count
+    @Query("SELECT Score.StudentID as StudentID, substr(Score.EndDateTime,1,10) as startDate, TableContent.resourcetype as resourceType, count(TableContent.resourcetype) as count\n" +
+            "FROM Score\n" +
+            "INNER JOIN  TableContent ON Score.ResourceID=TableContent.resourceid\n" +
+            "WHERE Score.StudentID=:studentid\n" +
+            "GROUP BY TableContent.resourcetype, substr(Score.EndDateTime,1,10)")
+    List<Modal_dateWiseResourceCount> getDateWiseResourceCount(String studentid);
 }
