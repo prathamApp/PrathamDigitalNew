@@ -87,14 +87,29 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
     @UiThread
     @Override
     public void showTotalResourceCount(String gcnt, String pcnt, String vcnt) {
+        if(gcnt.equals(""))
+            total_gameCount.setText("0");
+        else
         total_gameCount.setText(gcnt);
-        total_pdfCount.setText(pcnt);
-        total_videoCount.setText(vcnt);
+
+        if(pcnt.equals(""))
+            total_pdfCount.setText("0");
+        else
+            total_pdfCount.setText(pcnt);
+
+        if(vcnt.equals(""))
+            total_videoCount.setText("0");
+        else
+            total_videoCount.setText(vcnt);
     }
 
     @UiThread
     @Override
     public void showDateWiseResourceCount(List<Modal_dateWiseResourceCount> dateWiseResourceCountList, List<String> endDateList) {
+        if(dateWiseResourceCountList.size()==0){
+            Modal_ProfileDetails details = new Modal_ProfileDetails("date", "0", "0", "0");
+            detailsList.add(details);
+        }
         String vcnt = "0", gcnt = "0", pcnt = "0";
         List<String> dateString = new ArrayList<String>(new LinkedHashSet<String>(endDateList));
         for (int i = 0; i < dateString.size(); i++) {

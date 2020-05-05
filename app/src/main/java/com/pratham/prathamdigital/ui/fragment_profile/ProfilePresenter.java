@@ -33,7 +33,6 @@ public class ProfilePresenter implements ProfileContract.ProfilePresenter {
         this.profileView=profileView;
     }
 
-    @Background
     @Override
     public void loadTotalUsedResources() {
 //        HashMap<String, List<Modal_JoinScoreContentTable>> courses = new HashMap<>();
@@ -61,7 +60,6 @@ public class ProfilePresenter implements ProfileContract.ProfilePresenter {
         profileView.showTotalResourceCount(gameCnt,pdfCnt,videoCnt);
     }
 
-    @Background
     @Override
     public void loadDateWiseResources() {
         List<Modal_dateWiseResourceCount> dateWiseResourceCountList;
