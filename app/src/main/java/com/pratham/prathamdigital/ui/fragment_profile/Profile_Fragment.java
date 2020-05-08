@@ -1,8 +1,12 @@
 package com.pratham.prathamdigital.ui.fragment_profile;
 
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -13,13 +17,22 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_JoinScoreContentTable;
 import com.pratham.prathamdigital.models.Modal_ProfileDetails;
+import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_dateWiseResourceCount;
+import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
+import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
+import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -27,6 +40,8 @@ import org.androidannotations.annotations.ViewById;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.fragment_profile)
 public class Profile_Fragment extends Fragment implements ProfileContract.ProfileView {
@@ -137,5 +152,15 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
             gcnt = "0";
             pcnt = "0";
         }
+    }
+
+    @Click(R.id.profileImage_lottie)
+    public void changeProfile(){
+//        Toast.makeText(getActivity(), FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"), Toast.LENGTH_SHORT).show();
+        Intent cpintent = new Intent(getActivity(), AttendanceActivity_.class);
+        cpintent.putExtra(PD_Constant.STUDENT_ADDED, true);
+        startActivity(cpintent);
+        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        getActivity().finishAfterTransition();
     }
 }
