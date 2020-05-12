@@ -95,7 +95,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_videocount"
-                                android:text="Total Video Seen"
+                                android:text="@string/str_totvidseen"
                                 android:textColor="@color/mid_grey"
                                 android:gravity="center_horizontal"/>
                         </RelativeLayout>
@@ -121,7 +121,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_gameicon"
-                                android:text="30"
+                                android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
                                 android:textStyle="bold"
                                 android:gravity="center_horizontal"/>
@@ -130,7 +130,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_gamecount"
-                                android:text="Total Game Played"
+                                android:text="@string/str_totgampld"
+                                android:textColor="@color/mid_grey"
                                 android:gravity="center_horizontal"/>
                         </RelativeLayout>
 
@@ -155,7 +156,7 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_pdficon"
-                                android:text="19"
+                                android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
                                 android:textStyle="bold"
                                 android:gravity="center_horizontal"/>
@@ -164,7 +165,8 @@
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_pdfcount"
-                                android:text="Total Pdf Read"
+                                android:text="@string/str_totstoryrd"
+                                android:textColor="@color/mid_grey"
                                 android:gravity="center_horizontal"/>
                         </RelativeLayout>
 

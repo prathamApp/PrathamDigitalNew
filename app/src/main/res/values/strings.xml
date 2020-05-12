@@ -327,4 +327,13 @@
         <font color="#FF3A41">CAMERA:</font></i></b> Interactive courses where learners can share assignments\n<b><i>
         <font color="#FF3A41">STORAGE:</font></i></b> To save the content and enable offline access\n<b><i>
         <font color="#FF3A41">RECORD_AUDIO:</font></i></b> Using speech recognition for advanced \n reading exercises</string>
+
+    <string name="lipsumtext">Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.</string>
+
+    <!--Profile Section-->
+    <string name="str_totvidseen">Total Videos Seen</string>
+    <string name="str_totgampld">Total Games Played</string>
+    <string name="str_totstoryrd">Total Stories Read</string>
+    <string name="str_activityperf">Activity Performed</string>
+
 </resources>
