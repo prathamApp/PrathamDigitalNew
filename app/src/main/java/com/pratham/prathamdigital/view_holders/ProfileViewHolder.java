@@ -36,6 +36,9 @@ public class ProfileViewHolder extends RecyclerView.ViewHolder {
         videocount.setText(details.getVideoCnt());
         gamecount.setText(details.getGameCnt());
         pdfcount.setText(details.getPdfCnt());
+        upperView.setVisibility(View.VISIBLE);
+        lowerView.setVisibility(View.VISIBLE);
+
 
         if (position == 0) {
             upperView.setVisibility(View.INVISIBLE);

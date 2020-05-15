@@ -29,7 +29,9 @@
                     android:layout_weight="2"
                     android:background="@color/blue"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:clickable="true"
+                    android:focusable="true">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/profile_card"
@@ -73,13 +75,17 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true">
                             <ImageView
                                 android:id="@+id/total_videoicon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
                                 android:src="@drawable/videoblack"
-                                android:padding="@dimen/_5sdp"/>
+                                android:padding="@dimen/_5sdp"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_videocount"
                                 android:layout_width="match_parent"
@@ -89,7 +95,9 @@
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
                                 android:textStyle="bold"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalGamePlayed"
                                 android:layout_width="match_parent"
@@ -97,7 +105,9 @@
                                 android:layout_below="@+id/total_videocount"
                                 android:text="@string/str_totvidseen"
                                 android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"/>
                         </RelativeLayout>
 
                         <View
@@ -109,13 +119,17 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true">
                             <ImageView
                                 android:id="@+id/total_gameicon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
                                 android:src="@drawable/gameblack"
-                                android:padding="@dimen/_7sdp"/>
+                                android:padding="@dimen/_7sdp"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_gamecount"
                                 android:layout_width="match_parent"
@@ -124,7 +138,9 @@
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
                                 android:textStyle="bold"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalVideowatched"
                                 android:layout_width="match_parent"
@@ -132,7 +148,9 @@
                                 android:layout_below="@+id/total_gamecount"
                                 android:text="@string/str_totgampld"
                                 android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"/>
                         </RelativeLayout>
 
                         <View
@@ -144,13 +162,17 @@
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center">
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true">
                             <ImageView
                                 android:id="@+id/total_pdficon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
                                 android:src="@drawable/documentblack"
-                                android:padding="@dimen/_5sdp"/>
+                                android:padding="@dimen/_5sdp"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_pdfcount"
                                 android:layout_width="match_parent"
@@ -159,7 +181,9 @@
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
                                 android:textStyle="bold"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:clickable="true"
+                                android:focusable="true"/>
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalPdfRead"
                                 android:layout_width="match_parent"
@@ -167,7 +191,8 @@
                                 android:layout_below="@+id/total_pdfcount"
                                 android:text="@string/str_totstoryrd"
                                 android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"                                android:clickable="true"
+                                android:focusable="true" />
                         </RelativeLayout>
 
                     </LinearLayout>

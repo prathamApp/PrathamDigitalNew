@@ -227,6 +227,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     startActivity(intent);
                     overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                     break;
+                case SHOW_PROFILE:
+                    if (isChecked)
+                        toggleToArrow();
+                    Bundle bundleProf = new Bundle();
+                    bundleProf.putInt(PD_Constant.REVEALX, 0);
+                    bundleProf.putInt(PD_Constant.REVEALY, 0);
+                    PD_Utility.showFragment(ActivityMain.this, new Profile_Fragment_(), R.id.main_frame,
+                            bundleProf, Profile_Fragment.class.getSimpleName());
+                    break;
             }
         }
     };
@@ -251,10 +260,18 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     @Click(R.id.drawer_profile_lottie)
     public void showProfile(){
-        if (main_sliding_drawer.isOpen())
+        PrathamApplication.bubble_mp.start();
+        //if (main_sliding_drawer.isOpen())
             main_sliding_drawer.closePane();
+        mHandler.sendEmptyMessage(SHOW_PROFILE);
+        //main_sliding_drawer.closePane();
+/*
+        Bundle bundle2 = new Bundle();
+        bundle2.putInt(PD_Constant.REVEALX, 0);
+        bundle2.putInt(PD_Constant.REVEALY, 0);
         PD_Utility.showFragment(ActivityMain.this, new Profile_Fragment_(), R.id.main_frame,
-                null, Profile_Fragment.class.getSimpleName());
+                bundle2, Profile_Fragment.class.getSimpleName());
+*/
     }
 
     @Click(R.id.download_badge)
