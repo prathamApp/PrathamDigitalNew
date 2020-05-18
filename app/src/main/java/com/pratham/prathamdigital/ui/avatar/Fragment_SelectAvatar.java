@@ -122,6 +122,12 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
             });
         }
         initializeAvatars();
+
+        //Set spinner dropdown background to white for os api level > 22
+        if(Build.VERSION.SDK_INT>22){
+            spinner_age.setPopupBackgroundResource(R.color.white);
+            spinner_class.setPopupBackgroundResource(R.color.white);
+        }
     }
 
     @UiThread
@@ -138,12 +144,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                 .setMinScale(0.9f)
                 .setMaxScale(1.05f)
                 .build());
-
-        //Set spinner dropdown background to white for os api level > 22
-        if(Build.VERSION.SDK_INT>22){
-            spinner_age.setPopupBackgroundResource(R.color.white);
-            spinner_class.setPopupBackgroundResource(R.color.white);
-        }
     }
 
     @Click(R.id.btn_avatar_next)
