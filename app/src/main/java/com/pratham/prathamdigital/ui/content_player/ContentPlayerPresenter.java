@@ -104,7 +104,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                 vid_path = pradigiPath + "/PrathamVideo/" + vidContentDetail.getResourcepath();
             vidBundle.putString("videoPath", vid_path);
             vidBundle.putString("videoTitle", vidContentDetail.getNodetitle());
-            vidBundle.putString("resId", vidContentDetail.getAltnodeid());
+            vidBundle.putString("resId", vidContentDetail.getResourceid());
         }
         vidBundle.putBoolean("isCourse", isCourse);
         if (youtube_link != null && !youtube_link.isEmpty())
