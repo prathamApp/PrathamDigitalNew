@@ -63,7 +63,6 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
 
     @Bean(ProfilePresenter.class)
     ProfilePresenter profilePresenter;
-
     private ProfileAdapter profileAdapter;
 
     @AfterViews
@@ -84,10 +83,11 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
             profileAdapter = new ProfileAdapter(getActivity(), detailsList);
             rv_activityDetail.setLayoutManager(new LinearLayoutManager(getActivity()));
             rv_activityDetail.setHasFixedSize(true);
+            rv_activityDetail.setItemViewCacheSize(10);
             rv_activityDetail.setItemAnimator(new DefaultItemAnimator());
             rv_activityDetail.setAdapter(profileAdapter);
-            //          recyclerData();
-        } else {
+        }
+        else {
             profileAdapter.notifyDataSetChanged();
         }
     }
@@ -147,7 +147,6 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
             }
             Modal_ProfileDetails details = new Modal_ProfileDetails(date.substring(0, 5), vcnt, gcnt, pcnt);
             detailsList.add(details);
-//            Log.e("Op",date+" | "+"vcnt : "+vcnt+"gcnt : "+gcnt+"pcnt : "+pcnt);
             vcnt = "0";
             gcnt = "0";
             pcnt = "0";

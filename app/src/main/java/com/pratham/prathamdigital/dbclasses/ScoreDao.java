@@ -53,7 +53,7 @@ public interface ScoreDao {
     List<Modal_ResourcePlayedByGroups> getRecourcesPlayedByGroups(String grpId);
 
     //Query for getting Total Resource Count
-    @Query("SELECT Score.StudentID as studentId, TableContent.resourcetype as resourceType, count(TableContent.resourceType) as totalCount\n" +
+    @Query("SELECT Score.StudentID as studentId, TableContent.resourcetype as resourceType, count(DISTINCT TableContent.resourceid) as totalCount\n" +
             "FROM Score, TableContent\n" +
             "WHERE Score.resourceid = TableContent.resourceid\n" +
             "and Score.StudentID=:studentid\n" +
@@ -61,10 +61,12 @@ public interface ScoreDao {
     List<Modal_JoinScoreContentTable> getUsedResources(String studentid);
 
     //Query for getting DateWise Resource Count
-    @Query("SELECT Score.StudentID as StudentID, substr(Score.EndDateTime,1,10) as startDate, TableContent.resourcetype as resourceType, count(TableContent.resourcetype) as count\n" +
-            "FROM Score\n" +
-            "INNER JOIN  TableContent ON Score.ResourceID=TableContent.resourceid\n" +
-            "WHERE Score.StudentID=:studentid\n" +
-            "GROUP BY TableContent.resourcetype, substr(Score.EndDateTime,1,10)")
+    @Query("select st.sId as StudentID, st.sdt as startDate, st.rt as resourceType, count(st.rt) as count\n" +
+            "from (select s.studentId as sId, substr(s.EndDateTime,1,10) sdt, r.resourceType as rt\n" +
+            "from score s, TableContent r\n" +
+            "where s.resourceid = r.resourceid\n" +
+            "group by substr(s.EndDateTime,1,10), r.resourceid) st\n" +
+            "where st.sId =:studentid\n" +
+            "group by st.sdt, st.rt;")
     List<Modal_dateWiseResourceCount> getDateWiseResourceCount(String studentid);
 }

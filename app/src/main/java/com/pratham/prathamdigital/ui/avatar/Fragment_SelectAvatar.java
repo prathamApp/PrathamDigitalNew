@@ -2,7 +2,9 @@ package com.pratham.prathamdigital.ui.avatar;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ArrayAdapter;
@@ -120,6 +122,12 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
             });
         }
         initializeAvatars();
+
+        //Set spinner dropdown background to white for os api level > 22
+        if(Build.VERSION.SDK_INT>22){
+            spinner_age.setPopupBackgroundResource(R.color.white);
+            spinner_class.setPopupBackgroundResource(R.color.white);
+        }
     }
 
     @UiThread
