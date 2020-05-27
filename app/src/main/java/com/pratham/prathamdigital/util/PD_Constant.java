@@ -6,6 +6,7 @@ public class PD_Constant {
 
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
+    public static final String RASP_IP = "http://192.168.4.1:8080";
 //    private static final String BASE_URL = "http://posuatapi.prathamopenschool.org/api/";
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
@@ -62,7 +63,6 @@ public class PD_Constant {
     public static final String MSG_HANDLER_KEY = "msg_handler_key";
     public static final String DOWNLOAD_PROGRESS = "download_progress";
     public static final String DOWNLOAD_SPEED_RATE = "download_speed_rate";
-    public static final String RASP_IP = "http://192.168.4.1:8080";
     public static final String AVATAR = "avatar";
     public static final String INTERNET_HEADER = "INTERNET_HEADER";
     public static final String BROWSE_INTERNET = "BROWSE_INTERNET";
