@@ -6,6 +6,7 @@ public class PD_Constant {
 
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
+//    private static final String BASE_URL = "http://posuatapi.prathamopenschool.org/api/";
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
@@ -230,6 +231,7 @@ public class PD_Constant {
     public enum URL {
 
         BROWSE_BY_ID(BASE_URL + "get?id="),
+//        BROWSE_BY_ID(BASE_URL + "content/browse?id="),
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),

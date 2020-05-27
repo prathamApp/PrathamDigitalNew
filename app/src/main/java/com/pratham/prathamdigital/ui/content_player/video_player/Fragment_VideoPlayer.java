@@ -107,7 +107,17 @@ public class Fragment_VideoPlayer extends Fragment {
             new YouTubeExtractor(Objects.requireNonNull(getActivity())) {
                 @Override
                 protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-                    if (ytFiles != null) initializePlayer(ytFiles.get(22).getUrl());
+                    if (ytFiles != null && ytFiles.size() > 0) {
+                        String url = null;
+                        for (int i = 0; i < ytFiles.size(); i++) {
+                            int m = ytFiles.keyAt(i);
+                            if (ytFiles.get(m).getUrl() != null)
+                                url = ytFiles.get(m).getUrl();
+                            break;
+                        }
+                        initializePlayer(url);
+                    } else
+                        Toast.makeText(getActivity(), "Video cannot be played", Toast.LENGTH_SHORT).show();
                 }
             }.extract(videoPath, true, true);
         } else {
