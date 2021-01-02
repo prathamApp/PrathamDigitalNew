@@ -85,6 +85,7 @@
                     android:drawSelectorOnTop="true"
                     android:elevation="@dimen/_10sdp"
                     android:gravity="center"
+                    android:popupBackground="@color/white"
                     android:textAlignment="center" />
 
                 <Spinner
@@ -97,6 +98,7 @@
                     android:drawSelectorOnTop="true"
                     android:elevation="@dimen/_10sdp"
                     android:gravity="center"
+                    android:popupBackground="@color/white"
                     android:textAlignment="center" />
 
                 <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView

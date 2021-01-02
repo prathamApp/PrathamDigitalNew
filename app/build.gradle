@@ -6,7 +6,7 @@ apply plugin: 'kotlin-android-extensions'
  Increment the MAJOR after the MINOR version achieved the number 9*/
 ext.versionMajor = 3
 /*Minor Version : While adding a functionality , minor changes like color change or icon changes*/
-ext.versionMinor = 4
+ext.versionMinor = 5
 /*Patch : Bug fixing*/
 ext.versionPatch = 0
 ext.minSdkVersion = 21

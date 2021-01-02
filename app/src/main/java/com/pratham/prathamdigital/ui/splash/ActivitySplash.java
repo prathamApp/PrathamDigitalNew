@@ -191,7 +191,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
             @Override
             public void onEnded() {
-                //this method is called more than once? No reason.
+                //this method is called more than once? No reason. Might be library bug
                 if (!ended)
                     splashPresenter.checkPrathamCode();
                 ended = true;
