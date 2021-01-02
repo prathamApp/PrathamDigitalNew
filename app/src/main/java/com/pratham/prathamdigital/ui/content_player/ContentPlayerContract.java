@@ -44,6 +44,10 @@ public interface ContentPlayerContract {
 
     interface courseDetailAdapterClick {
         void onChildItemClicked(Modal_ContentDetail modal_contentDetail);
+
+        void onAssessmentItemClicked();
+
+        void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View start_reveal_item);
     }
 
     interface assignment_submission {

@@ -9,11 +9,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -69,6 +71,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     private static final String TAG = FragmentChildAttendance.class.getSimpleName();
     private static final int INITIALIZE_STUDENTS = 1;
     private static final int CAMERA_REQUEST = 2;
+    private static final int CHECKUPDATE_REQUEST = 3;
 
     @ViewById(R.id.chid_attendance_reveal)
     CircularRevelLayout chid_attendance_reveal;
@@ -78,6 +81,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     Button btn_attendance_next;
     @ViewById(R.id.img_child_back)
     ImageView img_child_back;
+    @ViewById(R.id.tv_updateApp)
+    TextView updateApp;
 
     private ChildAdapter childAdapter;
     private ArrayList<Modal_Student> students = new ArrayList<>();
@@ -112,6 +117,12 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                     }
                     setChilds(students);
                     break;
+                case CHECKUPDATE_REQUEST:
+                    //Send message if new update is available
+                    EventMessage checkUpdate = new EventMessage();
+                    checkUpdate.setMessage(PD_Constant.CHECK_UPDATE);
+                    EventBus.getDefault().post(checkUpdate);
+                    break;
             }
         }
     };
@@ -133,6 +144,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             });
         }
         mHandler.sendEmptyMessage(INITIALIZE_STUDENTS);
+        //checks whether new Update is available on playstore
+        mHandler.sendEmptyMessage(CHECKUPDATE_REQUEST);
     }
 
     @UiThread
@@ -357,7 +370,20 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                 Bundle bundle = message.getBundle();
                 noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
                 noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.UPDATE_AVAILABLE)){
+                showUpdateButton();
             }
+    }
+
+    //If new Update is available this function is called
+    public void showUpdateButton(){
+        updateApp.setVisibility(View.VISIBLE);
+        updateApp.setOnClickListener(v -> {
+            EventMessage startUpdate = new EventMessage();
+            startUpdate.setMessage(PD_Constant.START_UPDATE);
+            EventBus.getDefault().post(startUpdate);
+            updateApp.setVisibility(View.GONE);
+        });
     }
 
     @Override

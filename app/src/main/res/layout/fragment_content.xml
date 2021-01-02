@@ -45,18 +45,27 @@
 
             <ImageView
                 android:id="@+id/iv_wifi_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:srcCompat="@drawable/ic_no_wifi" />
+
+            <ImageView
+                android:id="@+id/iv_updateApp"
                 android:layout_width="@dimen/_30sdp"
                 android:layout_height="@dimen/_30sdp"
                 android:layout_gravity="center_vertical"
-                app:srcCompat="@drawable/ic_no_wifi" />
+                android:src="@drawable/ic_app_update"/>
         </LinearLayout>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_level"
             android:layout_width="match_parent"
             android:layout_height="@dimen/_30sdp"
-            android:layout_marginLeft="@dimen/_30sdp"
-            android:layout_marginTop="@dimen/_10sdp" />
+            android:layout_marginStart="@dimen/_30sdp"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_25sdp"/>
 
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

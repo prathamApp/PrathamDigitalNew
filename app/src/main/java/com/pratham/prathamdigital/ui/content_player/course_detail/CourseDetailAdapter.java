@@ -1,9 +1,12 @@
 package com.pratham.prathamdigital.ui.content_player.course_detail;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewAnimationUtils;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateDecelerateInterpolator;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.AsyncListDiffer;
@@ -52,7 +55,7 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseChildViewHol
     @Override
     public void onBindViewHolder(@NonNull CourseChildViewHolder childViewHolder, int i) {
         i = childViewHolder.getAdapterPosition();
-        childViewHolder.setChildItems(mDiffer.getCurrentList().get(i), courseDetailAdapterClick);
+        childViewHolder.setChildItems(mDiffer.getCurrentList().get(i), courseDetailAdapterClick, i);
     }
 
     @Override
@@ -61,7 +64,7 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseChildViewHol
             super.onBindViewHolder(childViewHolder, position, payloads);
         } else {
             Modal_ContentDetail contentDetail = (Modal_ContentDetail) payloads.get(0);
-            childViewHolder.setChildItems(contentDetail, courseDetailAdapterClick);
+            childViewHolder.setChildItems(contentDetail, courseDetailAdapterClick, position);
         }
     }
 
@@ -72,5 +75,22 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseChildViewHol
 
     public void submitList(List<Modal_ContentDetail> data) {
         mDiffer.submitList(data);
+    }
+
+    public void reveal(View view, View startView) {
+        // previously invisible view
+        try {
+            int centerX = view.getWidth();
+            int centerY = view.getHeight();
+            int startRadius = 0;
+            int endRadius = (int) Math.hypot(centerX, centerY);
+            Animator anim = ViewAnimationUtils.createCircularReveal(view, (int) startView.getX(), (int) startView.getY(), startRadius, endRadius);
+            anim.setInterpolator(new AccelerateDecelerateInterpolator());
+            anim.setDuration(300);
+            view.setVisibility(View.VISIBLE);
+            anim.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

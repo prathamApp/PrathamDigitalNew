@@ -6,9 +6,13 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -17,6 +21,7 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -79,6 +84,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     RelativeLayout rl_network_error;
     @ViewById(R.id.iv_wifi_status)
     ImageView iv_wifi_status;
+    @ViewById(R.id.iv_updateApp)
+    ImageView iv_updateApp;
 
     @Bean(ContentPresenterImpl.class)
     ContentContract.contentPresenter contentPresenter;
@@ -90,6 +97,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private int revealY;
     private BlurPopupWindow download_builder;
     private Modal_ContentDetail dl_Content;
+    private int courseFlag;
+
+    private final static int IS_COURSE=999;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -157,9 +167,20 @@ public class FragmentContent extends Fragment implements ContentContract.content
             mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
             mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
             showDialog();
-            if (levelAdapter == null) contentPresenter.getContent(null);
+            if (levelAdapter == null) contentPresenter.getContent(null,"");
             else contentPresenter.getContent();
         }, 500);
+    }
+
+    @Click(R.id.iv_updateApp)
+    public void updateApp(){
+        //Toast.makeText(getContext(), "Update", Toast.LENGTH_SHORT).show();
+        final String appPackageName = Objects.requireNonNull(getActivity()).getPackageName(); // getPackageName() from Context or Activity object
+        try {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+        } catch (android.content.ActivityNotFoundException anfe) {
+            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
     }
 
     @Override
@@ -172,7 +193,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
         //When returned from the webview or other activity, latest contents are not updated. The below call is thus required.
         if (contentAdapter != null)
             if (contentPresenter.isFilesDownloading()) contentPresenter.getContent();
-            else displayContents(contentPresenter.getContentList());
+            else {
+                displayContents(contentPresenter.getContentList());}
     }
 
     @Override
@@ -276,7 +298,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Click(R.id.btn_retry)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
-        contentPresenter.getContent(null);
+        contentPresenter.getContent(null,"");
     }
 
     @UiThread
@@ -299,12 +321,38 @@ public class FragmentContent extends Fragment implements ContentContract.content
         }
     }
 
+    @Override
+    public void displayContentsInCourse(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs) {
+        if(courseFlag==IS_COURSE){
+            String courseID = contentDetail.getAltnodeid();
+            String nodeTitle = contentDetail.getNodetitle();
+            String nodeDesc = contentDetail.getNodedesc();
+            KotlinPermissions.with(Objects.requireNonNull(getActivity()))
+                    .permissions(Manifest.permission.RECORD_AUDIO)
+                    .onAccepted(permissionResult -> {
+                        Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                        intent.putExtra("NODE_CALL","CALL_FROM_NODE");
+                        intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
+                        intent.putExtra(PD_Constant.COURSE_ID, courseID);
+                        intent.putExtra(PD_Constant.WEEK, "WEEK_1");
+                        intent.putExtra("NODE_TITLE",nodeTitle);
+                        intent.putExtra("NODE_DESC", nodeDesc);
+                        //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
+                        Log.e("URL", String.valueOf(childs.size()));
+                        startActivityForResult(intent, 4);
+                        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
+                    })
+                    .ask();
+        }
+    }
+
     @UiThread
     @Override
     public void levelClicked(Modal_ContentDetail detail) {
         PrathamApplication.bubble_mp.start();
         showDialog();
-        contentPresenter.getContent(detail);
+        contentPresenter.getContent(detail,"");
     }
 
     @UiThread
@@ -317,9 +365,40 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @UiThread
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
-        PrathamApplication.bubble_mp.start();
-        showDialog();
-        contentPresenter.getContent(contentDetail);
+            PrathamApplication.bubble_mp.start();
+            showDialog();
+            contentPresenter.getContent(contentDetail,"");
+    }
+
+    @Override
+    public void onCourseClicked(int position, Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs) {
+        if(position==IS_COURSE) {
+            PrathamApplication.bubble_mp.start();
+            showDialog();
+            contentPresenter.getContent(contentDetail,"isCourse");
+            courseFlag=position;
+        } else {
+            String courseID = contentDetail.getAltnodeid();
+            String nodeTitle = contentDetail.getNodetitle();
+            String nodeDesc = contentDetail.getNodedesc();
+            KotlinPermissions.with(Objects.requireNonNull(getActivity()))
+                    .permissions(Manifest.permission.RECORD_AUDIO)
+                    .onAccepted(permissionResult -> {
+                        Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                        intent.putExtra("NODE_CALL", "CALL_FROM_NODE");
+                        intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
+                        intent.putExtra(PD_Constant.COURSE_ID, courseID);
+                        intent.putExtra(PD_Constant.WEEK, "WEEK_1");
+                        intent.putExtra("NODE_TITLE", nodeTitle);
+                        intent.putExtra("NODE_DESC", nodeDesc);
+                        //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
+                        Log.e("URL", String.valueOf(childs.size()));
+                        startActivityForResult(intent, 4);
+                        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
+                    })
+                    .ask();
+        }
     }
 
 

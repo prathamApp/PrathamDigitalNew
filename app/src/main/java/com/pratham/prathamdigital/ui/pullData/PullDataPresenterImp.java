@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.pullData;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -178,9 +179,14 @@ public class PullDataPresenterImp implements PullDataContract.PullDataPresenter,
         //To safely remove from a collection while iterating over it, Iterator should be used.
         Iterator<Modal_Student> i = studentList.iterator();
         while (i.hasNext()) {
+            //added try catch due to nullpointer exception
+            try {
             Modal_Student stu = i.next(); // must be called before you can call i.remove()
-            if (stu.getGender().equalsIgnoreCase("deleted"))
-                i.remove();
+                if (stu.getGender().equalsIgnoreCase("deleted"))
+                    i.remove();
+            }catch (Exception e){
+                Log.e("Pull Data : ",e.getMessage());
+            }
         }
         studentDao.insertAllStudents(studentList);
         Iterator<Modal_Groups> gi = groupList.iterator();

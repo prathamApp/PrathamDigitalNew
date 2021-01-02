@@ -112,8 +112,8 @@ dependencies {
     implementation 'commons-net:commons-net:3.6'
     compileOnly "org.projectlombok:lombok:1.16.18"
     annotationProcessor 'org.projectlombok:lombok:1.16.18'
-    annotationProcessor "org.androidannotations:androidannotations:4.7.0-SNAPSHOT"
-    implementation "org.androidannotations:androidannotations-api:4.7.0-SNAPSHOT"
+    annotationProcessor "org.androidannotations:androidannotations:4.7.0"
+    implementation "org.androidannotations:androidannotations-api:4.7.0"
     //Observes network connection status & gives callbacks
     implementation 'com.novoda:merlin:1.2.0'
     implementation 'com.liulishuo.okdownload:okdownload:1.0.5'
@@ -125,5 +125,8 @@ dependencies {
     //    implementation 'commons-net:commons-net:3.6'
 //webrtc calling
 //    implementation('org.jitsi.react:jitsi-meet-sdk:2.+') { transitive = true }
+    //in-app update
+    implementation 'com.google.android.play:core:1.7.3'
+
 }
 apply plugin: 'com.google.gms.google-services'

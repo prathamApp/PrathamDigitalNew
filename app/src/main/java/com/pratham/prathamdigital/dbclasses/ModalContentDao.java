@@ -56,5 +56,9 @@ public interface ModalContentDao {
     @Query("Update TableContent Set parentid='0' WHERE (parentid = 20 or parentid=1100 " +
             "or parentid=25 or parentid=30 or parentid=35 or parentid=45 ) and content_language=:language")
     void updateParentsFromPreviousAppVersion(String language);
+
+    //Added this to mark Viewed Content as Viewed in CourseDetailFragment
+    @Query("update TableContent set isViewed=1 where nodeid=:node_id")
+    void updateIsViewed(String node_id);
 }
 

@@ -2,8 +2,11 @@ package com.pratham.prathamdigital;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -12,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.WindowManager;
@@ -22,6 +26,18 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.play.core.appupdate.AppUpdateInfo;
+import com.google.android.play.core.appupdate.AppUpdateManager;
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory;
+import com.google.android.play.core.appupdate.testing.FakeAppUpdateManager;
+import com.google.android.play.core.install.InstallState;
+import com.google.android.play.core.install.InstallStateUpdatedListener;
+import com.google.android.play.core.install.model.ActivityResult;
+import com.google.android.play.core.install.model.AppUpdateType;
+import com.google.android.play.core.install.model.InstallStatus;
+import com.google.android.play.core.install.model.UpdateAvailability;
+import com.google.android.play.core.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 import com.novoda.merlin.Connectable;
 import com.novoda.merlin.Disconnectable;
@@ -71,7 +87,7 @@ public class BaseActivity extends AppCompatActivity {
     private static final int SHOW_OTG_SELECT_DIALOG = 11;
     private static final int HIDE_OTG_TRANSFER_DIALOG_SUCCESS = 12;
     private static final int HIDE_OTG_TRANSFER_DIALOG_FAILED = 13;
-    private static final int SHOW_PERMISSION_DIALOG = 14;
+    private static final int CHECK_UPDATE = 14;
 
     @SuppressLint("StaticFieldLeak")
     public static TTSService ttsService;
@@ -80,6 +96,12 @@ public class BaseActivity extends AppCompatActivity {
     TextView txt_push_error;
     BlurPopupWindow pushDialog;
     BlurPopupWindow sd_builder;
+
+    //In App Update Variables
+    private AppUpdateManager appUpdateManager;
+    private Task<AppUpdateInfo> appUpdateInfoTask;
+    private int APP_UPDATE_TYPE_SUPPORTED = AppUpdateType.FLEXIBLE;
+    private int REQUEST_UPDATE = 100;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -234,6 +256,9 @@ public class BaseActivity extends AppCompatActivity {
                         }
                     }, 1500);
                     break;
+                case CHECK_UPDATE:
+                    checkForUpdate();
+                    break;
             }
         }
     };
@@ -247,22 +272,22 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-        Catcho.Builder(this)
+/*        Catcho.Builder(this)
                 .activity(CatchoTransparentActivity.class)
 //                .recipients("abc@gm.com")
-                .build();
+                .build();*/
         initializeConnectionService();
         initializeTTS();
-//        FirebaseInstanceId.getInstance().getInstanceId()
-//                .addOnCompleteListener(task -> {
-//                    if (!task.isSuccessful()) {
-//                        Log.w(TAG, "getInstanceId failed", task.getException());
-//                        return;
-//                    }
-//                    // Get new Instance ID token
-//                    String token = task.getResult().getToken();
-//                    Log.d("fcm::", token);
-//                });
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(task -> {
+                    if (!task.isSuccessful()) {
+                        Log.w(TAG, "getInstanceId failed", task.getException());
+                        return;
+                    }
+                    // Get new Instance ID token
+                    String token = task.getResult().getToken();
+                    Log.d("fcm::", token);
+                });
     }
 
     private void initializeTTS() {
@@ -344,6 +369,10 @@ public class BaseActivity extends AppCompatActivity {
                 mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.WRITE_PERMISSION)) {
                 mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CHECK_UPDATE)){
+                mHandler.sendEmptyMessage(CHECK_UPDATE);
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.START_UPDATE)) {
+                startUpdate();
             }
         }
     }
@@ -362,5 +391,102 @@ public class BaseActivity extends AppCompatActivity {
                 new CopyDbToOTG().execute(treeUri);
             }
         }
+        //App Update
+        if (requestCode == REQUEST_UPDATE) {
+            Log.e("########## 4 ->", "Activity Result");
+            switch (requestCode) {
+                case RESULT_OK:
+                    if (APP_UPDATE_TYPE_SUPPORTED == AppUpdateType.FLEXIBLE) {
+                        Log.e("#", "App Updated Successfully");
+                    } else {
+                        Log.e("#", "Update Started");
+                    }
+                case RESULT_CANCELED:
+                    Log.e("#", "Update Cancelled");
+                case ActivityResult.RESULT_IN_APP_UPDATE_FAILED:
+                    Log.e("#", "Update Failed");
+            }
+        }
+    }
+
+    //Flexible Update
+    private void checkForUpdate() {
+/*
+        if (BuildConfig.DEBUG) {
+            appUpdateManager = new FakeAppUpdateManager(this);
+            ((FakeAppUpdateManager) appUpdateManager).setUpdateAvailable(0);
+            Log.e("##########  ->", "Fake");
+        } else {
+*/
+            appUpdateManager = AppUpdateManagerFactory.create(this);
+            Log.e("##########  ->", "Original");
+//        }
+        // Before starting an update, register a listener for updates.
+        appUpdateManager.registerListener(installStateUpdatedListener);
+
+        appUpdateInfoTask = appUpdateManager.getAppUpdateInfo();
+        Log.e("########## 1 ->", String.valueOf(appUpdateInfoTask));
+        appUpdateInfoTask.addOnSuccessListener(appUpdateInfo -> {
+            Log.e("########## 2 ->", "SuccessListener");
+            if ((appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE ||
+                    appUpdateInfo.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) &&
+                    appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
+
+                //send message if update is available
+                EventMessage updateAvailable = new EventMessage();
+                updateAvailable.setMessage(PD_Constant.UPDATE_AVAILABLE);
+                EventBus.getDefault().post(updateAvailable);
+            } else {
+                Log.e("########## 5 ->", "No Update available");
+            }
+        });
+    }
+
+    //Listener for checking Install Status
+    InstallStateUpdatedListener installStateUpdatedListener = new
+            InstallStateUpdatedListener() {
+                @Override
+                public void onStateUpdate(InstallState state) {
+                    if (state.installStatus() == InstallStatus.DOWNLOADED){
+                        //CHECK THIS if AppUpdateType.FLEXIBLE, otherwise you can skip
+                        //send message if update is downloaded
+                        Log.e("#", "InstallStateUpdated: state: " + state.installStatus());
+                        appUpdateManager.completeUpdate();
+                    } else if (state.installStatus() == InstallStatus.INSTALLED){
+                        Log.e("#", "InstallStateInstalled: state: " + state.installStatus());
+                        if (appUpdateManager != null){
+                            appUpdateManager.unregisterListener(installStateUpdatedListener);
+                        }
+
+                    } else {
+                        Log.e("#", "InstallStateUpdatedListener: state: " + state.installStatus());
+                    }
+                }
+            };
+
+    public void startUpdate(){
+        // Start an update.
+        try {
+            appUpdateManager.startUpdateFlowForResult(
+                    appUpdateInfoTask.getResult(),
+                    AppUpdateType.FLEXIBLE,
+                    this,
+                    REQUEST_UPDATE);
+            Log.e("########## 3 ->", "All Condition true");
+        } catch (IntentSender.SendIntentException e) {
+            e.printStackTrace();
+        }
+        //This is used to check update functionality offline
+/*        if (BuildConfig.DEBUG) {
+            FakeAppUpdateManager fakeAppUpdate = (FakeAppUpdateManager) appUpdateManager;
+            if (fakeAppUpdate.isConfirmationDialogVisible()) {
+                fakeAppUpdate.userAcceptsUpdate();
+                fakeAppUpdate.downloadStarts();
+                fakeAppUpdate.downloadCompletes();
+                fakeAppUpdate.completeUpdate();
+                fakeAppUpdate.installCompletes();
+            }
+        }*/
+
     }
 }

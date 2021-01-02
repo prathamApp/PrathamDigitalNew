@@ -21,6 +21,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 
 @EBean
@@ -75,8 +76,16 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
 
     private void bundleCourse(Intent intent) {
         Bundle courseDetailBundle = new Bundle();
-        courseDetailBundle.putParcelable(PD_Constant.COURSE_PARENT, intent.getParcelableExtra(PD_Constant.COURSE_PARENT));
-        courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT, intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
+        if(intent.getStringExtra("NODE_CALL").equalsIgnoreCase("CALL_FROM_NODE")){
+            courseDetailBundle.putString("NODE_CALL", intent.getStringExtra("NODE_CALL"));
+            courseDetailBundle.putString("NODE_TITLE", intent.getStringExtra("NODE_TITLE"));
+            courseDetailBundle.putString("NODE_DESC", intent.getStringExtra("NODE_DESC"));
+            courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT, intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
+        } else {
+            courseDetailBundle.putString("NODE_CALL", intent.getStringExtra("NODE_CALL"));
+            courseDetailBundle.putParcelable(PD_Constant.COURSE_PARENT, intent.getParcelableExtra(PD_Constant.COURSE_PARENT));
+            courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT, intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
+        }
         contentPlayerView.showCourseDetail(courseDetailBundle);
     }
 
@@ -123,6 +132,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         pdfBundle.putString("resId", pdfContentDetail.getResourceid());
         pdfBundle.putBoolean("isCourse", isCourse);
         contentPlayerView.showPdf(pdfBundle);
+        modalContentDao.updateIsViewed(pdfContentDetail.getResourceid());
     }
 
     @Background

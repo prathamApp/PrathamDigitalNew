@@ -1,6 +1,5 @@
 package com.pratham.prathamdigital.models;
 
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -21,7 +20,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String nodetype;
     @SerializedName("nodetitle")
     private String nodetitle;
-    @SerializedName("nodekeywords")
+    @SerializedName("nodeKeyword")
     private String nodekeywords;
     @SerializedName("nodeeage")
     private String nodeeage;
@@ -53,13 +52,13 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String version;
     @SerializedName("assignment")
     private String assignment;
+    private boolean isViewed = false;
     @Ignore
     private String kolibriNodeImageUrl;
     @Ignore
     private String mappedApiId;
     @Ignore
     private String mappedParentId;
-
 
     public Modal_ContentDetail() {
     }
@@ -88,6 +87,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         mappedApiId = in.readString();
         mappedParentId = in.readString();
         assignment = in.readString();
+        isViewed = in.readByte() != 0;
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -286,6 +286,15 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.assignment = assignment;
     }
 
+    //Added this to mark Viewed Content as Viewed in CourseDetailFragment
+    public boolean getIsViewed() {
+        return isViewed;
+    }
+
+    public void setIsViewed(boolean isViewed) {
+        this.isViewed = isViewed;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -328,5 +337,6 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(mappedApiId);
         dest.writeString(mappedParentId);
         dest.writeString(assignment);
+        dest.writeByte((byte) (isViewed ? 1 : 0));
     }
 }

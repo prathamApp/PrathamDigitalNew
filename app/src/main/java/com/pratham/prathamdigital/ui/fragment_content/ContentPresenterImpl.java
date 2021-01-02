@@ -66,6 +66,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     private Modal_ContentDetail folderContentClicked;
     private String id_3_6 = "";
 
+    private static final String IS_COURSE = "isCourse";
+    String iscourse;
+
     ContentPresenterImpl(Context context) {
         Context context1 = context;
     }
@@ -83,7 +86,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Background
     @Override
-    public void getContent(Modal_ContentDetail contentDetail) {
+    public void getContent(Modal_ContentDetail contentDetail, String isCourse) {
+        iscourse = isCourse;
         //fetching content from database first
         folderContentClicked = contentDetail;
         if (contentDetail == null) {
@@ -108,7 +112,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             if (contentView != null) {
                 if (levelContents.size() == 1)
                     contentView.animateHamburger();
-                contentView.displayLevel(levelContents);
+                if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                    contentView.displayLevel(levelContents);
+                }
             }
             getDownloadedContents(contentDetail.getNodeid(), contentDetail.getAltnodeid());
 //            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getNodeid()).execute();
@@ -197,9 +203,17 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
                     PD_Constant.URL.GET_TOP_LEVEL_NODE
                             + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"), contentList);
+            String url = PD_Constant.URL.GET_TOP_LEVEL_NODE + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi");
+            Log.e("URL TOP: ", url);
         } else {
-            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
-                    PD_Constant.URL.BROWSE_BY_ID + ((mappedParentApi != null) ? mappedParentApi : parentId), contentList);
+            try {
+                pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                        PD_Constant.URL.BROWSE_BY_ID + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID(), contentList);
+                String url = PD_Constant.URL.BROWSE_BY_ID + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID();
+                Log.e("URL BROWSE : ", url);
+            } catch (Exception e) {
+                Log.e("ERROR : ", e.getMessage());
+            }
         }
     }
 
@@ -208,7 +222,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     public void downloadContent(Modal_ContentDetail contentDetail) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
             pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
-                    PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
+//                    PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
+                    PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid() + "&deviceid=" + PD_Utility.getDeviceID(), null);
+            String url = PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid() + "&deviceid=" + PD_Utility.getDeviceID();
+            Log.e("**URL:", url);
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 try {
@@ -223,7 +240,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
             } else {
                 pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_DOWNLOAD,
-                        PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
+//                        PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid(), null);
+                        PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid() + "&deviceid=" + PD_Utility.getDeviceID(), null);
+                String url = PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid() + "&deviceid=" + PD_Utility.getDeviceID();
+                //String url = PD_Constant.URL.DOWNLOAD_RESOURCE.toString() + contentDetail.getNodeid();
             }
         }
     }
@@ -415,9 +435,14 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
                 totalContents = removeDownloadedContents(totalContents, displayedContents);
 //                Collections.shuffle(totalContents);
-                tempContentList = getFinalListWithHeader(totalContents);
-                if (contentView != null)
-                    contentView.displayContents(totalContents);
+                if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                    tempContentList = getFinalListWithHeader(totalContents);
+                    if (contentView != null)
+                        contentView.displayContents(totalContents);
+                } else {
+                    assert contentView != null;
+                    contentView.displayContentsInCourse(folderContentClicked, tempContents);
+                }
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
                 Modal_DownloadContent download_content = gson.fromJson(jsonObject.toString(), Modal_DownloadContent.class);
@@ -727,7 +752,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         //delete content thumbnail image
         PD_Utility.deleteRecursive(new File(PrathamApplication.pradigiPath
                 + "/PrathamImages/" + contentItem.getNodeimage()));
-        getContent(levelContents.get(levelContents.size() - 1));
+        getContent(levelContents.get(levelContents.size() - 1), "");
     }
 
     private void addDeleteEntryInScore(Modal_ContentDetail contentItem) {

@@ -6,6 +6,7 @@ public class PD_Constant {
 
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
+    private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
@@ -73,6 +74,7 @@ public class PD_Constant {
     public static final String GAME = "game";
     public static final String VIDEO = "video";
     public static final String PDF = "pdf";
+    public static final String ASSESSMENT = "assessment";
     public static final String SESSIONID = "sessionid";
     public static final String GROUPID = "groupid";
     public static final String CONTENT_BACK = "content_back";
@@ -227,12 +229,19 @@ public class PD_Constant {
     public static final String SERVER_VILLAGE = "&villageId=";
     public static final String SERVER_STATECODE = "&statecode=";
 
+    //In-App Update Constants
+    public static final String CHECK_UPDATE = "CHECK_UPDATE";
+    public static final String START_UPDATE = "START_UPDATE";
+    public static final String UPDATE_DIALOG = "UPDATE_DIALOG";
+    public static final String UPDATE_AVAILABLE = "UPDATE_AVAILABLE";
+
     public enum URL {
 
-        BROWSE_BY_ID(BASE_URL + "get?id="),
+        //BROWSE_BY_ID(BASE_URL + "get?id="),//req
+        BROWSE_BY_ID(BASE_URL_NEW + "browse?id="),//req
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
-        GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
+        GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
@@ -251,7 +260,8 @@ public class PD_Constant {
         pullCrlsKolibriURL(RASP_IP + "/pratham/datastore/?table_name=Crl&filter_name=programid:"),
         pullStudentsServerURL("http://www.devtab.openiscool.org/api/student?programid="),
         pullCrlsServerURL("http://www.swap.prathamcms.org/api/UserList?programId="),
-        DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");
+        //DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");//req
+        DOWNLOAD_RESOURCE(BASE_URL_NEW + "download?id=");//req
 
         private final String name;
 

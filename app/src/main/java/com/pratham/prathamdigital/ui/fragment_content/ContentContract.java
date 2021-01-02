@@ -17,6 +17,8 @@ public interface ContentContract {
 
         void displayContents(List<Modal_ContentDetail> content);
 
+        void displayContentsInCourse(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> content);
+
         void displayHeader(Modal_ContentDetail contentDetail);
 
         void hideViews();
@@ -49,7 +51,7 @@ public interface ContentContract {
 
         void showPreviousContent();
 
-        void getContent(Modal_ContentDetail contentDetail);
+        void getContent(Modal_ContentDetail contentDetail, String isCourse);
 
         void eventFileDownloadStarted(EventMessage message);
 
@@ -88,6 +90,8 @@ public interface ContentContract {
 
     interface contentClick {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
+
+        void onCourseClicked(int position, Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs);
 
         void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View start_reveal_item);
 

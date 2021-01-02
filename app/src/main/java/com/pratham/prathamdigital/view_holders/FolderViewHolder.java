@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +25,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
+import java.util.List;
 import java.util.Objects;
 
 public class FolderViewHolder extends RecyclerView.ViewHolder {
@@ -38,6 +40,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 
     private final ContentContract.contentClick contentClick;
 
+    private final static int IS_COURSE = 999;
     public FolderViewHolder(View itemView, final ContentContract.contentClick contentClick) {
         super(itemView);
         folder_content_image = itemView.findViewById(R.id.folder_content_image);
@@ -95,6 +98,16 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 //            Objects.requireNonNull(folder_content_desc).setText("No description");
 //        else
 //            Objects.requireNonNull(folder_content_desc).setText(contentItem.getNodedesc());
-        content_card.setOnClickListener(v -> contentClick.onfolderClicked(pos, contentItem));
+        content_card.setOnClickListener(v -> {
+            if (contentItem.getNodetype().equalsIgnoreCase("course")) {
+                List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(contentItem.getNodeid(), contentItem.getAltnodeid(), contentItem.getContent_language());
+                if (childs.size() != 0)
+                    contentClick.onCourseClicked(pos, contentItem, childs);
+                else
+                    contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
+            } else {
+                contentClick.onfolderClicked(pos, contentItem);
+            }
+        });
     }
 }

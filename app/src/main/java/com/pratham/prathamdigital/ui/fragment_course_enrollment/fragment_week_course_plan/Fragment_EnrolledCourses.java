@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -198,6 +199,7 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
                 .permissions(Manifest.permission.RECORD_AUDIO)
                 .onAccepted(permissionResult -> {
                     Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                    intent.putExtra("NODE_CALL","CALL_FROM_COURSE");//Call Activity from course section
                     intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
                     intent.putExtra(PD_Constant.COURSE_ID, courseId);
                     intent.putExtra(PD_Constant.WEEK, "WEEK_1");

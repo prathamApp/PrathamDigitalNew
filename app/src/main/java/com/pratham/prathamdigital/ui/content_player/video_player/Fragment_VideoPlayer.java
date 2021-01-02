@@ -35,6 +35,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
 @EFragment(R.layout.fragment_generic_vplayer)
@@ -45,6 +46,7 @@ public class Fragment_VideoPlayer extends Fragment {
     private static final int SHOW_NEXT_CONTENT_OF_THE_COURSE = 3;
     private static final int CLOSE_CONTENT_PLAYER_ACTIVITY = 4;
     private static final int BACK_TO_COURSE_DETAIL = 5;
+    private static final int IS_VIEWED = 6;
     @ViewById(R.id.videoView)
     CustomExoPlayerView videoView;
 //    @ViewById(R.id.player_control_view)
@@ -107,18 +109,18 @@ public class Fragment_VideoPlayer extends Fragment {
             new YouTubeExtractor(Objects.requireNonNull(getActivity())) {
                 @Override
                 protected void onExtractionComplete(SparseArray<YtFile> ytFiles, VideoMeta videoMeta) {
-                    if (ytFiles != null) initializePlayer(ytFiles.get(22).getUrl());
+                    if (ytFiles != null) initializePlayer(ytFiles.get(22).getUrl(), resId);
                 }
             }.extract(videoPath, true, true);
         } else {
             videoPath = Objects.requireNonNull(getArguments()).getString("videoPath");
             resId = getArguments().getString("resId");
             mHandler.sendEmptyMessage(AAJ_KA_SAWAL_FOR_THIS_VIDEO);
-            initializePlayer(videoPath);
+            initializePlayer(videoPath, resId);
         }
     }
 
-    private void initializePlayer(String videoPath) {
+    private void initializePlayer(String videoPath, String resId) {
         videoView.setSource(videoPath);
         videoView.setExoPlayerCallBack(new ExoPlayerCallBack() {
             @Override
@@ -140,8 +142,10 @@ public class Fragment_VideoPlayer extends Fragment {
                 if (!isVideoEnded) {
                     addScoreToDB();
                     if (videoSawal == null)
-                        if (Objects.requireNonNull(getArguments()).getBoolean("isCourse"))
+                        if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
                             mHandler.sendEmptyMessage(SHOW_NEXT_CONTENT_OF_THE_COURSE);
+                            modalContentDao.updateIsViewed(resId); //when video is complete make isViewId=1 in db
+                        }
                         else
                             mHandler.sendEmptyMessage(CLOSE_CONTENT_PLAYER_ACTIVITY);
                     else
