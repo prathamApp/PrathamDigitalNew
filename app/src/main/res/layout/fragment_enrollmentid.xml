@@ -1,0 +1,378 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/form_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/attendance_bkgd"
+    android:clickable="true">
+
+    <ImageView
+        android:id="@+id/tv_enroll_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:layout_marginTop="@dimen/_6sdp"
+        android:padding="@dimen/_5sdp"
+        android:src="@drawable/ic_att_back"
+        android:textColor="@color/white"
+        android:visibility="visible"
+        tools:ignore="HardcodedText" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/tv_title"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_40sdp"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:gravity="center"
+        android:text="Enrollment Details"
+        android:textColor="@color/white"
+        android:textSize="@dimen/_20sdp"
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tv_enroll_back"
+        android:layout_marginTop="@dimen/_5sdp">
+
+        <RelativeLayout
+            android:id="@+id/ll_form"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:paddingHorizontal="@dimen/_2sdp">
+
+            <RelativeLayout
+                android:id="@+id/rl_enroll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+                android:padding="@dimen/_2sdp">
+
+                <com.pratham.prathamdigital.custom.edittexts.IndieEditText
+                    android:id="@+id/et_enrollment_no"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_marginEnd="@dimen/_100sdp"
+                    android:background="@drawable/avatar_etxt_bkgd"
+                    android:clickable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="Enter enrollment ID"
+                    android:paddingStart="@dimen/_10sdp"
+                    android:singleLine="true"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/ghost_white"
+                    android:textSize="@dimen/_12sdp" />
+
+                <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                    android:id="@+id/tv_checkEnrollID"
+                    android:layout_width="@dimen/_90sdp"
+                    android:layout_height="@dimen/_30sdp"
+                    android:layout_alignParentEnd="true"
+                    android:background="@drawable/button_orange_selector"
+                    android:gravity="center"
+                    android:padding="@dimen/_5sdp"
+                    android:text="Check"
+                    android:textColor="@color/white"
+                    android:visibility="visible"
+                    tools:ignore="HardcodedText" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_enroll_no_details_outer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_enroll"
+                android:layout_marginStart="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_10sdp">
+
+                <ScrollView
+                    android:id="@+id/sv_enroll_no_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_5sdp">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
+
+                        <RelativeLayout
+                            android:id="@+id/rl_enroll_no_details"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:background="@drawable/rounded_border"
+                            android:padding="@dimen/_5sdp"
+                            android:visibility="visible">
+
+                            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                android:id="@+id/tv_enrolled_student_name"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/_5sdp"
+                                android:gravity="center"
+                                android:text="Abc D Efg"
+                                android:textColor="@color/white"
+                                android:textSize="@dimen/_14sdp" />
+
+                            <LinearLayout
+                                android:id="@+id/ll_enrolled_age"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_below="@+id/tv_enrolled_student_name"
+                                android:layout_gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="Age : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_age"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="3"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="Class : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_class"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="2"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="Gender : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_gender"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="1"
+                                    android:gravity="center_vertical"
+                                    android:text="Male"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_enrolled_group"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_below="@+id/ll_enrolled_age"
+                                android:layout_gravity="center_vertical"
+                                android:orientation="horizontal">
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:gravity="center_vertical"
+                                    android:text="Group Id : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_grp_id"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:gravity="center_vertical"
+                                    android:text="G01"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:gravity="center_vertical"
+                                    android:text="Group name : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_grp_name"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="2"
+                                    android:gravity="center_vertical"
+                                    android:text="Red"
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp" />
+
+                            </LinearLayout>
+
+                            <LinearLayout
+                                android:id="@+id/ll_enrolled_village_id"
+                                android:layout_width="match_parent"
+                                android:layout_height="@dimen/_30sdp"
+                                android:layout_below="@+id/ll_enrolled_group"
+                                android:layout_gravity="center_vertical"
+                                android:orientation="horizontal"
+                                android:visibility="gone"
+                                android:weightSum="2">
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.5"
+                                    android:gravity="center_vertical"
+                                    android:text="Village Id : "
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold"
+                                    android:visibility="gone" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_village_id"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.5"
+                                    android:gravity="center_vertical"
+                                    android:text=""
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:visibility="gone" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.5"
+                                    android:gravity="center_vertical"
+                                    android:text="Village Name :"
+                                    android:textColor="@color/black"
+                                    android:textSize="@dimen/_12sdp"
+                                    android:textStyle="bold"
+                                    android:visibility="gone" />
+
+                                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                                    android:id="@+id/tv_enrolled_student_village_name"
+                                    android:layout_width="0dp"
+                                    android:layout_height="match_parent"
+                                    android:layout_weight="0.5"
+                                    android:gravity="center_vertical"
+                                    android:text=""
+                                    android:textColor="@color/white"
+                                    android:textSize="@dimen/_10sdp"
+                                    android:visibility="gone" />
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </RelativeLayout>
+                </ScrollView>
+
+                <RelativeLayout
+                    android:id="@+id/rl_enroll_grp_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/rounded_border"
+                    android:padding="@dimen/_5sdp">
+
+                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                        android:id="@+id/tv_enrolled_group_groupName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="gropp" />
+
+                    <ListView
+                        android:id="@+id/lv_enrolled_groupList"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_below="@+id/tv_enrolled_group_groupName"
+                        android:layout_marginTop="@dimen/_10sdp" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/addBtn_l"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_60sdp"
+                    android:layout_alignParentBottom="true">
+
+                    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+                        android:id="@+id/btn_saveProfile"
+                        android:layout_width="@dimen/_150sdp"
+                        android:layout_height="@dimen/_40sdp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:layout_marginBottom="@dimen/_10sdp"
+                        android:background="@drawable/button_orange_selector"
+                        android:text="Save Profile"
+                        android:textColor="@color/white"
+                        android:visibility="visible"
+                        tools:ignore="HardcodedText" />
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rl_enroll_no_not_found"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/rl_enroll"
+                android:layout_centerInParent="true"
+                android:layout_centerHorizontal="true"
+                android:layout_margin="@dimen/_15sdp"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iv_student_not_found"
+                    android:layout_width="@dimen/_100sdp"
+                    android:layout_height="@dimen/_100sdp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:src="@drawable/no_data_to_show" />
+
+
+                <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/iv_student_not_found"
+                    android:layout_margin="@dimen/_5sdp"
+                    android:text="Student not found.\n Check Enrollment ID again."
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/_18sdp" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

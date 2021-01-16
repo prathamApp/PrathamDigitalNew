@@ -89,10 +89,12 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         ArrayList<Modal_Language> tempLang = new ArrayList<>();
         String[] languages = Objects.requireNonNull(getActivity()).getResources().getStringArray(R.array.languages);
         String[] main_languages = getActivity().getResources().getStringArray(R.array.main_languages);
+        String[] languages_id = getActivity().getResources().getStringArray(R.array.language_code);
         for (int i = 0; i < main_languages.length; i++) {
             Modal_Language modal_language = new Modal_Language();
             modal_language.setLanguage(languages[i]);
             modal_language.setMain_language(main_languages[i]);
+            modal_language.setLanguage_id(languages_id[i]);
             if (main_languages[i].equalsIgnoreCase(selectedLanguage))
                 modal_language.setIsselected(true);
             else
@@ -107,7 +109,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     public void languageSelected(int position) {
         PrathamApplication.bubble_mp.start();
         Modal_Language language = adapter.getitem(position);
-        FastSave.getInstance().saveString(PD_Constant.LANGUAGE, language.getMain_language());
+        FastSave.getInstance().saveString(PD_Constant.LANGUAGE_CODE, language.getLanguage_id());
         PrathamApplication.getInstance().setPradigiPath();
         adapter.updateLanguageItems(getLanguageList(language.getMain_language()));
         readContentDbFromSdCard.doInBackground(FragmentLanguage.this);

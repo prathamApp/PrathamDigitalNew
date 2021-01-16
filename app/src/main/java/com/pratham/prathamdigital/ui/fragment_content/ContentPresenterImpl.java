@@ -200,11 +200,25 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     private void callOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
-            pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
+/*            pd_apiRequest.getContentFromInternet(PD_Constant.INTERNET_HEADER,
                     PD_Constant.URL.GET_TOP_LEVEL_NODE
                             + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi"), contentList);
             String url = PD_Constant.URL.GET_TOP_LEVEL_NODE + FastSave.getInstance().getString(PD_Constant.LANGUAGE, "Hindi");
+            Log.e("URL TOP: ", url);*/
+            /*            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                    PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID(), contentList);*/
+
+//            String url = PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID();
+//            Log.e("URL TOP: ", url);
+
+
+            //new pradigi for life api top levelapi
+            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                    PD_Constant.URL.BROWSE_BY_ID + FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672") + "&deviceid=" + PD_Utility.getDeviceID(), contentList);
+
+            String url = PD_Constant.URL.BROWSE_BY_ID + FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672") + "&deviceid=" + PD_Utility.getDeviceID();
             Log.e("URL TOP: ", url);
+
         } else {
             try {
                 pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,

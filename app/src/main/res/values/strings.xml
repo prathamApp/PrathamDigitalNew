@@ -27,9 +27,26 @@
         <item>Age 8–14\nDekho Aur Sikho</item>
     </string-array>
     <string-array name="languages">
-        <item>English</item>
+        <!--        <item>English</item>-->
         <item>हिंदी</item>
         <item>मराठी</item>
+        <!--        <item>ಕನ್ನಡ</item>
+        <item>తెలుగు</item>
+        <item>বাংলা</item>
+        <item>ગુજરાતી</item>
+        <item>ਪੰਜਾਬੀ</item>
+        <item>தமிழ்</item>
+        <item>অসমীয়া</item>
+        <item>ଓଡ଼ିଆ</item>
+        <item>उर्दू</item>-->
+        <!--<item>മലയാളം</item>-->
+    </string-array>
+
+    <string-array name="language_code">
+        <!--        <item>English</item>-->
+        <item>78672</item>
+        <item>c7ef54ea-4787-4ee8-b429-4e93b29887eb</item>
+        <!--
         <item>ಕನ್ನಡ</item>
         <item>తెలుగు</item>
         <item>বাংলা</item>
@@ -39,12 +56,14 @@
         <item>অসমীয়া</item>
         <item>ଓଡ଼ିଆ</item>
         <item>उर्दू</item>
+-->
         <!--<item>മലയാളം</item>-->
     </string-array>
     <string-array name="main_languages">
-        <item>English</item>
+        <!--        <item>English</item>-->
         <item>Hindi</item>
         <item>Marathi</item>
+        <!--
         <item>Kannada</item>
         <item>Telugu</item>
         <item>Bengali</item>
@@ -54,6 +73,7 @@
         <item>Assamese</item>
         <item>Odiya</item>
         <item>Urdu</item>
+-->
         <!--<item>Malayalam</item>-->
     </string-array>
     <string-array name="default_preview">
@@ -192,6 +212,7 @@
         <item>Connect Wifi</item>
         <item>Share or Receive</item>
         <item>Share App</item>
+        <item>Sync</item>
         <item>Exit</item>
     </string-array>
     <string-array name="admin_options">

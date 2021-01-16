@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 public class Modal_Language implements Comparable {
     private String language;
     private String main_language;
+    private String language_id;
     private boolean isselected;
 
     public String getMain_language() {
@@ -21,6 +22,14 @@ public class Modal_Language implements Comparable {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getLanguage_id() {
+        return language_id;
+    }
+
+    public void setLanguage_id(String language_id) {
+        this.language_id = language_id;
     }
 
     public boolean isIsselected() {

@@ -7,6 +7,8 @@ public class PD_Constant {
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
+    public static final String STUDENT_ENROLLMENT_URL = "http://www.devtab.openiscool.org/api/Enrollement/Get?enrollmentno=";
+
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
@@ -70,6 +72,7 @@ public class PD_Constant {
     public static final String IS_GOOGLE_SIGNED_IN = "IS_GOOGLE_SIGNED_IN";
     public static final String GOOGLE_TOKEN = "GOOGLE_TOKEN";
     public static final String CONTENT = "CONTENT";
+    public static final String CONTENT_LEVEL = "CONTENT_LEVEL";
     public static final int LOCATION_GRANTED = 1;
     public static final String GAME = "game";
     public static final String VIDEO = "video";
@@ -81,6 +84,7 @@ public class PD_Constant {
     public static final String STUDENT_ADDED = "STUDENT_ADDED";
     public static final String STUDENT_LIST = "STUDENT_LIST";
     public static final String GROUP_AGE_BELOW_7 = "GROUP_AGE_BELOW_7";
+    public static final String GROUP_ENROLLED = "GROUP_ENROLLED";
     public static final String GROUPID1 = "group1";
     public static final String GROUPID2 = "group2";
     public static final String GROUPID3 = "group3";
@@ -178,6 +182,7 @@ public class PD_Constant {
     public static final String SERVER_GRP = "server_grp";
     public static final String KOLIBRI_STU = "kolibri_stu";
     public static final String SERVER_STU = "server_stu";
+    public static final String SERVER_ENROLLEDSTU = "server_enrolledstu";
     public static final String KOLIBRI_BLOCK = "kolibri_block";
     public static final String SERVER_BLOCK = "server_block";
     public static final String DOWNLOAD_FAILED = "download_failed";
@@ -222,6 +227,7 @@ public class PD_Constant {
     public static final String WIFI_AP_PASSWORD = "pratham123";
 
     public static final String LANGUAGE = "language";
+    public static final String LANGUAGE_CODE = "language_code";
     public static final String GOOGLE_ID = "google_id";
     public static final String KOLIBRI_STATE = ",state:";
     public static final String SERVER_STATE = "&state=";
@@ -242,6 +248,7 @@ public class PD_Constant {
         SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
+        //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),//req
         DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),

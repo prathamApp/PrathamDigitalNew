@@ -15,6 +15,9 @@ public interface CourseDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertCourse(Model_CourseEnrollment courseEnrolled);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertListCourse(List<Model_CourseEnrollment> courseListEnrolled);
+
     @Query("Select * from COURSEENROLLED where sentFlag=0")
     List<Model_CourseEnrollment> fetchUnpushedCourses();
 

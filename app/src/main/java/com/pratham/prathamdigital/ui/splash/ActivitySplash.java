@@ -13,6 +13,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -29,10 +31,14 @@ import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
+import com.pratham.prathamdigital.ui.fragment_enrollmentid.Fragment_Enrollmentid;
+import com.pratham.prathamdigital.ui.fragment_enrollmentid.Fragment_Enrollmentid_;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
+import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
@@ -55,6 +61,10 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
     @ViewById(R.id.splash_video)
     CustomExoPlayerView splash_video;
+    @ViewById(R.id.btn_createProfile)
+    Button btn_createProfile;
+    @ViewById(R.id.btn_enterEnrollID)
+    Button btn_enterEnrollID;
 
     @Bean(SplashPresenterImpl.class)
     SplashContract.splashPresenter splashPresenter;
@@ -168,6 +178,18 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         }
     };
 
+    @Click(R.id.btn_createProfile)
+    public void createProfile(){
+        splashPresenter.checkPrathamCode();
+        ended = true;
+    }
+
+    @Click(R.id.btn_enterEnrollID)
+    public void setBtn_enterEnrollID(){
+        PD_Utility.showFragment(ActivitySplash.this, new Fragment_Enrollmentid_(), R.id.splash_frame,
+                null, Fragment_Enrollmentid.class.getSimpleName());
+    }
+
     private void loadVideo() {
         splash_video.setSourceFromRawFolder(R.raw.pratham);
         splash_video.setExoPlayerCallBack(new ExoPlayerCallBack() {
@@ -191,10 +213,15 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
             @Override
             public void onEnded() {
-                //this method is called more than once? No reason. Might be library bug
-                if (!ended)
-                    splashPresenter.checkPrathamCode();
-                ended = true;
+                if (!PrathamApplication.isTablet) {
+                    btn_enterEnrollID.setVisibility(View.VISIBLE);
+                    btn_createProfile.setVisibility(View.VISIBLE);
+                } else {
+                    //this method is called more than once? No reason. Might be library bug
+                    if (!ended)
+                        splashPresenter.checkPrathamCode();
+                    ended = true;
+                }
             }
         });
     }

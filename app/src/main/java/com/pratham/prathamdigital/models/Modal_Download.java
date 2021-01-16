@@ -3,6 +3,7 @@ package com.pratham.prathamdigital.models;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 
 import java.util.ArrayList;
@@ -25,6 +26,7 @@ public class Modal_Download implements Parcelable {
     private String folder_name;
     private Modal_ContentDetail content;
     private ContentContract.contentPresenter contentPresenter;
+    private CourseDetailFragment courseDetailFragment;
     private ArrayList<Modal_ContentDetail> levelContents;
 
     public Modal_Download(Parcel in) {
@@ -86,6 +88,9 @@ public class Modal_Download implements Parcelable {
 
     public void setContentPresenter(ContentContract.contentPresenter contentPresenter) {
         this.contentPresenter = contentPresenter;
+    }
+    public void setCourseDetailFragment(CourseDetailFragment courseDetailFragment) {
+        this.courseDetailFragment = courseDetailFragment;
     }
 
     public ArrayList<Modal_ContentDetail> getLevelContents() {

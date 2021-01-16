@@ -2,7 +2,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
     <com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView
         android:id="@+id/splash_video"
@@ -10,6 +12,47 @@
         android:layout_height="match_parent"
         app:andexo_play_when_ready="true"
         app:andexo_resize_mode="Fill"
-        app:andexo_show_controller="false" />
+        app:andexo_show_controller="false"/>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
+        android:background="#00FFFFFF">
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_createProfile"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_50sdp"
+            android:background="@drawable/button_orange_selector"
+            android:text="Create Profile"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            tools:ignore="HardcodedText" />
+
+        <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+            android:id="@+id/btn_enterEnrollID"
+            android:layout_width="@dimen/_150sdp"
+            android:layout_height="@dimen/_30sdp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:layout_toEndOf="@+id/btn_createProfile"
+            android:background="@drawable/button_orange_selector"
+            android:text="EnrollmentID"
+            android:textColor="@color/white"
+            android:visibility="invisible"
+            tools:ignore="HardcodedText" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:id="@+id/splash_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#0d000000" />
 
 </RelativeLayout>

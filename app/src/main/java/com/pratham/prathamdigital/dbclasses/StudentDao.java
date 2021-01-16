@@ -51,5 +51,11 @@ public interface StudentDao {
     @Query("SELECT count(*) FROM Students")
     int getStudentsCount();
 
+    @Query("select * from Students where StudentId = :studentID")
+    Modal_Student getStudent(String studentID);
+
+    @Query("select * from Students where StudentId = :studentID")
+    List<Modal_Student> getAllStudent(String studentID);
+
     //   void deleteAllStudents();
 }

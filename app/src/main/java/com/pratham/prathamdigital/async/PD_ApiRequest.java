@@ -157,7 +157,8 @@ public class PD_ApiRequest {
                 .getAsJSONObject(new JSONObjectRequestListener() {
                     @Override
                     public void onResponse(JSONObject response) {
-                        logDao.deleteLogs();
+                        //todo comented deleted logs to check appStart and end logs
+                        //logDao.deleteLogs();
                         BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);

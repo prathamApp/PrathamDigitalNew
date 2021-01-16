@@ -127,6 +127,9 @@ dependencies {
 //    implementation('org.jitsi.react:jitsi-meet-sdk:2.+') { transitive = true }
     //in-app update
     implementation 'com.google.android.play:core:1.7.3'
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation "android.arch.lifecycle:common-java8:1.1.1"
+
 
 }
 apply plugin: 'com.google.gms.google-services'

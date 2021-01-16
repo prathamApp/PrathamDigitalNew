@@ -27,6 +27,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.BuildConfig;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -40,8 +41,12 @@ import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
 import com.pratham.prathamdigital.ftpSettings.FsService;
+import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
+import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
@@ -72,7 +77,12 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
 
 @EActivity(R.layout.main_activity)
@@ -92,6 +102,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_COURSES = 12;
     private static final int SHOW_YOU_TUBE_VIDEO = 13;
     private static final int SHOW_PROFILE = 14;
+    private static final int MENU_SYNC = 15;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -113,9 +124,16 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
     private boolean isChecked;
     private BlurPopupWindow exitDialog;
+    private BlurPopupWindow syncDataDialog;
     private DownloadListFragment_ downloadListFragment_;
     private String noti_key;
     private String noti_value;
+    Modal_Log log;
+
+    private BlurPopupWindow pushDialog;
+    private LottieAnimationView push_lottie;
+    private TextView txt_push_dialog_msg;
+    private TextView txt_push_error;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -236,6 +254,21 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     PD_Utility.showFragment(ActivityMain.this, new Profile_Fragment_(), R.id.main_frame,
                             bundleProf, Profile_Fragment.class.getSimpleName());
                     break;
+
+                case MENU_SYNC:
+                    if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                        showPushingDialog("Please wait...Pushing Data!");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                PrathamSmartSync.pushUsageToServer(true);
+                            }
+                        }, 1500);
+
+                    } else {
+                        Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
         }
     };
@@ -330,11 +363,54 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
+    @SuppressLint("SetTextI18n")
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void DataPushedSuccessfully(EventMessage msg) {
+        if (msg != null) {
+            if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
+                push_lottie.setAnimation("success.json");
+                push_lottie.playAnimation();
+                txt_push_dialog_msg.setText("Data Pushed Successfully!!");
+                new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
+                //This is used to push the assessment data to server
+                Intent assessmentIntent = new Intent("com.pratham.assessment.async.SyncDataActivity_");
+                startActivity(assessmentIntent);
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
+                push_lottie.setAnimation("error_cross.json");
+                push_lottie.playAnimation();
+                txt_push_dialog_msg.setText("Data Pushing Failed!!");
+                txt_push_error.setVisibility(View.VISIBLE);
+                new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
+                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @UiThread
+    public void showPushingDialog(String msg) {
+        if (pushDialog == null) {
+            pushDialog = new BlurPopupWindow.Builder(ActivityMain.this)
+                    .setContentView(R.layout.app_success_dialog)
+                    .setGravity(Gravity.CENTER)
+                    .setScaleRatio(0.2f)
+                    .setDismissOnClickBack(true)
+                    .setDismissOnTouchBackground(true)
+                    .setBlurRadius(10)
+                    .setTintColor(0x30000000)
+                    .build();
+            push_lottie = pushDialog.findViewById(R.id.push_lottie);
+            txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
+            txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+        }
+        txt_push_dialog_msg.setText(msg);
+        pushDialog.show();
+    }
+
     private void initializeMenu() {
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.navigation_menu);
         int[] menus_img = {R.drawable.ic_education, R.drawable.ic_courses, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
-                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_backpacker};
+                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.ic_backpacker};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -368,6 +444,46 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        //AppStart And Exit Log
+        String prevSessionID = FastSave.getInstance().getString("SESSION","");
+        Log.e("URL Ses : ", prevSessionID);
+        String currentSessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session");
+        Log.e("URL Ses1 : ", currentSessionID);
+
+        if (!prevSessionID.equalsIgnoreCase(currentSessionID)){
+            Log.e("URL", "Start");
+
+            //to add log for exit app, before starting new start log
+            log = new Modal_Log();
+            log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+            log.setErrorType("AppExitLog");
+            log.setExceptionMessage("App is Exited");
+            log.setExceptionStackTrace("");
+            log.setMethodName("NO_METHOD");
+            log.setSessionId(prevSessionID);
+            log.setDeviceId(PD_Utility.getDeviceSerialID());
+            logDao.insertLog(log);
+//            FastSave.getInstance().saveBoolean("APP_START",false);
+
+            //StartLog
+            log = new Modal_Log();
+            log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+            log.setErrorType("AppStartLog");
+            log.setExceptionMessage("App is Started");
+            log.setExceptionStackTrace("");
+            log.setMethodName("NO_METHOD");
+            log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+            log.setDeviceId(PD_Utility.getDeviceSerialID());
+            logDao.insertLog(log);
+//            FastSave.getInstance().saveBoolean("APP_START",true);
+        }
+        FastSave.getInstance().saveString("SESSION",FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+    }
+
     @UiThread
     public void exitApp() {
         if (!FsService.isRunning()) {
@@ -375,6 +491,19 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     .setContentView(R.layout.app_exit_dialog)
                     .bindClickListener(v -> {
                         exitDialog.dismiss();
+                        //Modal_Log log1 = new Modal_Log();
+                        log = new Modal_Log();
+                        log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+                        log.setErrorType("AppExitLog");
+                        log.setExceptionMessage("App is Exited");
+                        log.setExceptionStackTrace("");
+                        log.setMethodName("NO_METHOD");
+                        log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+                        log.setDeviceId(PD_Utility.getDeviceSerialID());
+                        logDao.insertLog(log);
+//                        FastSave.getInstance().saveBoolean("APP_START",false);
+                        FastSave.getInstance().saveString(PD_Constant.SESSIONID,"no_session");
+                        FastSave.getInstance().saveString("SESSION","no_session");
                         new Handler().postDelayed((Runnable) this::finishAffinity, 200);
                     }, R.id.dialog_btn_exit)
                     .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
@@ -462,6 +591,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_EXIT);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Courses"))
             mHandler.sendEmptyMessage(MENU_COURSES);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("SYNC"))
+            mHandler.sendEmptyMessage(MENU_SYNC);
     }
 
     @Override

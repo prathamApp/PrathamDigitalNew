@@ -77,6 +77,10 @@ public class CourseDetailAdapter extends RecyclerView.Adapter<CourseChildViewHol
         mDiffer.submitList(data);
     }
 
+    public List<Modal_ContentDetail> getData() {
+        return mDiffer.getCurrentList();
+    }
+
     public void reveal(View view, View startView) {
         // previously invisible view
         try {

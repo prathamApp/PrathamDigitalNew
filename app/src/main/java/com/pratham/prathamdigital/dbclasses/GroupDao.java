@@ -14,6 +14,9 @@ public interface GroupDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAllGroups(List<Modal_Groups> groupsList);
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    void insertGroup(Modal_Groups group);
+
     @Query("DELETE FROM Groups")
     void deleteAllGroups();
 

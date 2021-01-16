@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.ScaleAnimation;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.pratham.prathamdigital.BaseActivity;
+import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CountDownTextView;
+import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments_;
@@ -22,6 +27,8 @@ import com.pratham.prathamdigital.ui.content_player.video_player.Fragment_VideoP
 import com.pratham.prathamdigital.ui.content_player.video_player.Fragment_VideoPlayer_;
 import com.pratham.prathamdigital.ui.content_player.web_view.Fragment_WebView;
 import com.pratham.prathamdigital.ui.content_player.web_view.Fragment_WebView_;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
+import com.pratham.prathamdigital.ui.download_list.DownloadListFragment_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -33,6 +40,7 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 @EActivity(R.layout.activity_content_player)
 public class Activity_ContentPlayer extends BaseActivity implements ContentPlayerContract.contentPlayerView {
@@ -41,6 +49,15 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     CountDownTextView txt_next_countdown;
     @ViewById(R.id.pdf_play_next)
     TextView pdf_play_next;
+
+    @ViewById(R.id.download_notification)
+    NotificationBadge download_notification;
+    @ViewById(R.id.download_badge)
+    RelativeLayout download_badge;
+
+    private DownloadListFragment_ downloadListFragment_;
+    private String noti_key;
+    private String noti_value;
 
     private String pdfResId;
 
@@ -183,4 +200,61 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     public void onCourseCompleted() {
         onBackPressed();
     }
+
+    @Click(R.id.download_badge)
+    public void showDownloadList() {
+        PrathamApplication.bubble_mp.start();
+        downloadListFragment_ = new DownloadListFragment_();
+        downloadListFragment_.show(getSupportFragmentManager(), DownloadListFragment.class.getSimpleName());
+        EventMessage message = new EventMessage();
+        message.setMessage(PD_Constant.BROADCAST_DOWNLOADINGS);
+        EventBus.getDefault().post(message);
+    }
+
+    @Subscribe(threadMode = ThreadMode.BACKGROUND)
+    public void showNotificationBadge(EventMessage message) {
+        if (message != null) {
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_STARTED))
+                increaseNotificationCount(message);
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE))
+                decreaseNotificationCount(message);
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_ERROR))
+                decreaseNotificationCount(message);
+/*            else if (message.getMessage().equalsIgnoreCase(PD_Constant.EXIT_APP))
+                exitApp();
+            else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_HOME))
+                mHandler.sendEmptyMessage(MENU_HOME);*/
+        }
+    }
+
+    @UiThread
+    public void increaseNotificationCount(EventMessage message) {
+        download_notification.setNumber(message.getDownlaodContentSize());
+        if (message.getDownlaodContentSize() == 1) {
+            ScaleAnimation animation = new ScaleAnimation(0f, 1f, 0f, 1f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            animation.setFillAfter(true);
+            animation.setDuration(300);
+            download_badge.setAnimation(animation);
+            download_badge.setVisibility(View.VISIBLE);
+            animation.start();
+        }
+    }
+
+    @UiThread
+    public void decreaseNotificationCount(EventMessage message) {
+        download_notification.setNumber(message.getDownlaodContentSize());
+        if (message.getDownlaodContentSize() == 0) {
+            ScaleAnimation animation = new ScaleAnimation(1f, 0f, 1f, 0f,
+                    Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+            animation.setDuration(300);
+            animation.setFillAfter(false);
+            download_badge.setAnimation(animation);
+            animation.start();
+            download_badge.setVisibility(View.GONE);
+            if (downloadListFragment_ != null)
+                downloadListFragment_.dismiss();
+        }
+    }
+
 }

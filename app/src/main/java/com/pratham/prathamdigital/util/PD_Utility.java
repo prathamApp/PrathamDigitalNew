@@ -71,6 +71,7 @@ import com.pratham.prathamdigital.models.StorageInfo;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.splash.ActivitySplash;
 
 import org.greenrobot.eventbus.EventBus;
 import org.xmlpull.v1.XmlPullParserException;
@@ -244,6 +245,12 @@ public class PD_Utility {
                     .replace(frame, mFragment, TAG)
                     .addToBackStack(TAG)
                     .commit();
+        } else if (mActivity instanceof ActivitySplash) {
+            ((ActivitySplash) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
         }
     }
 
@@ -265,6 +272,12 @@ public class PD_Utility {
                     .commit();
         } else if (mActivity instanceof Activity_ContentPlayer) {
             ((Activity_ContentPlayer) mActivity).getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(frame, mFragment, TAG)
+                    .addToBackStack(TAG)
+                    .commit();
+        } else if (mActivity instanceof ActivitySplash) {
+            ((ActivitySplash) mActivity).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(frame, mFragment, TAG)
                     .addToBackStack(TAG)

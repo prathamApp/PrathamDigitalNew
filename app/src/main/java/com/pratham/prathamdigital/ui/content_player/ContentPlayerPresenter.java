@@ -81,6 +81,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             courseDetailBundle.putString("NODE_TITLE", intent.getStringExtra("NODE_TITLE"));
             courseDetailBundle.putString("NODE_DESC", intent.getStringExtra("NODE_DESC"));
             courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT, intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
+            courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT_LEVEL, intent.getParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL));
         } else {
             courseDetailBundle.putString("NODE_CALL", intent.getStringExtra("NODE_CALL"));
             courseDetailBundle.putParcelable(PD_Constant.COURSE_PARENT, intent.getParcelableExtra(PD_Constant.COURSE_PARENT));

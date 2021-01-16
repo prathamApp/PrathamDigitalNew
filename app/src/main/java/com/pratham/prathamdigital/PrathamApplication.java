@@ -4,8 +4,13 @@ import android.app.Application;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.os.StrictMode;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.multidex.MultiDex;
 
 import com.androidnetworking.AndroidNetworking;
@@ -27,6 +32,7 @@ import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -39,7 +45,7 @@ import okhttp3.OkHttpClient;
 /**
  * Created by HP on 09-08-2017.
  */
-public class PrathamApplication extends Application {
+public class PrathamApplication extends Application implements LifecycleObserver {
     private static PrathamApplication mInstance;
     public static WiseFy wiseF;
     public static String pradigiPath = "";
@@ -50,7 +56,7 @@ public class PrathamApplication extends Application {
      * Check baseUrl in PDConstant
      * increase version before generating signed apk otherwise "app not installed"
      */
-    public static final boolean isTablet = false;
+    public static boolean isTablet = false;
     public static boolean useSatelliteGPS = false;
     public static boolean externalContentExists = false;
     public static String externalContentPath = "";
@@ -66,6 +72,8 @@ public class PrathamApplication extends Application {
     public static LogDao logDao;
     public static CourseDao courseDao;
     public static ContentProgressDao contentProgressDao;
+    public static boolean wasInBackground;
+
 
     static {
         AppCompatDelegate.setCompatVectorFromResourcesEnabled(true);
@@ -101,6 +109,9 @@ public class PrathamApplication extends Application {
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .build();
         AndroidNetworking.initialize(getApplicationContext(), okHttpClient);
+
+        //Added this to check whether app is in background
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
     }
 
     protected void attachBaseContext(Context base) {
@@ -145,6 +156,28 @@ public class PrathamApplication extends Application {
         contentProgressDao = db.getContentProgressDao();
         if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
             new ReadBackupDb().execute();
+    }
+
+    //when app goes in background log entry is made
+    @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+    public void onAppBackgrounded() {
+        Log.e("URL B","BackGround");
+        Modal_Log log = new Modal_Log();
+        log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+        log.setErrorType("AppInBackgroundLog");
+        log.setExceptionMessage("App is in Background");
+        log.setExceptionStackTrace("");
+        log.setMethodName("NO_METHOD");
+        log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+        log.setDeviceId(PD_Utility.getDeviceSerialID());
+        logDao.insertLog(log);
+    }
+
+    @OnLifecycleEvent(Lifecycle.Event.ON_START)
+    public void onAppForegrounded() {
+        wasInBackground=true;
+        Log.e("URL F","FourGround");
+        // App in foreground
     }
 }
 

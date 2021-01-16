@@ -58,6 +58,7 @@ public class AttendanceActivity extends BaseActivity {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
                 ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) studentDao.getAllStudents();
                 bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+                bundle.putBoolean("ISTABMODE",false);
                 PD_Utility.showFragment(this, new FragmentChildAttendance_(), R.id.frame_attendance,
                         bundle, FragmentChildAttendance.class.getSimpleName());
             } else {
