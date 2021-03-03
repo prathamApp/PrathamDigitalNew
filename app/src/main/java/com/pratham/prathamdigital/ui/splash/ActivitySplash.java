@@ -186,6 +186,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
     @Click(R.id.btn_enterEnrollID)
     public void setBtn_enterEnrollID(){
+        checkPermissionss();
         PD_Utility.showFragment(ActivitySplash.this, new Fragment_Enrollmentid_(), R.id.splash_frame,
                 null, Fragment_Enrollmentid.class.getSimpleName());
     }
@@ -358,6 +359,32 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             dialog_permission.show();
         } else {
             splashPresenter.checkStudentList();
+        }
+    }
+
+    //this method created to grant permission on enrollment id click
+    public void checkPermissionss() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED) {
+            dialog_permission = new BlurPopupWindow.Builder(ActivitySplash.this)
+                    .setContentView(R.layout.permission_detail_dialog)
+                    .bindClickListener(v -> {
+                        EventMessage message = new EventMessage();
+                        message.setMessage(PD_Constant.CHECK_PERMISSIONS);
+                        EventBus.getDefault().post(message);
+                        dialog_permission.dismiss();
+                    }, R.id.btn_perm_okay)
+                    .setGravity(Gravity.CENTER)
+                    .setDismissOnClickBack(false)
+                    .setDismissOnTouchBackground(false)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(8)
+                    .setTintColor(0x30000000)
+                    .build();
+            dialog_permission.show();
         }
     }
 }

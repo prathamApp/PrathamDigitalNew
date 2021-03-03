@@ -3,11 +3,13 @@ package com.pratham.prathamdigital.ui.content_player;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -15,6 +17,7 @@ import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.CountDownTextView;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments_;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
@@ -42,6 +45,8 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.util.ArrayList;
+
 @EActivity(R.layout.activity_content_player)
 public class Activity_ContentPlayer extends BaseActivity implements ContentPlayerContract.contentPlayerView {
 
@@ -49,7 +54,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     CountDownTextView txt_next_countdown;
     @ViewById(R.id.pdf_play_next)
     TextView pdf_play_next;
-
+//---
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -58,7 +63,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     private DownloadListFragment_ downloadListFragment_;
     private String noti_key;
     private String noti_value;
-
+//---
     private String pdfResId;
 
     @Bean(ContentPlayerPresenter.class)
@@ -111,7 +116,10 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                         R.id.content_player_frame, message.getBundle(), Fragment_AAJ_KA_SAWAL.class.getSimpleName());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.PLAY_SPECIFIC_COURSE_CONTENT)) {
                 contentPlayerPresenter.playSpecificCourseContent(message.getDownloadId());
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_COURSE_DETAIL)) {
+            }/* else if (message.getMessage().equalsIgnoreCase("PLAY_SPECIFIC_COURSE_CONTENT_FROM_NODE")) {
+                pdf_play_next.setVisibility(View.GONE);
+                contentPlayerPresenter.playSpecificCourseContent(message.getDownloadId());
+            }*/ else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_COURSE_DETAIL)) {
                 hideNextButton();
                 getSupportFragmentManager().popBackStackImmediate(CourseDetailFragment.class.getSimpleName(), 0);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.SHOW_NEXT_BUTTON)) {
@@ -178,6 +186,16 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                 vidBundle, Fragment_VideoPlayer.class.getSimpleName());
     }
 
+    //Todo : added for audio functionality , will check while audio implementing
+    @UiThread
+    @Override
+    public void showAudio(Bundle audBundle) {
+        hideNextButton();
+        PD_Utility.showFragment(Activity_ContentPlayer.this, new Fragment_VideoPlayer_(), R.id.content_player_frame,
+                audBundle, Fragment_VideoPlayer.class.getSimpleName());
+        Toast.makeText(this, "Audio Player Not Found!!", Toast.LENGTH_SHORT).show();
+    }
+
     @UiThread
     @Override
     public void showPdf(Bundle pdfBundle) {
@@ -200,7 +218,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     public void onCourseCompleted() {
         onBackPressed();
     }
-
+//
     @Click(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();
@@ -256,5 +274,5 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                 downloadListFragment_.dismiss();
         }
     }
-
+//
 }

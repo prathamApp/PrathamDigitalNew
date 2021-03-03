@@ -29,7 +29,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.location.OnNmeaMessageListener;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -37,6 +39,7 @@ import android.os.SystemClock;
 import android.text.Html;
 import android.util.Log;
 
+import androidx.annotation.RequiresApi;
 import androidx.core.app.TaskStackBuilder;
 
 import com.google.android.gms.location.ActivityRecognition;
@@ -511,6 +514,7 @@ public class GpsLoggingService extends Service {
      * prefer cell towers, then cell towers are used. If neither is enabled,
      * then nothing is requested.
      */
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressWarnings("ResourceType")
     private void startGpsManager() {
         //If the user has been still for more than the minimum seconds
@@ -536,7 +540,9 @@ public class GpsLoggingService extends Service {
             // gps satellite based
             gpsLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, gpsLocationListener);
             gpsLocationManager.addGpsStatusListener(gpsLocationListener);
-            gpsLocationManager.addNmeaListener(gpsLocationListener);
+            //gpsLocationManager.addNmeaListener(gpsLocationListener);
+            //for api level 29 made change
+            gpsLocationManager.addNmeaListener((OnNmeaMessageListener) gpsLocationListener);
 
             session.setUsingGps(true);
             startAbsoluteTimer();

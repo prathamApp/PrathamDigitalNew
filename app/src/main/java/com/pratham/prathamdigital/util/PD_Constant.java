@@ -77,6 +77,7 @@ public class PD_Constant {
     public static final String GAME = "game";
     public static final String VIDEO = "video";
     public static final String PDF = "pdf";
+    public static final String AUDIO = "audio";
     public static final String ASSESSMENT = "assessment";
     public static final String SESSIONID = "sessionid";
     public static final String GROUPID = "groupid";
@@ -249,14 +250,16 @@ public class PD_Constant {
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
         //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),//req
-        DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),
+        DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),//pushapi
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
         RASPBERRY_FACILITY_URL(RASP_IP + "/api/content/session/"),
         //        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/content/channel/"),
-        POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
-        POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
+        POST_SMART_INTERNET_URL("http://devprodigi.openiscool.org/api/PRADIGILIFE/PushFiles"),
+//        POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
+        POST_TAB_INTERNET_URL("http://devprodigi.openiscool.org/api/PRADIGILIFE/PushFiles"),
+//        POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         AAJ_KA_SAWAL_URL("http://rpi.prathamskills.org/aajkasawaal/"),
         PULL_PROGRAMS("http://swap.prathamcms.org/api/program"),
         pullVillagesKolibriURL(RASP_IP + "/pratham/datastore/?table_name=village&filter_name=programid:"),

@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
@@ -37,9 +38,12 @@ import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
+import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
+import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -60,6 +64,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+
 @EFragment(R.layout.fragment_content)
 public class FragmentContent extends Fragment implements ContentContract.contentView,
         ContentContract.contentClick, CircularRevelLayout.CallBacks, LevelContract {
@@ -68,6 +75,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private static final int INITIALIZE_CONTENT_ADAPTER = 1;
     private static final int INITIALIZE_LEVEL_ADAPTER = 2;
     private static final int CLICK_DL_CONTENT = 3;
+    private static final int REQUEST_CODE_COURSE_BACK = 4;
     private static boolean IS_DEEP_LINK = false;
     private Dialog dialog;
     @ViewById(R.id.frag_content_bkgd)
@@ -99,7 +107,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private Modal_ContentDetail dl_Content;
     private int courseFlag;
 
-    private final static int IS_COURSE=999;
+    private final static int IS_COURSE = 999;
+    ArrayList<Modal_ContentDetail> temp_levels;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -167,13 +176,13 @@ public class FragmentContent extends Fragment implements ContentContract.content
             mHandler.sendEmptyMessage(INITIALIZE_CONTENT_ADAPTER);
             mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
             showDialog();
-            if (levelAdapter == null) contentPresenter.getContent(null,"");
+            if (levelAdapter == null) contentPresenter.getContent(null, "");
             else contentPresenter.getContent();
         }, 500);
     }
 
     @Click(R.id.iv_updateApp)
-    public void updateApp(){
+    public void updateApp() {
         //Toast.makeText(getContext(), "Update", Toast.LENGTH_SHORT).show();
         final String appPackageName = Objects.requireNonNull(getActivity()).getPackageName(); // getPackageName() from Context or Activity object
         try {
@@ -194,7 +203,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
         if (contentAdapter != null)
             if (contentPresenter.isFilesDownloading()) contentPresenter.getContent();
             else {
-                displayContents(contentPresenter.getContentList());}
+                displayContents(contentPresenter.getContentList());
+            }
     }
 
     @Override
@@ -298,7 +308,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Click(R.id.btn_retry)
     public void setRetry() {
         PrathamApplication.bubble_mp.start();
-        contentPresenter.getContent(null,"");
+        contentPresenter.getContent(null, "");
     }
 
     @UiThread
@@ -323,7 +333,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     @Override
     public void displayContentsInCourse(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs) {
-        if(courseFlag==IS_COURSE){
+        if (courseFlag == IS_COURSE) {
             String courseID = contentDetail.getAltnodeid();
             String nodeTitle = contentDetail.getNodetitle();
             String nodeDesc = contentDetail.getNodedesc();
@@ -331,16 +341,17 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     .permissions(Manifest.permission.RECORD_AUDIO)
                     .onAccepted(permissionResult -> {
                         Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
-                        intent.putExtra("NODE_CALL","CALL_FROM_NODE");
+                        intent.putExtra("NODE_CALL", "CALL_FROM_NODE");
                         intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
                         intent.putExtra(PD_Constant.COURSE_ID, courseID);
                         intent.putExtra(PD_Constant.WEEK, "WEEK_1");
-                        intent.putExtra("NODE_TITLE",nodeTitle);
+                        intent.putExtra("NODE_TITLE", nodeTitle);
                         intent.putExtra("NODE_DESC", nodeDesc);
                         //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
-                        Log.e("URL", String.valueOf(childs.size()));
-                        startActivityForResult(intent, 4);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
+                        Log.e("URL", String.valueOf(temp_levels.size()));
+                        startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
                         getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                     })
                     .ask();
@@ -352,31 +363,32 @@ public class FragmentContent extends Fragment implements ContentContract.content
     public void levelClicked(Modal_ContentDetail detail) {
         PrathamApplication.bubble_mp.start();
         showDialog();
-        contentPresenter.getContent(detail,"");
+        contentPresenter.getContent(detail, "");
     }
 
     @UiThread
     @Override
-    public void displayLevel(ArrayList<Modal_ContentDetail> levelContents) {
-        ArrayList<Modal_ContentDetail> temp_levels = new ArrayList<>(levelContents);
-        showLevels(temp_levels);
+    public void displayLevel(ArrayList<Modal_ContentDetail> levelContents, String isCourse) {
+        temp_levels = new ArrayList<>(levelContents);
+        Log.e("url displev", String.valueOf(temp_levels.size()));
+        showLevels(temp_levels, isCourse);
     }
 
     @UiThread
     @Override
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
-            PrathamApplication.bubble_mp.start();
-            showDialog();
-            contentPresenter.getContent(contentDetail,"");
+        PrathamApplication.bubble_mp.start();
+        showDialog();
+        contentPresenter.getContent(contentDetail, "");
     }
 
     @Override
     public void onCourseClicked(int position, Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs) {
-        if(position==IS_COURSE) {
+        if (position == IS_COURSE) {
             PrathamApplication.bubble_mp.start();
             showDialog();
-            contentPresenter.getContent(contentDetail,"isCourse");
-            courseFlag=position;
+            contentPresenter.getContent(contentDetail, "isCourse");
+            courseFlag = position;
         } else {
             String courseID = contentDetail.getAltnodeid();
             String nodeTitle = contentDetail.getNodetitle();
@@ -393,11 +405,80 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         intent.putExtra("NODE_DESC", nodeDesc);
                         //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
-                        Log.e("URL", String.valueOf(childs.size()));
-                        startActivityForResult(intent, 4);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
+                        Log.e("URL", String.valueOf(temp_levels.size()));
+                        startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
                         getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                     })
                     .ask();
+        }
+    }
+
+    @Override
+    public void onAssessmentItemClicked(Modal_ContentDetail modal_contentDetail) {
+        new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
+                .setTitle("Confirm")
+                .setMessage("You will be redirected to Assessment App!")
+                .setPositiveButton("YES", (dialog, which) -> {
+                    try {
+                        //startActivityForResult(); //use this when actual testing
+                        startAssessment(modal_contentDetail);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), "App not found", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("CANCEL", (dialog, which) -> {
+                    dialog.dismiss();
+                })
+                .show();
+    }
+
+    public void startAssessment(Modal_ContentDetail contentDetail) {
+//        if (!PrathamApplication.isTablet) {
+        Intent intent = new Intent("com.pratham.assessment.ui.choose_assessment.science.ScienceAssessmentActivity_");
+        Bundle mBundle = new Bundle();
+
+        ArrayList<String> studname = new ArrayList<>();
+        ArrayList<String> studID = new ArrayList<>();
+        List<Attendance> newAttendance = attendanceDao.getNewAttendances(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+        for (Attendance att : newAttendance) {
+            List<Modal_Student> newStudent = studentDao.getAllStudent(att.getStudentID());
+            for (Modal_Student stud : newStudent) {
+                studname.add(stud.getFullName());
+                studID.add(stud.getStudentId());
+            }
+        }
+
+        if (studname.size() == 1) {
+            mBundle.putString("studentId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+            mBundle.putString("appName", getResources().getString(R.string.app_name));
+            mBundle.putString("studentName", FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, ""));
+            mBundle.putString("subjectName", contentDetail.getSubject());
+            mBundle.putString("subjectLanguage", contentDetail.getContent_language());
+//                mBundle.putString("subjectLevel", "1");
+            mBundle.putString("examId", contentDetail.getNodekeywords());
+//                mBundle.putString("subjectId", "89");
+            intent.putExtras(mBundle);
+            startActivity(intent);
+        } else {
+            final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
+            new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
+                    .setTitle("Select Student for Assessment")
+                    .setItems(charSequenceItems, (dialog, which) -> {
+                        // extras.putString(key, value);
+                        mBundle.putString("studentId", studID.get(which));
+                        mBundle.putString("appName", getResources().getString(R.string.app_name));
+                        mBundle.putString("studentName", studname.get(which));
+                        mBundle.putString("subjectName", contentDetail.getSubject());
+                        mBundle.putString("subjectLanguage", contentDetail.getContent_language());
+                        //mBundle.putString("subjectLevel", "1");
+                        mBundle.putString("examId", contentDetail.getNodekeywords());
+                        //mBundle.putString("subjectId", "89");
+                        intent.putExtras(mBundle);
+                        startActivity(intent);
+                    })
+                    .show();
         }
     }
 
@@ -472,6 +553,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
             if (data != null && data.getData() != null) {
                 contentPresenter.parseSD_UriandPath(data);
             }
+        } else if(requestCode == REQUEST_CODE_COURSE_BACK) {
+            contentPresenter.showPreviousContent();
         }
     }
 
@@ -518,11 +601,17 @@ public class FragmentContent extends Fragment implements ContentContract.content
     }
 
     @UiThread
-    public void showLevels(ArrayList<Modal_ContentDetail> levelContents) {
+    public void showLevels(ArrayList<Modal_ContentDetail> levelContents, String isCourse) {
+        Log.e("url showlevel : ", String.valueOf(levelContents.size()));
         if (levelContents != null) {
             if (levelAdapter == null) {
                 mHandler.sendEmptyMessage(INITIALIZE_LEVEL_ADAPTER);
             } else {
+/*                if(isCourse.equalsIgnoreCase("IS_COURSE")){
+                    Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
+                    levelContents.remove(levelContents.size() - 1);
+                    levelAdapter.submitList(levelContents);
+                } else*/
                 levelAdapter.submitList(levelContents);
             }
         }
@@ -552,6 +641,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
                             break;
                         case PD_Constant.VIDEO:
                             intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.VIDEO);
+                            break;
+                        case PD_Constant.AUDIO:
+                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.AUDIO);
                             break;
                         case PD_Constant.PDF:
                             intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.PDF);

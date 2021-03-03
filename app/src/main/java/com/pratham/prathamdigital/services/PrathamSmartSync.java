@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.services;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,12 +18,21 @@ import com.pratham.prathamdigital.models.Model_ContentProgress;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.services.auto_sync.AutoSync;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.util.List;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
@@ -35,6 +45,7 @@ import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
+    private static int BUFFER = 10000;
 
     @Override
     protected void onCreate(Context context) {
@@ -119,12 +130,7 @@ public class PrathamSmartSync extends AutoSync {
                             .pushDataToRaspberry(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
                                     rootJson.toString(), programID, PD_Constant.USAGEDATA);
                 else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                    if (PrathamApplication.isTablet)
-                        new PD_ApiRequest(PrathamApplication.getInstance())
-                                .pushDataToInternet(PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), rootJson);
-                    else
-                        new PD_ApiRequest(PrathamApplication.getInstance())
-                                .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), rootJson);
+                    pushDataToServer(rootJson);
                 }
             } else {
                 if (isPressed) {
@@ -143,5 +149,64 @@ public class PrathamSmartSync extends AutoSync {
         Log.d(TAG, "onSync: ");
         // Push Tab related Jsons
         pushUsageToServer(false);
+    }
+
+    //before pushing zipping the json and then pushing
+    public static void pushDataToServer(JSONObject data) {
+        try {
+            String uuID = "" + PD_Utility.getUUID();
+            String filepathstr = PrathamApplication.pradigiPath +"/"+ uuID; // file path to save
+            File filepath = new File(filepathstr + ".json"); // file path to save
+
+            if (filepath.exists())
+                filepath.delete();
+            FileWriter writer = new FileWriter(filepath);
+            writer.write(String.valueOf(data));
+            writer.flush();
+            writer.close();
+
+            String[] s = new String[1];
+
+            // Type the path of the files in here
+            s[0] = filepathstr + ".json";
+            // first parameter is d files second parameter is zip file name
+            zip(s, filepathstr + ".zip", filepath);
+
+            if (PrathamApplication.isTablet)
+                new PD_ApiRequest(PrathamApplication.getInstance())
+                        .pushDataToInternet(PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), uuID, filepathstr, data);
+            else
+                new PD_ApiRequest(PrathamApplication.getInstance())
+                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void zip(String[] _files, String zipFileName, File filepath) {
+        try {
+            BufferedInputStream origin = null;
+            FileOutputStream dest = new FileOutputStream(zipFileName);
+            ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
+
+            byte[] data = new byte[BUFFER];
+            for (int i = 0; i < _files.length; i++) {
+                Log.v("Compress", "Adding: " + _files[i]);
+                FileInputStream fi = new FileInputStream(_files[i]);
+                origin = new BufferedInputStream(fi, BUFFER);
+                ZipEntry entry = new ZipEntry(_files[i].substring(_files[i].lastIndexOf("/") + 1));
+                out.putNextEntry(entry);
+                int count;
+                while ((count = origin.read(data, 0, BUFFER)) != -1) {
+                    out.write(data, 0, count);
+                }
+                origin.close();
+            }
+
+            out.close();
+            filepath.delete();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

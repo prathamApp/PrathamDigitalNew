@@ -181,15 +181,17 @@ public class BaseActivity extends AppCompatActivity {
                     KotlinPermissions.with(BaseActivity.this)
                             .permissions(Manifest.permission.READ_PHONE_STATE)
                             .onAccepted(permissionResult -> {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                                //Removed this due to api level 29 issue
+                                //Toast.makeText(BaseActivity.this, "Given", Toast.LENGTH_SHORT).show();
+                                /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                                     Modal_Status statusObj = new Modal_Status();
                                     statusObj.setStatusKey("SerialID");
                                     statusObj.setValue(Build.getSerial());
                                     statusDao.insert(statusObj);
-                                }
-                                EventMessage msg1 = new EventMessage();
+                                }*/
+                                /*EventMessage msg1 = new EventMessage();
                                 msg1.setMessage(PD_Constant.PERMISSIONS_GRANTED);
-                                EventBus.getDefault().post(msg1);
+                                EventBus.getDefault().post(msg1);*/
                             })
                             .onForeverDenied(permissionResult -> {
                                 Toast.makeText(BaseActivity.this, "Kindly grant phone permission and restart the app", Toast.LENGTH_SHORT).show();

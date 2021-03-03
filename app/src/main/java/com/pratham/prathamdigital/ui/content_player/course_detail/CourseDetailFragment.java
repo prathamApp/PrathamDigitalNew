@@ -53,6 +53,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +76,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     TextView course_detail;
     @ViewById(R.id.btn_submit_assignment)
     Button btn_submit_assignment;
+    @ViewById(R.id.play_all_content_serially)
+    Button btn_playAll;
 
     CourseDetailAdapter adapter;
     private Model_CourseEnrollment enrollment;
@@ -93,6 +97,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
 
+    boolean assessmentToastFlag=false;
+
     @SuppressLint("SetTextI18n")
     @AfterViews
     public void init() {
@@ -101,7 +107,6 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             course_name.setText(Objects.requireNonNull(getArguments()).getString("NODE_TITLE"));
             course_detail.setText(getArguments().getString("NODE_DESC"));
             levelContents = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT_LEVEL);
-            Log.e("URL", String.valueOf(levelContents.size()));
         }
         //else screen open via Course navigation item click
         else {
@@ -109,6 +114,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             assert enrollment != null;
             course_name.setText(enrollment.getCourseDetail().getNodetitle());
             course_detail.setText(enrollment.getCourseDetail().getNodedesc());
+            btn_playAll.setVisibility(View.VISIBLE);
+            assessmentToastFlag=true;
         }
         initializeAdapter();
         pd_apiRequest.setApiResult(CourseDetailFragment.this);
@@ -132,8 +139,21 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     }
 
     private void initializeAdapter() {
-        if (childs == null || childs.isEmpty())
+        if (childs == null || childs.isEmpty()) {
             childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
+            //to sort list sequence wise like portal
+            Collections.sort(childs, (o1, o2) -> {
+                if(o1.seq_no==null) {
+                    return (o1.getNodeid().compareToIgnoreCase(o2.getNodeid()));
+                }
+                else {
+                    int s1 = Integer.parseInt(o1.getSeq_no());
+                    int s2 = Integer.parseInt(o2.getSeq_no());
+                    return (Integer.compare(s1, s2));
+                }
+            });
+        }
+
         adapter = new CourseDetailAdapter(getActivity(), this);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
@@ -160,6 +180,10 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
     @Override
     public void onAssessmentItemClicked(Modal_ContentDetail contentDetail) {
+        if (PrathamApplication.wiseF.isDeviceConnectedToMobileOrWifiNetwork()) {
+            if(!assessmentToastFlag)
+            saveAssessment(contentDetail);
+        }
 
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
                 .setTitle("Confirm")
@@ -179,6 +203,77 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 .show();
     }
 
+    public void startAssessment(Modal_ContentDetail contentDetail) {
+//        if (!PrathamApplication.isTablet) {
+
+        Intent intent = new Intent("com.pratham.assessment.ui.choose_assessment.science.ScienceAssessmentActivity_");
+        Bundle mBundle = new Bundle();
+
+        ArrayList<String> studname = new ArrayList<>();
+        ArrayList<String> studID = new ArrayList<>();
+        List<Attendance> newAttendance = attendanceDao.getNewAttendances(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+        for (Attendance att : newAttendance) {
+            List<Modal_Student> newStudent = studentDao.getAllStudent(att.getStudentID());
+            for (Modal_Student stud : newStudent) {
+                studname.add(stud.getFullName());
+                studID.add(stud.getStudentId());
+            }
+        }
+
+        if (studname.size() == 1) {
+            mBundle.putString("studentId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+            mBundle.putString("appName", getResources().getString(R.string.app_name));
+            mBundle.putString("studentName", FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, ""));
+            mBundle.putString("subjectName", contentDetail.getSubject());
+            mBundle.putString("subjectLanguage", contentDetail.getContent_language());
+//                mBundle.putString("subjectLevel", "1");
+            mBundle.putString("examId", contentDetail.getNodekeywords());
+//                mBundle.putString("subjectId", "89");
+            intent.putExtras(mBundle);
+            startActivity(intent);
+        } else {
+            final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
+            new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
+                    .setTitle("Select Student for Assessment")
+                    .setItems(charSequenceItems, (dialog, which) -> {
+                        // extras.putString(key, value);
+                        mBundle.putString("studentId", studID.get(which));
+                        mBundle.putString("appName", getResources().getString(R.string.app_name));
+                        mBundle.putString("studentName", studname.get(which));
+                        mBundle.putString("subjectName", contentDetail.getSubject());
+                        mBundle.putString("subjectLanguage", contentDetail.getContent_language());
+                        //mBundle.putString("subjectLevel", "1");
+                        mBundle.putString("examId", contentDetail.getNodekeywords());
+                        //mBundle.putString("subjectId", "89");
+                        intent.putExtras(mBundle);
+                        startActivity(intent);
+                    })
+                    .show();
+        }
+    }
+
+    //saving the assessment nodetype in db
+    public void saveAssessment(Modal_ContentDetail contentDetail){
+        ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levelContents);
+        Modal_ContentDetail content = contentDetail;//Objects.requireNonNull(filesContentDownloading.get(downloadId)).getContentDetail();
+        content.setContentType("file");
+        content.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        temp.add(content);
+        for (Modal_ContentDetail d : temp) {
+            if (d.getNodeimage() != null) {
+                String img_name = d.getNodeimage().substring(d.getNodeimage().lastIndexOf('/') + 1);
+                d.setNodeimage(img_name);
+            }
+            d.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            d.setDownloaded(true);
+            d.setOnSDCard(false);
+        }
+        modalContentDao.addContentList(temp);
+        Toast.makeText(getActivity(), "Assessment Saved.", Toast.LENGTH_SHORT).show();
+    }
+
+
+/*
     public void startAssessment(Modal_ContentDetail contentDetail) {
         if (!PrathamApplication.isTablet) {
             //below are test values only, it will be replace by actual studentId and other
@@ -228,6 +323,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         }
 
     }
+*/
 
     // TODO : Download the clicked content
     //function is called when download icon is clicked
@@ -328,8 +424,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         ArrayList<Modal_ContentDetail> displayedContents = new ArrayList<>();
         ArrayList<Modal_ContentDetail> totalContents = new ArrayList<>();
         try {
-            Log.d("response:::", response);
-            Log.d("response:::", "requestType:: " + header);
+            Log.e("url response:::", response);
+            Log.e("url response:::", "requestType:: " + header);
             Gson gson = new Gson();
             if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
@@ -337,8 +433,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 Modal_ContentDetail contentDetail = download_content.getNodelist().get(download_content.getNodelist().size() - 1);
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
-                Toast.makeText(getActivity(), fileName, Toast.LENGTH_SHORT).show();
-                zipDownloader.initializee(CourseDetailFragment.this, download_content.getDownloadurl(),
+                zipDownloader.initializeforCourse(CourseDetailFragment.this, download_content.getDownloadurl(),
                         download_content.getFoldername(), fileName, contentDetail, levelContents);
             }
         } catch (Exception e) {
@@ -440,20 +535,12 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         Modal_ContentDetail content = Objects.requireNonNull(filesContentDownloading.get(downloadId)).getContentDetail();
         filesContentDownloading.remove(downloadId);
         postSingleFileDownloadErrorMessage(content);
-        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
+        EventBus.getDefault().post(new ArrayList<>(filesContentDownloading.values()));
         cancelDownload(downloadId);
     }
 
     public void broadcast_downloadings() {
         postProgressMessage();
-    }
-
-    public void eventFileDownloadStarted(EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_STARTED)) {
-                eventFileDownloadStarted_(message);
-            }
-        }
     }
 
     @Background
@@ -481,16 +568,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     public void postDownloadStartMessage() {
         EventMessage msg = new EventMessage();
         msg.setMessage(PD_Constant.FILE_DOWNLOAD_STARTED);
-        msg.setDownlaodContentSize(filesDownloading.size());
+        msg.setDownlaodContentSize(filesContentDownloading.size());
         EventBus.getDefault().post(msg);
-    }
-
-    public void eventUpdateFileProgress(EventMessage message) {
-        if (message != null) {
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_UPDATE)) {
-                eventUpdateFileProgress_(message);
-            }
-        }
     }
 
     public void eventUpdateFileProgress_(EventMessage message) {
@@ -511,7 +590,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
     @UiThread
     public void postProgressMessage() {
-        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
+        EventBus.getDefault().post(new ArrayList<>(filesContentDownloading.values()));
     }
 
     public void eventOnDownloadCompleted(EventMessage message) {
@@ -568,7 +647,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             if (message.getMessage().equalsIgnoreCase(PD_Constant.DOWNLOAD_FAILED)) {
                 Modal_ContentDetail content = Objects.requireNonNull(filesContentDownloading.get(message.getDownloadId())).getContentDetail();
                 postSingleFileDownloadErrorMessage(content);
-                filesDownloading.remove(message.getDownloadId());
+                filesContentDownloading.remove(message.getDownloadId());
                 EventBus.getDefault().post(new ArrayList<>(filesContentDownloading.values()));
             }
         }

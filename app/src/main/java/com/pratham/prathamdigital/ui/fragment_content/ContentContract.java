@@ -29,7 +29,7 @@ public interface ContentContract {
 
         void decreaseNotification(int number, Modal_ContentDetail detail, ArrayList<String> selectedNodeIds);
 
-        void displayLevel(ArrayList<Modal_ContentDetail> levelContents);
+        void displayLevel(ArrayList<Modal_ContentDetail> levelContents, String isCourse);
 
         void onDownloadError(EventMessage message);
 
@@ -92,6 +92,8 @@ public interface ContentContract {
         void onfolderClicked(int position, Modal_ContentDetail contentDetail);
 
         void onCourseClicked(int position, Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs);
+
+        void onAssessmentItemClicked(Modal_ContentDetail modal_contentDetail);
 
         void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View start_reveal_item);
 

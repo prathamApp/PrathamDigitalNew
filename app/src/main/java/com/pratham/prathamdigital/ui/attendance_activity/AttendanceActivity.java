@@ -19,6 +19,8 @@ import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup;
 import com.pratham.prathamdigital.ui.fragment_age_group.FragmentSelectAgeGroup_;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
+import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup;
+import com.pratham.prathamdigital.ui.fragment_select_group.FragmentSelectGroup_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -58,9 +60,10 @@ public class AttendanceActivity extends BaseActivity {
             if (getIntent().getBooleanExtra(PD_Constant.STUDENT_ADDED, false)) {
                 ArrayList<Modal_Student> students = (ArrayList<Modal_Student>) studentDao.getAllStudents();
                 bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+                bundle.putBoolean(PD_Constant.SHOW_BACK, false);
                 bundle.putBoolean("ISTABMODE",false);
-                PD_Utility.showFragment(this, new FragmentChildAttendance_(), R.id.frame_attendance,
-                        bundle, FragmentChildAttendance.class.getSimpleName());
+                PD_Utility.showFragment(this, new FragmentSelectGroup_(), R.id.frame_attendance,
+                        bundle, FragmentSelectGroup.class.getSimpleName());
             } else {
                 bundle.putBoolean(PD_Constant.SHOW_BACK, false);
                 PD_Utility.showFragment(this, new Fragment_SelectAvatar_(), R.id.frame_attendance,

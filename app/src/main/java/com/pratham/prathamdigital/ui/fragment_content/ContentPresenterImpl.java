@@ -113,7 +113,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (levelContents.size() == 1)
                     contentView.animateHamburger();
                 if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
-                    contentView.displayLevel(levelContents);
+                    contentView.displayLevel(levelContents,"");
+                } else{
+                    contentView.displayLevel(levelContents,"IS_COURSE");
                 }
             }
             getDownloadedContents(contentDetail.getNodeid(), contentDetail.getAltnodeid());
@@ -174,6 +176,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 tempContentList = getFinalListWithHeader(contentList);
                 if (contentView != null)
                     contentView.displayContents(contentList);
+                /* if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                    tempContentList = getFinalListWithHeader(contentList);
+                    if (contentView != null)
+                        contentView.displayContents(contentList);
+                } else {
+                    assert contentView != null;
+                    contentView.displayContentsInCourse(folderContentClicked, contentList);
+                    iscourse="";
+                }*/
             }
         }
     }
@@ -270,8 +281,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         ArrayList<Modal_ContentDetail> displayedContents = new ArrayList<>();
         ArrayList<Modal_ContentDetail> totalContents = new ArrayList<>();
         try {
-            Log.d("response:::", response);
-            Log.d("response:::", "requestType:: " + header);
+            Log.e("url response:::", response);
+            Log.e("url response:::", "requestType:: " + header);
             Gson gson = new Gson();
             if (header.equalsIgnoreCase(PD_Constant.FACILITY_ID)) {
                 Modal_RaspFacility facility = gson.fromJson(response, Modal_RaspFacility.class);
@@ -436,11 +447,12 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 for (Modal_ContentDetail detail : tempContents) {
                     if (detail.getResourcetype().equalsIgnoreCase("Game")
                             || detail.getResourcetype().equalsIgnoreCase("Video")
-                            || detail.getResourcetype().equalsIgnoreCase("Pdf"))
+                            || detail.getResourcetype().equalsIgnoreCase("Pdf")
+                            || detail.getResourcetype().equalsIgnoreCase("Audio"))
                         detail.setContentType("file");
                     else
                         detail.setContentType("folder");
-                    if (detail.getParentid().equalsIgnoreCase(id_3_6))
+                    if (detail.getParentid().equalsIgnoreCase(FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE,"78672")))
                         detail.setParentid("0");
                     detail.setMappedApiId(detail.getNodeid());
                     detail.setMappedParentId(mappedParentApi);
@@ -455,7 +467,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         contentView.displayContents(totalContents);
                 } else {
                     assert contentView != null;
-                    contentView.displayContentsInCourse(folderContentClicked, tempContents);
+                    contentView.displayContentsInCourse(folderContentClicked, totalContents);
+                    iscourse="";
                 }
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
@@ -477,7 +490,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (!dbContents.isEmpty())
             parentid = dbContents.get(0).getParentid();
         for (int i = 0; i < onlineContents.size(); i++) {
-            Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getAltnodeid(),
+            /** replaced altnodeid with nodeid*/
+            Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getNodeid(),
                     FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
             if (content != null) {
                 content.setMappedApiId(onlineContents.get(i).getNodeid());
@@ -705,9 +719,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         } else {
             Modal_ContentDetail contentDetail = levelContents.get(levelContents.size() - 1);
             levelContents.remove(levelContents.size() - 1);
+            Log.e("URL PrevLevelContent", String.valueOf(levelContents.size()));
             if (contentView != null) {
                 if (levelContents.isEmpty()) contentView.animateHamburger();
-                contentView.displayLevel(levelContents);
+                contentView.displayLevel(levelContents,"");
             }
             mappedParentApi = contentDetail.getMappedParentId();
             getDownloadedContents(contentDetail.getParentid(), ""); //altnodeId is sent blank coz it points to its same node,
@@ -848,7 +863,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
             }
             if (contentView != null) {
-                contentView.displayLevel(levelContents);
+                contentView.displayLevel(levelContents,"");
                 List<Modal_ContentDetail> details = new ArrayList<>();
                 details.add(0, new Modal_ContentDetail());//null modal for displaying header
                 details.add(download_content.getNodelist().get(download_content.getNodelist().size() - 1));
@@ -871,7 +886,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         String lang = FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI);
         List<Modal_ContentDetail> childsOfParent;
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
-            childsOfParent = modalContentDao.getChildsOfParent(parentId, altNodeId, lang);
+            /** replaced altnodeid with nodeid*/
+            childsOfParent = modalContentDao.getChildsOfParent(parentId, parentId, lang);
         } else {
             int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
             if (PrathamApplication.isTablet)

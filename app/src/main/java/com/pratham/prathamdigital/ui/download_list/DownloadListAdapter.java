@@ -61,6 +61,9 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
                 .equalsIgnoreCase(PD_Constant.PDF))
             Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_book);
+        else if (mDiffer.getCurrentList().get(holder.getAdapterPosition()).getContentDetail().getResourcetype().toLowerCase()
+                .equalsIgnoreCase(PD_Constant.AUDIO))
+            Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_music_icon);
         else
             Objects.requireNonNull(holder.download_file_view).setImageResource(R.drawable.ic_joystick);
         Objects.requireNonNull(holder.download_remaining_time).setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());

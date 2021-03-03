@@ -40,7 +40,8 @@
                     android:gravity="center"
                     android:text="Play all"
                     android:textColor="@color/white"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:visibility="gone"/>
 
                 <com.pratham.prathamdigital.custom.shimmer_view.ShimmerFrameLayout
                     android:layout_width="wrap_content"

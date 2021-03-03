@@ -36,6 +36,9 @@ public class Modal_Student implements Comparable, Parcelable {
     @PrimaryKey
     @SerializedName("StudentId")
     public String StudentId;
+
+    public String VillageName;
+
     public String avatarName;
     @Ignore
     private transient boolean isChecked = false;
@@ -180,6 +183,14 @@ public class Modal_Student implements Comparable, Parcelable {
 
     public void setAvatarName(String avatarName) {
         this.avatarName = avatarName;
+    }
+
+    public String getVillageName() {
+        return VillageName;
+    }
+
+    public void setVillageName(String villageName) {
+        VillageName = villageName;
     }
 
     @Override

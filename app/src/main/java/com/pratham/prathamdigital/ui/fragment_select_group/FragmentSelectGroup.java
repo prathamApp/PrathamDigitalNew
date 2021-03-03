@@ -1,10 +1,13 @@
 package com.pratham.prathamdigital.ui.fragment_select_group;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
@@ -15,8 +18,11 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CircularRevelLayout;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.services.AppKillService;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -46,11 +52,14 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     CircularRevelLayout circular_group_reveal;
     @ViewById(R.id.btn_group_next)
     Button btn_group_next;
+    @ViewById(R.id.img_att_back)
+    ImageView img_Att_back;
 
     private GroupAdapter groupAdapter;
     private int revealX;
     private int revealY;
     private BlurPopupWindow noGrpDialog;
+
 
     @AfterViews
     public void initialize() {
@@ -66,6 +75,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
                     return true;
                 }
             });
+            if (getArguments() != null && getArguments().getBoolean(PD_Constant.SHOW_BACK))
+                img_Att_back.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -97,7 +108,9 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         if (groups != null && groups.size() > 0) {
             setGroups(groups);
         } else {
-            showNoGroupsDialog();
+            if ((Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_ENROLLED))) {
+                showNoGroupsDialog();
+            }
         }
     }
 
@@ -108,6 +121,24 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
                 .bindClickListener(v -> {
                     noGrpDialog.dismiss();
                     Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+                }, R.id.dialog_no_grp_btn_exit)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        noGrpDialog.show();
+    }
+
+    @UiThread
+    public void showNoGroupsExitDialog() {
+        noGrpDialog = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.no_grp_dialog)
+                .bindClickListener(v -> {
+                    noGrpDialog.dismiss();
+                    Objects.requireNonNull(getActivity()).finish();
                 }, R.id.dialog_no_grp_btn_exit)
                 .setGravity(Gravity.CENTER)
                 .setDismissOnTouchBackground(false)
@@ -156,6 +187,24 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
                 groups.add(group);
             }
         }
+
+        //todo
+        String GID = "%SmartPhone";
+        List<Modal_Student> studentsSmartPhone = studentDao.getGroupwiseStudentsLike(GID);
+         if(studentsSmartPhone.size()!=0) {
+              for (Modal_Student stu : studentsSmartPhone) {
+                    Modal_Groups groups1 = new Modal_Groups();
+                    groups1.setGroupId(stu.getGroupId());
+                    groups1.setGroupName(stu.getFullName());
+                    groups1.setVillageId(stu.getStudentId());
+                    groups1.setProgramId(0);
+                    groups1.setGroupCode("");
+                    groups1.setSchoolName("");
+                    groups1.setDeviceId(PD_Utility.getDeviceID());
+                    Log.e("URL : ", String.valueOf(groups1));
+                    groups.add(groups1);
+                }
+            }
         return groups;
     }
 
@@ -185,7 +234,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Click(R.id.img_att_back)
     public void setAttBack() {
         try {
-            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+//            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -193,19 +242,53 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
 
     @UiThread
     public void setNext(View v, Modal_Groups modal_groups) {
-        PrathamApplication.bubble_mp.start();
-        ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
-        int[] outLocation = new int[2];
-        v.getLocationOnScreen(outLocation);
-        outLocation[0] += v.getWidth() / 2;
-        Bundle bundle = new Bundle();
-        bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
-        bundle.putString(PD_Constant.GROUP_NAME, modal_groups.getGroupName());
-        bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
-        bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
-        bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
-        PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
-                bundle, FragmentChildAttendance.class.getSimpleName());
+        if(modal_groups.getGroupId().contains("SmartPhone")){
+            PrathamApplication.bubble_mp.start();
+            ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getGroupwiseStudentsLike(modal_groups.getGroupId()));
+            int[] outLocation = new int[2];
+            v.getLocationOnScreen(outLocation);
+            outLocation[0] += v.getWidth() / 2;
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+            bundle.putString(PD_Constant.GROUP_NAME, modal_groups.getGroupName());
+            bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
+            bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+            bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+            bundle.putBoolean("ISTABMODE", false);
+            if ((Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_ENROLLED))) {
+                bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);
+                PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.splash_frame,
+                        bundle, FragmentChildAttendance.class.getSimpleName());
+            } else {
+                PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
+                        bundle, FragmentChildAttendance.class.getSimpleName());
+            }
+            //presentActivity();
+        } else {
+            PrathamApplication.bubble_mp.start();
+            ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getGroupwiseStudents(modal_groups.getGroupId()));
+            int[] outLocation = new int[2];
+            v.getLocationOnScreen(outLocation);
+            outLocation[0] += v.getWidth() / 2;
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(PD_Constant.STUDENT_LIST, students);
+            bundle.putString(PD_Constant.GROUP_NAME, modal_groups.getGroupName());
+            bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
+            bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
+            bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+     /*   PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
+                bundle, FragmentChildAttendance.class.getSimpleName());*/
+            if ((Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_ENROLLED))) {
+                bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);
+                bundle.putBoolean("ISTABMODE", true);
+                PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.splash_frame,
+                        bundle, FragmentChildAttendance.class.getSimpleName());
+            } else {
+                bundle.putBoolean("ISTABMODE", true);
+                PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
+                        bundle, FragmentChildAttendance.class.getSimpleName());
+            }
+        }
     }
 
     @Override
@@ -219,6 +302,20 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
 //        temp.set(position, modalGroup);
         groupAdapter.notifyDataSetChanged();
+    }
+
+    @UiThread
+    public void presentActivity() {
+        Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), AppKillService.class));
+        FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
+        Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
+        if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.DEEP_LINK, false)) {
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
+            mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
+        }
+        startActivity(mActivityIntent);
+        getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        getActivity().finishAfterTransition();
     }
 
     @Override

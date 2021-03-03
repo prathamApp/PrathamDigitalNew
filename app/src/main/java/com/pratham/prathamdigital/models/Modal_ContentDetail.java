@@ -38,7 +38,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String resourcepath;
     @SerializedName("level")
     private int level;
-    @SerializedName("content_language")
+    @SerializedName("nodelang")
     private String content_language;
     @SerializedName("parentid")
     private String parentid;
@@ -52,6 +52,12 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String version;
     @SerializedName("assignment")
     private String assignment;
+    @SerializedName("subject")
+    public String subject;
+    @SerializedName("seq_no")
+    public String seq_no;
+    @SerializedName("seq_rule")
+    public String seq_rule;
     private boolean isViewed = false;
     @Ignore
     private String kolibriNodeImageUrl;
@@ -87,7 +93,9 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         mappedApiId = in.readString();
         mappedParentId = in.readString();
         assignment = in.readString();
+        subject = in.readString();
         isViewed = in.readByte() != 0;
+        seq_no = in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -142,6 +150,13 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.nodeeage = nodeeage;
     }
 
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
     public String getNodedesc() {
         return nodedesc;
     }
@@ -295,6 +310,22 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.isViewed = isViewed;
     }
 
+    public String getSeq_no() {
+        return seq_no;
+    }
+
+    public void setSeq_no(String seq_no) {
+        this.seq_no = seq_no;
+    }
+
+    public String getSeq_rule() {
+        return seq_rule;
+    }
+
+    public void setSeq_rule(String seq_rule) {
+        this.seq_rule = seq_rule;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -337,6 +368,8 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(mappedApiId);
         dest.writeString(mappedParentId);
         dest.writeString(assignment);
+        dest.writeString(subject);
         dest.writeByte((byte) (isViewed ? 1 : 0));
+        dest.writeString(seq_no);
     }
 }

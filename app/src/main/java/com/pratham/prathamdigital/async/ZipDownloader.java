@@ -18,6 +18,7 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.SpeedMonitor;
@@ -53,6 +54,14 @@ public class ZipDownloader {
                            ArrayList<Modal_ContentDetail> levelContents) {
         this.filename = f_name;
         createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
+    }
+
+    //created for download functioanlity in course fragment
+    public void initializeforCourse(CourseDetailFragment courseDetailFragment, String url,
+                            String foldername, String f_name, Modal_ContentDetail contentDetail,
+                            ArrayList<Modal_ContentDetail> levelContents) {
+        this.filename = f_name;
+        createFolderAndStartDownloadforCourse(url, foldername, f_name, contentDetail, courseDetailFragment, levelContents);
     }
 
     /*Creating folder in internal.
@@ -95,6 +104,46 @@ public class ZipDownloader {
         task.setTag(modal_download);
         task.enqueue(listener);
         contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
+    }
+
+    //created for download functioanlity in course fragment
+    @Background
+    public void createFolderAndStartDownloadforCourse(String url, String foldername, String f_name,
+                                             Modal_ContentDetail contentDetail,
+                                             CourseDetailFragment courseDetailFragment,
+                                             ArrayList<Modal_ContentDetail> levelContents) {
+        File mydir;
+        mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
+        if (!mydir.exists()) mydir.mkdirs();
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+            if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
+                f_name = f_name.substring(0, f_name.lastIndexOf("."));
+                File temp_dir = new File(mydir.getAbsolutePath() + "/" + f_name);
+                if (!temp_dir.exists()) temp_dir.mkdirs();
+                mydir = temp_dir;
+            }
+        }
+        Log.d("internal_file", mydir.getAbsolutePath());
+
+        Modal_Download modal_download = new Modal_Download();
+        modal_download.setUrl(url);
+        modal_download.setDir_path(mydir.getAbsolutePath());
+        modal_download.setF_name(filename);
+        modal_download.setFolder_name(foldername);
+        modal_download.setContent(contentDetail);
+        modal_download.setCourseDetailFragment(courseDetailFragment);
+        modal_download.setLevelContents(levelContents);
+
+        //download Thumbnail image first
+        downloadImages(modal_download, modal_download.getLevelContents());
+        DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
+                .setFilename(modal_download.getF_name())
+                // the minimal interval millisecond for callback progress
+                .setMinIntervalMillisCallbackProcess(30)
+                .build();
+        task.setTag(modal_download);
+        task.enqueue(listener);
+        courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);
     }
 
     private com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {

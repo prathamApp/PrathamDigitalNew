@@ -96,6 +96,8 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_video);
             else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_book);
+            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO))
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_music_icon);
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {

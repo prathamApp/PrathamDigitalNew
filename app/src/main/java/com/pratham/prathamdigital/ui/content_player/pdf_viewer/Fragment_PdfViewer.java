@@ -57,6 +57,17 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
         BookFlipPageTransformer transformer = new BookFlipPageTransformer();
         transformer.setEnableScale(true);
         pdf_curl_view.setPageTransformer(true, transformer);
+
+        //shows nextbutton even if pdf is of single page
+        if(bitmaps.size() == 1) {
+            if (Objects.requireNonNull(getArguments()).getBoolean("isCourse")) {
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.SHOW_NEXT_BUTTON);
+                message.setDownloadId(resId);
+                EventBus.getDefault().post(message);
+            }
+        }
+
         pdf_curl_view.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int i, float v, int i1) {

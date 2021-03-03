@@ -2,7 +2,9 @@ package com.pratham.prathamdigital.ui.content_player.web_view;
 
 import android.annotation.SuppressLint;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.view.View;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -45,6 +47,7 @@ public class Fragment_WebView extends Fragment implements VideoListener {
     private void createWebView(String GamePath, String parse, String resId, boolean isOnSdCard) {
         try {
             webView.loadUrl("file:///" + GamePath);
+            webView.getSettings().setAllowContentAccess(true);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
@@ -54,7 +57,7 @@ public class Fragment_WebView extends Fragment implements VideoListener {
             webView.setWebViewClient(new WebViewClient());
             webView.setWebChromeClient(new WebChromeClient());
             webView.clearCache(true);
-
+            //added below method to support apilevel 29 and above
             webView.getSettings().setLoadsImagesAutomatically(true);
             webView.getSettings().setDomStorageEnabled(true);
             webView.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);

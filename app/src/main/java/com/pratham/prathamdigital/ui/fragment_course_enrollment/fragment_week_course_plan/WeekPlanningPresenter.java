@@ -244,7 +244,15 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     public void fetchCourseChilds(Model_CourseEnrollment c_enrolled) {
         Modal_ContentDetail detail = c_enrolled.getCourseDetail();
         List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
-        Collections.sort(childs, (o1, o2) -> o1.getNodetitle().compareToIgnoreCase(o2.getNodetitle()));
+        Collections.sort(childs, (o1, o2) -> {
+            if(o1.seq_no==null)
+                return o1.getNodeid().compareToIgnoreCase(o2.getNodeid());
+            else {
+                int s1 = Integer.parseInt(o1.getSeq_no());
+                int s2 = Integer.parseInt(o2.getSeq_no());
+                return (Integer.compare(s1, s2));
+            }
+        });
         planningView.showChilds(c_enrolled, childs, detail.getNodeid());
     }
 

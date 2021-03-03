@@ -64,12 +64,11 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
         course_del_yes = itemView.findViewById(R.id.course_del_yes);
         course_del_no = itemView.findViewById(R.id.course_del_no);
     }
-
     public void setChildItems(Modal_ContentDetail contentDetail,
                               ContentPlayerContract.courseDetailAdapterClick courseDetailAdapterClick, int pos) {
         course_child_title.setText(contentDetail.getNodetitle());
         Log.e("url", contentDetail.getNodeid() + " | " + String.valueOf(contentDetail.getIsViewed()));
-        if (contentDetail.isDownloaded()) {
+         if (contentDetail.isDownloaded()) {
             if (!PrathamApplication.isTablet)
                 Objects.requireNonNull(item_courseFile_delete).setVisibility(View.VISIBLE);
             else Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
@@ -100,24 +99,29 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             Objects.requireNonNull(content_card).setBackgroundColor(PD_Utility.getRandomColorGradient());
             if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_joystick);
-                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
+//                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_video);
-                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
+//                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_book);
-                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
+//                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
+            } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO)) {
+                Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_music_icon);
+//                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }
 
             if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
-                course_child_title.setText("Give Assessment");
+                course_child_title.setText(contentDetail.getNodetitle());
                 course_child_image.setImageResource(R.drawable.assessment_logo);
+            }else {
+                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }
 
             itemView.setOnClickListener(v -> {
                 if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))
-                    courseDetailAdapterClick.onAssessmentItemClicked();
+                    courseDetailAdapterClick.onAssessmentItemClicked(contentDetail);
                 else
                     courseDetailAdapterClick.onChildItemClicked(contentDetail);
             });
@@ -163,13 +167,16 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
 
             if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
-                course_child_title.setText("Give Assessment");
+                course_child_title.setText(contentDetail.getNodetitle());
                 course_child_image.setImageResource(R.drawable.assessment_logo);
+                rl_courseDownload.setEnabled(false);
+            } else {
+                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }
 
             itemView.setOnClickListener(v -> {
                 if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))
-                    courseDetailAdapterClick.onAssessmentItemClicked();
+                    courseDetailAdapterClick.onAssessmentItemClicked(contentDetail);
             });
 
         }

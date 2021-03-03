@@ -23,16 +23,19 @@ public interface ModalContentDao {
     @Query("SELECT COUNT(*) from TableContent WHERE parentid=:nodeId and content_language=:language")
     int getChildCountOfParent(String nodeId, String language);
 
+    //todo : below three queries are same, check and make it one
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
             "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     List<Modal_ContentDetail> getParentsHeaders(String language);
 
+    /*** removed nodeeage not like '3-6' to get data of parentid = 0 on 22Feb21*/
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
-            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage like '3-6'")
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     List<Modal_ContentDetail> getPrimaryAgeParentsHeaders(String language);
 
+    /*** removed nodeeage not like '3-6' to get data of parentid = 0*/
     @Query("SELECT * FROM TableContent WHERE (parentid ISNULL or parentid = 0 or parentid='' " +
-            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language and nodeeage not like '3-6'")
+            "or LTRIM(RTRIM([parentid])) = '') and content_language=:language")
     List<Modal_ContentDetail> getAbovePrimaryAgeParentHeaders(String language);
 
     @Query("SELECT * FROM TableContent WHERE parentid=:id or parentid=:altnodeId and content_language=:language")

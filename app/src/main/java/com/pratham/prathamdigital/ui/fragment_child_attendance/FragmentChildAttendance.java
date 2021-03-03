@@ -100,8 +100,9 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIALIZE_STUDENTS:
+                    boolean isTabletmode = getArguments().getBoolean("ISTABMODE");
                     students = getArguments() != null ? getArguments().getParcelableArrayList(PD_Constant.STUDENT_LIST) : null;
-                    if (PrathamApplication.isTablet) {
+                    if (isTabletmode) {
                         img_child_back.setVisibility(View.VISIBLE);
                         btn_attendance_next.setVisibility(View.VISIBLE);
                         groupID = getArguments().getString(PD_Constant.GROUPID);
@@ -115,7 +116,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
                         add_student.setStudentId("Add Child");
                         if (!students.contains(add_student)) students.add(add_student);
                     }
-                    setChilds(students);
+                    setChilds(students, isTabletmode);
                     break;
                 case CHECKUPDATE_REQUEST:
                     //Send message if new update is available
@@ -149,8 +150,8 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     }
 
     @UiThread
-    public void setChilds(ArrayList<Modal_Student> childs) {
-        childAdapter = new ChildAdapter(getActivity(), childs, FragmentChildAttendance.this);
+    public void setChilds(ArrayList<Modal_Student> childs, boolean isTabMode) {
+        childAdapter = new ChildAdapter(getActivity(), childs, FragmentChildAttendance.this, isTabMode);
         rv_child.setHasFixedSize(true);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.CENTER);
@@ -204,7 +205,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         ArrayList<Modal_Student> s = new ArrayList<>();
         s.add(student);
         markAttendance(s);
-        presentActivity(v);
+//        presentActivity();
     }
 
     @Touch(R.id.btn_attendance_next)
@@ -222,7 +223,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
     }
 
     @Click(R.id.btn_attendance_next)
-    public void setNext(View v) {
+    public void setNext() {
         ArrayList<Modal_Student> checkedStds = new ArrayList<>();
         for (int i = 0; i < students.size(); i++) {
             if (students.get(i).isChecked())
@@ -234,7 +235,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, Objects.requireNonNull(getArguments()).getString(PD_Constant.GROUP_NAME));
             FastSave.getInstance().saveString(PD_Constant.GROUPID, groupID);
             markAttendance(checkedStds);
-            presentActivity(v);
+//            presentActivity();
         } else {
             Toast.makeText(getContext(), "Please Select Students !", Toast.LENGTH_SHORT).show();
         }
@@ -263,12 +264,13 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
         s.setFromDate(PD_Utility.getCurrentDateTime());
         s.setToDate("NA");
         sessionDao.insert(s);
+        presentActivity();
     }
 
     @UiThread
-    public void presentActivity(View view) {
-        FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
+    public void presentActivity() {
         Objects.requireNonNull(getActivity()).startService(new Intent(getActivity(), AppKillService.class));
+        FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, false);
         Intent mActivityIntent = new Intent(getActivity(), ActivityMain_.class);
         if (Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.DEEP_LINK, false)) {
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);

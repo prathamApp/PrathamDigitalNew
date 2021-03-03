@@ -36,19 +36,21 @@ public class ChildAdapter extends RecyclerView.Adapter {
     private final ArrayList<Modal_Student> datalist;
     private final Context context;
     private final ContractChildAttendance.attendanceView attendanceView;
+    boolean isTabMode;
 
     public ChildAdapter(Context context, ArrayList<Modal_Student> datalist,
-                        ContractChildAttendance.attendanceView attendanceView) {
+                        ContractChildAttendance.attendanceView attendanceView, boolean isTabMode) {
         this.context = context;
         this.datalist = datalist;
         this.attendanceView = attendanceView;
+        this.isTabMode = isTabMode;
     }
 
     @Override
     public int getItemViewType(int position) {
         if (datalist.get(position).getStudentId().equalsIgnoreCase("Add Child"))
             return ADD_CHILD;
-        else if (PrathamApplication.isTablet)
+        else if (isTabMode)
             return TAB_CHILD;
         else
             return SMART_CHILD;

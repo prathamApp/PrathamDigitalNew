@@ -11,6 +11,7 @@ import com.androidnetworking.interfaces.DownloadListener;
 import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
+import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -96,6 +97,7 @@ public class PD_ApiRequest {
                         @Override
                         public void onResponse(String response) {
                             if (apiResult != null)
+                                Log.e("url api response : ", response);
                                 apiResult.recievedContent(requestType, response, contentList);
                         }
 
@@ -148,7 +150,10 @@ public class PD_ApiRequest {
                 });
     }
 
-    public void pushDataToInternet(/*final String requestType, */String url, JSONObject data) {
+/*
+    public void pushDataToInternet(*/
+/*final String requestType, *//*
+String url, JSONObject data) {
         AndroidNetworking.post(url)
 //                .addHeaders("Content-Type", "application/json")
                 .addJSONObjectBody(data)
@@ -168,6 +173,38 @@ public class PD_ApiRequest {
 
                     @Override
                     public void onError(ANError anError) {
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.d("Error::", anError.getErrorDetail());
+                        Log.d("Error::", anError.getMessage());
+                        Log.d("Error::", anError.getResponse().toString());
+                    }
+                });
+    }
+*/
+
+    public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data) {
+        AndroidNetworking.upload(url)
+                .addHeaders("Content-Type", "file/zip")
+                .addMultipartFile(""+uuID, new File(filepathstr + ".zip"))
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("PushData", "DATA PUSH "+response);
+                        new File(filepathstr + ".zip").delete();
+                        BackupDatabase.backup(PrathamApplication.getInstance());
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        msg.setPushData(data.toString());
+                        EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        //Fail - Show dialog with failure message.
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
                         EventBus.getDefault().post(msg);

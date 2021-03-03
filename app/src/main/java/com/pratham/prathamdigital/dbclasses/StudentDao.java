@@ -45,6 +45,9 @@ public interface StudentDao {
     @Query("SELECT * FROM Students WHERE GroupId=:gID")
     List<Modal_Student> getGroupwiseStudents(String gID);
 
+    @Query("SELECT * FROM Students WHERE GroupId Like :gID")
+    List<Modal_Student> getGroupwiseStudentsLike(String gID);
+
     @Query("DELETE FROM Students Where StudentId=:stdID")
     void deleteStudentByID(String stdID);
 

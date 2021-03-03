@@ -2,8 +2,11 @@ package com.pratham.prathamdigital.ui.content_player;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -20,6 +23,9 @@ import org.androidannotations.annotations.EBean;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
+
+import androidx.annotation.RequiresApi;
 
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
@@ -50,6 +56,19 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         coursePlayingQueue = new ArrayList<>(intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
         course_week = intent.getStringExtra(PD_Constant.WEEK);
         courseId = intent.getStringExtra(PD_Constant.COURSE_ID);
+        Log.e("url ee :", String.valueOf(coursePlayingQueue.size()));
+        Log.e("url cc :", String.valueOf(courseChilds.size()));
+
+//        coursePlayingQueue.removeIf(b->b.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)||b.getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO));
+
+        List<Modal_ContentDetail> found = new ArrayList<Modal_ContentDetail>();
+        for(Modal_ContentDetail mcd : coursePlayingQueue){
+            if(mcd.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)||mcd.getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO)){
+                found.add(mcd);
+            }
+        }
+        coursePlayingQueue.removeAll(found);
+        Log.e("url eer :", String.valueOf(coursePlayingQueue.size()));
     }
 
     @Background
@@ -65,6 +84,9 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.GAME)) {
                 Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
                 bundleGame(contentDetail, false);
+            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.AUDIO)) {
+                Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                bundleAudio(contentDetail, false);
             } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.COURSE)) {
                 setCourse(intent);
                 bundleCourse(intent);
@@ -121,7 +143,23 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             vidBundle.putString(PD_Constant.YOUTUBE_LINK, youtube_link);
         contentPlayerView.showVideo(vidBundle);
     }
-
+/////
+    private void bundleAudio(Modal_ContentDetail audContentDetail, boolean isCourse) {
+        Bundle audBundle = new Bundle();
+        String aud_path;
+        if (audContentDetail != null) {
+            if (audContentDetail.isOnSDCard())
+                aud_path = PrathamApplication.externalContentPath + "/PrathamAudio/" + audContentDetail.getResourcepath();
+            else
+                aud_path = pradigiPath + "/PrathamAudio/" + audContentDetail.getResourcepath();
+            audBundle.putString("videoPath", aud_path);
+            audBundle.putString("videoTitle", audContentDetail.getNodetitle());
+            audBundle.putString("resId", audContentDetail.getResourceid());
+        }
+        audBundle.putBoolean("isCourse", isCourse);
+        contentPlayerView.showAudio(audBundle);
+    }
+////
     private void bundlePdf(Modal_ContentDetail pdfContentDetail, boolean isCourse) {
         Bundle pdfBundle = new Bundle();
         String pdf_path;
@@ -133,7 +171,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         pdfBundle.putString("resId", pdfContentDetail.getResourceid());
         pdfBundle.putBoolean("isCourse", isCourse);
         contentPlayerView.showPdf(pdfBundle);
-        modalContentDao.updateIsViewed(pdfContentDetail.getResourceid());
+        //modalContentDao.updateIsViewed(pdfContentDetail.getResourceid());
     }
 
     @Background
@@ -146,6 +184,15 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                 bundleVideo(coursePlayingQueue.get(0), true, null);
             } else if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.GAME)) {
                 bundleGame(coursePlayingQueue.get(0), true);
+            } else if (coursePlayingQueue.get(0).getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
+                //showNextContentAsmntandAudio(coursePlayingQueue.get(0).getResourceid());
+                addProgress(coursePlayingQueue.get(0).getResourceid());
+                Log.e("url Amnt next : ",".");
+                resumeCourse();
+            } else if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO)) {
+                //showNextContentAsmntandAudio(coursePlayingQueue.get(0).getResourceid());
+                Log.e("url Audio Nxt : ",".");
+                resumeCourse();
             }
             coursePlayingQueue.remove(0);
         } else contentPlayerView.onCourseCompleted();
@@ -161,13 +208,12 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             contentPlayerView.onCourseCompleted();
     }
 
-    @Background
     public void addProgress(String resID) {
         String stuid = FastSave.getInstance().getString(PD_Constant.GROUPID, "NA");
         Model_ContentProgress contentProgress = PrathamApplication.contentProgressDao.getCourse(stuid, courseId, course_week);
         if (contentProgress != null) {
             if (!contentProgress.getLabel().toLowerCase().contains(resID.toLowerCase())) {
-                int percentage_progress = 100 / courseChilds.size();
+                int percentage_progress = 100 / coursePlayingQueue.size();
                 int ttl = Integer.parseInt(contentProgress.getProgressPercentage().isEmpty() ? "0" : contentProgress.getProgressPercentage()) + percentage_progress;
                 String label = contentProgress.getLabel() + resID + ",";
                 contentProgress.setLabel(label);
@@ -190,7 +236,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                 }
             }
         } else {
-            int percentage_progress = 100 / courseChilds.size();
+            int percentage_progress = 100 / coursePlayingQueue.size();
             contentProgress = new Model_ContentProgress();
             contentProgress.setStudentId(stuid);
             contentProgress.setResourceId(courseId);

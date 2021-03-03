@@ -36,6 +36,8 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
     @Nullable
     TextView folder_content_desc;
     @Nullable
+    TextView folder_viewmore;
+    @Nullable
     LabelView content_card;
 
     private final ContentContract.contentClick contentClick;
@@ -47,6 +49,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
         folder_title = itemView.findViewById(R.id.folder_title);
         folder_content_desc = itemView.findViewById(R.id.folder_content_desc);
         content_card = itemView.findViewById(R.id.content_card);
+        folder_viewmore = itemView.findViewById(R.id.folder_viewmore);
         this.contentClick = contentClick;
     }
 
@@ -57,6 +60,14 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
         if (contentItem.getNodetype().equalsIgnoreCase(PD_Constant.COURSE))
             Objects.requireNonNull(content_card).setLabelVisual(true);
         else Objects.requireNonNull(content_card).setLabelVisual(false);
+
+        if (contentItem.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
+            folder_viewmore.setText(contentItem.getNodetitle());
+            folder_content_image.setImageResource(R.drawable.assessment_logo);
+        } else {
+            folder_viewmore.setText("VIEW MORE");
+        }
+
         ImageRequest request = null;
         if (contentItem.isDownloaded()) {
             Uri imgUri;
@@ -91,6 +102,7 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
                 folder_content_image.setController(controller);
             }
         }
+
         Objects.requireNonNull(content_card).setBackgroundColor(PD_Utility.getRandomColorGradient());
         Objects.requireNonNull(folder_title).setText(contentItem.getNodetitle());
         Objects.requireNonNull(folder_title).setSelected(true);
@@ -100,11 +112,18 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 //            Objects.requireNonNull(folder_content_desc).setText(contentItem.getNodedesc());
         content_card.setOnClickListener(v -> {
             if (contentItem.getNodetype().equalsIgnoreCase("course")) {
-                List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(contentItem.getNodeid(), contentItem.getAltnodeid(), contentItem.getContent_language());
-                if (childs.size() != 0)
-                    contentClick.onCourseClicked(pos, contentItem, childs);
-                else
+                /** replaced altnodeid with nodeid*/
+                List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(contentItem.getNodeid(), contentItem.getNodeid(), contentItem.getContent_language());
+                //need to check this loop
+                if (childs.size() != 0){
+                    /**Todo 26jan*/
                     contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
+                Log.e("URL Q1: ","Q1");}
+                else
+                    Log.e("URL Q2: ","Q2");
+                    contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
+            } else if((contentItem.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))){
+                    contentClick.onAssessmentItemClicked(contentItem);
             } else {
                 contentClick.onfolderClicked(pos, contentItem);
             }

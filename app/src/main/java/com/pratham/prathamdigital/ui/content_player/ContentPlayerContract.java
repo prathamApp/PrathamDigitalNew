@@ -15,6 +15,8 @@ public interface ContentPlayerContract {
 
         void showVideo(Bundle vidBundle);
 
+        void showAudio(Bundle audBundle);
+
         void showPdf(Bundle pdfBundle);
 
         void showNextContentPlayingTimer();

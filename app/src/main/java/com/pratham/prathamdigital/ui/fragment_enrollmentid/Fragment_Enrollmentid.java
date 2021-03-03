@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
@@ -35,6 +36,7 @@ import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.Attendance;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Enrollment;
 import com.pratham.prathamdigital.models.Modal_Groups;
@@ -55,6 +57,7 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.Subscribe;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -108,6 +111,8 @@ public class Fragment_Enrollmentid extends Fragment {
     TextView tv_enrolled_group_groupName;
     @ViewById(R.id.lv_enrolled_groupList)
     ListView lv_enrolled_groupList;
+    @ViewById(R.id.btn_saveProfile)
+    Button btn_saveProfile;
 
     boolean isGroup=false;
     String grpID;
@@ -115,9 +120,13 @@ public class Fragment_Enrollmentid extends Fragment {
 
     @Bean(PD_ApiRequest.class)
     PD_ApiRequest pd_apiRequest;
-    private final List<Modal_Student> studentList = new ArrayList();
+    List<Modal_Student> studentList;
     Modal_Student newEnrolledStudent;
+    Modal_Student newEnrolledGrpStudent;
+    Modal_Groups groups;
 
+    private String noti_key;
+    private String noti_value;
 
     public Fragment_Enrollmentid() {
         // Required empty public constructor
@@ -129,6 +138,7 @@ public class Fragment_Enrollmentid extends Fragment {
             rl_enroll_no_details.setVisibility(View.GONE);
             rl_enroll_no_not_found.setVisibility(View.GONE);
             rl_enroll_grp_details.setVisibility(View.GONE);
+            btn_saveProfile.setEnabled(false);
         }
 //        pd_apiRequest.setApiResult(Fragment_Enrollmentid.this);
     }
@@ -218,7 +228,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 newEnrolledStudent.setStud_Class(enrollmentModel.getLstStudent().get(0).getClasss());
                 newEnrolledStudent.setAge(enrollmentModel.getLstStudent().get(0).getAge());
                 newEnrolledStudent.setGender(enrollmentModel.getLstStudent().get(0).getGender());
-                newEnrolledStudent.setGroupId(enrollmentModel.getLstStudent().get(0).getGroupId());
+                newEnrolledStudent.setGroupId(enrollmentModel.getLstStudent().get(0).getGroupId()+"_SmartPhone");
                 newEnrolledStudent.setGroupName(enrollmentModel.getLstStudent().get(0).getGroupName());
                 rl_enroll_grp_details.setVisibility(View.GONE);
                 setResponse(newEnrolledStudent);
@@ -226,7 +236,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 //PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().insertStudent(newEnrolledStudent);
             } else {
                 isGroup=true;
-                Modal_Groups groups = new Modal_Groups();
+                groups = new Modal_Groups();
                 groups.setGroupId(enrollmentModel.getGroupId());
                 groups.setGroupName(enrollmentModel.getGroupName());
                 groups.setVillageId(enrollmentModel.getVillageId());
@@ -236,8 +246,8 @@ public class Fragment_Enrollmentid extends Fragment {
                 groups.setVIllageName(enrollmentModel.getVIllageName());
                 groups.setDeviceId(PD_Utility.getDeviceID());
                 grpID=enrollmentModel.getGroupId();
-                PrathamDatabase.getDatabaseInstance(getActivity()).getGroupDao().insertGroup(groups);
-                List<Modal_Student> studentList = new ArrayList<>();
+
+                studentList = new ArrayList<>();
                 List<String> studentListTemp = new ArrayList<>();
                 Modal_Student student = null;
                 for (int i = 0; i < enrollmentModel.getLstStudent().size(); i++) {
@@ -260,11 +270,12 @@ public class Fragment_Enrollmentid extends Fragment {
                 rl_enroll_no_details.setVisibility(View.GONE);
                 rl_enroll_no_not_found.setVisibility(View.GONE);
                 rl_enroll_grp_details.setVisibility(View.VISIBLE);
-                PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().insertAllStudents(studentList);
+
+                btn_saveProfile.setEnabled(true);
             }
 //            dismissLoadingDialog();
             BackupDatabase.backup(getActivity());
-            Toast.makeText(getActivity(), "Profile created Successfully..", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(getActivity(), "Profile created Successfully..", Toast.LENGTH_SHORT).show();
 //        splashInterface.onChildAdded();
         } catch (Exception e) {
 //            dismissLoadingDialog();
@@ -287,6 +298,7 @@ public class Fragment_Enrollmentid extends Fragment {
 
                     rl_enroll_no_details.setVisibility(View.VISIBLE);
                     rl_enroll_no_not_found.setVisibility(View.GONE);
+                    btn_saveProfile.setEnabled(true);
                 } else {
                     rl_enroll_no_details.setVisibility(View.GONE);
                     rl_enroll_no_not_found.setVisibility(View.VISIBLE);
@@ -321,40 +333,64 @@ public class Fragment_Enrollmentid extends Fragment {
 
     @Click(R.id.btn_saveProfile)
     public void saveStudent(){
-        if(isGroup) {
 
-            String groupId1 = statusDao.getValue(PD_Constant.GROUPID1);
-            String groupId2 = statusDao.getValue(PD_Constant.GROUPID2);
-            String groupId3 = statusDao.getValue(PD_Constant.GROUPID3);
-            String groupId4 = statusDao.getValue(PD_Constant.GROUPID4);
-            String groupId5 = statusDao.getValue(PD_Constant.GROUPID5);
-            if (groupId1 != null && !groupId1.equalsIgnoreCase("0") && !groupId1.equalsIgnoreCase(grpID))
-                statusDao.updateValue(PD_Constant.GROUPID1,grpID);
-            else if (groupId2 != null && !groupId2.equalsIgnoreCase("0") && !groupId2.equalsIgnoreCase(grpID))
-                statusDao.updateValue(PD_Constant.GROUPID2,grpID);
-            else if (groupId3 != null && !groupId3.equalsIgnoreCase("0") && !groupId3.equalsIgnoreCase(grpID))
-                statusDao.updateValue(PD_Constant.GROUPID3,grpID);
-            else if (groupId4 != null && !groupId4.equalsIgnoreCase("0") && !groupId4.equalsIgnoreCase(grpID))
-                statusDao.updateValue(PD_Constant.GROUPID4,grpID);
-            else if (groupId5 != null && !groupId5.equalsIgnoreCase("0") && !groupId5.equalsIgnoreCase(grpID))
-                statusDao.updateValue(PD_Constant.GROUPID5,grpID);
-            else {
-                statusDao.updateValue(PD_Constant.GROUPID5,grpID);
-            }
+        if(!et_enrollment_id.getText().toString().isEmpty()) {
+            if (isGroup) {
+                String groupId1 = statusDao.getValue(PD_Constant.GROUPID1);
+                String groupId2 = statusDao.getValue(PD_Constant.GROUPID2);
+                String groupId3 = statusDao.getValue(PD_Constant.GROUPID3);
+                String groupId4 = statusDao.getValue(PD_Constant.GROUPID4);
+                String groupId5 = statusDao.getValue(PD_Constant.GROUPID5);
+                Modal_Groups group = PrathamDatabase.getDatabaseInstance(getActivity()).getGroupDao().getGroupByGrpID(grpID);
+                if(group!=null){
+                    Toast.makeText(getActivity(), "Profile is already saved..", Toast.LENGTH_SHORT).show();
+                } else {
+                    /*if (!groupId1.equalsIgnoreCase("0") && groupId1.equalsIgnoreCase(grpID))
+                        statusDao.updateValue(PD_Constant.GROUPID1, grpID);
+                    else if (!groupId2.equalsIgnoreCase("0") && groupId2.equalsIgnoreCase(grpID))
+                        statusDao.updateValue(PD_Constant.GROUPID2, grpID);
+                    else if (groupId3 != null && !groupId3.equalsIgnoreCase("0") && !groupId3.equalsIgnoreCase(grpID))
+                        statusDao.updateValue(PD_Constant.GROUPID3, grpID);
+                    else if (groupId4 != null && !groupId4.equalsIgnoreCase("0") && !groupId4.equalsIgnoreCase(grpID))
+                        statusDao.updateValue(PD_Constant.GROUPID4, grpID);
+                    else if (groupId5 != null && !groupId5.equalsIgnoreCase("0") && !groupId5.equalsIgnoreCase(grpID))
+                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
+                    else {
+                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
+                    }*/
+                    //group overwrite issue resolved using below logic
+                    if (groupId1.equalsIgnoreCase(""))
+                        statusDao.updateValue(PD_Constant.GROUPID1, grpID);
+                    else if (groupId2.equalsIgnoreCase(""))
+                        statusDao.updateValue(PD_Constant.GROUPID2, grpID);
+                    else if (groupId3.equalsIgnoreCase(""))
+                        statusDao.updateValue(PD_Constant.GROUPID3, grpID);
+                    else if (groupId4.equalsIgnoreCase(""))
+                        statusDao.updateValue(PD_Constant.GROUPID4, grpID);
+                    else if (groupId5.equalsIgnoreCase(""))
+                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
+                    else {
+                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
+                    }
+                    PrathamDatabase.getDatabaseInstance(getActivity()).getGroupDao().insertGroup(groups);
+                    PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().insertAllStudents(studentList);
+                    isGroup=false;
+                }
 /*            Intent mActivityIntent = new Intent(getActivity(), AttendanceActivity_.class);
             mActivityIntent.putExtra(PD_Constant.STUDENT_ADDED, true);
             startActivity(mActivityIntent);*/
-            PrathamApplication.bubble_mp.start();
-            Bundle bundle = new Bundle();
-            bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);
-            bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
-            bundle.putString(PD_Constant.GROUPID, grpID);
-            PD_Utility.addFragment(getActivity(), new FragmentSelectGroup_(), R.id.splash_frame,
-                    bundle, FragmentSelectGroup.class.getSimpleName());
+                PrathamApplication.bubble_mp.start();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);
+                bundle.putBoolean(PD_Constant.GROUP_AGE_BELOW_7, false);
+                bundle.putString(PD_Constant.GROUPID, grpID);
+                PD_Utility.addFragment(getActivity(), new FragmentSelectGroup_(), R.id.splash_frame,
+                        bundle, FragmentSelectGroup.class.getSimpleName());
+            } else
+                insertStudentAndMarkAttendance();
+        } else{
+            Toast.makeText(getActivity(), "Please Enter EnrollmentId", Toast.LENGTH_SHORT).show();
         }
-//            presentActivity();
-        else
-            insertStudentAndMarkAttendance();
     }
 
     private void insertStudentAndMarkAttendance() {
@@ -388,13 +424,27 @@ public class Fragment_Enrollmentid extends Fragment {
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK, true);
             mActivityIntent.putExtra(PD_Constant.DEEP_LINK_CONTENT, getArguments().getString(PD_Constant.DEEP_LINK_CONTENT));
         }
-/*        if (doesArgumentContainsNotificationData()) {
+        if (doesArgumentContainsNotificationData()) {
             mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_KEY, noti_key);
             mActivityIntent.putExtra(PD_Constant.PUSH_NOTI_VALUE, noti_value);
-        }*/
+        }
         startActivity(mActivityIntent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
+    }
+
+    private boolean doesArgumentContainsNotificationData() {
+        if (noti_key != null && noti_value != null)
+            return true; //that means the values are newly assigned in @Subscribe, when a new notification arrives.
+        // if not, then we are continuing with the previous one, if exists.
+        if (getArguments() != null && getArguments().getString(PD_Constant.PUSH_NOTI_KEY) != null &&
+                getArguments().getString(PD_Constant.PUSH_NOTI_VALUE) != null) {
+            noti_key = getArguments().getString(PD_Constant.PUSH_NOTI_KEY);
+            noti_value = getArguments().getString(PD_Constant.PUSH_NOTI_VALUE);
+            return true;
+        }
+        //no notification received
+        return false;
     }
 
     private void markAttendance(Modal_Student stud) {
@@ -409,7 +459,7 @@ public class Fragment_Enrollmentid extends Fragment {
         attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
         attendance.StudentID = stud.getStudentId();
         attendance.Date = PD_Utility.getCurrentDateTime();
-        attendance.GroupID = "SmartPhone";
+        attendance.GroupID = stud.getGroupId();
         attendance.sentFlag = 0;
         attendances.add(attendance);
         attendanceDao.insertAttendance(attendances);
@@ -420,4 +470,13 @@ public class Fragment_Enrollmentid extends Fragment {
         sessionDao.insert(s);
     }
 
+    @Subscribe
+    public void onMessageReceived(EventMessage message) {
+        if (message != null)
+             if (message.getMessage().equalsIgnoreCase(PD_Constant.NOTIFICATION_RECIEVED)) {
+                Bundle bundle = message.getBundle();
+                noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
+                noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+            }
+    }
 }
