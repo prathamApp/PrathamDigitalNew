@@ -1,25 +1,34 @@
 package com.pratham.prathamdigital.ui.content_player;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.CountDownTextView;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments_;
+import com.pratham.prathamdigital.ui.content_player.audio_player.Fragment_AudioPlayer;
+import com.pratham.prathamdigital.ui.content_player.audio_player.Fragment_AudioPlayer_;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment_;
 import com.pratham.prathamdigital.ui.content_player.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;
@@ -45,7 +54,11 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @EActivity(R.layout.activity_content_player)
 public class Activity_ContentPlayer extends BaseActivity implements ContentPlayerContract.contentPlayerView {
@@ -54,7 +67,7 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     CountDownTextView txt_next_countdown;
     @ViewById(R.id.pdf_play_next)
     TextView pdf_play_next;
-//---
+    //---
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -63,11 +76,20 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     private DownloadListFragment_ downloadListFragment_;
     private String noti_key;
     private String noti_value;
-//---
+    //---
     private String pdfResId;
+
+    public BlurPopupWindow audioDialog;
 
     @Bean(ContentPlayerPresenter.class)
     ContentPlayerContract.contentPlayerPresenter contentPlayerPresenter;
+
+    //Variable for Audio Player
+    SeekBar seekBar;
+    MediaPlayer mp = new MediaPlayer();
+    private Handler myHandler = new Handler();
+    TextView audioTitle, runningTime, audioDuration;
+    ImageView iv_playIcon, iv_pauseIcon;
 
     @AfterViews
     public void init() {
@@ -186,15 +208,81 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
                 vidBundle, Fragment_VideoPlayer.class.getSimpleName());
     }
 
-    //Todo : added for audio functionality , will check while audio implementing
+    @SuppressLint("DefaultLocale")
     @UiThread
     @Override
     public void showAudio(Bundle audBundle) {
-        hideNextButton();
-        PD_Utility.showFragment(Activity_ContentPlayer.this, new Fragment_VideoPlayer_(), R.id.content_player_frame,
-                audBundle, Fragment_VideoPlayer.class.getSimpleName());
-        Toast.makeText(this, "Audio Player Not Found!!", Toast.LENGTH_SHORT).show();
+        String path = Objects.requireNonNull(audBundle.getString("audioPath"));
+        String fileName = Objects.requireNonNull(audBundle.getString("audioTitle"));
+        Log.e("url acp: ", path);
+        try {
+            mp.setDataSource(path);
+            mp.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        float startTime = mp.getCurrentPosition();
+        float finalTime = mp.getDuration();
+
+        audioDialog = new BlurPopupWindow.Builder(Activity_ContentPlayer.this)
+                .setContentView(R.layout.dialog_audioplayer)
+                .bindClickListener(v -> {
+                    mp.start();
+                    getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    iv_playIcon.setImageResource(R.drawable.ic_play_circle_outline_yellowmustard_48dp);
+                    iv_pauseIcon.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
+                    seekBar.setProgress((int) startTime);
+                    myHandler.postDelayed(UpdateSongTime, 100);
+                }, R.id.iv_playIcon)
+                .bindClickListener(v -> {
+                    iv_pauseIcon.setImageResource(R.drawable.ic_pause_circle_outline_mustardyellow_48dp);
+                    iv_playIcon.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+                    mp.pause();
+                }, R.id.iv_pauseIcon)
+                .bindClickListener(v -> {
+                    mp.stop();
+                    mp.reset();
+                    audioDialog.dismiss();
+                    getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }, R.id.iv_close)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        iv_playIcon = audioDialog.findViewById(R.id.iv_playIcon);
+        iv_pauseIcon = audioDialog.findViewById(R.id.iv_pauseIcon);
+        audioTitle = audioDialog.findViewById(R.id.audioTitle);
+        runningTime = audioDialog.findViewById(R.id.tv_runningTime);
+        audioDuration = audioDialog.findViewById(R.id.tv_finalTime);
+        seekBar = audioDialog.findViewById(R.id.seekBar);
+        seekBar.setMax((int) finalTime);
+        audioTitle.setText(fileName);
+        audioDuration.setText(String.format("%d : %d",
+                TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+                TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
+                                finalTime))));
+        audioDialog.show();
     }
+
+    //method to show progress on seekbar
+    Runnable UpdateSongTime = new Runnable() {
+        @SuppressLint("DefaultLocale")
+        public void run() {
+            float startTime = mp.getCurrentPosition();
+            runningTime.setText(String.format("%d : %d",
+                    TimeUnit.MILLISECONDS.toMinutes((long) startTime),
+                    TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                    toMinutes((long) startTime)))
+            );
+            seekBar.setProgress((int)startTime);
+            myHandler.postDelayed(this, 100);
+        }
+    };
 
     @UiThread
     @Override
@@ -218,7 +306,8 @@ public class Activity_ContentPlayer extends BaseActivity implements ContentPlaye
     public void onCourseCompleted() {
         onBackPressed();
     }
-//
+
+    //
     @Click(R.id.download_badge)
     public void showDownloadList() {
         PrathamApplication.bubble_mp.start();

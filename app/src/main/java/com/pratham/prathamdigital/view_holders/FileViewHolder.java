@@ -25,6 +25,7 @@ import com.facebook.imagepipeline.request.ImageRequest;
 import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -32,6 +33,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
 
 public class FileViewHolder extends RecyclerView.ViewHolder {
     @Nullable
@@ -54,6 +57,8 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
     Button file_del_yes;
     @Nullable
     Button file_del_no;
+    @Nullable
+    TextView file_video_watched_percent;
     private final ContentContract.contentClick contentClick;
 
     public FileViewHolder(View view, final ContentContract.contentClick contentClick) {
@@ -68,6 +73,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         rl_delete_reveal = view.findViewById(R.id.rl_delete_reveal);
         file_del_yes = view.findViewById(R.id.file_del_yes);
         file_del_no = view.findViewById(R.id.file_del_no);
+        file_video_watched_percent = view.findViewById(R.id.item_watchedPercent);
         this.contentClick = contentClick;
     }
 
@@ -75,8 +81,8 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         Objects.requireNonNull(file_content_desc).setText(contentItem.getNodetitle());
         if (contentItem.isDownloaded()) {
             if (!PrathamApplication.isTablet)
-                Objects.requireNonNull(item_file_delete).setVisibility(View.VISIBLE);
-            else Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
+                Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
+            else Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
             Objects.requireNonNull(rl_reveal).setVisibility(View.GONE);
             if (contentItem.getNodeserverimage() != null && !contentItem.getNodeserverimage().isEmpty()) {
                 Uri imgUri;
@@ -90,14 +96,29 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                     Objects.requireNonNull(file_content_image).setImageURI(imgUri);
                 }
             }
-            if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME))
+            if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_joystick);
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO))
+                Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
+            }
+            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_video);
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF))
+                //to show percentage of watched video
+                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID,""),contentItem.getResourceid());
+                if(percent!=null){
+                    Objects.requireNonNull(file_video_watched_percent).setVisibility(View.VISIBLE);
+                    file_video_watched_percent.setText(percent+"%");
+                } else {
+                    Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
+                }
+            }
+            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_book);
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO))
+                Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
+            }
+            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_music_icon);
+                Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
+            }
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {
@@ -109,6 +130,7 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
         } else {
             Objects.requireNonNull(rl_delete_reveal).setVisibility(View.GONE);
             Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
+            Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
             Objects.requireNonNull(img_download_content).setImageResource(R.drawable.content_download_icon);
             ImageRequest request = null;
             if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Log;
@@ -45,7 +46,7 @@ import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
-    private static int BUFFER = 10000;
+    public static String courseCount="";
 
     @Override
     protected void onCreate(Context context) {
@@ -98,6 +99,7 @@ public class PrathamSmartSync extends AutoSync {
                     for (Modal_Student std : newStudents)
                         studentArray.put(new JSONObject(gson.toJson(std)));
                 }
+
                 //fetch updated status
                 JSONObject metadataJson = new JSONObject();
                 List<Modal_Status> metadata = statusDao.getAllStatuses();
@@ -106,12 +108,16 @@ public class PrathamSmartSync extends AutoSync {
                     if (status.getStatusKey().equalsIgnoreCase("programId"))
                         programID = status.getValue();
                 }
+
                 //fetch enrolled courses
                 JSONArray courseArray = new JSONArray();
                 List<Model_CourseEnrollment> coursedata = courseDao.fetchUnpushedCourses();
                 for (Model_CourseEnrollment course : coursedata) {
                     courseArray.put(new JSONObject(gson.toJson(course)));
                 }
+                courseCount = String.valueOf(coursedata.size());
+                Log.e("url cc : ", courseCount);
+
                 //fetch courses progress
                 JSONArray progArray = new JSONArray();
                 List<Model_ContentProgress> progdata = contentProgressDao.fetchProgress();
@@ -125,13 +131,7 @@ public class PrathamSmartSync extends AutoSync {
                 rootJson.put(PD_Constant.METADATA, metadataJson);
                 rootJson.put(PD_Constant.COURSE_ENROLLED, courseArray);
                 rootJson.put(PD_Constant.COURSE_PROGRESS, progArray);
-                if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-                    new PD_ApiRequest(PrathamApplication.getInstance())
-                            .pushDataToRaspberry(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(),
-                                    rootJson.toString(), programID, PD_Constant.USAGEDATA);
-                else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-                    pushDataToServer(rootJson);
-                }
+                pushDataToServer(rootJson,courseCount);
             } else {
                 if (isPressed) {
                     EventMessage msg = new EventMessage();
@@ -152,7 +152,7 @@ public class PrathamSmartSync extends AutoSync {
     }
 
     //before pushing zipping the json and then pushing
-    public static void pushDataToServer(JSONObject data) {
+    public static void pushDataToServer(JSONObject data, String courseCount) {
         try {
             String uuID = "" + PD_Utility.getUUID();
             String filepathstr = PrathamApplication.pradigiPath +"/"+ uuID; // file path to save
@@ -172,12 +172,13 @@ public class PrathamSmartSync extends AutoSync {
             // first parameter is d files second parameter is zip file name
             zip(s, filepathstr + ".zip", filepath);
 
-            if (PrathamApplication.isTablet)
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
                 new PD_ApiRequest(PrathamApplication.getInstance())
-                        .pushDataToInternet(PD_Constant.URL.POST_TAB_INTERNET_URL.toString(), uuID, filepathstr, data);
-            else
+                        .pushDataToRaspberyPI(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(), uuID, filepathstr, data, courseCount);
+            else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
                 new PD_ApiRequest(PrathamApplication.getInstance())
-                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data);
+                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data, courseCount);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -185,6 +186,7 @@ public class PrathamSmartSync extends AutoSync {
 
     public static void zip(String[] _files, String zipFileName, File filepath) {
         try {
+            int BUFFER = 10000;
             BufferedInputStream origin = null;
             FileOutputStream dest = new FileOutputStream(zipFileName);
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));

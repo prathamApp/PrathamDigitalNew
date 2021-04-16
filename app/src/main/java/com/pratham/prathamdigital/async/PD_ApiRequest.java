@@ -62,15 +62,17 @@ public class PD_ApiRequest {
         this.apiResult = result;
     }
 
+    //Used to get the content from rasp_pi device in json format
     public void getContentFromRaspberry(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
         try {
             AndroidNetworking.get(url)
                     .addHeaders("Content-Type", "application/json")
-                    .addHeaders("Authorization", getAuthHeader())
+                    //.addHeaders("Authorization", getAuthHeader())
                     .build()
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
+                            Log.e("url rasp respon : ",response);
                             if (apiResult != null)
                                 apiResult.recievedContent(requestType, response, contentList);
                         }
@@ -79,8 +81,8 @@ public class PD_ApiRequest {
                         public void onError(ANError anError) {
                             if (apiResult != null)
                                 apiResult.recievedError(requestType, contentList);
-                            Log.d("Error::", anError.getErrorDetail());
-                            Log.d("Error::", anError.getResponse().toString());
+                            Log.e("Error::", anError.getErrorDetail());
+                            Log.e("Error::", anError.getResponse().toString());
                         }
                     });
         } catch (Exception e) {
@@ -88,6 +90,7 @@ public class PD_ApiRequest {
         }
     }
 
+    //Used to get the content over server device in json format
     public void getContentFromInternet(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
         try {
             AndroidNetworking.get(url)
@@ -184,7 +187,8 @@ String url, JSONObject data) {
     }
 */
 
-    public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data) {
+    //Used to push data to server in zip format(zip contains json file)
+    public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data, String courseCount) {
         AndroidNetworking.upload(url)
                 .addHeaders("Content-Type", "file/zip")
                 .addMultipartFile(""+uuID, new File(filepathstr + ".zip"))
@@ -193,11 +197,11 @@ String url, JSONObject data) {
                 .getAsString(new StringRequestListener() {
                     @Override
                     public void onResponse(String response) {
-                        Log.d("PushData", "DATA PUSH "+response);
+                        Log.e("PushData", "DATA PUSH "+response);
                         new File(filepathstr + ".zip").delete();
-                        BackupDatabase.backup(PrathamApplication.getInstance());
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        msg.setCourseCount(courseCount);
                         msg.setPushData(data.toString());
                         EventBus.getDefault().post(msg);
                     }
@@ -208,9 +212,42 @@ String url, JSONObject data) {
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
                         EventBus.getDefault().post(msg);
-                        Log.d("Error::", anError.getErrorDetail());
-                        Log.d("Error::", anError.getMessage());
-                        Log.d("Error::", anError.getResponse().toString());
+                        Log.e("Error::", anError.getErrorDetail());
+                        Log.e("Error::", anError.getMessage());
+                        Log.e("Error::", anError.getResponse().toString());
+                    }
+                });
+    }
+
+    //Used to push data to rasp_Pi device in zip format(zip contains json file)
+    public void pushDataToRaspberyPI(String url, String uuID, String filepathstr, JSONObject data, String courseCount) {
+        Log.e("url :",url);
+        AndroidNetworking.upload(url)
+                .addHeaders("Content-Type", "application/json")
+                .addMultipartFile("uploaded_file", new File(filepathstr + ".zip"))
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("PushData", "DATA PUSH "+response);
+                        new File(filepathstr + ".zip").delete();
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
+                        msg.setCourseCount(courseCount);
+                        msg.setPushData(data.toString());
+                        EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        //Fail - Show dialog with failure message.
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.e("Error::", anError.getErrorDetail());
+                        Log.e("Error::", anError.getMessage());
+                        Log.e("Error::", anError.getResponse().toString());
                     }
                 });
     }

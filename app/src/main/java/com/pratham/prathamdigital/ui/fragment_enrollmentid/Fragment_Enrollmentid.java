@@ -194,7 +194,7 @@ public class Fragment_Enrollmentid extends Fragment {
 
                         @Override
                         public void onError(ANError anError) {
-
+                            progressDialog.dismiss();
                         }
 
                     });
@@ -206,7 +206,7 @@ public class Fragment_Enrollmentid extends Fragment {
     private void addStudentData(Modal_Enrollment enrollmentModel) {
         try {
 //            dismissLoadingDialog();
-            if (enrollmentModel.getLstCourseEnroll() != null) {
+/*            if (enrollmentModel.getLstCourseEnroll() != null) {
                 List<Model_CourseEnrollment> courseEnrollmentList = new ArrayList<>();
                 for (int v = 0; v < enrollmentModel.getLstCourseEnroll().size(); v++) {
                     Model_CourseEnrollment model_courseEnrollment = new Model_CourseEnrollment();
@@ -218,7 +218,7 @@ public class Fragment_Enrollmentid extends Fragment {
                     courseEnrollmentList.add(model_courseEnrollment);
                 }
                 PrathamDatabase.getDatabaseInstance(getActivity()).getCourseDao().insertListCourse(courseEnrollmentList);
-            }
+            }*/
             if (enrollmentModel.getEnrollmentType().equalsIgnoreCase("Student")) {
                 newEnrolledStudent = new Modal_Student();
                 newEnrolledStudent.setStudentId(enrollmentModel.getLstStudent().get(0).getStudentId());
@@ -276,11 +276,7 @@ public class Fragment_Enrollmentid extends Fragment {
 //            dismissLoadingDialog();
             BackupDatabase.backup(getActivity());
 //            Toast.makeText(getActivity(), "Profile created Successfully..", Toast.LENGTH_SHORT).show();
-//        splashInterface.onChildAdded();
         } catch (Exception e) {
-//            dismissLoadingDialog();
-  /*          new Handler().postDelayed(() ->
-                    btn_back.performClick(), 1000);*/
             e.printStackTrace();
         }
     }
@@ -305,7 +301,6 @@ public class Fragment_Enrollmentid extends Fragment {
                 }
             } else {
                 if (!PrathamApplication.wiseF.isDeviceConnectedToMobileOrWifiNetwork()) {
-//                    Toast.makeText(getActivity(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                     Toast.makeText(getActivity(), "No internet connection", Toast.LENGTH_SHORT).show();
                 }
                 rl_enroll_no_details.setVisibility(View.GONE);
@@ -345,19 +340,6 @@ public class Fragment_Enrollmentid extends Fragment {
                 if(group!=null){
                     Toast.makeText(getActivity(), "Profile is already saved..", Toast.LENGTH_SHORT).show();
                 } else {
-                    /*if (!groupId1.equalsIgnoreCase("0") && groupId1.equalsIgnoreCase(grpID))
-                        statusDao.updateValue(PD_Constant.GROUPID1, grpID);
-                    else if (!groupId2.equalsIgnoreCase("0") && groupId2.equalsIgnoreCase(grpID))
-                        statusDao.updateValue(PD_Constant.GROUPID2, grpID);
-                    else if (groupId3 != null && !groupId3.equalsIgnoreCase("0") && !groupId3.equalsIgnoreCase(grpID))
-                        statusDao.updateValue(PD_Constant.GROUPID3, grpID);
-                    else if (groupId4 != null && !groupId4.equalsIgnoreCase("0") && !groupId4.equalsIgnoreCase(grpID))
-                        statusDao.updateValue(PD_Constant.GROUPID4, grpID);
-                    else if (groupId5 != null && !groupId5.equalsIgnoreCase("0") && !groupId5.equalsIgnoreCase(grpID))
-                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
-                    else {
-                        statusDao.updateValue(PD_Constant.GROUPID5, grpID);
-                    }*/
                     //group overwrite issue resolved using below logic
                     if (groupId1.equalsIgnoreCase(""))
                         statusDao.updateValue(PD_Constant.GROUPID1, grpID);
@@ -374,11 +356,9 @@ public class Fragment_Enrollmentid extends Fragment {
                     }
                     PrathamDatabase.getDatabaseInstance(getActivity()).getGroupDao().insertGroup(groups);
                     PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().insertAllStudents(studentList);
+                    BackupDatabase.backup(getActivity());
                     isGroup=false;
                 }
-/*            Intent mActivityIntent = new Intent(getActivity(), AttendanceActivity_.class);
-            mActivityIntent.putExtra(PD_Constant.STUDENT_ADDED, true);
-            startActivity(mActivityIntent);*/
                 PrathamApplication.bubble_mp.start();
                 Bundle bundle = new Bundle();
                 bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);

@@ -58,6 +58,10 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     public String seq_no;
     @SerializedName("seq_rule")
     public String seq_rule;
+    //ToDo : check if error
+//    @SerializedName("resourcezip")
+    public String resourcezip;
+
     private boolean isViewed = false;
     @Ignore
     private String kolibriNodeImageUrl;
@@ -96,6 +100,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         subject = in.readString();
         isViewed = in.readByte() != 0;
         seq_no = in.readString();
+        resourcezip=in.readString();
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
@@ -326,6 +331,14 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.seq_rule = seq_rule;
     }
 
+    public String getResourcezip() {
+        return resourcezip;
+    }
+
+    public void setResourcezip(String resourcezip) {
+        this.resourcezip = resourcezip;
+    }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -371,5 +384,6 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         dest.writeString(subject);
         dest.writeByte((byte) (isViewed ? 1 : 0));
         dest.writeString(seq_no);
+        dest.writeString(resourcezip);
     }
 }

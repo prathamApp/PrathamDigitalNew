@@ -274,10 +274,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //Utility initialized for shuffling the color codes
         PD_Utility pd_utility = new PD_Utility(this);
-/*        Catcho.Builder(this)
+        Catcho.Builder(this)
                 .activity(CatchoTransparentActivity.class)
 //                .recipients("abc@gm.com")
-                .build();*/
+                .build();
         initializeConnectionService();
         initializeTTS();
         FirebaseInstanceId.getInstance().getInstanceId()
@@ -361,6 +361,8 @@ public class BaseActivity extends AppCompatActivity {
                 if (pushedData.getStudents() != null)
                     for (Modal_Student student : pushedData.getStudents())
                         studentDao.updateSentStudentFlags(student.getStudentId());
+
+                BackupDatabase.backup(PrathamApplication.getInstance());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.OTG_INSERTED)) {
                 mHandler.sendEmptyMessage(SHOW_OTG_TRANSFER_DIALOG);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.BACKUP_DB_COPIED)) {

@@ -114,14 +114,16 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
             if (contentItem.getNodetype().equalsIgnoreCase("course")) {
                 /** replaced altnodeid with nodeid*/
                 List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(contentItem.getNodeid(), contentItem.getNodeid(), contentItem.getContent_language());
-                //need to check this loop
+                contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
+/*                //need to check this loop
                 if (childs.size() != 0){
-                    /**Todo 26jan*/
                     contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
-                Log.e("URL Q1: ","Q1");}
-                else
+                    Log.e("URL Q1: ","Q1");
+                }
+                else{
+                    contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
                     Log.e("URL Q2: ","Q2");
-                    contentClick.onCourseClicked(IS_COURSE, contentItem, childs);
+                }*/
             } else if((contentItem.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))){
                     contentClick.onAssessmentItemClicked(contentItem);
             } else {

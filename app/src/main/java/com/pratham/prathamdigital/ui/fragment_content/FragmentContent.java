@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -20,6 +21,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +44,7 @@ import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.dashboard.ContractMenu;
@@ -58,13 +61,16 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.fragment_content)
@@ -109,6 +115,15 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     private final static int IS_COURSE = 999;
     ArrayList<Modal_ContentDetail> temp_levels;
+
+    //Variable for Audio Player
+    SeekBar seekBar;
+    MediaPlayer mp = new MediaPlayer();
+    private Handler myHandler = new Handler();
+    TextView audioTitle, runningTime, audioDuration;
+    ImageView iv_playIcon, iv_pauseIcon;
+    public BlurPopupWindow audioDialog;
+
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -553,7 +568,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
             if (data != null && data.getData() != null) {
                 contentPresenter.parseSD_UriandPath(data);
             }
-        } else if(requestCode == REQUEST_CODE_COURSE_BACK) {
+        } else if (requestCode == REQUEST_CODE_COURSE_BACK) {
             contentPresenter.showPreviousContent();
         }
     }
@@ -631,30 +646,113 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void openContent(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
+
         KotlinPermissions.with(Objects.requireNonNull(getActivity()))
                 .permissions(Manifest.permission.RECORD_AUDIO)
                 .onAccepted(permissionResult -> {
-                    Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
-                    switch (contentDetail.getResourcetype().toLowerCase()) {
-                        case PD_Constant.GAME:
-                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.GAME);
-                            break;
-                        case PD_Constant.VIDEO:
-                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.VIDEO);
-                            break;
-                        case PD_Constant.AUDIO:
-                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.AUDIO);
-                            break;
-                        case PD_Constant.PDF:
-                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.PDF);
-                            break;
+                    if (contentDetail.getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO)) {
+                        playAudioInPlayer(contentDetail);
+                    } else if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
+                        onAssessmentItemClicked(contentDetail);
+                    } else {
+                        Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                        switch (contentDetail.getResourcetype().toLowerCase()) {
+                            case PD_Constant.GAME:
+                                intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.GAME);
+                                break;
+                            case PD_Constant.VIDEO:
+                                intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.VIDEO);
+                                break;
+                            case PD_Constant.PDF:
+                                intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.PDF);
+                                break;
+                        }
+                        intent.putExtra(PD_Constant.CONTENT, contentDetail);
+                        Objects.requireNonNull(getActivity()).startActivity(intent);
+                        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                     }
-                    intent.putExtra(PD_Constant.CONTENT, contentDetail);
-                    Objects.requireNonNull(getActivity()).startActivity(intent);
-                    getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
                 })
                 .ask();
     }
+
+    @SuppressLint("DefaultLocale")
+    private void playAudioInPlayer(Modal_ContentDetail contentDetail) {
+        String aud_path;
+        if (contentDetail.isOnSDCard())
+            aud_path = PrathamApplication.externalContentPath + "/PrathamVideo/" + contentDetail.getResourcepath();
+        else
+            aud_path = pradigiPath + "/PrathamAudio/" + contentDetail.getResourcepath();
+        Log.e("url fc: ", aud_path);
+
+        try {
+            mp.setDataSource(aud_path);
+            mp.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        float startTime = mp.getCurrentPosition();
+        float finalTime = mp.getDuration();
+
+        audioDialog = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.dialog_audioplayer)
+                .bindClickListener(v -> {
+                    mp.start();
+                    Objects.requireNonNull(getActivity()).getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                    iv_playIcon.setImageResource(R.drawable.ic_play_circle_outline_yellowmustard_48dp);
+                    iv_pauseIcon.setImageResource(R.drawable.ic_pause_circle_outline_white_48dp);
+                    seekBar.setProgress((int) startTime);
+                    myHandler.postDelayed(UpdateSongTime, 100);
+                }, R.id.iv_playIcon)
+                .bindClickListener(v -> {
+                    iv_pauseIcon.setImageResource(R.drawable.ic_pause_circle_outline_mustardyellow_48dp);
+                    iv_playIcon.setImageResource(R.drawable.ic_play_circle_outline_white_48dp);
+                    mp.pause();
+                }, R.id.iv_pauseIcon)
+                .bindClickListener(v -> {
+                    mp.stop();
+                    mp.reset();
+                    audioDialog.dismiss();
+                    Objects.requireNonNull(getActivity()).getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+                }, R.id.iv_close)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(false)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+        iv_playIcon = audioDialog.findViewById(R.id.iv_playIcon);
+        iv_pauseIcon = audioDialog.findViewById(R.id.iv_pauseIcon);
+        audioTitle = audioDialog.findViewById(R.id.audioTitle);
+        runningTime = audioDialog.findViewById(R.id.tv_runningTime);
+        audioDuration = audioDialog.findViewById(R.id.tv_finalTime);
+        seekBar = audioDialog.findViewById(R.id.seekBar);
+        seekBar.setMax((int) finalTime);
+        audioTitle.setText(contentDetail.getNodetitle());
+        audioDuration.setText(String.format("%d : %d",
+                TimeUnit.MILLISECONDS.toMinutes((long) finalTime),
+                TimeUnit.MILLISECONDS.toSeconds((long) finalTime) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes((long)
+                                finalTime))));
+        audioDialog.show();
+    }
+
+    //method to show progress on seekbar
+    Runnable UpdateSongTime = new Runnable() {
+        @SuppressLint("DefaultLocale")
+        public void run() {
+            float startTime = mp.getCurrentPosition();
+            runningTime.setText(String.format("%d : %d",
+                    TimeUnit.MILLISECONDS.toMinutes((long) startTime),
+                    TimeUnit.MILLISECONDS.toSeconds((long) startTime) -
+                            TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.
+                                    toMinutes((long) startTime)))
+            );
+            seekBar.setProgress((int) startTime);
+            myHandler.postDelayed(this, 100);
+        }
+    };
 
     @Override
     public void animateHamburger() {

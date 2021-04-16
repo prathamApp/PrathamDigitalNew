@@ -96,6 +96,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             }
         }
     };
+
     @SuppressLint("HandlerLeak")
     private final Handler mhandler = new Handler() {
         @Override
@@ -267,19 +268,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     public void showAppUpdateDialog() {
         mhandler.sendEmptyMessage(UPDATE_DIALOG);
     }
-
-    /*@Override
-    public void signInUsingGoogle() {
-        if (!FastSave.getInstance().getBoolean(PD_Constant.IS_GOOGLE_SIGNED_IN, false)) {
-            if (mGoogleApiClient == null) {
-                mGoogleApiClient = splashPresenter.configureSignIn();
-            }
-            Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-            startActivityForResult(signInIntent, GOOGLE_SIGN_IN);
-        } else {
-            splashPresenter.checkIfContentinSDCard();
-        }
-    }*/
 
     @UiThread
     @Override

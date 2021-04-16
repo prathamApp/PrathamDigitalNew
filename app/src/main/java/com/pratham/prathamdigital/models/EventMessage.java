@@ -16,6 +16,7 @@ public class EventMessage {
     private String pushData;
     private String downloadId;
     private String file_name;
+    private String courseCount;
     private long progress;
     private Location location;
     private Modal_FileDownloading modal_fileDownloading;
@@ -131,5 +132,13 @@ public class EventMessage {
 
     public void setBundle(Bundle bundle) {
         this.bundle = bundle;
+    }
+
+    public String getCourseCount() {
+        return courseCount;
+    }
+
+    public void setCourseCount(String courseCount) {
+        this.courseCount = courseCount;
     }
 }

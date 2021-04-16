@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -15,12 +16,14 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -84,6 +87,7 @@ import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
+import static com.pratham.prathamdigital.dbclasses.PrathamDatabase.DB_NAME;
 
 @EActivity(R.layout.main_activity)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu,
@@ -103,6 +107,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int SHOW_YOU_TUBE_VIDEO = 13;
     private static final int SHOW_PROFILE = 14;
     private static final int MENU_SYNC = 15;
+    private static final int MENU_SYNCDB = 16;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -121,6 +126,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     RecyclerView rv_drawer;
     @ViewById(R.id.main_nav)
     RelativeLayout main_nav;
+    @ViewById(R.id.versionNum)
+    TextView versionNum;
 
     private boolean isChecked;
     private BlurPopupWindow exitDialog;
@@ -134,6 +141,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private LottieAnimationView push_lottie;
     private TextView txt_push_dialog_msg;
     private TextView txt_push_error;
+    private TextView tv_courseCount;
+    private TextView tv_scoreCount;
+    private Button btn_done;
+
+    public String courseCount;
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -263,21 +275,48 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             public void run() {
                                 PrathamSmartSync.pushUsageToServer(true);
                             }
-                        }, 1500);
+                        }, 2500);
 
                     } else {
                         Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
                     }
                     break;
+
+                case MENU_SYNCDB:
+                    Toast.makeText(ActivityMain.this, "Work In Progress!", Toast.LENGTH_SHORT).show();
+                    //get dp file
+                    File dbFile = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS +"/"+DB_NAME);
+                    String fname = dbFile.getAbsolutePath();//db file name
+                    //zip file name
+                    String zipname = fname+FastSave.getInstance().getString(PD_Constant.GROUPID,"")+".zip";
+                    String[] s = new String[1];
+                    s[0] = fname;
+//                    PD_Utility.zip(s,zipname,dbFile);
+/*                    if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                        showPushingDialog("Please wait...Pushing Data!");
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //sendDBToServer();
+                                //PrathamSmartSync.pushUsageToServer(true);
+                            }
+                        }, 2500);
+
+                    } else {
+                        Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
+                    }*/
+                    break;
             }
         }
     };
 
+    @SuppressLint("SetTextI18n")
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
         mHandler.sendEmptyMessage(SHOW_MENU);
         mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
+        versionNum.setText("Version : "+PD_Utility.getCurrentVersion(this));
     }
 
     private void initializeDrawer() {
@@ -368,41 +407,53 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
+                courseCount = msg.getCourseCount();
+                tv_courseCount.setText("Course Enrolled : "+courseCount);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushed Successfully!!");
-                new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
-                //This is used to push the assessment data to server
-                Intent assessmentIntent = new Intent("com.pratham.assessment.async.SyncDataActivity_");
-                startActivity(assessmentIntent);
+                tv_courseCount.setVisibility(View.VISIBLE);
+                tv_scoreCount.setVisibility(View.GONE);
+                btn_done.setVisibility(View.VISIBLE);
+                //new Handler().postDelayed(() -> pushDialog.dismiss(), 2500);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
                 push_lottie.setAnimation("error_cross.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushing Failed!!");
                 txt_push_error.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
-                Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show();
             }
         }
     }
 
+    @SuppressLint("SetTextI18n")
     @UiThread
     public void showPushingDialog(String msg) {
         if (pushDialog == null) {
             pushDialog = new BlurPopupWindow.Builder(ActivityMain.this)
                     .setContentView(R.layout.app_success_dialog)
+                    .bindClickListener(v -> {
+                        pushDialog.dismiss();
+                        //This is used to push the assessment data to server
+                        Intent assessmentIntent = new Intent("com.pratham.assessment.async.SyncDataActivity_");
+                        startActivity(assessmentIntent);
+                    },R.id.btn_ok)
                     .setGravity(Gravity.CENTER)
                     .setScaleRatio(0.2f)
                     .setDismissOnClickBack(true)
-                    .setDismissOnTouchBackground(true)
+                    .setDismissOnTouchBackground(false)
                     .setBlurRadius(10)
                     .setTintColor(0x30000000)
                     .build();
             push_lottie = pushDialog.findViewById(R.id.push_lottie);
             txt_push_dialog_msg = pushDialog.findViewById(R.id.txt_push_dialog_msg);
             txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
+            tv_courseCount = pushDialog.findViewById(R.id.tv_courseCount);
+            tv_scoreCount = pushDialog.findViewById(R.id.tv_scoreCount);
+            btn_done = pushDialog.findViewById(R.id.btn_ok);
         }
         txt_push_dialog_msg.setText(msg);
+        tv_courseCount.setText("Course Enrolled : "+FastSave.getInstance().getString(PD_Constant.COURSE_COUNT,"0"));
         pushDialog.show();
     }
 
@@ -410,7 +461,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.navigation_menu);
         int[] menus_img = {R.drawable.ic_education, R.drawable.ic_courses, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
-                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.ic_backpacker};
+                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.syncdb, R.drawable.ic_backpacker};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -591,8 +642,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_EXIT);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Courses"))
             mHandler.sendEmptyMessage(MENU_COURSES);
-        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("SYNC"))
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Sync Data"))
             mHandler.sendEmptyMessage(MENU_SYNC);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Sync Database"))
+            mHandler.sendEmptyMessage(MENU_SYNCDB);
     }
 
     @Override

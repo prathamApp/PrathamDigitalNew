@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.util.SparseArray;
 import android.widget.Toast;
 
@@ -19,6 +20,7 @@ import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_AajKaSawal;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.Model_ContentProgress;
 import com.pratham.prathamdigital.services.youtube_extractor.VideoMeta;
 import com.pratham.prathamdigital.services.youtube_extractor.YouTubeExtractor;
 import com.pratham.prathamdigital.services.youtube_extractor.YtFile;
@@ -35,6 +37,7 @@ import org.greenrobot.eventbus.Subscribe;
 import java.io.File;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
@@ -217,6 +220,28 @@ public class Fragment_VideoPlayer extends Fragment {
         modalScore.setLabel("_");
         modalScore.setSentFlag(0);
         scoreDao.insert(modalScore);
+        //Calculate the percentage of video watched
+        int vidDuration = (int) videoView.getPlayer().getDuration();
+        int vidWatchedDuration = (int) videoView.getPlayer().getCurrentPosition();
+        float percentage = ((float) vidWatchedDuration /(float) vidDuration) * 100;
+        int watchedPercent = (int) percentage;
+        addContentProgress(watchedPercent,"videoProgress");
+    }
+
+    private void addContentProgress(int perc, String label) {
+        try {
+            Model_ContentProgress contentProgress = new Model_ContentProgress();
+            contentProgress.setProgressPercentage("" + perc);
+            contentProgress.setResourceId("" + resId);
+            //contentProgress.setSessionId("" + FastSave.getInstance().getString(FC_Constants.CURRENT_SESSION, ""));
+            contentProgress.setStudentId("" + FastSave.getInstance().getString(PD_Constant.GROUPID, ""));
+            contentProgress.setUpdatedDateTime("" + PD_Utility.getCurrentDateTime());
+            contentProgress.setLabel("" + label);
+            contentProgress.setSentFlag(false);
+            contentProgressDao.insertProgress(contentProgress);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Background

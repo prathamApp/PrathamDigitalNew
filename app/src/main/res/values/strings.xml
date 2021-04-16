@@ -212,7 +212,8 @@
         <item>Connect Wifi</item>
         <item>Share or Receive</item>
         <item>Share App</item>
-        <item>Sync</item>
+        <item>Sync Data</item>
+        <item>Sync Database</item>
         <item>Exit</item>
     </string-array>
     <string-array name="admin_options">

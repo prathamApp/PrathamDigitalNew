@@ -2,7 +2,7 @@
 <com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/_200sdp"
-    android:layout_height="@dimen/_200sdp"
+    android:layout_height="@dimen/_230sdp"
     android:layout_gravity="center"
     android:gravity="center_horizontal"
     android:orientation="vertical"
@@ -36,4 +36,35 @@
         android:textColor="@color/charcoal"
         android:textSize="@dimen/_12sdp"
         android:visibility="gone" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/tv_courseCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Course Enrolled : "
+        android:textColor="@color/charcoal"
+        android:textSize="@dimen/_12sdp"
+        android:visibility="gone" />
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/tv_scoreCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:text="Score Count : "
+        android:textColor="@color/charcoal"
+        android:textSize="@dimen/_12sdp"
+        android:visibility="gone" />
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        android:id="@+id/btn_ok"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:text="Done"
+        android:textColor="@color/white"
+        android:background="@drawable/button_orange_selector"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:visibility="gone"/>
+
 </com.pratham.prathamdigital.custom.BlurPopupDialog.ShadowContainer>

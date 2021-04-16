@@ -272,60 +272,6 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         Toast.makeText(getActivity(), "Assessment Saved.", Toast.LENGTH_SHORT).show();
     }
 
-
-/*
-    public void startAssessment(Modal_ContentDetail contentDetail) {
-        if (!PrathamApplication.isTablet) {
-            //below are test values only, it will be replace by actual studentId and other
-            Intent intent = new Intent("com.pratham.assessment.ui.choose_assessment.science.ScienceAssessmentActivity_");
-            Bundle mBundle = new Bundle();
-            // extras.putString(key, value);
-            mBundle.putString("studentId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
-            mBundle.putString("appName", getResources().getString(R.string.app_name));
-            mBundle.putString("studentName", FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, ""));
-            mBundle.putString("subjectName", "Science");
-            mBundle.putString("subjectLanguage", contentDetail.getContent_language());
-            mBundle.putString("subjectLevel", "1");
-            mBundle.putString("examId", contentDetail.getNodekeywords());
-            mBundle.putString("subjectId", "89");
-            intent.putExtras(mBundle);
-            startActivity(intent);
-        } else {
-            ArrayList<String> studname = new ArrayList<>();
-            ArrayList<String> studID = new ArrayList<>();
-            List<Attendance> newAttendance = attendanceDao.getNewAttendances(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
-            for (Attendance att : newAttendance) {
-                List<Modal_Student> newStudent = studentDao.getAllStudent(att.getStudentID());
-                for (Modal_Student stud : newStudent) {
-                    studname.add(stud.getFullName());
-                    studID.add(stud.getStudentId());
-                }
-            }
-            final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
-            new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
-                    .setTitle("Select Student for Assessment")
-                    .setItems(charSequenceItems, (dialog, which) -> {
-                        Intent intent = new Intent("com.pratham.assessment.ui.choose_assessment.science.ScienceAssessmentActivity_");
-                        Bundle mBundle = new Bundle();
-                        // extras.putString(key, value);
-                        mBundle.putString("studentId", studID.get(which));
-                        mBundle.putString("appName", getResources().getString(R.string.app_name));
-                        mBundle.putString("studentName", studname.get(which));
-                        mBundle.putString("subjectName", "Science");
-                        mBundle.putString("subjectLanguage", contentDetail.getContent_language());
-                        mBundle.putString("subjectLevel", "1");
-                        mBundle.putString("examId", contentDetail.getNodekeywords());
-                        mBundle.putString("subjectId", "89");
-                        intent.putExtras(mBundle);
-                        startActivity(intent);
-                    })
-                    .show();
-        }
-
-    }
-*/
-
-    // TODO : Download the clicked content
     //function is called when download icon is clicked
     @Override
     public void onDownloadClicked(int position, Modal_ContentDetail contentDetail, View reveal_view, View start_reveal_item) {
@@ -364,13 +310,23 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 try {
-                    String url = contentDetail.getNodekeywords();
-                    String filename = URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8")
-                            .substring(URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8").lastIndexOf('/') + 1);
+//                    String url = contentDetail.getResourcezip();
+                    String url="";
+                    String filename = URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8")
+                            .substring(URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8").lastIndexOf('/') + 1);
                     String foldername = contentDetail.getResourcetype();
-                    //todo uncomment for rasp
-                    /*                    zipDownloader.initialize(CourseDetailFragment.this
-                            , url, foldername, filename, contentDetail, levelContents);*/
+                    if(foldername.equalsIgnoreCase("pdf")){
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/docs/" + filename;
+                    }else if(foldername.equalsIgnoreCase("game")){
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/zips/" + filename;
+                    }else if(foldername.equalsIgnoreCase("video")){
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/videos/mp4/" + filename;
+                    }else if(foldername.equalsIgnoreCase("audio")) {
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/mp3/" + filename;
+                    }
+                    Log.e("**URL:", url);
+                    zipDownloader.initializeforCourse(CourseDetailFragment.this
+                            , url, foldername, filename, contentDetail, levelContents, PD_Constant.RASPPI);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -434,7 +390,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
                 zipDownloader.initializeforCourse(CourseDetailFragment.this, download_content.getDownloadurl(),
-                        download_content.getFoldername(), fileName, contentDetail, levelContents);
+                        download_content.getFoldername(), fileName, contentDetail, levelContents,"");
             }
         } catch (Exception e) {
             e.printStackTrace();

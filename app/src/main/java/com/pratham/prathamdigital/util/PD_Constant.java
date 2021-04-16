@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 
 public class PD_Constant {
 
+
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
@@ -64,7 +65,10 @@ public class PD_Constant {
     public static final String MSG_HANDLER_KEY = "msg_handler_key";
     public static final String DOWNLOAD_PROGRESS = "download_progress";
     public static final String DOWNLOAD_SPEED_RATE = "download_speed_rate";
-    public static final String RASP_IP = "http://192.168.4.1:8080";
+    public static final String RASPPI = "rasp_pi";
+    public static final String RASP_IP = "http://192.168.4.1:8000";
+    public static final String RASP_LOCAL_URL = "/static/storage/PRADIGI FOR LIFE/content";
+    public static final String RASP_LOCAL_IMAGES = "/static/storage/PRADIGI FOR LIFE/images/";
     public static final String AVATAR = "avatar";
     public static final String INTERNET_HEADER = "INTERNET_HEADER";
     public static final String BROWSE_INTERNET = "BROWSE_INTERNET";
@@ -203,9 +207,12 @@ public class PD_Constant {
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
-    public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamkolibri";
+    public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamDigital";
     public static final String RASPBERRY_HEADER = "RASPBERRY_HEADER";
     public static final String OTG_INSERTED = "OTG_INSERTED";
+    public static final String SCORE_COUNTT = "score_count";
+    public static final String COURSE_COUNT = "course_count";
+
     //languages
     public static String HINDI = "Hindi";
     static String ENGLISH = "English";
@@ -250,7 +257,7 @@ public class PD_Constant {
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
         //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),//req
-        DATASTORE_RASPBERY_URL(RASP_IP + "/pratham/datastore/"),//pushapi
+        DATASTORE_RASPBERY_URL(RASP_IP + "/api/usagedata/"),//pushapi
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
         RASPBERRY_FACILITY_URL(RASP_IP + "/api/content/session/"),
@@ -271,7 +278,8 @@ public class PD_Constant {
         pullStudentsServerURL("http://www.devtab.openiscool.org/api/student?programid="),
         pullCrlsServerURL("http://www.swap.prathamcms.org/api/UserList?programId="),
         //DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");//req
-        DOWNLOAD_RESOURCE(BASE_URL_NEW + "download?id=");//req
+        DOWNLOAD_RESOURCE(BASE_URL_NEW + "download?id="),//req
+        BROWSE_RASPBERRY_URL_NEW(RASP_IP + "/api/channel/AppNodeDetailListByNode/?ParentId=");//req
 
         private final String name;
 

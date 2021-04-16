@@ -24,6 +24,9 @@ import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
 import com.pratham.prathamdigital.models.Modal_Rasp_Header;
 import com.pratham.prathamdigital.models.Modal_Score;
+import com.pratham.prathamdigital.models.RaspModel.ModalRaspContentNew;
+import com.pratham.prathamdigital.models.RaspModel.Modal_RaspResult;
+import com.pratham.prathamdigital.models.RaspModel.Modal_Rasp_JsonData;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
@@ -113,9 +116,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (levelContents.size() == 1)
                     contentView.animateHamburger();
                 if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
-                    contentView.displayLevel(levelContents,"");
-                } else{
-                    contentView.displayLevel(levelContents,"IS_COURSE");
+                    contentView.displayLevel(levelContents, "");
+                } else {
+                    contentView.displayLevel(levelContents, "IS_COURSE");
                 }
             }
             getDownloadedContents(contentDetail.getNodeid(), contentDetail.getAltnodeid());
@@ -173,10 +176,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     contentView.showNoConnectivity();
             } else {
 //                Collections.shuffle(totalContents);
-                tempContentList = getFinalListWithHeader(contentList);
+/*                tempContentList = getFinalListWithHeader(contentList);
                 if (contentView != null)
-                    contentView.displayContents(contentList);
-                /* if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                    contentView.displayContents(contentList);*/
+                //for offline also course open in content activity
+                 if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
                     tempContentList = getFinalListWithHeader(contentList);
                     if (contentView != null)
                         contentView.displayContents(contentList);
@@ -184,17 +188,22 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     assert contentView != null;
                     contentView.displayContentsInCourse(folderContentClicked, contentList);
                     iscourse="";
-                }*/
+                }
             }
         }
     }
 
     private void callKolibriAPI(ArrayList<Modal_ContentDetail> contentList, String parentId) {
         if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
-            pd_apiRequest.getContentFromRaspberry(PD_Constant.RASPBERRY_HEADER, PD_Constant.URL.GET_RASPBERRY_HEADER.toString(), contentList);
+            pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL_NEW + FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672"), contentList);
+            String url = PD_Constant.URL.BROWSE_RASPBERRY_URL_NEW.toString() + FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672");
+            Log.e("url 1: ", url);
         } else {
-            pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL.toString()
+            pd_apiRequest.getContentFromRaspberry(PD_Constant.BROWSE_RASPBERRY, PD_Constant.URL.BROWSE_RASPBERRY_URL_NEW.toString()
                     + ((mappedParentApi != null) ? mappedParentApi : parentId), contentList);
+            String url = PD_Constant.URL.BROWSE_RASPBERRY_URL_NEW.toString()
+                    + ((mappedParentApi != null) ? mappedParentApi : parentId);
+            Log.e("url 2: ", url);
         }
     }
 
@@ -254,12 +263,30 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 try {
-                    String url = contentDetail.getNodekeywords();
-                    String filename = URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8")
-                            .substring(URLDecoder.decode(contentDetail.getNodekeywords(), "UTF-8").lastIndexOf('/') + 1);
+//                    String url = contentDetail.getResourcezip();
+                    String url = "";
+                    String filename = URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8")
+                            .substring(URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8").lastIndexOf('/') + 1);
                     String foldername = contentDetail.getResourcetype();
+                    String fileFormat = contentDetail.getResourcepath().substring(contentDetail.getResourcepath().lastIndexOf("."));
+                    if (foldername.equalsIgnoreCase("pdf")) {
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/docs/" + filename;
+                    } else if (foldername.equalsIgnoreCase("game")) {
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/zips/" + filename;
+                    } else if (foldername.equalsIgnoreCase("video")) {
+                        if (fileFormat.equalsIgnoreCase(".mp4"))
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/videos/mp4/" + filename;
+                        else
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/videos/m4v/" + filename;
+                    } else if (foldername.equalsIgnoreCase("audio")) {
+                        if (fileFormat.equalsIgnoreCase(".mp3"))
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/mp3/" + filename;
+                        else
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/wav/" + filename;
+                    }
+                    Log.e("**URL:", url);
                     zipDownloader.initialize(ContentPresenterImpl.this
-                            , url, foldername, filename, contentDetail, levelContents);
+                            , url, foldername, filename, contentDetail, levelContents, PD_Constant.RASPPI);
                 } catch (UnsupportedEncodingException e) {
                     e.printStackTrace();
                 }
@@ -373,6 +400,46 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 displayedContents.clear();
                 totalContents.clear();
                 totalContents.addAll(contentList);
+                ModalRaspContentNew rasp_contents = gson.fromJson(response, ModalRaspContentNew.class);
+                rasp_contents.getModalRaspResults();
+                Log.e("url raspResult : ", String.valueOf(rasp_contents.getModalRaspResults().size()));
+                Modal_Rasp_JsonData modal_rasp_jsonData;
+
+                if (rasp_contents.getModalRaspResults() != null) {
+                    List<Modal_RaspResult> raspResults = new ArrayList<>();
+                    for (int i = 0; i < rasp_contents.getModalRaspResults().size(); i++) {
+                        Modal_RaspResult modalRaspResult = new Modal_RaspResult();
+                        modalRaspResult.setAppId(rasp_contents.getModalRaspResults().get(i).getAppId());
+                        modalRaspResult.setNodeId(rasp_contents.getModalRaspResults().get(i).getNodeId());
+                        modalRaspResult.setNodeType(rasp_contents.getModalRaspResults().get(i).getNodeType());
+                        modalRaspResult.setNodeTitle(rasp_contents.getModalRaspResults().get(i).getNodeTitle());
+                        modalRaspResult.setParentId(rasp_contents.getModalRaspResults().get(i).getParentId());
+                        modalRaspResult.setJsonData(rasp_contents.getModalRaspResults().get(i).getJsonData());
+                        //raspResults.add(modalRaspResult);
+                        modal_rasp_jsonData = gson.fromJson(rasp_contents.getModalRaspResults().get(i).getJsonData(), Modal_Rasp_JsonData.class);
+                        Modal_ContentDetail detail = modalRaspResult.setContentToConfigNodeStructure(modalRaspResult, modal_rasp_jsonData);
+                        detail.setMappedApiId(detail.getNodeid());
+                        detail.setMappedParentId(mappedParentApi);
+                        detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                        displayedContents.add(detail);
+                    }
+                }
+
+                totalContents = removeDownloadedContents(totalContents, displayedContents);
+//                Collections.shuffle(totalContents);
+                if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                    tempContentList = getFinalListWithHeader(totalContents);
+                    if (contentView != null)
+                        contentView.displayContents(totalContents);
+                } else {
+                    assert contentView != null;
+                    contentView.displayContentsInCourse(folderContentClicked, totalContents);
+                    iscourse = "";
+                }
+
+/*                displayedContents.clear();
+                totalContents.clear();
+                totalContents.addAll(contentList);
                 Type listType = new TypeToken<ArrayList<Modal_Rasp_Content>>() {
                 }.getType();
                 List<Modal_Rasp_Content> rasp_contents = gson.fromJson(response, listType);
@@ -387,7 +454,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 //                Collections.shuffle(totalContents);
                 tempContentList = getFinalListWithHeader(totalContents);
                 if (contentView != null)
-                    contentView.displayContents(totalContents);
+                    contentView.displayContents(totalContents);*/
             } else if ((header.equalsIgnoreCase(PD_Constant.INTERNET_HEADER))) {
                 displayedContents.clear();
                 totalContents.clear();
@@ -452,7 +519,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         detail.setContentType("file");
                     else
                         detail.setContentType("folder");
-                    if (detail.getParentid().equalsIgnoreCase(FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE,"78672")))
+                    if (detail.getParentid().equalsIgnoreCase(FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672")))
                         detail.setParentid("0");
                     detail.setMappedApiId(detail.getNodeid());
                     detail.setMappedParentId(mappedParentApi);
@@ -468,7 +535,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 } else {
                     assert contentView != null;
                     contentView.displayContentsInCourse(folderContentClicked, totalContents);
-                    iscourse="";
+                    iscourse = "";
                 }
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
                 JSONObject jsonObject = new JSONObject(response);
@@ -477,7 +544,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
                 zipDownloader.initialize(ContentPresenterImpl.this, download_content.getDownloadurl(),
-                        download_content.getFoldername(), fileName, contentDetail, levelContents);
+                        download_content.getFoldername(), fileName, contentDetail, levelContents, "");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -722,7 +789,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             Log.e("URL PrevLevelContent", String.valueOf(levelContents.size()));
             if (contentView != null) {
                 if (levelContents.isEmpty()) contentView.animateHamburger();
-                contentView.displayLevel(levelContents,"");
+                contentView.displayLevel(levelContents, "");
             }
             mappedParentApi = contentDetail.getMappedParentId();
             getDownloadedContents(contentDetail.getParentid(), ""); //altnodeId is sent blank coz it points to its same node,
@@ -863,7 +930,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 }
             }
             if (contentView != null) {
-                contentView.displayLevel(levelContents,"");
+                contentView.displayLevel(levelContents, "");
                 List<Modal_ContentDetail> details = new ArrayList<>();
                 details.add(0, new Modal_ContentDetail());//null modal for displaying header
                 details.add(download_content.getNodelist().get(download_content.getNodelist().size() - 1));

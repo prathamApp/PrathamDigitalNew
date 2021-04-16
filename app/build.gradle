@@ -17,7 +17,7 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion 29
         versionCode generateVersionCode()
-        versionName "4.6"
+        versionName "4.6.2"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -117,7 +117,7 @@ dependencies {
     implementation "org.androidannotations:androidannotations-api:4.7.0"
     //Observes network connection status & gives callbacks
     implementation 'com.novoda:merlin:1.2.0'
-    implementation 'com.liulishuo.okdownload:okdownload:1.0.5'
+    implementation 'com.liulishuo.okdownload:okdownload:1.0.7'
     implementation 'com.archit.calendar:awesome-calendar:1.1.4'
     // for face detection, used in Attendance activity when child's photo is clicked. Fresco uses this to crop the photo keeping the face at the center.
     implementation 'com.google.android.gms:play-services-vision:20.1.3'
@@ -130,7 +130,7 @@ dependencies {
     implementation 'com.google.android.play:core:1.7.3'
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation "android.arch.lifecycle:common-java8:1.1.1"
-    implementation 'com.balsikandar.android:crashreporter:1.1.0'
+    //implementation 'com.balsikandar.android:crashreporter:1.1.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 

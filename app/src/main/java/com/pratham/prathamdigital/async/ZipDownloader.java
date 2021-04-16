@@ -9,6 +9,7 @@ import com.androidnetworking.AndroidNetworking;
 import com.androidnetworking.common.Priority;
 import com.androidnetworking.error.ANError;
 import com.androidnetworking.interfaces.DownloadListener;
+import com.androidnetworking.interfaces.DownloadProgressListener;
 import com.liulishuo.okdownload.DownloadTask;
 import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
 import com.liulishuo.okdownload.core.listener.DownloadListener3;
@@ -20,6 +21,7 @@ import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
+import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.SpeedMonitor;
 
@@ -51,38 +53,38 @@ public class ZipDownloader {
 
     public void initialize(ContentContract.contentPresenter contentPresenter, String url,
                            String foldername, String f_name, Modal_ContentDetail contentDetail,
-                           ArrayList<Modal_ContentDetail> levelContents) {
+                           ArrayList<Modal_ContentDetail> levelContents, String isRaspPi) {
         this.filename = f_name;
-        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents);
+        createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents, isRaspPi);
     }
 
     //created for download functioanlity in course fragment
     public void initializeforCourse(CourseDetailFragment courseDetailFragment, String url,
                             String foldername, String f_name, Modal_ContentDetail contentDetail,
-                            ArrayList<Modal_ContentDetail> levelContents) {
+                            ArrayList<Modal_ContentDetail> levelContents, String isRaspPi) {
         this.filename = f_name;
-        createFolderAndStartDownloadforCourse(url, foldername, f_name, contentDetail, courseDetailFragment, levelContents);
+        createFolderAndStartDownloadforCourse(url, foldername, f_name, contentDetail, courseDetailFragment, levelContents, isRaspPi);
     }
 
-    /*Creating folder in internal.
+    /**Creating folder in internal.
      *That internal might be of android internal or sdcard internal (if available and writable)
      * */
     @Background
     public void createFolderAndStartDownload(String url, String foldername, String f_name,
                                              Modal_ContentDetail contentDetail,
                                              ContentContract.contentPresenter contentPresenter,
-                                             ArrayList<Modal_ContentDetail> levelContents) {
+                                             ArrayList<Modal_ContentDetail> levelContents, String isRaspPi) {
         File mydir;
         mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
         if (!mydir.exists()) mydir.mkdirs();
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+/*        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             if (foldername.equalsIgnoreCase(PD_Constant.GAME)) {
                 f_name = f_name.substring(0, f_name.lastIndexOf("."));
                 File temp_dir = new File(mydir.getAbsolutePath() + "/" + f_name);
                 if (!temp_dir.exists()) temp_dir.mkdirs();
                 mydir = temp_dir;
             }
-        }
+        }*/
         Log.d("internal_file", mydir.getAbsolutePath());
 
         Modal_Download modal_download = new Modal_Download();
@@ -94,16 +96,46 @@ public class ZipDownloader {
         modal_download.setContentPresenter(contentPresenter);
         modal_download.setLevelContents(levelContents);
 
-        //download Thumbnail image first
-        downloadImages(modal_download, modal_download.getLevelContents());
-        DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
-                .setFilename(modal_download.getF_name())
-                // the minimal interval millisecond for callback progress
-                .setMinIntervalMillisCallbackProcess(30)
-                .build();
-        task.setTag(modal_download);
-        task.enqueue(listener);
-        contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
+        //If download is over RaspPi device
+        if(isRaspPi.equalsIgnoreCase(PD_Constant.RASPPI)) {
+            //download Thumbnail image first
+            downloadRaspImages(modal_download, modal_download.getLevelContents());
+            //Todo : Check if this can be moved to PD_ApiRequest class
+            AndroidNetworking.download(url, mydir.getAbsolutePath(), filename)
+                    .setTag("downloadTest")
+                    .setPriority(Priority.HIGH)
+                    .build()
+                    .setDownloadProgressListener(new DownloadProgressListener() {
+                        @Override
+                        public void onProgress(long bytesDownloaded, long totalBytes) {
+                            updateProgress(modal_download, totalBytes, bytesDownloaded);
+                            Log.e("url prgrs:", String.valueOf(bytesDownloaded) + " | " + String.valueOf(totalBytes));
+                        }
+                    })
+                    .startDownload(new DownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            notifyDownloadSuccess(modal_download);
+                            Log.e("url prgrs cmp:", "Complete");
+                        }
+
+                        @Override
+                        public void onError(ANError error) {
+                            Log.e("url prgrs error:", "Error");
+                        }
+                    });
+        } else {
+            //download Thumbnail image first
+            downloadImages(modal_download, modal_download.getLevelContents());
+            DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
+                    .setFilename(modal_download.getF_name())
+                    // the minimal interval millisecond for callback progress
+                    .setMinIntervalMillisCallbackProcess(30)
+                    .build();
+            task.setTag(modal_download);
+            task.enqueue(listener);
+            contentPresenter.currentDownloadRunning(contentDetail.getNodeid(), task);
+        }
     }
 
     //created for download functioanlity in course fragment
@@ -111,7 +143,8 @@ public class ZipDownloader {
     public void createFolderAndStartDownloadforCourse(String url, String foldername, String f_name,
                                              Modal_ContentDetail contentDetail,
                                              CourseDetailFragment courseDetailFragment,
-                                             ArrayList<Modal_ContentDetail> levelContents) {
+                                             ArrayList<Modal_ContentDetail> levelContents,
+                                                      String isRaspPi) {
         File mydir;
         mydir = new File(PrathamApplication.pradigiPath + "/Pratham" + foldername);
         if (!mydir.exists()) mydir.mkdirs();
@@ -134,7 +167,46 @@ public class ZipDownloader {
         modal_download.setCourseDetailFragment(courseDetailFragment);
         modal_download.setLevelContents(levelContents);
 
-        //download Thumbnail image first
+        if(isRaspPi.equalsIgnoreCase(PD_Constant.RASPPI)) {
+            //download Thumbnail image first
+            downloadRaspImages(modal_download, modal_download.getLevelContents());
+            AndroidNetworking.download(url, mydir.getAbsolutePath(), filename)
+                    .setTag("downloadTest")
+                    .setPriority(Priority.HIGH)
+                    .build()
+                    .setDownloadProgressListener(new DownloadProgressListener() {
+                        @Override
+                        public void onProgress(long bytesDownloaded, long totalBytes) {
+                            updateProgress(modal_download, totalBytes, bytesDownloaded);
+                            Log.e("url prgrs:", String.valueOf(bytesDownloaded) + " | " + String.valueOf(totalBytes));
+                        }
+                    })
+                    .startDownload(new DownloadListener() {
+                        @Override
+                        public void onDownloadComplete() {
+                            notifyDownloadSuccess(modal_download);
+                            Log.e("url prgrs cmp:", "Complete");
+                        }
+
+                        @Override
+                        public void onError(ANError error) {
+                            Log.e("url prgrs error:", "Error");
+                        }
+                    });
+        } else {
+            //download Thumbnail image first
+            downloadImages(modal_download, modal_download.getLevelContents());
+            DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
+                    .setFilename(modal_download.getF_name())
+                    // the minimal interval millisecond for callback progress
+                    .setMinIntervalMillisCallbackProcess(30)
+                    .build();
+            task.setTag(modal_download);
+            task.enqueue(listener);
+            courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);
+        }
+
+/*        //download Thumbnail image first
         downloadImages(modal_download, modal_download.getLevelContents());
         DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
                 .setFilename(modal_download.getF_name())
@@ -143,7 +215,7 @@ public class ZipDownloader {
                 .build();
         task.setTag(modal_download);
         task.enqueue(listener);
-        courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);
+        courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);*/
     }
 
     private com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {
@@ -284,6 +356,23 @@ public class ZipDownloader {
         }
     }
 
+    private void downloadRaspImages(Modal_Download modal_download, ArrayList<Modal_ContentDetail> levelContents) {
+        for (Modal_ContentDetail detail : levelContents) {
+            if (detail.getNodeserverimage() != null) {
+                String f_name = detail.getNodeserverimage()
+                        .substring(detail.getNodeserverimage().lastIndexOf('/') + 1);
+                String url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_IMAGES + detail.getNodeimage();
+                downloadImage(url, f_name);
+            }
+        }
+        if (modal_download.getContent().getNodeserverimage() != null) {
+            String f_name = modal_download.getContent().getNodeserverimage()
+                    .substring(modal_download.getContent().getNodeserverimage().lastIndexOf('/') + 1);
+            String url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_IMAGES + modal_download.getContent().getNodeimage();
+            downloadImage(url, f_name);
+        }
+    }
+
     private static void downloadImage(String url, String filename) {
         File dir = new File(PrathamApplication.pradigiPath + "/PrathamImages"); //Creating an internal dir;
         if (!dir.exists()) dir.mkdirs();
@@ -304,8 +393,3 @@ public class ZipDownloader {
                 });
     }
 }
-
-
-
-
-

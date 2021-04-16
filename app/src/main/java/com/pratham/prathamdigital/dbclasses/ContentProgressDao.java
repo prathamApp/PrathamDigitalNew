@@ -31,4 +31,9 @@ public interface ContentProgressDao {
 
     @Query("UPDATE ContentProgress SET sentFlag = 1 where studentId = :s_id and resourceId = :r_id")
     int updateFlag(String s_id, String r_id);
+
+    //to show the max watched percentage of video
+    @Query("select max(CAST(progressPercentage as INT)) from ContentProgress\n" +
+            "WHERE studentId = :studId and resourceid = :resId")
+    String progressPercent(String studId, String resId);
 }

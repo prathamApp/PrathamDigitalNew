@@ -27,6 +27,7 @@ import com.facebook.imagepipeline.request.ImageRequestBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.label.LabelView;
+import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -34,6 +35,8 @@ import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
 import java.util.Objects;
+
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
 
 public class CourseChildViewHolder extends RecyclerView.ViewHolder {
     SimpleDraweeView course_child_image;
@@ -48,6 +51,8 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
     LinearLayout rl_courseDelete_reveal;
     Button course_del_yes;
     Button course_del_no;
+    @Nullable
+    TextView course_video_watched_percent;
 
 
     public CourseChildViewHolder(@NonNull View itemView) {
@@ -63,6 +68,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
         rl_courseDelete_reveal = itemView.findViewById(R.id.rl_courseDelete_reveal);
         course_del_yes = itemView.findViewById(R.id.course_del_yes);
         course_del_no = itemView.findViewById(R.id.course_del_no);
+        course_video_watched_percent = itemView.findViewById(R.id.item_watchedPercent);
     }
     public void setChildItems(Modal_ContentDetail contentDetail,
                               ContentPlayerContract.courseDetailAdapterClick courseDetailAdapterClick, int pos) {
@@ -70,7 +76,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
         Log.e("url", contentDetail.getNodeid() + " | " + String.valueOf(contentDetail.getIsViewed()));
          if (contentDetail.isDownloaded()) {
             if (!PrathamApplication.isTablet)
-                Objects.requireNonNull(item_courseFile_delete).setVisibility(View.VISIBLE);
+                Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
             else Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
 
             Objects.requireNonNull(rl_courseReveal).setVisibility(View.GONE);
@@ -99,20 +105,31 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             Objects.requireNonNull(content_card).setBackgroundColor(PD_Utility.getRandomColorGradient());
             if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_joystick);
+                Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
 //                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_video);
 //                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
+                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID,""),contentDetail.getResourceid());
+                if(percent!=null){
+                    Objects.requireNonNull(course_video_watched_percent).setVisibility(View.VISIBLE);
+                    course_video_watched_percent.setText(percent+"%");
+                } else {
+                    Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
+                }
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_book);
+                Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
 //                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_music_icon);
+                Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
 //                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }
 
             if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
+                Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
                 course_child_title.setText(contentDetail.getNodetitle());
                 course_child_image.setImageResource(R.drawable.assessment_logo);
             }else {
@@ -129,6 +146,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             //if content is not downloaded
             Objects.requireNonNull(rl_courseDelete_reveal).setVisibility(View.GONE);
             Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
+            Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
             Objects.requireNonNull(img_content_type).setImageResource(R.drawable.content_download_icon);
 
             //show img

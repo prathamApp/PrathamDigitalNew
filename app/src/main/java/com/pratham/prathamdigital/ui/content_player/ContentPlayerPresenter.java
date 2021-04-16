@@ -24,6 +24,7 @@ import org.androidannotations.annotations.EBean;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Objects;
 
 import androidx.annotation.RequiresApi;
 
@@ -56,8 +57,8 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         coursePlayingQueue = new ArrayList<>(intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
         course_week = intent.getStringExtra(PD_Constant.WEEK);
         courseId = intent.getStringExtra(PD_Constant.COURSE_ID);
-        Log.e("url ee :", String.valueOf(coursePlayingQueue.size()));
-        Log.e("url cc :", String.valueOf(courseChilds.size()));
+        //Log.e("url ee :", String.valueOf(coursePlayingQueue.size()));
+        //Log.e("url cc :", String.valueOf(courseChilds.size()));
 
 //        coursePlayingQueue.removeIf(b->b.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)||b.getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO));
 
@@ -74,26 +75,26 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
     @Background
     @Override
     public void categorizeIntent(Intent intent) {
-        if (intent != null) {
-            if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.PDF)) {
-                Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
-                bundlePdf(contentDetail, false);
-            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.VIDEO)) {
-                Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
-                bundleVideo(contentDetail, false, null);
-            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.GAME)) {
-                Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
-                bundleGame(contentDetail, false);
-            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.AUDIO)) {
-                Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
-                bundleAudio(contentDetail, false);
-            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.COURSE)) {
-                setCourse(intent);
-                bundleCourse(intent);
-            } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.YOUTUBE_LINK)) {
-                bundleVideo(null, false, intent.getStringExtra(PD_Constant.CONTENT));
+            if (intent != null) {
+                if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.PDF)) {
+                    Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                    bundlePdf(contentDetail, false);
+                } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.VIDEO)) {
+                    Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                    bundleVideo(contentDetail, false, null);
+                } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.GAME)) {
+                    Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                    bundleGame(contentDetail, false);
+                } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.AUDIO)) {
+                    Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                    bundleAudio(contentDetail, false);
+                } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.COURSE)) {
+                    setCourse(intent);
+                    bundleCourse(intent);
+                } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.YOUTUBE_LINK)) {
+                    bundleVideo(null, false, intent.getStringExtra(PD_Constant.CONTENT));
+                }
             }
-        }
     }
 
     private void bundleCourse(Intent intent) {
@@ -149,11 +150,11 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
         String aud_path;
         if (audContentDetail != null) {
             if (audContentDetail.isOnSDCard())
-                aud_path = PrathamApplication.externalContentPath + "/PrathamAudio/" + audContentDetail.getResourcepath();
+                aud_path = PrathamApplication.externalContentPath + "/PrathamVideo/" + audContentDetail.getResourcepath();
             else
                 aud_path = pradigiPath + "/PrathamAudio/" + audContentDetail.getResourcepath();
-            audBundle.putString("videoPath", aud_path);
-            audBundle.putString("videoTitle", audContentDetail.getNodetitle());
+            audBundle.putString("audioPath", aud_path);
+            audBundle.putString("audioTitle", audContentDetail.getNodetitle());
             audBundle.putString("resId", audContentDetail.getResourceid());
         }
         audBundle.putBoolean("isCourse", isCourse);
@@ -192,7 +193,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             } else if (coursePlayingQueue.get(0).getResourcetype().equalsIgnoreCase(PD_Constant.AUDIO)) {
                 //showNextContentAsmntandAudio(coursePlayingQueue.get(0).getResourceid());
                 Log.e("url Audio Nxt : ",".");
-                resumeCourse();
+                bundleAudio(coursePlayingQueue.get(0), true);
             }
             coursePlayingQueue.remove(0);
         } else contentPlayerView.onCourseCompleted();
