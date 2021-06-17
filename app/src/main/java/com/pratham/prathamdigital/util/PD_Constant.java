@@ -206,6 +206,7 @@ public class PD_Constant {
     public static String HOTSPOT_PASSWORD = "";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
+    public static final String DBSUCCESSFULLYPUSHED = "db_successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamDigital";
     public static final String RASPBERRY_HEADER = "RASPBERRY_HEADER";
@@ -279,7 +280,9 @@ public class PD_Constant {
         pullCrlsServerURL("http://www.swap.prathamcms.org/api/UserList?programId="),
         //DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");//req
         DOWNLOAD_RESOURCE(BASE_URL_NEW + "download?id="),//req
-        BROWSE_RASPBERRY_URL_NEW(RASP_IP + "/api/channel/AppNodeDetailListByNode/?ParentId=");//req
+        BROWSE_RASPBERRY_URL_NEW(RASP_IP + "/api/channel/AppNodeDetailListByNode/?ParentId="),//req
+        PUSH_DB_URL("http://devprodigi.openiscool.org/api/PradigiLifeDB/PushFiles"),//req
+        PUSH_DBTORASP_URL(RASP_IP + "/api/dbpushdata/?table_name=DBPUSHDATA");//req
 
         private final String name;
 

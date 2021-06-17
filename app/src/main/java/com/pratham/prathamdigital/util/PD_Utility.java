@@ -2181,7 +2181,7 @@ public class PD_Utility {
     }
 
     //For zipping and compressing data and database
-    public static void zip(String[] _files, String zipFileName, File filepath) {
+    public static void zip(List<String> _files, String zipFileName, File filepath) {
         try {
             int BUFFER = 10000;
             BufferedInputStream origin = null;
@@ -2189,11 +2189,11 @@ public class PD_Utility {
             ZipOutputStream out = new ZipOutputStream(new BufferedOutputStream(dest));
 
             byte[] data = new byte[BUFFER];
-            for (int i = 0; i < _files.length; i++) {
-                Log.v("Compress", "Adding: " + _files[i]);
-                FileInputStream fi = new FileInputStream(_files[i]);
+            for (int i = 0; i < _files.size(); i++) {
+                Log.v("Compress", "Adding: " + _files.get(i));
+                FileInputStream fi = new FileInputStream(_files.get(i));
                 origin = new BufferedInputStream(fi, BUFFER);
-                ZipEntry entry = new ZipEntry(_files[i].substring(_files[i].lastIndexOf("/") + 1));
+                ZipEntry entry = new ZipEntry(_files.get(i).substring(_files.get(i).lastIndexOf("/") + 1));
                 out.putNextEntry(entry);
                 int count;
                 while ((count = origin.read(data, 0, BUFFER)) != -1) {

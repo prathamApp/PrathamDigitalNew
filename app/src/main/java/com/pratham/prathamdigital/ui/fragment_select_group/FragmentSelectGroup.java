@@ -189,7 +189,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
 
         //todo
-        String GID = "%SmartPhone";
+        String GID = "%SmartPhone%";
         List<Modal_Student> studentsSmartPhone = studentDao.getGroupwiseStudentsLike(GID);
          if(studentsSmartPhone.size()!=0) {
               for (Modal_Student stu : studentsSmartPhone) {
@@ -234,7 +234,8 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     @Click(R.id.img_att_back)
     public void setAttBack() {
         try {
-//            Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+            //Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+            Objects.requireNonNull(getActivity()).onBackPressed();
         } catch (Exception e) {
             e.printStackTrace();
         }

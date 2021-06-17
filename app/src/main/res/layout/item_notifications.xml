@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+android:id="@+id/rl_notif_itemView"
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="wrap_content">
+
+<ImageView
+    android:id="@+id/notificon"
+    android:layout_width="@dimen/_15sdp"
+    android:layout_height="@dimen/_15sdp"
+    android:src="@drawable/ic_bellbw"
+    android:layout_margin="@dimen/_10sdp"
+    android:layout_marginStart="@dimen/_20sdp"/>
+
+<LinearLayout
+    android:id="@+id/ll_title"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_vertical"
+    android:layout_toEndOf="@+id/notificon"
+    android:layout_margin="@dimen/_10sdp">
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/nf_date"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="date"/>
+
+    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+        android:id="@+id/nf_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="date"/>
+
+</LinearLayout>
+
+<View
+    android:id="@+id/notifRightLine"
+    android:layout_width="@dimen/_4sdp"
+    android:layout_height="@dimen/_40sdp"
+    android:layout_alignParentEnd="true"
+    android:background="@color/light_orange"
+    android:visibility="gone"/>
+</RelativeLayout>

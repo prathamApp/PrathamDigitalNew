@@ -252,6 +252,66 @@ String url, JSONObject data) {
                 });
     }
 
+    //Used to push database to server in zip format(zip contains database file)
+    public void pushDBToInternet(String url, String uuID, String filepathstr) {
+        AndroidNetworking.upload(url)
+                .addHeaders("Content-Type", "file/zip")
+                .addMultipartFile(""+uuID, new File(filepathstr + ".zip"))
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("PushDataBase", "DATABASE PUSH "+response);
+                        new File(filepathstr + ".zip").delete();
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.DBSUCCESSFULLYPUSHED);
+                        EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        //Fail - Show dialog with failure message.
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.e("Error::", anError.getErrorDetail());
+                        Log.e("Error::", anError.getMessage());
+                        Log.e("Error::", anError.getResponse().toString());
+                    }
+                });
+    }
+
+    //Used to push database to raspdevice in zip format(zip contains database file)
+    public void pushDBToRaspberryPi(String url, String uuID, String filepathstr) {
+        AndroidNetworking.upload(url)
+                .addHeaders("Content-Type", "file/zip")
+                .addMultipartFile("uploaded_file", new File(filepathstr + ".zip"))
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("PushDataBase", "DATABASE PUSH "+response);
+                        new File(filepathstr + ".zip").delete();
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.DBSUCCESSFULLYPUSHED);
+                        EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        //Fail - Show dialog with failure message.
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.e("Error1::", anError.getErrorDetail());
+                        Log.e("Error2::", anError.getMessage());
+                        Log.e("Error3::", anError.getResponse().toString());
+                    }
+                });
+    }
+
     public void getacilityIdfromRaspberry(final String requestType, String url, JSONObject data) {
         AndroidNetworking.post(url)
                 .addHeaders("Content-Type", "application/json")

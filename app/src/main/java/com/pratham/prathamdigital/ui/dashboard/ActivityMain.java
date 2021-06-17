@@ -35,6 +35,7 @@ import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.BuildConfig;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.custom.NotificationBadge;
 import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
@@ -43,6 +44,7 @@ import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.ftpSettings.FsService;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -85,6 +87,7 @@ import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.async.PD_ApiRequest.downloadAajKaSawal;
 import static com.pratham.prathamdigital.dbclasses.PrathamDatabase.DB_NAME;
@@ -282,29 +285,56 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     }
                     break;
 
-                case MENU_SYNCDB:
-                    Toast.makeText(ActivityMain.this, "Work In Progress!", Toast.LENGTH_SHORT).show();
-                    //get dp file
-                    File dbFile = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS +"/"+DB_NAME);
-                    String fname = dbFile.getAbsolutePath();//db file name
-                    //zip file name
-                    String zipname = fname+FastSave.getInstance().getString(PD_Constant.GROUPID,"")+".zip";
-                    String[] s = new String[1];
-                    s[0] = fname;
-//                    PD_Utility.zip(s,zipname,dbFile);
-/*                    if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-                        showPushingDialog("Please wait...Pushing Data!");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                //sendDBToServer();
-                                //PrathamSmartSync.pushUsageToServer(true);
-                            }
-                        }, 2500);
 
-                    } else {
-                        Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
-                    }*/
+                case MENU_SYNCDB:
+                    String uuID = "" + PD_Utility.getUUID();
+                    File dbfilepath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + DB_NAME); // file path to save
+                    File zipFilePath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS); // file path in which zip created
+                    String filepathstr = zipFilePath.getAbsolutePath() + "/" + uuID;
+                    //Checking all pradigi_db files in Folder and adding it to zip
+                    File dir = new File(Environment.getExternalStorageDirectory().toString() + "/PrathamBackups/");
+                    File[] db_files = dir.listFiles();
+                    if (db_files != null) {
+                        List<String> fileNameListStrings = new ArrayList<>();
+                        for (int i = 0; i < db_files.length; i++)
+                            if (db_files[i].exists() && db_files[i].isFile() && db_files[i].getName().contains("pradigi_db"))
+                                fileNameListStrings.add(db_files[i].getAbsolutePath());
+/*
+                    File dbfilepath1 = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS +"/"+DB_NAME+"-shm"); // file path to save
+                    File dbfilepath2 = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS +"/"+DB_NAME+"-wal"); // file path to save
+
+                    String[] s = new String[3];
+                    // Type the path of the files in here
+                    s[0] = dbfilepath.getAbsolutePath();
+                    s[1] = dbfilepath1.getAbsolutePath();
+                    s[2] = dbfilepath2.getAbsolutePath();
+*/
+                        PD_Utility.zip(fileNameListStrings, filepathstr + ".zip", dbfilepath);
+                        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
+                            showPushingDialog("Please wait...Pushing Database!");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new PD_ApiRequest(PrathamApplication.getInstance())
+                                            .pushDBToRaspberryPi(PD_Constant.URL.PUSH_DBTORASP_URL.toString(), uuID, filepathstr);
+                                }
+                            }, 2500);
+                        }
+                        else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                            showPushingDialog("Please wait...Pushing Database!");
+                            new Handler().postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    new PD_ApiRequest(PrathamApplication.getInstance())
+                                            .pushDBToInternet(PD_Constant.URL.PUSH_DB_URL.toString(), uuID, filepathstr);
+                                }
+                            }, 2500);
+
+                        }
+                        else {
+                            Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
                     break;
             }
         }
@@ -316,7 +346,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
         mHandler.sendEmptyMessage(SHOW_MENU);
         mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
-        versionNum.setText("Version : "+PD_Utility.getCurrentVersion(this));
+        versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
     }
 
     private void initializeDrawer() {
@@ -331,10 +361,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     }
 
     @Click(R.id.drawer_profile_lottie)
-    public void showProfile(){
+    public void showProfile() {
         PrathamApplication.bubble_mp.start();
         //if (main_sliding_drawer.isOpen())
-            main_sliding_drawer.closePane();
+        main_sliding_drawer.closePane();
         mHandler.sendEmptyMessage(SHOW_PROFILE);
         //main_sliding_drawer.closePane();
 /*
@@ -408,7 +438,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 courseCount = msg.getCourseCount();
-                tv_courseCount.setText("Course Enrolled : "+courseCount);
+                tv_courseCount.setText("Course Enrolled : " + courseCount);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText("Data Pushed Successfully!!");
@@ -416,6 +446,13 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 tv_scoreCount.setVisibility(View.GONE);
                 btn_done.setVisibility(View.VISIBLE);
                 //new Handler().postDelayed(() -> pushDialog.dismiss(), 2500);
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.DBSUCCESSFULLYPUSHED)) {
+                tv_courseCount.setVisibility(View.GONE);
+                tv_scoreCount.setVisibility(View.GONE);
+                btn_done.setVisibility(View.GONE);
+                push_lottie.setAnimation("success.json");
+                push_lottie.playAnimation();
+                txt_push_dialog_msg.setText("DataBase Pushed Successfully!!");
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
                 push_lottie.setAnimation("error_cross.json");
                 push_lottie.playAnimation();
@@ -435,9 +472,21 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     .bindClickListener(v -> {
                         pushDialog.dismiss();
                         //This is used to push the assessment data to server
-                        Intent assessmentIntent = new Intent("com.pratham.assessment.async.SyncDataActivity_");
-                        startActivity(assessmentIntent);
-                    },R.id.btn_ok)
+                        try {
+                            Intent assessmentIntent = new Intent("com.pratham.assessment.async.SyncDataActivity_");
+                            startActivity(assessmentIntent);
+                            tv_courseCount.setVisibility(View.GONE);
+                            tv_scoreCount.setVisibility(View.GONE);
+                            btn_done.setVisibility(View.GONE);
+                            push_lottie.setAnimation("success.json");
+                        } catch (Exception e){
+                            Log.e("url : ", e.getMessage());
+                            tv_courseCount.setVisibility(View.GONE);
+                            tv_scoreCount.setVisibility(View.GONE);
+                            btn_done.setVisibility(View.GONE);
+                            push_lottie.setAnimation("success.json");
+                        }
+                    }, R.id.btn_ok)
                     .setGravity(Gravity.CENTER)
                     .setScaleRatio(0.2f)
                     .setDismissOnClickBack(true)
@@ -452,8 +501,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             tv_scoreCount = pushDialog.findViewById(R.id.tv_scoreCount);
             btn_done = pushDialog.findViewById(R.id.btn_ok);
         }
+        push_lottie.setAnimation("loading.json");
         txt_push_dialog_msg.setText(msg);
-        tv_courseCount.setText("Course Enrolled : "+FastSave.getInstance().getString(PD_Constant.COURSE_COUNT,"0"));
+        tv_courseCount.setText("Course Enrolled : " + FastSave.getInstance().getString(PD_Constant.COURSE_COUNT, "0"));
         pushDialog.show();
     }
 
@@ -500,12 +550,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         super.onStart();
 
         //AppStart And Exit Log
-        String prevSessionID = FastSave.getInstance().getString("SESSION","");
+        String prevSessionID = FastSave.getInstance().getString("SESSION", "");
         Log.e("URL Ses : ", prevSessionID);
-        String currentSessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session");
+        String currentSessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session");
         Log.e("URL Ses1 : ", currentSessionID);
 
-        if (!prevSessionID.equalsIgnoreCase(currentSessionID)){
+        if (!prevSessionID.equalsIgnoreCase(currentSessionID)) {
             Log.e("URL", "Start");
 
             //to add log for exit app, before starting new start log
@@ -531,8 +581,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             log.setDeviceId(PD_Utility.getDeviceSerialID());
             logDao.insertLog(log);
 //            FastSave.getInstance().saveBoolean("APP_START",true);
+            BackupDatabase.backup(this);
         }
-        FastSave.getInstance().saveString("SESSION",FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+        FastSave.getInstance().saveString("SESSION", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
     }
 
     @UiThread
@@ -552,9 +603,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
                         log.setDeviceId(PD_Utility.getDeviceSerialID());
                         logDao.insertLog(log);
+                        BackupDatabase.backup(this);
 //                        FastSave.getInstance().saveBoolean("APP_START",false);
-                        FastSave.getInstance().saveString(PD_Constant.SESSIONID,"no_session");
-                        FastSave.getInstance().saveString("SESSION","no_session");
+                        FastSave.getInstance().saveString("SESSION", "no_session");
                         new Handler().postDelayed((Runnable) this::finishAffinity, 200);
                     }, R.id.dialog_btn_exit)
                     .bindClickListener(v -> exitDialog.dismiss(), R.id.btn_cancel)
@@ -698,5 +749,13 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             noti_value = intent.getStringExtra(PD_Constant.PUSH_NOTI_VALUE);
             mHandler.sendEmptyMessage(SHOW_YOU_TUBE_VIDEO);
         }
+    }
+
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+        BackupDatabase.backup(this);
+        Log.d("url : ",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
     }
 }

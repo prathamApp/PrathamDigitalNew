@@ -40,6 +40,7 @@ import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.wrappedLayoutManagers.WrapContentLinearLayoutManager;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
@@ -71,6 +72,7 @@ import java.util.concurrent.TimeUnit;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.pradigiPath;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.fragment_content)
@@ -82,6 +84,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private static final int INITIALIZE_LEVEL_ADAPTER = 2;
     private static final int CLICK_DL_CONTENT = 3;
     private static final int REQUEST_CODE_COURSE_BACK = 4;
+    private static final int REQUEST_CODE_ASSESSMENT_BACK = 5;
     private static boolean IS_DEEP_LINK = false;
     private Dialog dialog;
     @ViewById(R.id.frag_content_bkgd)
@@ -116,7 +119,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     private final static int IS_COURSE = 999;
     ArrayList<Modal_ContentDetail> temp_levels;
 
-    //Variable for Audio Player
+    //Variables for Audio Player
     SeekBar seekBar;
     MediaPlayer mp = new MediaPlayer();
     private Handler myHandler = new Handler();
@@ -437,6 +440,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
                 .setPositiveButton("YES", (dialog, which) -> {
                     try {
                         //startActivityForResult(); //use this when actual testing
+                        sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+                        BackupDatabase.backup(getActivity());
                         startAssessment(modal_contentDetail);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -466,16 +471,17 @@ public class FragmentContent extends Fragment implements ContentContract.content
         }
 
         if (studname.size() == 1) {
-            mBundle.putString("studentId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+            mBundle.putString("studentId", studID.get(0));
             mBundle.putString("appName", getResources().getString(R.string.app_name));
-            mBundle.putString("studentName", FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, ""));
+            mBundle.putString("studentName", studname.get(0));
             mBundle.putString("subjectName", contentDetail.getSubject());
             mBundle.putString("subjectLanguage", contentDetail.getContent_language());
 //                mBundle.putString("subjectLevel", "1");
             mBundle.putString("examId", contentDetail.getNodekeywords());
 //                mBundle.putString("subjectId", "89");
+            mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
             intent.putExtras(mBundle);
-            startActivity(intent);
+            startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
         } else {
             final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
             new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
@@ -490,8 +496,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         //mBundle.putString("subjectLevel", "1");
                         mBundle.putString("examId", contentDetail.getNodekeywords());
                         //mBundle.putString("subjectId", "89");
+                        mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
                         intent.putExtras(mBundle);
-                        startActivity(intent);
+                        startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
                     })
                     .show();
         }
@@ -570,6 +577,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
             }
         } else if (requestCode == REQUEST_CODE_COURSE_BACK) {
             contentPresenter.showPreviousContent();
+        } else if (requestCode == REQUEST_CODE_ASSESSMENT_BACK) {
+            sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+            BackupDatabase.backup(getActivity());
         }
     }
 
@@ -676,6 +686,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     }
 
     @SuppressLint("DefaultLocale")
+    //Custom Audio Player
     private void playAudioInPlayer(Modal_ContentDetail contentDetail) {
         String aud_path;
         if (contentDetail.isOnSDCard())

@@ -25,6 +25,7 @@ import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -62,12 +63,14 @@ import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 import static com.pratham.prathamdigital.custom.file_picker.FilePickerActivity.TAG;
 
 @EFragment(R.layout.fragment_course_detail)
 public class CourseDetailFragment extends Fragment implements ContentPlayerContract.courseDetailAdapterClick, ApiResult {
 
+    private static final int REQUEST_CODE_ASSESSMENT_BACK = 001;
     @ViewById(R.id.rv_course_childs)
     RecyclerView rv_course_childs;
     @ViewById(R.id.course_name)
@@ -221,16 +224,20 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         }
 
         if (studname.size() == 1) {
-            mBundle.putString("studentId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
+            mBundle.putString("studentId", studID.get(0));
             mBundle.putString("appName", getResources().getString(R.string.app_name));
-            mBundle.putString("studentName", FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, ""));
+            mBundle.putString("studentName", studname.get(0));
             mBundle.putString("subjectName", contentDetail.getSubject());
             mBundle.putString("subjectLanguage", contentDetail.getContent_language());
 //                mBundle.putString("subjectLevel", "1");
             mBundle.putString("examId", contentDetail.getNodekeywords());
 //                mBundle.putString("subjectId", "89");
+            mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
             intent.putExtras(mBundle);
-            startActivity(intent);
+            startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
+            sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+            Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            BackupDatabase.backup(getActivity());
         } else {
             final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
             new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
@@ -246,7 +253,11 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                         mBundle.putString("examId", contentDetail.getNodekeywords());
                         //mBundle.putString("subjectId", "89");
                         intent.putExtras(mBundle);
-                        startActivity(intent);
+                        mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
+                        startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
+                        sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+                        Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+                        BackupDatabase.backup(getActivity());
                     })
                     .show();
         }
@@ -631,4 +642,15 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             postProgressMessage();
         }
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_ASSESSMENT_BACK) {
+            sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
+            Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            BackupDatabase.backup(getActivity());
+        }
+    }
+
 }

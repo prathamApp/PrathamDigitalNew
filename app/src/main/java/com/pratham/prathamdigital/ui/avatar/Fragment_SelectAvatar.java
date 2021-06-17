@@ -96,6 +96,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     private String noti_key;
     private String noti_value;
 
+    String dateTime = PD_Utility.getCurrentDateTime().replaceAll("[\\-\\s\\:]","");
+
     @Background
     public void initializeAvatars() {
         String[] avatars = getResources().getStringArray(R.array.avatars);
@@ -163,7 +165,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         Modal_Student modal_student = new Modal_Student();
         modal_student.setStudentId(PD_Utility.getUUID().toString());
         modal_student.setFullName(et_child_name.getText().toString());
-        modal_student.setGroupId("SmartPhone");
+        modal_student.setGroupId("SmartPhone_"+dateTime);
         modal_student.setGroupName("SmartPhone");
         modal_student.setFirstName(et_child_name.getText().toString());
         modal_student.setMiddleName(et_child_name.getText().toString());
@@ -233,7 +235,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         attendance.SessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "");
         attendance.StudentID = stud.getStudentId();
         attendance.Date = PD_Utility.getCurrentDateTime();
-        attendance.GroupID = "SmartPhone";
+        attendance.GroupID = "SmartPhone_"+dateTime;
         attendance.sentFlag = 0;
         attendances.add(attendance);
         attendanceDao.insertAttendance(attendances);
