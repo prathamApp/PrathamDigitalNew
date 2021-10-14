@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.fragment_profile.Profile_Fragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:weightSum="1"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="1">
 
         <RelativeLayout
             android:layout_width="0dp"
@@ -22,16 +22,36 @@
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:weightSum="3">
+
                 <LinearLayout
                     android:id="@+id/rl_profileimage"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="2"
                     android:background="@color/blue"
-                    android:gravity="center"
-                    android:orientation="vertical"
                     android:clickable="true"
-                    android:focusable="true">
+                    android:focusable="true"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/iv_editProfile"
+                        android:layout_width="@dimen/_20sdp"
+                        android:layout_height="@dimen/_20sdp"
+                        android:src="@drawable/pencil"
+                        android:layout_gravity="end|top"
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
+                        android:visibility="gone"/>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="2"
+                        android:background="@color/blue"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:gravity="center"
+                        android:orientation="vertical">
 
                     <com.google.android.material.card.MaterialCardView
                         android:id="@+id/profile_card"
@@ -52,10 +72,11 @@
                         android:id="@+id/profile_name"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="@dimen/_25sdp"
+                        android:layout_marginTop="@dimen/_10sdp"
                         android:textColor="@color/mid_grey"
-                        android:textStyle="bold"
-                        android:layout_marginTop="@dimen/_10sdp"/>
+                        android:textSize="@dimen/_25sdp"
+                        android:textStyle="bold" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <RelativeLayout
@@ -68,131 +89,141 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:weightSum="3"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:weightSum="3">
 
                         <RelativeLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:clickable="true"
-                            android:focusable="true">
+                            android:focusable="true"
+                            android:gravity="center">
+
                             <ImageView
                                 android:id="@+id/total_videoicon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/videoblack"
-                                android:padding="@dimen/_5sdp"
                                 android:clickable="true"
-                                android:focusable="true"/>
+                                android:focusable="true"
+                                android:padding="@dimen/_5sdp"
+                                android:src="@drawable/videoblack" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_videocount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_videoicon"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
                                 android:text="23"
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
-                                android:textStyle="bold"
-                                android:gravity="center_horizontal"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:textStyle="bold" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalGamePlayed"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_videocount"
-                                android:text="@string/str_totvidseen"
-                                android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"
                                 android:clickable="true"
-                                android:focusable="true"/>
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
+                                android:text="@string/str_totvidseen"
+                                android:textColor="@color/mid_grey" />
                         </RelativeLayout>
 
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
-                            android:background="@drawable/black_gradient"/>
+                            android:background="@drawable/black_gradient" />
 
                         <RelativeLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:clickable="true"
-                            android:focusable="true">
+                            android:focusable="true"
+                            android:gravity="center">
+
                             <ImageView
                                 android:id="@+id/total_gameicon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/gameblack"
-                                android:padding="@dimen/_7sdp"
                                 android:clickable="true"
-                                android:focusable="true"/>
+                                android:focusable="true"
+                                android:padding="@dimen/_7sdp"
+                                android:src="@drawable/gameblack" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_gamecount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_gameicon"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
-                                android:textStyle="bold"
-                                android:gravity="center_horizontal"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:textStyle="bold" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalVideowatched"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_gamecount"
-                                android:text="@string/str_totgampld"
-                                android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"
                                 android:clickable="true"
-                                android:focusable="true"/>
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
+                                android:text="@string/str_totgampld"
+                                android:textColor="@color/mid_grey" />
                         </RelativeLayout>
 
                         <View
                             android:layout_width="2dp"
                             android:layout_height="match_parent"
-                            android:background="@drawable/black_gradient"/>
+                            android:background="@drawable/black_gradient" />
 
                         <RelativeLayout
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="1"
-                            android:gravity="center"
                             android:clickable="true"
-                            android:focusable="true">
+                            android:focusable="true"
+                            android:gravity="center">
+
                             <ImageView
                                 android:id="@+id/total_pdficon"
                                 android:layout_width="match_parent"
                                 android:layout_height="@dimen/_40sdp"
-                                android:src="@drawable/documentblack"
-                                android:padding="@dimen/_5sdp"
                                 android:clickable="true"
-                                android:focusable="true"/>
+                                android:focusable="true"
+                                android:padding="@dimen/_5sdp"
+                                android:src="@drawable/documentblack" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/total_pdfcount"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_pdficon"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
                                 android:textColor="@color/mid_grey"
                                 android:textSize="@dimen/_20sdp"
-                                android:textStyle="bold"
-                                android:gravity="center_horizontal"
-                                android:clickable="true"
-                                android:focusable="true"/>
+                                android:textStyle="bold" />
+
                             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                                 android:id="@+id/totalPdfRead"
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/total_pdfcount"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:gravity="center_horizontal"
                                 android:text="@string/str_totstoryrd"
-                                android:textColor="@color/mid_grey"
-                                android:gravity="center_horizontal"                                android:clickable="true"
-                                android:focusable="true" />
+                                android:textColor="@color/mid_grey" />
                         </RelativeLayout>
 
                     </LinearLayout>
@@ -203,16 +234,16 @@
         <RelativeLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight=".5"
-            android:gravity="center_horizontal"
             android:layout_marginStart="@dimen/_20sdp"
-            android:layout_marginTop="@dimen/_20sdp">
+            android:layout_marginTop="@dimen/_20sdp"
+            android:layout_weight=".5"
+            android:gravity="center_horizontal">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_activityDetail"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_centerHorizontal="true"/>
+                android:layout_centerHorizontal="true" />
 
         </RelativeLayout>
     </LinearLayout>

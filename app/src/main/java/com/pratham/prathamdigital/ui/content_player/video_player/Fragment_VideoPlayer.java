@@ -128,7 +128,7 @@ public class Fragment_VideoPlayer extends Fragment {
         videoView.setExoPlayerCallBack(new ExoPlayerCallBack() {
             @Override
             public void onError() {
-                Toast.makeText(getActivity(), "error", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), R.string.vid_player_error, Toast.LENGTH_SHORT).show();
             }
 
             @Override

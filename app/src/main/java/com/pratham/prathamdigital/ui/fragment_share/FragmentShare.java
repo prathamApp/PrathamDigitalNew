@@ -241,7 +241,7 @@ public class FragmentShare extends Fragment implements ZXingScannerView.ResultHa
 
     @Override
     public void showFileNotFoundToast() {
-        Toast.makeText(getActivity(), "File not found.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.file_not_found, Toast.LENGTH_SHORT).show();
     }
 
     @Override

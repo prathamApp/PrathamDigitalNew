@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewAnimationUtils;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -13,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
@@ -99,39 +101,55 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
             if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.GAME)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_joystick);
                 Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
-            }
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
+            } else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_video);
                 //to show percentage of watched video
-                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID,""),contentItem.getResourceid());
-                if(percent!=null){
+                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID, ""), contentItem.getResourceid());
+                if (percent != null) {
                     Objects.requireNonNull(file_video_watched_percent).setVisibility(View.VISIBLE);
-                    file_video_watched_percent.setText(percent+"%");
+                    file_video_watched_percent.setText(percent + "%");
                 } else {
                     Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
                 }
-            }
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
+            } else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.PDF)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_book);
                 Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
-            }
-            else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO)) {
+            } else if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.AUDIO)) {
                 Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_music_icon);
                 Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
             }
             Objects.requireNonNull(content_card_file).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
-            Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
+//            Objects.requireNonNull(rl_download).setOnClickListener(v -> contentClick.openContent(pos, contentItem));
             Objects.requireNonNull(item_file_delete).setOnClickListener(v -> {
                 Objects.requireNonNull(rl_delete_reveal).setVisibility(View.INVISIBLE);
                 new Handler().postDelayed(() -> reveal(rl_delete_reveal, item_file_delete), 200);
             });
             Objects.requireNonNull(file_del_yes).setOnClickListener(v -> contentClick.deleteContent(pos, contentItem));
             Objects.requireNonNull(file_del_no).setOnClickListener(v -> unreveal(rl_delete_reveal, item_file_delete));
+
+            /** this condition used for content versioning*/
+            if (contentItem.isNodeUpdate())
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.ic_update);
+
+            Objects.requireNonNull(rl_download).setOnClickListener(v -> {
+                if (contentItem.isNodeUpdate()) {
+                    if (rl_reveal != null) rl_reveal.setVisibility(View.INVISIBLE);
+                    contentClick.onDownloadClicked(pos, contentItem, rl_reveal, rl_download);
+                } else {
+                    contentClick.openContent(pos, contentItem);
+                }
+            });
+
         } else {
+            if (contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.YOUTUBE_LINK))
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.youtubeplayicon);
+            else
+                Objects.requireNonNull(img_download_content).setImageResource(R.drawable.content_download_icon);
+
             Objects.requireNonNull(rl_delete_reveal).setVisibility(View.GONE);
             Objects.requireNonNull(item_file_delete).setVisibility(View.GONE);
             Objects.requireNonNull(file_video_watched_percent).setVisibility(View.GONE);
-            Objects.requireNonNull(img_download_content).setImageResource(R.drawable.content_download_icon);
+
             ImageRequest request = null;
             if (contentItem.getKolibriNodeImageUrl() != null && !contentItem.getKolibriNodeImageUrl().isEmpty()) {
                 request = ImageRequestBuilder
@@ -158,8 +176,12 @@ public class FileViewHolder extends RecyclerView.ViewHolder {
                 Objects.requireNonNull(rl_reveal).setBackgroundColor(color);
             }
             rl_download.setOnClickListener(v -> {
-                if (rl_reveal != null) rl_reveal.setVisibility(View.INVISIBLE);
-                contentClick.onDownloadClicked(pos, contentItem, rl_reveal, rl_download);
+                if(contentItem.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.YOUTUBE_LINK))
+                    contentClick.openContent(pos, contentItem);
+                else {
+                    if (rl_reveal != null) rl_reveal.setVisibility(View.INVISIBLE);
+                    contentClick.onDownloadClicked(pos, contentItem, rl_reveal, rl_download);
+                }
             });
             Objects.requireNonNull(content_card_file).setOnClickListener(null);
         }

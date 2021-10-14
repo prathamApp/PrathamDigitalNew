@@ -52,6 +52,8 @@ import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
 import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer_;
 import com.pratham.prathamdigital.ui.download_list.DownloadListFragment;
@@ -281,7 +283,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         }, 2500);
 
                     } else {
-                        Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ActivityMain.this, R.string.internet_connection, Toast.LENGTH_SHORT).show();
                     }
                     break;
 
@@ -332,7 +334,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
                         }
                         else {
-                            Toast.makeText(ActivityMain.this, "Please Check Internet Connection!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(ActivityMain.this, R.string.internet_connection, Toast.LENGTH_SHORT).show();
                         }
                     }
                     break;
@@ -358,6 +360,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     "avatars/dino_dance.json"));
         drawer_profile_name.setText(FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, "No Name"));
         initializeMenu();
+    }
+
+    @Click(R.id.versionNum)
+    public void showApkDate(){
+        Toast.makeText(this, PD_Constant.apkDate, Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.drawer_profile_lottie)
@@ -432,16 +439,26 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
     }
 
+    @Subscribe
+    public void onMessageReceived(EventMessage message) {
+        if (message != null)
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.EDIT_SUCCESS)){
+                drawer_profile_lottie.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR,
+                        "avatars/dino_dance.json"));
+                drawer_profile_name.setText(FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, "No Name"));
+            }
+    }
+
     @SuppressLint("SetTextI18n")
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void DataPushedSuccessfully(EventMessage msg) {
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 courseCount = msg.getCourseCount();
-                tv_courseCount.setText("Course Enrolled : " + courseCount);
+                tv_courseCount.setText(R.string.course_count + courseCount);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
-                txt_push_dialog_msg.setText("Data Pushed Successfully!!");
+                txt_push_dialog_msg.setText(R.string.data_push_success);
                 tv_courseCount.setVisibility(View.VISIBLE);
                 tv_scoreCount.setVisibility(View.GONE);
                 btn_done.setVisibility(View.VISIBLE);
@@ -452,11 +469,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 btn_done.setVisibility(View.GONE);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
-                txt_push_dialog_msg.setText("DataBase Pushed Successfully!!");
+                txt_push_dialog_msg.setText(R.string.db_push_success);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.PUSHFAILED)) {
                 push_lottie.setAnimation("error_cross.json");
                 push_lottie.playAnimation();
-                txt_push_dialog_msg.setText("Data Pushing Failed!!");
+                txt_push_dialog_msg.setText(R.string.data_push_fail);
                 txt_push_error.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
             }
@@ -503,7 +520,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         }
         push_lottie.setAnimation("loading.json");
         txt_push_dialog_msg.setText(msg);
-        tv_courseCount.setText("Course Enrolled : " + FastSave.getInstance().getString(PD_Constant.COURSE_COUNT, "0"));
+        tv_courseCount.setText(R.string.course_count + FastSave.getInstance().getString(PD_Constant.COURSE_COUNT, "0"));
         pushDialog.show();
     }
 
@@ -541,6 +558,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         } else if (fragment instanceof FragmentShare_ || fragment instanceof FragmentReceive_) {
             EventMessage message = new EventMessage();
             message.setMessage(PD_Constant.SHARE_BACK);
+            EventBus.getDefault().post(message);
+        } else if (fragment instanceof Fragment_SelectAvatar_) {
+            EventMessage message = new EventMessage();
+            message.setMessage(PD_Constant.EDIT_BACK);
             EventBus.getDefault().post(message);
         }
     }

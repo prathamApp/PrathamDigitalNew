@@ -61,13 +61,13 @@ public class EnrolledCoursesHolder extends RecyclerView.ViewHolder {
                 txt_course_action.setText("View");
                 item_view_course.setOnClickListener(onClickListener);
                 break;
-            case PD_Constant.COURSE_COMPLETED:
+            case PD_Constant.COURSE_COMPLETED: //used this to go to feedback directly by skipping submit assignment
                 iv_delete_course.setVisibility(View.GONE);
                 item_view_course.setVisibility(View.VISIBLE);
                 item_course_status.setVisibility(View.VISIBLE);
-                item_course_status.setText("Completed");
-                txt_course_action.setText("Submit Assignment");
-                item_view_course.setOnClickListener(onClickListener);
+                item_course_status.setText("Course Completed");
+                txt_course_action.setText("Give Feedback");
+                item_view_course.setOnClickListener(v -> planningView.provideFeedback(pos, c_Enrolled));
                 break;
             case PD_Constant.ASSIGNMENT_SUBMITTED:
                 iv_delete_course.setVisibility(View.GONE);

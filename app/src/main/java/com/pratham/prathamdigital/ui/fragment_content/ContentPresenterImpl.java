@@ -44,6 +44,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -180,14 +181,15 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 if (contentView != null)
                     contentView.displayContents(contentList);*/
                 //for offline also course open in content activity
-                 if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
+                if (!IS_COURSE.equalsIgnoreCase(iscourse)) {
                     tempContentList = getFinalListWithHeader(contentList);
-                    if (contentView != null)
+                    if (contentView != null) {
                         contentView.displayContents(contentList);
+                    }
                 } else {
                     assert contentView != null;
                     contentView.displayContentsInCourse(folderContentClicked, contentList);
-                    iscourse="";
+                    iscourse = "";
                 }
             }
         }
@@ -505,6 +507,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         contentView.displayContents(totalContents);
                 }
             } else if ((header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET))) {
+                List<Modal_ContentDetail> tempUpdatedCourseContent = new ArrayList<>();
                 displayedContents.clear();
                 totalContents.clear();
                 totalContents.addAll(contentList);
@@ -514,10 +517,23 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 for (Modal_ContentDetail detail : tempContents) {
                     if (detail.getResourcetype().equalsIgnoreCase("Game")
                             || detail.getResourcetype().equalsIgnoreCase("Video")
+                            || detail.getResourcetype().equalsIgnoreCase("Youtube")
                             || detail.getResourcetype().equalsIgnoreCase("Pdf")
-                            || detail.getResourcetype().equalsIgnoreCase("Audio"))
+                            || detail.getResourcetype().equalsIgnoreCase("Audio")) {
                         detail.setContentType("file");
-                    else
+                        for (Modal_ContentDetail dbDetail : totalContents) {
+                            if (detail.getNodeid().equalsIgnoreCase(dbDetail.getNodeid())) {
+                                if (!detail.getVersion().equalsIgnoreCase(dbDetail.getVersion())) {
+                                    Log.e("version no : ", detail.getNodeid());
+                                    detail.setNodeUpdate(true);
+                                    tempUpdatedCourseContent.add(detail);
+                                    //dbDetail.setNodeUpdate(true);
+                                }
+//                                totalContents.add(detail);
+//                                break;
+                            }
+                        }
+                    } else
                         detail.setContentType("folder");
                     if (detail.getParentid().equalsIgnoreCase(FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672")))
                         detail.setParentid("0");
@@ -534,7 +550,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         contentView.displayContents(totalContents);
                 } else {
                     assert contentView != null;
-                    contentView.displayContentsInCourse(folderContentClicked, totalContents);
+                    contentView.displayContentsInCourseNew(folderContentClicked, totalContents, tempUpdatedCourseContent);
                     iscourse = "";
                 }
             } else if (header.equalsIgnoreCase(PD_Constant.INTERNET_DOWNLOAD)) {
@@ -561,6 +577,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getNodeid(),
                     FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
             if (content != null) {
+                if (onlineContents.get(i).isNodeUpdate()) {
+                    content.setNodeUpdate(true);
+                    content.setVersion(onlineContents.get(i).getVersion());
+                }
+
                 content.setMappedApiId(onlineContents.get(i).getNodeid());
                 content.setMappedParentId(mappedParentApi);
                 onlineContents.set(i, content);
@@ -955,6 +976,19 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (parentId != null && !parentId.equalsIgnoreCase("0") && !parentId.isEmpty()) {
             /** replaced altnodeid with nodeid*/
             childsOfParent = modalContentDao.getChildsOfParent(parentId, parentId, lang);
+            try {
+                Collections.sort(childsOfParent, (o1, o2) -> {
+                    if (o1.seq_no == null) {
+                        return (o1.getNodeid().compareToIgnoreCase(o2.getNodeid()));
+                    } else {
+                        int s1 = Integer.parseInt(o1.getSeq_no());
+                        int s2 = Integer.parseInt(o2.getSeq_no());
+                        return (Integer.compare(s1, s2));
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             int child_age = FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0);
             if (PrathamApplication.isTablet)

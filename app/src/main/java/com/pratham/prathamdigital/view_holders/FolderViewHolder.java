@@ -63,9 +63,9 @@ public class FolderViewHolder extends RecyclerView.ViewHolder {
 
         if (contentItem.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
             folder_viewmore.setText(contentItem.getNodetitle());
-            folder_content_image.setImageResource(R.drawable.assessment_logo);
+//            folder_content_image.setImageResource(R.drawable.assessment_logo);
         } else {
-            folder_viewmore.setText("VIEW MORE");
+            folder_viewmore.setText(R.string.view_more);
         }
 
         ImageRequest request = null;

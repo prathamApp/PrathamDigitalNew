@@ -26,7 +26,7 @@
         android:layout_height="@dimen/_40sdp"
         android:layout_marginTop="@dimen/_10sdp"
         android:gravity="center"
-        android:text="Enrollment Details"
+        android:text="@string/enrollment_details"
         android:textColor="@color/white"
         android:textSize="@dimen/_20sdp"
         android:textStyle="bold" />
@@ -60,7 +60,7 @@
                     android:background="@drawable/avatar_etxt_bkgd"
                     android:clickable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="Enter enrollment ID"
+                    android:hint="@string/enter_enrollment_id"
                     android:paddingStart="@dimen/_10sdp"
                     android:singleLine="true"
                     android:textColor="@color/white"
@@ -75,7 +75,7 @@
                     android:background="@drawable/button_orange_selector"
                     android:gravity="center"
                     android:padding="@dimen/_5sdp"
-                    android:text="Check"
+                    android:text="@string/check"
                     android:textColor="@color/white"
                     android:visibility="visible"
                     tools:ignore="HardcodedText" />
@@ -130,7 +130,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:gravity="center_vertical"
-                                    android:text="Age : "
+                                    android:text="@string/age"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
@@ -150,7 +150,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:gravity="center_vertical"
-                                    android:text="Class : "
+                                    android:text="@string/clas"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
@@ -170,7 +170,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="1"
                                     android:gravity="center_vertical"
-                                    android:text="Gender : "
+                                    android:text="@string/gender"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
@@ -200,7 +200,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="2"
                                     android:gravity="center_vertical"
-                                    android:text="Group Id : "
+                                    android:text="@string/group_id"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
@@ -220,7 +220,7 @@
                                     android:layout_height="match_parent"
                                     android:layout_weight="2"
                                     android:gravity="center_vertical"
-                                    android:text="Group name : "
+                                    android:text="@string/group_name"
                                     android:textColor="@color/black"
                                     android:textSize="@dimen/_12sdp"
                                     android:textStyle="bold" />
@@ -333,7 +333,7 @@
                         android:layout_marginTop="@dimen/_10sdp"
                         android:layout_marginBottom="@dimen/_10sdp"
                         android:background="@drawable/button_orange_selector"
-                        android:text="Save Profile"
+                        android:text="@string/save_profile"
                         android:textColor="@color/white"
                         android:visibility="visible"
                         tools:ignore="HardcodedText" />
@@ -366,7 +366,7 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/iv_student_not_found"
                     android:layout_margin="@dimen/_5sdp"
-                    android:text="Student not found.\n Check Enrollment ID again."
+                    android:text="@string/no_stud_found"
                     android:textAlignment="center"
                     android:textColor="@color/black"
                     android:textSize="@dimen/_18sdp" />

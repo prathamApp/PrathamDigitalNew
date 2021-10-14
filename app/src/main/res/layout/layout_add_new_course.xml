@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/_5sdp"
             android:padding="@dimen/_2sdp"
-            android:text="No data to show, Create a course now"
+            android:text="@string/create_course"
             android:textColor="@android:color/black"
             android:textSize="@dimen/_22sdp"
             tools:ignore="HardcodedText" />
@@ -40,7 +40,7 @@
             android:layout_below="@+id/txt_no_data"
             android:layout_margin="@dimen/_5sdp"
             android:background="@drawable/button_blue_selector"
-            android:text="Add New Course"
+            android:text="@string/add_new_course"
             android:textAllCaps="false"
             android:textColor="@color/white"
             tools:ignore="HardcodedText" />

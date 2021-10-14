@@ -217,13 +217,13 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @UiThread
     @Override
     public void showErrorToast() {
-        Toast.makeText(getActivity(), "Please check connection", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.internet_connection, Toast.LENGTH_SHORT).show();
     }
 
     @UiThread
     @Override
     public void openLoginActivity() {
-        Toast.makeText(getActivity(), "Data Pulled Successfully !", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.data_pull_success, Toast.LENGTH_SHORT).show();
         Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
     }
 
@@ -241,7 +241,7 @@ public class PullDataFragment extends Fragment implements PullDataContract.PullD
     @UiThread
     @Override
     public void onDataClearToast() {
-        Toast.makeText(getActivity(), "Data cleared Successfully", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.data_clear_success, Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.img_pull_back)

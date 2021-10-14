@@ -64,6 +64,7 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -135,18 +136,32 @@ public class FragmentContent extends Fragment implements ContentContract.content
             super.handleMessage(msg);
             switch (msg.what) {
                 case INITIALIZE_CONTENT_ADAPTER:
-                    contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
-                    FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
-                    flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
+                    try {
+                        if (contentAdapter == null) {
+                            contentAdapter = new ContentAdapter(getActivity(), FragmentContent.this);
+                            FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
+                            flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
 //                    flexboxLayoutManager.setAlignItems(AlignItems.CENTER);
-                    rv_content.setLayoutManager(flexboxLayoutManager);
-                    rv_content.setAdapter(contentAdapter);
+                            rv_content.setLayoutManager(flexboxLayoutManager);
+                            rv_content.setAdapter(contentAdapter);
+                        } else {
+                            contentAdapter.notifyDataSetChanged();
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        contentAdapter.notifyDataSetChanged();
+                    }
                     break;
                 case INITIALIZE_LEVEL_ADAPTER:
-                    levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
-                    rv_level.setHasFixedSize(true);
-                    rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
-                    rv_level.setAdapter(levelAdapter);
+                    try {
+                        levelAdapter = new RV_LevelAdapter(getActivity(), FragmentContent.this);
+                        rv_level.setHasFixedSize(true);
+                        rv_level.setLayoutManager(new WrapContentLinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+                        rv_level.setAdapter(levelAdapter);
+                    } catch (Exception e) {
+                        levelAdapter.notifyDataSetChanged();
+                        e.printStackTrace();
+                    }
                     break;
                 case CLICK_DL_CONTENT:
                     List<Modal_ContentDetail> details;
@@ -367,6 +382,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         intent.putExtra("NODE_DESC", nodeDesc);
                         //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
+                        //intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
                         Log.e("URL", String.valueOf(temp_levels.size()));
                         startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
@@ -374,6 +390,36 @@ public class FragmentContent extends Fragment implements ContentContract.content
                     })
                     .ask();
         }
+    }
+
+    //added for showing updated content from server
+    @Override
+    public void displayContentsInCourseNew(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs, List<Modal_ContentDetail> childs1) {
+        if (courseFlag == IS_COURSE) {
+            String courseID = contentDetail.getAltnodeid();
+            String nodeTitle = contentDetail.getNodetitle();
+            String nodeDesc = contentDetail.getNodedesc();
+            KotlinPermissions.with(Objects.requireNonNull(getActivity()))
+                    .permissions(Manifest.permission.RECORD_AUDIO)
+                    .onAccepted(permissionResult -> {
+                        Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                        intent.putExtra("NODE_CALL", "CALL_FROM_NODE");
+                        intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
+                        intent.putExtra(PD_Constant.COURSE_ID, courseID);
+                        intent.putExtra(PD_Constant.WEEK, "WEEK_1");
+                        intent.putExtra("NODE_TITLE", nodeTitle);
+                        intent.putExtra("NODE_DESC", nodeDesc);
+                        //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
+                        intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
+                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
+                        Log.e("URL", String.valueOf(temp_levels.size()));
+                        startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
+                        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
+                    })
+                    .ask();
+        }
+
     }
 
     @UiThread
@@ -435,8 +481,8 @@ public class FragmentContent extends Fragment implements ContentContract.content
     @Override
     public void onAssessmentItemClicked(Modal_ContentDetail modal_contentDetail) {
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
-                .setTitle("Confirm")
-                .setMessage("You will be redirected to Assessment App!")
+                .setTitle(R.string.confirm)
+                .setMessage(R.string.asmnt_redirect)
                 .setPositiveButton("YES", (dialog, which) -> {
                     try {
                         //startActivityForResult(); //use this when actual testing
@@ -445,7 +491,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         startAssessment(modal_contentDetail);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), "App not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.asmntapp_not_found, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("CANCEL", (dialog, which) -> {
@@ -479,9 +525,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
 //                mBundle.putString("subjectLevel", "1");
             mBundle.putString("examId", contentDetail.getNodekeywords());
 //                mBundle.putString("subjectId", "89");
-            mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
+            mBundle.putString("currentSessionId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
             intent.putExtras(mBundle);
-            startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
+            startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
         } else {
             final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
             new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
@@ -496,7 +542,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         //mBundle.putString("subjectLevel", "1");
                         mBundle.putString("examId", contentDetail.getNodekeywords());
                         //mBundle.putString("subjectId", "89");
-                        mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
+                        mBundle.putString("currentSessionId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
                         intent.putExtras(mBundle);
                         startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
                     })
@@ -675,6 +721,9 @@ public class FragmentContent extends Fragment implements ContentContract.content
                                 break;
                             case PD_Constant.PDF:
                                 intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.PDF);
+                                break;
+                            case PD_Constant.YOUTUBE_LINK:
+                                intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.YOUTUBE_LINK);
                                 break;
                         }
                         intent.putExtra(PD_Constant.CONTENT, contentDetail);

@@ -29,7 +29,7 @@
             android:layout_marginBottom="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_50sdp"
             android:background="@drawable/button_orange_selector"
-            android:text="Create Profile"
+            android:text="@string/create_profile"
             android:textColor="@color/white"
             android:visibility="invisible"
             tools:ignore="HardcodedText" />
@@ -43,7 +43,7 @@
             android:layout_marginBottom="@dimen/_10sdp"
             android:layout_toEndOf="@+id/btn_createProfile"
             android:background="@drawable/button_orange_selector"
-            android:text="EnrollmentID"
+            android:text="@string/enrollmentID"
             android:textColor="@color/white"
             android:visibility="invisible"
             tools:ignore="HardcodedText" />

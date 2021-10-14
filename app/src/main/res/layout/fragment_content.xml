@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:layout_marginRight="@dimen/_5sdp"
-                android:text="No connection"
+                android:text="@string/no_connect"
                 android:textColor="@color/dark_blue"
                 tools:ignore="HardcodedText" />
 

@@ -23,7 +23,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/_10sdp"
         android:gravity="center"
-        android:text="Please wait, pushing Data..."
+        android:text="@string/pushing_data"
         android:textColor="@android:color/holo_green_dark"
         android:textSize="@dimen/_12sdp" />
 
@@ -32,7 +32,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Check your wifi is connected to Pratham Kolibri !"
+        android:text="@string/push_error"
         android:textColor="@color/charcoal"
         android:textSize="@dimen/_12sdp"
         android:visibility="gone" />
@@ -42,7 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Course Enrolled : "
+        android:text="@string/course_count"
         android:textColor="@color/charcoal"
         android:textSize="@dimen/_12sdp"
         android:visibility="gone" />
@@ -61,7 +61,7 @@
         android:id="@+id/btn_ok"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_30sdp"
-        android:text="Done"
+        android:text="@string/done"
         android:textColor="@color/white"
         android:background="@drawable/button_orange_selector"
         android:layout_marginTop="@dimen/_10sdp"

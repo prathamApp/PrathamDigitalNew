@@ -52,6 +52,7 @@ import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 public class PD_ApiRequest {
     private final Context mContext;
     private ApiResult apiResult = null;
+    private ApiResult.languageResult languageResult = null;
 //    OkHttpClient okHttpClient;
 
     public PD_ApiRequest(Context mContext) {
@@ -61,6 +62,8 @@ public class PD_ApiRequest {
     public void setApiResult(ApiResult result) {
         this.apiResult = result;
     }
+
+    public void setLangApiResult(ApiResult.languageResult result) {this.languageResult=result;}
 
     //Used to get the content from rasp_pi device in json format
     public void getContentFromRaspberry(final String requestType, String url, ArrayList<Modal_ContentDetail> contentList) {
@@ -100,8 +103,8 @@ public class PD_ApiRequest {
                         @Override
                         public void onResponse(String response) {
                             if (apiResult != null)
-                                Log.e("url api response : ", response);
-                                apiResult.recievedContent(requestType, response, contentList);
+                            apiResult.recievedContent(requestType, response, contentList);
+                            Log.e("url api response : ", response);
                         }
 
                         @Override
@@ -116,6 +119,35 @@ public class PD_ApiRequest {
             e.printStackTrace();
         }
     }
+
+    //Used to get the language over server device in json format
+    public void getLanguageFromInternet(final String requestType, String url) {
+        try {
+            Log.e("url : ",url);
+            AndroidNetworking.get(url)
+                    .addHeaders("Content-Type", "application/json")
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (languageResult != null)
+                                languageResult.recievedLang(requestType, response);
+//                                Log.e("url api response : ", response);
+                         }
+
+                        @Override
+                        public void onError(ANError anError) {
+                            if (languageResult != null)
+                                languageResult.recievedLangError(requestType);
+                            Log.d("Error:", anError.getErrorDetail());
+                            Log.d("Error::", anError.getResponse().toString());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public void pushDataToRaspberry(/*final String requestType, */String url, String data,
                                                                   String filter_name, String table_name) {

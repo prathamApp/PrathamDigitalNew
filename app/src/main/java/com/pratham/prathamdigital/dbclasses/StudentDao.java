@@ -60,5 +60,13 @@ public interface StudentDao {
     @Query("select * from Students where StudentId = :studentID")
     List<Modal_Student> getAllStudent(String studentID);
 
+    //Edit profile
+    @Query("update Students set FirstName=:studName, MiddleName=:studName, LastName=:studName, FullName=:studName, Age=:studAge," +
+            "Stud_Class=:studClass, avatarName=:avatarName, sentFlag=0 where StudentId=:sId")
+    void editStudent(String studName, String studAge, String studClass, String avatarName, String sId);
+
+    @Query("select GroupName from Students where StudentId = :studentID")
+    String getStudGroupName(String studentID);
+
     //   void deleteAllStudents();
 }

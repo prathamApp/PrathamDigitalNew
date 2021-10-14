@@ -63,5 +63,9 @@ public interface ModalContentDao {
     //Added this to mark Viewed Content as Viewed in CourseDetailFragment
     @Query("update TableContent set isViewed=1 where nodeid=:node_id")
     void updateIsViewed(String node_id);
+
+    //Get languages from DB
+    @Query("SELECT content_language from TableContent GROUP BY content_language")
+    List<String> getLanguagesFromDB();
 }
 

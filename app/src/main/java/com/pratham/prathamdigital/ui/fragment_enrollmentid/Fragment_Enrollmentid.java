@@ -154,7 +154,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 setResponse(newEnrolledStudent);
             }
         } else {
-            Toast.makeText(getActivity(), "Enter enrollment number", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.enter_enroll_id, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -301,7 +301,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 }
             } else {
                 if (!PrathamApplication.wiseF.isDeviceConnectedToMobileOrWifiNetwork()) {
-                    Toast.makeText(getActivity(), "No internet connection", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                 }
                 rl_enroll_no_details.setVisibility(View.GONE);
                 rl_enroll_no_not_found.setVisibility(View.VISIBLE);
@@ -338,7 +338,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 String groupId5 = statusDao.getValue(PD_Constant.GROUPID5);
                 Modal_Groups group = PrathamDatabase.getDatabaseInstance(getActivity()).getGroupDao().getGroupByGrpID(grpID);
                 if(group!=null){
-                    Toast.makeText(getActivity(), "Profile is already saved..", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.profile_already_saved, Toast.LENGTH_SHORT).show();
                 } else {
                     //group overwrite issue resolved using below logic
                     if (groupId1.equalsIgnoreCase(""))
@@ -369,7 +369,7 @@ public class Fragment_Enrollmentid extends Fragment {
             } else
                 insertStudentAndMarkAttendance();
         } else{
-            Toast.makeText(getActivity(), "Please Enter EnrollmentId", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.enter_enroll_id, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -383,11 +383,11 @@ public class Fragment_Enrollmentid extends Fragment {
         newEnrolledStudent.setAvatarName("avatars/dino_dance.json");
         Modal_Student student = PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().getStudent(newEnrolledStudent.getStudentId());
         if (student != null) {
-            Toast.makeText(getActivity(), "Profile is already saved..", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.profile_already_saved, Toast.LENGTH_SHORT).show();
         } else {
             studentDao.insertStudent(newEnrolledStudent);
             BackupDatabase.backup(getActivity());
-            Toast.makeText(getActivity(), "Profile created Successfully..", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.profile_created_success, Toast.LENGTH_SHORT).show();
         }
         FastSave.getInstance().saveString(PD_Constant.GROUPID, newEnrolledStudent.getStudentId());
         FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());

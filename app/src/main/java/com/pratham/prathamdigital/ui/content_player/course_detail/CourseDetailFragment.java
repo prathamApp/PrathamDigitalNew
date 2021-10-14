@@ -85,6 +85,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     CourseDetailAdapter adapter;
     private Model_CourseEnrollment enrollment;
     private List<Modal_ContentDetail> childs;
+    private List<Modal_ContentDetail> childs1;
+    private List<Modal_ContentDetail> dispchilds = new ArrayList<>();
 
     private final Map<String, Integer> filesDownloading = new HashMap<>();
     private final Map<String, Modal_FileDownloading> filesContentDownloading = new HashMap<>();
@@ -142,19 +144,41 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     }
 
     private void initializeAdapter() {
+
+        //check if update available for content
         if (childs == null || childs.isEmpty()) {
             childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
+            childs1 = Objects.requireNonNull(getArguments()).getParcelableArrayList("course_update");
+            if(childs1!=null && !Objects.requireNonNull(childs1).isEmpty()) {
+                for (Modal_ContentDetail detail1 : childs) {
+                    for (Modal_ContentDetail detail : childs1) {
+                        if (detail.getNodeid().equalsIgnoreCase(detail1.getNodeid())) {
+                            detail1.setNodeUpdate(true);
+                            Log.e("version if: ", detail.getNodeid());
+                        } else {
+                            //detail1.setNodeUpdate(false);
+                            //Log.e("version else: ",detail1.getNodeid());
+                        }
+                    }
+                    dispchilds.add(detail1);
+                }
+            } else {
+                dispchilds = childs;
+            }
             //to sort list sequence wise like portal
-            Collections.sort(childs, (o1, o2) -> {
-                if(o1.seq_no==null) {
-                    return (o1.getNodeid().compareToIgnoreCase(o2.getNodeid()));
-                }
-                else {
-                    int s1 = Integer.parseInt(o1.getSeq_no());
-                    int s2 = Integer.parseInt(o2.getSeq_no());
-                    return (Integer.compare(s1, s2));
-                }
-            });
+            try {
+                Collections.sort(dispchilds, (o1, o2) -> {
+                    if (o1.seq_no == null) {
+                        return (o1.getNodeid().compareToIgnoreCase(o2.getNodeid()));
+                    } else {
+                        int s1 = Integer.parseInt(o1.getSeq_no());
+                        int s2 = Integer.parseInt(o2.getSeq_no());
+                        return (Integer.compare(s1, s2));
+                    }
+                });
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
 
         adapter = new CourseDetailAdapter(getActivity(), this);
@@ -162,7 +186,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
         rv_course_childs.setLayoutManager(flexboxLayoutManager);
         rv_course_childs.setAdapter(adapter);
-        adapter.submitList(childs);
+        adapter.submitList(dispchilds);
     }
 
     @Click(R.id.play_all_content_serially)
@@ -189,15 +213,15 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         }
 
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
-                .setTitle("Confirm")
-                .setMessage("You will be redirected to Assessment App!")
+                .setTitle(R.string.confirm)
+                .setMessage(R.string.asmnt_redirect)
                 .setPositiveButton("YES", (dialog, which) -> {
                     try {
                         //startActivityForResult(); //use this when actual testing
                         startAssessment(contentDetail);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getActivity(), "App not found", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), R.string.asmntapp_not_found, Toast.LENGTH_SHORT).show();
                     }
                 })
                 .setNegativeButton("CANCEL", (dialog, which) -> {
@@ -231,6 +255,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             mBundle.putString("subjectLanguage", contentDetail.getContent_language());
 //                mBundle.putString("subjectLevel", "1");
             mBundle.putString("examId", contentDetail.getNodekeywords());
+            Log.e("exam id : ", contentDetail.getNodekeywords());
 //                mBundle.putString("subjectId", "89");
             mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
             intent.putExtras(mBundle);
@@ -280,7 +305,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             d.setOnSDCard(false);
         }
         modalContentDao.addContentList(temp);
-        Toast.makeText(getActivity(), "Assessment Saved.", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.asmnt_saved, Toast.LENGTH_SHORT).show();
     }
 
     //function is called when download icon is clicked
@@ -371,19 +396,20 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 eventMessage1.setMessage(PD_Constant.CLOSE_CONTENT_ACTIVITY);
                 EventBus.getDefault().post(eventMessage1);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.COURSE_COMPLETED))
-                btn_submit_assignment.setVisibility(View.VISIBLE);
+                btn_submit_assignment.setVisibility(View.GONE);//made gone to skip assignment step
         }
     }
 
+    //assignment feature skiped
     @Click(R.id.btn_submit_assignment)
     public void openAssignments() {
-        Bundle bundle = new Bundle();
+/*        Bundle bundle = new Bundle();
         bundle.putParcelable(PD_Constant.ENROLLED_COURSE, enrollment);
         bundle.putString(PD_Constant.OPEN_ASSIGNMENTS, enrollment.getCourseDetail().getAssignment());
         EventMessage message = new EventMessage();
         message.setMessage(PD_Constant.OPEN_ASSIGNMENTS);
         message.setBundle(bundle);
-        EventBus.getDefault().post(message);
+        EventBus.getDefault().post(message);*/
     }
 
     @Override

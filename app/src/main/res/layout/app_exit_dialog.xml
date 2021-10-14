@@ -35,7 +35,7 @@
                 android:gravity="center"
                 android:minWidth="@dimen/_120sdp"
                 android:minHeight="@dimen/_25sdp"
-                android:text="Cancel"
+                android:text="@string/cancel_dialog"
                 android:textColor="@android:color/black" />
 
             <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
@@ -49,7 +49,7 @@
                 android:gravity="center"
                 android:minWidth="@dimen/_120sdp"
                 android:minHeight="@dimen/_35sdp"
-                android:text="Exit"
+                android:text="@string/exit_dialog"
                 android:textColor="@android:color/white" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView

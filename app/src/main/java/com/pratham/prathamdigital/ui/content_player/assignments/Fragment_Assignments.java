@@ -57,6 +57,7 @@ public class Fragment_Assignments extends Fragment implements ContentPlayerContr
     private int parentPositionClicked;
     private Model_CourseEnrollment enrolledCourse;
     private ExplosionField explosionField;
+
     private BlurPopupWindow exitDialog;
 
     @AfterViews
@@ -99,7 +100,7 @@ public class Fragment_Assignments extends Fragment implements ContentPlayerContr
         if (assignmentSubmitted)
             addAssignmentEntryInDB();
         else
-            Toast.makeText(getActivity(), "Please submit all assignments", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.submit_assignment, Toast.LENGTH_SHORT).show();
     }
 
     @Background

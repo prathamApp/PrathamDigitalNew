@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -17,6 +18,7 @@ import com.airbnb.lottie.LottieAnimationView;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_JoinScoreContentTable;
 import com.pratham.prathamdigital.models.Modal_ProfileDetails;
@@ -25,6 +27,7 @@ import com.pratham.prathamdigital.models.Modal_dateWiseResourceCount;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -36,10 +39,12 @@ import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EFragment;
 import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
+import org.greenrobot.eventbus.Subscribe;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
@@ -60,6 +65,8 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
     TextView total_pdfCount;
     @ViewById(R.id.rv_activityDetail)
     RecyclerView rv_activityDetail;
+    @ViewById(R.id.iv_editProfile)
+    ImageView iv_editProfile;
 
     @Bean(ProfilePresenter.class)
     ProfilePresenter profilePresenter;
@@ -75,6 +82,15 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
         profilePresenter.loadTotalUsedResources();
         profilePresenter.loadDateWiseResources();
         initializeAdapter();
+        String groupName = studentDao.getStudGroupName(FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"));
+        try{
+            if(groupName.equals("SmartPhone"))
+                iv_editProfile.setVisibility(View.VISIBLE);
+            else
+                iv_editProfile.setVisibility(View.GONE);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @UiThread
@@ -121,6 +137,7 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
     @UiThread
     @Override
     public void showDateWiseResourceCount(List<Modal_dateWiseResourceCount> dateWiseResourceCountList, List<String> endDateList) {
+        detailsList.clear();
         if(dateWiseResourceCountList.size()==0){
             Modal_ProfileDetails details = new Modal_ProfileDetails("date", "0", "0", "0");
             detailsList.add(details);
@@ -161,5 +178,24 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
         startActivity(cpintent);
         getActivity().overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         getActivity().finishAfterTransition();
+    }
+
+    @Click(R.id.iv_editProfile)
+    public void editProfile(){
+        Bundle bundleProf = new Bundle();
+        bundleProf.putInt(PD_Constant.REVEALX, 0);
+        bundleProf.putInt(PD_Constant.REVEALY, 0);
+        bundleProf.putString(PD_Constant.EDIT_PROFILE,"edit_profile");
+        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.main_frame,
+                bundleProf, Fragment_SelectAvatar.class.getSimpleName());
+    }
+
+    //method mainly used to refresh the recycler view, while coming back from editprofile
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        rv_activityDetail.setAdapter(null);
+        profileAdapter = null;
+        rv_activityDetail = null;
     }
 }

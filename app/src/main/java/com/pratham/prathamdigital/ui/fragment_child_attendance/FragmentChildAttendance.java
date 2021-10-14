@@ -237,7 +237,7 @@ public class FragmentChildAttendance extends Fragment implements ContractChildAt
             markAttendance(checkedStds);
 //            presentActivity();
         } else {
-            Toast.makeText(getContext(), "Please Select Students !", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.select_students, Toast.LENGTH_SHORT).show();
         }
     }
 

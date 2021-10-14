@@ -134,10 +134,18 @@ public class ReadContentDbFromSdCard {
                     detail.setLevel(content_cursor.getInt(content_cursor.getColumnIndex("level")));
                     detail.setContent_language(content_cursor.getString(content_cursor.getColumnIndex("content_language")));
                     detail.setParentid(content_cursor.getString(content_cursor.getColumnIndex("parentid")));
-                    detail.setContentType(content_cursor.getString(content_cursor.getColumnIndex("contentType")));
+
+                    //made this change for july 21 db
+                    if(content_cursor.getString(content_cursor.getColumnIndex("contentType")).equalsIgnoreCase("Assessment")||
+                            content_cursor.getString(content_cursor.getColumnIndex("contentType")).equalsIgnoreCase("Course"))
+                        detail.setContentType("folder");
+                    else
+                        detail.setContentType(content_cursor.getString(content_cursor.getColumnIndex("contentType")));
+
                     detail.setAltnodeid(content_cursor.getString(content_cursor.getColumnIndex("altnodeid")));
                     detail.setVersion(content_cursor.getString(content_cursor.getColumnIndex("version")));
                     detail.setAssignment(content_cursor.getString(content_cursor.getColumnIndex("assignment")));
+                    detail.setSeq_no(content_cursor.getString(content_cursor.getColumnIndex("seq_no")));
                     detail.setDownloaded(true);
                     detail.setOnSDCard(true);
                     contents.add(detail);

@@ -70,6 +70,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
         course_del_no = itemView.findViewById(R.id.course_del_no);
         course_video_watched_percent = itemView.findViewById(R.id.item_watchedPercent);
     }
+
     public void setChildItems(Modal_ContentDetail contentDetail,
                               ContentPlayerContract.courseDetailAdapterClick courseDetailAdapterClick, int pos) {
         course_child_title.setText(contentDetail.getNodetitle());
@@ -110,10 +111,10 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             } else if (contentDetail.getResourcetype().toLowerCase().equalsIgnoreCase(PD_Constant.VIDEO)) {
                 Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_video);
 //                Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
-                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID,""),contentDetail.getResourceid());
-                if(percent!=null){
+                String percent = contentProgressDao.progressPercent(FastSave.getInstance().getString(PD_Constant.GROUPID, ""), contentDetail.getResourceid());
+                if (percent != null) {
                     Objects.requireNonNull(course_video_watched_percent).setVisibility(View.VISIBLE);
-                    course_video_watched_percent.setText(percent+"%");
+                    course_video_watched_percent.setText(percent + "%");
                 } else {
                     Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
                 }
@@ -131,10 +132,31 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
                 Objects.requireNonNull(course_video_watched_percent).setVisibility(View.GONE);
                 course_child_title.setText(contentDetail.getNodetitle());
-                course_child_image.setImageResource(R.drawable.assessment_logo);
-            }else {
+ //               course_child_image.setImageResource(contentDetail.getNodeserverimage());
+            } else {
                 Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }
+
+            /** this condition used for content versioning*/
+            if (contentDetail.isNodeUpdate())
+                Objects.requireNonNull(img_content_type).setImageResource(R.drawable.ic_update);
+
+            rl_courseDownload.setOnClickListener(v -> {//
+                Log.e("rl click : ", "in");
+                if (contentDetail.isNodeUpdate()) {
+                    if (rl_courseReveal != null) rl_courseReveal.setVisibility(View.INVISIBLE);
+                    Log.e("rl click : ", "in if");
+                    courseDetailAdapterClick.onDownloadClicked(pos, contentDetail, rl_courseReveal, rl_courseDownload);
+                } else {
+                    if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))
+                        courseDetailAdapterClick.onAssessmentItemClicked(contentDetail);
+                    else {
+                        Log.e("rl click : ", "in if else");
+                        courseDetailAdapterClick.onChildItemClicked(contentDetail);
+                    }
+                }
+            });
+
 
             itemView.setOnClickListener(v -> {
                 if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))
@@ -178,6 +200,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             }
             // TODO : Further Functionality when download clicked
             rl_courseDownload.setOnClickListener(v -> {//
+                Log.e("rl click dwnld: ", "in");
                 if (rl_courseReveal != null) rl_courseReveal.setVisibility(View.INVISIBLE);
                 courseDetailAdapterClick.onDownloadClicked(pos, contentDetail, rl_courseReveal, rl_courseDownload);
             });
@@ -186,7 +209,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT)) {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
                 course_child_title.setText(contentDetail.getNodetitle());
-                course_child_image.setImageResource(R.drawable.assessment_logo);
+//                course_child_image.setImageResource(R.drawable.assessment_logo);
                 rl_courseDownload.setEnabled(false);
             } else {
                 Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);

@@ -38,7 +38,7 @@ public class Fragment_CourseEnrollment extends Fragment {
     }
 
     private void initializeTabs() {
-        String[] mTitles = {"Enrolled Courses", "New Courses"};
+        String[] mTitles = getResources().getStringArray(R.array.course_menu);
         tab_course.setTabData(mTitles);
         tab_course.setOnTabSelectListener(new OnTabSelectListener() {
             @Override

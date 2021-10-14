@@ -1,9 +1,11 @@
 package com.pratham.prathamdigital.models;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
@@ -69,10 +71,13 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     private String mappedApiId;
     @Ignore
     private String mappedParentId;
+    @Ignore
+    public boolean nodeUpdate = false;//if content has update
 
     public Modal_ContentDetail() {
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     protected Modal_ContentDetail(Parcel in) {
         nodeid = in.readString();
         nodetype = in.readString();
@@ -104,6 +109,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
     }
 
     public static final Creator<Modal_ContentDetail> CREATOR = new Creator<Modal_ContentDetail>() {
+        @RequiresApi(api = Build.VERSION_CODES.Q)
         @Override
         public Modal_ContentDetail createFromParcel(Parcel in) {
             return new Modal_ContentDetail(in);
@@ -339,6 +345,10 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         this.resourcezip = resourcezip;
     }
 
+    public boolean isNodeUpdate() { return nodeUpdate; }
+
+    public void setNodeUpdate(boolean nodeUpdate) { this.nodeUpdate = nodeUpdate; }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_ContentDetail compare = (Modal_ContentDetail) o;
@@ -356,6 +366,7 @@ public class Modal_ContentDetail implements Comparable, Parcelable {
         return 0;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(nodeid);

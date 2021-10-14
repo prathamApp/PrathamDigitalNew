@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.interfaces.FTPConnected;
 
 import org.androidannotations.annotations.Background;
@@ -53,7 +54,7 @@ public class ConnectToFTP {
         if (connected) {
             ftpConnected.onFTPConnected(true, client1);
         } else {
-            Toast.makeText(context, "Connecting... Please wait!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.connecting_wait, Toast.LENGTH_SHORT).show();
             ftpConnected.onFTPConnected(connected, null);
         }
     }

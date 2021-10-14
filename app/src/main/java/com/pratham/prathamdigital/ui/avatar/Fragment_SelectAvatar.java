@@ -76,6 +76,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     ImageView img_add_child_back;
     @ViewById(R.id.txt_sel_language)
     TextView txt_sel_language;
+    @ViewById(R.id.label_addChild)
+    TextView label_addChild;
 
     private final ArrayList<String> avatarList = new ArrayList<>();
     private Context context;
@@ -98,6 +100,9 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     String dateTime = PD_Utility.getCurrentDateTime().replaceAll("[\\-\\s\\:]","");
 
+    Modal_Student modal_student;
+    ArrayAdapter adapterAge, adapterClass;
+
     @Background
     public void initializeAvatars() {
         String[] avatars = getResources().getStringArray(R.array.avatars);
@@ -107,6 +112,13 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     @AfterViews
     public void initialize() {
+        //spinner adapters
+        adapterClass = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.student_class, R.layout.simple_spinner_item);
+        spinner_class.setAdapter(adapterClass);
+        adapterAge = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.age, R.layout.simple_spinner_item);
+        spinner_age.setAdapter(adapterAge);
+        initializeAvatars();
+
         avatar_circular_reveal.setListener(this);
         if (getArguments() != null && getArguments().getBoolean(PD_Constant.SHOW_BACK))
             img_add_child_back.setVisibility(View.VISIBLE);
@@ -122,8 +134,20 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                     return true;
                 }
             });
+            try {
+                if (getArguments().getString(PD_Constant.EDIT_PROFILE).equalsIgnoreCase(PD_Constant.EDIT_PROFILE)) {
+                    modal_student = studentDao.getStudent(FastSave.getInstance().getString(PD_Constant.GROUPID,""));
+                    txt_sel_language.setVisibility(View.GONE);
+                    label_addChild.setText("Edit Child");
+                    btn_avatar_next.setText("Edit & Save");
+                    et_child_name.setText(modal_student.getFullName());
+                    spinner_age.setSelection(adapterAge.getPosition("Age "+modal_student.getAge()));
+                    spinner_class.setSelection(adapterClass.getPosition(modal_student.getStud_Class()));
+                }
+            } catch(Exception e){
+                e.printStackTrace();
+            }
         }
-        initializeAvatars();
 
         //Set spinner dropdown background to white for os api level > 22
         if(Build.VERSION.SDK_INT>22){
@@ -134,10 +158,6 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
 
     @UiThread
     public void initializeAdapter() {
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(Objects.requireNonNull(getActivity()), R.array.student_class, R.layout.simple_spinner_item);
-        spinner_class.setAdapter(adapter);
-        ArrayAdapter adapter2 = ArrayAdapter.createFromResource(getActivity(), R.array.age, R.layout.simple_spinner_item);
-        spinner_age.setAdapter(adapter2);
         avatar_rv.setOrientation(DSVOrientation.VERTICAL);
         avatar_rv.addOnItemChangedListener(onItemChangedListener);
         avatar_rv.setAdapter(new AvatarAdapter(context, avatarList));
@@ -152,9 +172,27 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
     public void setNext() {
         PrathamApplication.bubble_mp.start();
         if (!et_child_name.getText().toString().isEmpty()) {
-            insertStudentAndMarkAttendance();
+            /**editing student details*/
+            if(getArguments().getString(PD_Constant.EDIT_PROFILE)!=null){
+                getSelectedAge();
+                String studClass = spinner_class.getSelectedItem().toString();
+                studentDao.editStudent(et_child_name.getText().toString(),
+                        String.valueOf(FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0)),
+                        studClass, avatar_selected,
+                        FastSave.getInstance().getString(PD_Constant.GROUPID,""));
+
+                FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME,et_child_name.getText().toString());
+                FastSave.getInstance().saveString(PD_Constant.AVATAR,avatar_selected);
+                Toast.makeText(getActivity(), R.string.profile_edit_success, Toast.LENGTH_SHORT).show();
+                EventMessage message = new EventMessage();
+                message.setMessage(PD_Constant.EDIT_SUCCESS);
+                EventBus.getDefault().post(message);
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
+            } else{
+                insertStudentAndMarkAttendance();
+            }
         } else
-            Toast.makeText(getActivity(), "Please enter the name", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.enter_name, Toast.LENGTH_SHORT).show();
     }
 
     @Background
@@ -277,6 +315,8 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
                 Bundle bundle = message.getBundle();
                 noti_key = bundle.getString(PD_Constant.PUSH_NOTI_KEY);
                 noti_value = bundle.getString(PD_Constant.PUSH_NOTI_VALUE);
+            } else if(message.getMessage().equalsIgnoreCase(PD_Constant.EDIT_BACK)){
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().popBackStack();
             }
     }
 

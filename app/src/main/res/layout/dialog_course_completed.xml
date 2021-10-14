@@ -34,7 +34,7 @@
             android:layout_marginRight="@dimen/_10sdp"
             android:layout_marginBottom="@dimen/_20sdp"
             android:gravity="center"
-            android:text="Great!!\n Let's share our experience for this course."
+            android:text="@string/course_expr"
             android:textColor="@color/charcoal"
             android:textSize="@dimen/_16sdp"
             tools:ignore="HardcodedText" />
@@ -48,7 +48,7 @@
             android:gravity="center"
             android:minWidth="@dimen/_120sdp"
             android:minHeight="@dimen/_35sdp"
-            android:text="Let's Go"
+            android:text="@string/lets_go"
             android:textColor="@android:color/white"
             tools:ignore="HardcodedText" />
     </LinearLayout>

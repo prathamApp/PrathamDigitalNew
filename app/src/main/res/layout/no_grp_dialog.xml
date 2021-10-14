@@ -36,7 +36,7 @@
                 android:gravity="center"
                 android:minWidth="@dimen/_120sdp"
                 android:minHeight="@dimen/_35sdp"
-                android:text="Exit"
+                android:text="@string/exit_dialog"
                 android:textColor="@android:color/white" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView

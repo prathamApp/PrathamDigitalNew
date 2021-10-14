@@ -155,13 +155,13 @@ public class Fragment_NewCourses extends Fragment implements PlanningContract.ne
     @UiThread
     @Override
     public void courseAlreadySelected() {
-        Toast.makeText(getActivity(), "Course already enrolled!", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), R.string.course_already_enrolled, Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.btn_course_time_select)
     public void onCourseTimeSelected() {
         if (endDate == null || startDate == null) {
-            Toast.makeText(getActivity(), "Please select the correct timeline.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.select_correct_timeline, Toast.LENGTH_SHORT).show();
             return;
         }
         mHandler.sendEmptyMessage(HIDE_DATE_PICKER);

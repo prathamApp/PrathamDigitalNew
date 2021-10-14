@@ -28,6 +28,8 @@
     <color name="light_orange">#fba27f</color>
     <color name="purple">#8458c1</color>
 
+    <color name="colorBtnGreenDark">#00c853</color>
+
     <color name="stpi_default_circle_color">#b3bdc2</color>
     <color name="stpi_default_primary_color">#00b47c</color>
     <color name="stpi_default_line_color">#313b49</color>

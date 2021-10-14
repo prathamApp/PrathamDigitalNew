@@ -8,12 +8,25 @@
     <string name="age_8to14">Age 8-14</string>
     <string name="pref_key_transition_time">pref_key_transition_time</string>
     <string name="download">Download</string>
-    <string name="new_version_available">For more features and a better user experience, please upgrade this app.</string>
+    <string name="new_version_available">A new Version is Available. Click to Update.</string>
     <string name="default_notification_channel_id">fcm_default_channel</string>
     <string name="fcm_message">Pratham</string>
     <string name="retry">Retry</string>
     <string name="Open">Open</string>
-    <string name="downloading">Downloading...</string>
+    <string name="downloading">Downloading..</string>
+    //
+    <string name="no_connect">no_connection</string>
+    <string name="view_more">VIEW MORE</string>
+    <string name="choose_sd_card">Choose SD card</string>
+    <string name="course_expr">Great!!\n Let\'s share our experience for this course.</string>
+    <string name="lets_go">Let\'s Go</string>
+    <string name="pushing_data">Please wait, pushing Data..</string>
+    <string name="push_error">Check your wifi is connected !</string>
+    <string name="course_count">Course Enrolled : </string>
+    <string name="done">Done</string>
+    <string name="confirm">Confirm</string>
+    <string name="asmnt_redirect">You will be redirected to Assessment App!</string>
+
     <string-array name="search_tags">
         <item>English</item>
         <item>Maths</item>
@@ -27,9 +40,11 @@
         <item>Age 8–14\nDekho Aur Sikho</item>
     </string-array>
     <string-array name="languages">
-        <!--        <item>English</item>-->
         <item>हिंदी</item>
+        <item>English</item>
         <item>मराठी</item>
+        <item>اردو</item>
+        <item>ಕನ್ನಡ</item>-->
         <!--        <item>ಕನ್ನಡ</item>
         <item>తెలుగు</item>
         <item>বাংলা</item>
@@ -43,9 +58,11 @@
     </string-array>
 
     <string-array name="language_code">
-        <!--        <item>English</item>-->
         <item>78672</item>
+        <item>82758</item>
         <item>c7ef54ea-4787-4ee8-b429-4e93b29887eb</item>
+        <item>82748</item>
+        <item>82768</item>
         <!--
         <item>ಕನ್ನಡ</item>
         <item>తెలుగు</item>
@@ -60,9 +77,12 @@
         <!--<item>മലയാളം</item>-->
     </string-array>
     <string-array name="main_languages">
-        <!--        <item>English</item>-->
         <item>Hindi</item>
+        <item>English</item>
         <item>Marathi</item>
+        <item>Urdu</item>
+        <item>Kannada</item>-->
+
         <!--
         <item>Kannada</item>
         <item>Telugu</item>
@@ -224,6 +244,7 @@
         <item>Pull Data</item>
         <item>Read village data from DB</item>
     </string-array>
+
     <string name="read_india">Read India</string>
     <string name="hybrid_learning">Hybrid Learning</string>
     <string name="second_chance">Second Chance</string>
@@ -327,7 +348,8 @@
     <string name="no_permissions_granted">We can\'t give you service without your permission</string>
     <string name="permissions_dialog_title">We need your help</string>
     <string name="accept_permissions_dialog">GIVE PERMISSIONS!</string>
-    <string name="cancel_dialog">CANCEL</string>
+    <string name="cancel_dialog">Cancel</string>
+    <string name="exit_dialog">EXIT</string>
     <string name="no_internet_connection">NO INTERNET CONNECTION:( PLEASE CHECK YOUR CONNECTION</string>
     <string name="count_down_gap_string_format">Next content in %s seconds</string>
     <!--    vertical stepper view-->
@@ -357,5 +379,54 @@
     <string name="str_totgampld">Total Games Played</string>
     <string name="str_totstoryrd">Total Stories Read</string>
     <string name="str_activityperf">Activity Performed</string>
+    <string name="str_date">date</string>
+
+    <string-array name="course_menu">
+        <item>Enrolled Courses</item>
+        <item>New Courses</item>
+    </string-array>
+    <string name="add_new_course">Add New Course</string>
+    <string name="create_course">No data to show, Create a course now</string>
+
+    <string name="data_push_success">Data Pushed Successfully!!</string>
+    <string name="db_push_success">DataBase Pushed Successfully!!</string>
+    <string name="data_push_fail">Data Pushing Failed!!</string>
+    <string name="open_menu">Open Menu</string>
+    <string name="create_profile">Create Profile</string>
+    <string name="enrollmentID">EnrollmentID</string>
+    <string name="enrollment_details">Enrollment Details</string>
+    <string name="enter_enrollment_id">Enter enrollment ID</string>
+    <string name="check">Check</string>
+    <string name="age">Age : </string>
+    <string name="clas">Class : </string>
+    <string name="gender">Gender : </string>
+    <string name="group_id">Group Id : </string>
+    <string name="group_name">Group name : </string>
+    <string name="no_stud_found">Student not found.\n Check Enrollment ID again.</string>
+    <string name="save_profile">Save Profile</string>
+
+
+    //All Toast Messages
+    <string name="grant_storage_permission">Kindly grant storage permission and restart the app.</string>
+    <string name="enter_name">Please enter name</string>
+    <string name="permission_not_given">Permission Not Given</string>
+    <string name="invalid_input">Input Is Invalid</string>
+    <string name="connecting_wait">Connecting… Please wait!</string>
+    <string name="submit_assignment">Please submit all assignments</string>
+    <string name="asmntapp_not_found">Assessment App not found</string>
+    <string name="asmnt_saved">Assessment Saved</string>
+    <string name="vid_player_error">VideoPlayer Error</string>
+    <string name="internet_connection">Please Check Internet Connection!</string>
+    <string name="select_students">Please Select Students</string>
+    <string name="course_already_enrolled">Course already enrolled!</string>
+    <string name="select_correct_timeline">Please select the correct timeline</string>
+    <string name="enter_enroll_id">Please Enter enrollment Id</string>
+    <string name="profile_edit_success">Profile Edited Successfully!</string>
+    <string name="profile_already_saved">Profile is already saved..</string>
+    <string name="profile_created_success">Profile created Successfully..</string>
+    <string name="select_grp_or_stud">Please select a Group or Student</string>
+    <string name="file_not_found">File not found</string>
+    <string name="data_pull_success">Data Pulled Successfully!</string>
+    <string name="data_clear_success">Data cleared Successfully!</string>
 
 </resources>

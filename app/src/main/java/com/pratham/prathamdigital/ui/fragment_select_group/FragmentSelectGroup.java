@@ -228,7 +228,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
         if (tempGrp != null)
             setNext(btn_group_next, tempGrp);
-        else Toast.makeText(getActivity(), "Please select a Group.", Toast.LENGTH_SHORT).show();
+        else Toast.makeText(getActivity(), R.string.select_grp_or_stud, Toast.LENGTH_SHORT).show();
     }
 
     @Click(R.id.img_att_back)

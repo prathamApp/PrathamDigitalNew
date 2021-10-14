@@ -1,0 +1,37 @@
+[
+  {
+    "language": "Hindi",
+    "main_language": "Hindi",
+    "language_id": 78672
+  },
+  {
+    "language": "Marathi",
+    "main_language": "Marathi",
+    "language_id": "c7ef54ea-4787-4ee8-b429-4e93b29887eb"
+  },
+  {
+    "language": "Urdu",
+    "main_language": "Urdu",
+    "language_id": 82748
+  },
+  {
+    "language": "English",
+    "main_language": "English",
+    "language_id": 82758
+  },
+  {
+    "language": "Kannada",
+    "main_language": "Kannada",
+    "language_id": 82768
+  },
+  {
+    "language": "Assamese",
+    "main_language": "Assamese",
+    "language_id": 82900
+  },
+  {
+    "language": "Odia",
+    "main_language": "Odia",
+    "language_id": 86000
+  }
+]

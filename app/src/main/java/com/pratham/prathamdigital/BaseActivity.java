@@ -157,7 +157,7 @@ public class BaseActivity extends AppCompatActivity {
                                 mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .onForeverDenied(permissionResult -> {
-                                Toast.makeText(BaseActivity.this, "Kindly grant storage permission and restart the app", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
@@ -173,7 +173,7 @@ public class BaseActivity extends AppCompatActivity {
                                 mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
                             })
                             .onForeverDenied(permissionResult -> {
-                                Toast.makeText(BaseActivity.this, "Kindly grant location permission and restart the app", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
@@ -194,7 +194,7 @@ public class BaseActivity extends AppCompatActivity {
                                 EventBus.getDefault().post(msg1);*/
                             })
                             .onForeverDenied(permissionResult -> {
-                                Toast.makeText(BaseActivity.this, "Kindly grant phone permission and restart the app", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;

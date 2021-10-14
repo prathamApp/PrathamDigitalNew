@@ -27,8 +27,6 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments;
 import com.pratham.prathamdigital.ui.content_player.assignments.Fragment_Assignments_;
-import com.pratham.prathamdigital.ui.content_player.audio_player.Fragment_AudioPlayer;
-import com.pratham.prathamdigital.ui.content_player.audio_player.Fragment_AudioPlayer_;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment_;
 import com.pratham.prathamdigital.ui.content_player.fragment_aaj_ka_sawal.Fragment_AAJ_KA_SAWAL;

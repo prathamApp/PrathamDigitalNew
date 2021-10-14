@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 public class PD_Constant {
 
 
+    public static final String apkDate = "09-10-2021";
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
@@ -213,6 +214,9 @@ public class PD_Constant {
     public static final String OTG_INSERTED = "OTG_INSERTED";
     public static final String SCORE_COUNTT = "score_count";
     public static final String COURSE_COUNT = "course_count";
+    public static final String EDIT_PROFILE = "edit_profile";
+    public static final String EDIT_SUCCESS = "edit_success";
+    public static final String EDIT_BACK = "edit_back";
 
     //languages
     public static String HINDI = "Hindi";
@@ -283,7 +287,6 @@ public class PD_Constant {
         BROWSE_RASPBERRY_URL_NEW(RASP_IP + "/api/channel/AppNodeDetailListByNode/?ParentId="),//req
         PUSH_DB_URL("http://devprodigi.openiscool.org/api/PradigiLifeDB/PushFiles"),//req
         PUSH_DBTORASP_URL(RASP_IP + "/api/dbpushdata/?table_name=DBPUSHDATA");//req
-
         private final String name;
 
         URL(String s) {

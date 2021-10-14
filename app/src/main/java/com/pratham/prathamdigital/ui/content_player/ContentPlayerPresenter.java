@@ -36,6 +36,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
     Context context;
     private Model_CourseEnrollment courseParent;
     private List<Modal_ContentDetail> courseChilds;
+    private List<Modal_ContentDetail> tempUpdatedCourseContent;
     private List<Modal_ContentDetail> coursePlayingQueue;
     private ContentPlayerContract.contentPlayerView contentPlayerView;
     private String courseId;
@@ -54,6 +55,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
     public void setCourse(Intent intent) {
         courseParent = intent.getParcelableExtra(PD_Constant.COURSE_PARENT);
         courseChilds = intent.getParcelableArrayListExtra(PD_Constant.CONTENT);
+        tempUpdatedCourseContent = intent.getParcelableArrayListExtra("course_update");
         coursePlayingQueue = new ArrayList<>(intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
         course_week = intent.getStringExtra(PD_Constant.WEEK);
         courseId = intent.getStringExtra(PD_Constant.COURSE_ID);
@@ -92,7 +94,8 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                     setCourse(intent);
                     bundleCourse(intent);
                 } else if (intent.getStringExtra(PD_Constant.CONTENT_TYPE).equalsIgnoreCase(PD_Constant.YOUTUBE_LINK)) {
-                    bundleVideo(null, false, intent.getStringExtra(PD_Constant.CONTENT));
+                    Modal_ContentDetail contentDetail = intent.getParcelableExtra(PD_Constant.CONTENT);
+                    bundleVideo(contentDetail, false, PD_Constant.YOUTUBE_LINK);
                 }
             }
     }
@@ -104,6 +107,7 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
             courseDetailBundle.putString("NODE_TITLE", intent.getStringExtra("NODE_TITLE"));
             courseDetailBundle.putString("NODE_DESC", intent.getStringExtra("NODE_DESC"));
             courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT, intent.getParcelableArrayListExtra(PD_Constant.CONTENT));
+            courseDetailBundle.putParcelableArrayList("course_update", intent.getParcelableArrayListExtra("course_update"));
             courseDetailBundle.putParcelableArrayList(PD_Constant.CONTENT_LEVEL, intent.getParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL));
         } else {
             courseDetailBundle.putString("NODE_CALL", intent.getStringExtra("NODE_CALL"));
@@ -195,7 +199,9 @@ public class ContentPlayerPresenter implements ContentPlayerContract.contentPlay
                 Log.e("url Audio Nxt : ",".");
                 bundleAudio(coursePlayingQueue.get(0), true);
             }
-            coursePlayingQueue.remove(0);
+            try {
+                coursePlayingQueue.remove(0);
+            } catch (Exception e) { e.printStackTrace();}
         } else contentPlayerView.onCourseCompleted();
     }
 

@@ -311,7 +311,7 @@ public class CustomExoPlayerView extends LinearLayout implements View.OnClickLis
     private MediaSource buildMediaSource(String source, HashMap<String, String> extraHeaders) {
 
         if (source == null) {
-            Toast.makeText(context, "Input Is Invalid.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, R.string.invalid_input, Toast.LENGTH_SHORT).show();
             return null;
         }
 

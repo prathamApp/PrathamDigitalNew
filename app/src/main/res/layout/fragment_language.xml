@@ -6,10 +6,14 @@
     android:clickable="true"
     android:focusable="true">
 
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <RelativeLayout
+
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/language_gradient_three">
+
+        <include layout="@layout/layout_network_error" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_language"

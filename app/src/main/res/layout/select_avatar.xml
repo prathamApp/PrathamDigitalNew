@@ -28,6 +28,7 @@
                 tools:ignore="HardcodedText" />
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/label_addChild"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -73,7 +74,8 @@
                     android:hint="Name"
                     android:textColor="@color/white"
                     android:textColorHint="@color/white"
-                    tools:ignore="HardcodedText" />
+                    tools:ignore="HardcodedText"
+                    android:imeOptions="actionNext"/>
 
                 <Spinner
                     android:id="@+id/spinner_age"

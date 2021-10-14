@@ -19,6 +19,8 @@ public interface ContentContract {
 
         void displayContentsInCourse(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> content);
 
+        void displayContentsInCourseNew(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> content, List<Modal_ContentDetail> content1);
+
         void displayHeader(Modal_ContentDetail contentDetail);
 
         void hideViews();

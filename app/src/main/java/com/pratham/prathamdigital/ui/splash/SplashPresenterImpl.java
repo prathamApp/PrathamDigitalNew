@@ -244,6 +244,11 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = PD_Utility.getCurrentVersion(context);
             statusDao.insert(statusObj);
         }
+        if(statusDao.getKey("apkDate")==null) {
+            statusObj.statusKey = "apkDate";
+            statusObj.value = PD_Constant.apkDate;
+            statusDao.insert(statusObj);
+        }
     }
 
     @Background
