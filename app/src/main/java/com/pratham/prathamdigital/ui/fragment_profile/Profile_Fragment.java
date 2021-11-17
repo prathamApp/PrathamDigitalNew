@@ -46,6 +46,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 @EFragment(R.layout.fragment_profile)
@@ -67,6 +68,8 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
     RecyclerView rv_activityDetail;
     @ViewById(R.id.iv_editProfile)
     ImageView iv_editProfile;
+    @ViewById(R.id.tv_enrollment_id)
+    TextView tv_enrollment_id;
 
     @Bean(ProfilePresenter.class)
     ProfilePresenter profilePresenter;
@@ -82,14 +85,26 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
         profilePresenter.loadTotalUsedResources();
         profilePresenter.loadDateWiseResources();
         initializeAdapter();
+        Log.e("id ::::::::::::: ",FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"));
+        Log.e("enrollType ::::::::::: ",FastSave.getInstance().getString(PD_Constant.ENROL_TYPE,"not_enroll"));
         String groupName = studentDao.getStudGroupName(FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"));
         try{
-            if(groupName.equals("SmartPhone"))
+            if(groupName.equals("SmartPhone")) {
                 iv_editProfile.setVisibility(View.VISIBLE);
-            else
+                tv_enrollment_id.setVisibility(View.GONE);
+            }
+            else {
+                String enrollmentID = studentDao.getEnrollmentId(FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"));
+                tv_enrollment_id.setVisibility(View.VISIBLE);
                 iv_editProfile.setVisibility(View.GONE);
+                tv_enrollment_id.setText(enrollmentID);
+            }
         } catch (Exception e){
             e.printStackTrace();
+            String enrollmentID = groupDao.getEnrollmentId(FastSave.getInstance().getString(PD_Constant.GROUPID,"no_student"));
+            tv_enrollment_id.setVisibility(View.VISIBLE);
+            iv_editProfile.setVisibility(View.GONE);
+            tv_enrollment_id.setText(enrollmentID);
         }
     }
 

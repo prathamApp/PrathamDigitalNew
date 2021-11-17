@@ -49,6 +49,8 @@ public class Modal_PushData {
         List<Modal_Score> scores;
         @SerializedName("attendances")
         List<Attendance> attendances;
+        @SerializedName("logs")
+        List<Modal_Log> logs;
 
         public String getSessionId() {
             return sessionId;
@@ -73,5 +75,10 @@ public class Modal_PushData {
         public void setAttendances(List<Attendance> attendances) {
             this.attendances = attendances;
         }
+
+        public List<Modal_Log> getLogs() { return logs; }
+
+        public void setLogs(List<Modal_Log> logs) { this.logs = logs; }
+
     }
 }

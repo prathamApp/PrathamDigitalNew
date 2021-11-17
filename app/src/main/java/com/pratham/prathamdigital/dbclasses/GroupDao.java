@@ -35,4 +35,7 @@ public interface GroupDao {
     @Query("select * from Groups WHERE DeviceID = 'deleted'")
     List<Modal_Groups> GetAllDeletedGroups();
 
+    @Query("select SchoolName from Groups WHERE GroupId=:grpID")
+    String getEnrollmentId(String grpID);
+
 }

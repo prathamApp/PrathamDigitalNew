@@ -217,6 +217,10 @@ public class PD_Constant {
     public static final String EDIT_PROFILE = "edit_profile";
     public static final String EDIT_SUCCESS = "edit_success";
     public static final String EDIT_BACK = "edit_back";
+    public static final String AUTO_PUSH = "AUTO_PUSH";
+    public static final String MANUAL_PUSH = "MANUAL_PUSH";
+    public static final String DB_PUSH = "DB_PUSH";
+    public static final String ENROL_TYPE = "ENROLL_TYPE";
 
     //languages
     public static String HINDI = "Hindi";

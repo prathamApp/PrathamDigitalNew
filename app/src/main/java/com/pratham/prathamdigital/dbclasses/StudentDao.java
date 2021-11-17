@@ -68,5 +68,8 @@ public interface StudentDao {
     @Query("select GroupName from Students where StudentId = :studentID")
     String getStudGroupName(String studentID);
 
+    @Query("select LastName from Students where StudentId = :studentID")
+    String getEnrollmentId(String studentID);
+
     //   void deleteAllStudents();
 }

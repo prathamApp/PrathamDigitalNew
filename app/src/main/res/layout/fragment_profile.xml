@@ -37,11 +37,11 @@
                         android:id="@+id/iv_editProfile"
                         android:layout_width="@dimen/_20sdp"
                         android:layout_height="@dimen/_20sdp"
-                        android:src="@drawable/pencil"
                         android:layout_gravity="end|top"
-                        android:layout_marginEnd="@dimen/_10sdp"
                         android:layout_marginTop="@dimen/_10sdp"
-                        android:visibility="gone"/>
+                        android:layout_marginEnd="@dimen/_10sdp"
+                        android:src="@drawable/pencil"
+                        android:visibility="gone" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -53,29 +53,40 @@
                         android:gravity="center"
                         android:orientation="vertical">
 
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/profile_card"
-                        android:layout_width="@dimen/_100sdp"
-                        android:layout_height="@dimen/_100sdp"
-                        app:cardBackgroundColor="@color/white"
-                        app:cardCornerRadius="@dimen/_50sdp">
+                        <com.google.android.material.card.MaterialCardView
+                            android:id="@+id/profile_card"
+                            android:layout_width="@dimen/_100sdp"
+                            android:layout_height="@dimen/_100sdp"
+                            app:cardBackgroundColor="@color/white"
+                            app:cardCornerRadius="@dimen/_50sdp">
 
-                        <com.airbnb.lottie.LottieAnimationView
-                            android:id="@+id/profileImage_lottie"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            app:lottie_autoPlay="true"
-                            app:lottie_loop="true" />
-                    </com.google.android.material.card.MaterialCardView>
+                            <com.airbnb.lottie.LottieAnimationView
+                                android:id="@+id/profileImage_lottie"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                app:lottie_autoPlay="true"
+                                app:lottie_loop="true" />
+                        </com.google.android.material.card.MaterialCardView>
 
-                    <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-                        android:id="@+id/profile_name"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_10sdp"
-                        android:textColor="@color/mid_grey"
-                        android:textSize="@dimen/_25sdp"
-                        android:textStyle="bold" />
+                        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                            android:id="@+id/profile_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_10sdp"
+                            android:textColor="@color/mid_grey"
+                            android:textSize="@dimen/_22sdp"
+                            android:textStyle="bold" />
+
+                        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                            android:id="@+id/tv_enrollment_id"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/_10sdp"
+                            android:textStyle="bold"
+                            android:visibility="gone"/>
+
                     </LinearLayout>
                 </LinearLayout>
 

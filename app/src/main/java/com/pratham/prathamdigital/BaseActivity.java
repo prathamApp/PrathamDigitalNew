@@ -48,6 +48,7 @@ import com.pratham.prathamdigital.custom.permissions.KotlinPermissions;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_PushData;
 import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Status;
@@ -70,6 +71,7 @@ import java.util.Objects;
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
 import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
 import static com.pratham.prathamdigital.PrathamApplication.courseDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
@@ -351,6 +353,8 @@ public class BaseActivity extends AppCompatActivity {
                         scoreDao.updateFlag(pushed.getSessionId());
                     for (Attendance att : pushed.getAttendances())
                         attendanceDao.updateSentFlag(pushed.getSessionId());
+                    for (Modal_Log logs : pushed.getLogs())
+                        logDao.updateSentFlag(pushed.getSessionId());
                 }
                 for (Model_CourseEnrollment enroll : pushedData.getCourse_enrolled()) {
                     courseDao.updateFlag(enroll.getCourseId(), enroll.getGroupId(), enroll.getLanguage());

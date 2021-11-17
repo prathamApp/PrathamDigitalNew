@@ -256,6 +256,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
             bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
             bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
             bundle.putBoolean("ISTABMODE", false);
+            FastSave.getInstance().saveString(PD_Constant.ENROL_TYPE,"INDIVIDUAL");
             if ((Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_ENROLLED))) {
                 bundle.putBoolean(PD_Constant.GROUP_ENROLLED, true);
                 PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.splash_frame,
@@ -277,6 +278,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
             bundle.putString(PD_Constant.GROUPID, modal_groups.getGroupId());
             bundle.putInt(PD_Constant.REVEALX, outLocation[0]);
             bundle.putInt(PD_Constant.REVEALY, outLocation[1]);
+            FastSave.getInstance().saveString(PD_Constant.ENROL_TYPE,"GROUP");
      /*   PD_Utility.addFragment(getActivity(), new FragmentChildAttendance_(), R.id.frame_attendance,
                 bundle, FragmentChildAttendance.class.getSimpleName());*/
             if ((Objects.requireNonNull(getArguments()).getBoolean(PD_Constant.GROUP_ENROLLED))) {

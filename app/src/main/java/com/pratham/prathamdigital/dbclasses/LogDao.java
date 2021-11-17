@@ -25,4 +25,10 @@ public interface LogDao {
 
     @Query("select * from Logs where sentFlag=0")
     List<Modal_Log> getAllLogs();
+
+    @Query("UPDATE Logs SET sentFlag=1 WHERE SessionID=:s_id")
+    void updateSentFlag(String s_id);
+
+    @Query("UPDATE Logs SET sentFlag=1")
+    void updateAllSentFlag();
 }
