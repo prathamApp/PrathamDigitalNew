@@ -292,4 +292,9 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             e.printStackTrace();
         }
     }
+
+    //Method to call download method from adapter
+    public void downloadAll(Modal_ContentDetail contentDetail, ContentPlayerContract.courseDetailAdapterClick courseDetailAdapterClick, int position){
+        courseDetailAdapterClick.onDownloadClicked(position, contentDetail, rl_courseReveal, rl_courseDownload);
+    }
 }

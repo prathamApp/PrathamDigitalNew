@@ -10,6 +10,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.pratham.prathamdigital.PrathamApplication;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -66,7 +67,8 @@ public enum MediaUpdater {
                 public void run() {
                     Log.d(TAG, "Sending ACTION_MEDIA_MOUNTED broadcast");
                     final Context context = PrathamApplication.getInstance();
-                    Uri uri = Uri.parse("file://" + Environment.getExternalStorageDirectory());
+                    //Uri uri = Uri.parse("file://" + Environment.getExternalStorageDirectory());
+                    Uri uri = Uri.parse("file://" + PD_Utility.getStoragePath());
                     Intent intent = new Intent(Intent.ACTION_MEDIA_MOUNTED, uri);
                     context.sendBroadcast(intent);
                 }

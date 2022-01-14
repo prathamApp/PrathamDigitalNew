@@ -5,6 +5,7 @@ import android.os.Environment;
 
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -20,8 +21,8 @@ public class BackupDatabase {
     public static void backup(Context mContext) {
         try {
             deletePreviousDbs();
-            File sd = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS);
-            if (!sd.exists()) sd.mkdir();
+            File sd = new File(PD_Utility.getStoragePath() + "/" + PD_Constant.PRATHAM_BACKUPS);
+            if (!sd.exists()) sd.mkdirs();
             if (sd.canWrite()) {
                 File currentDB = mContext.getDatabasePath(DB_NAME);
                 File parentPath = currentDB.getParentFile();
@@ -45,7 +46,7 @@ public class BackupDatabase {
     }
 
     private static void deletePreviousDbs() {
-        File sd = Environment.getExternalStorageDirectory();
+        File sd = PD_Utility.getStoragePath();
         for (File f : sd.listFiles()) {
             if (f.getName().contains(DB_NAME))
                 f.delete();

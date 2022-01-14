@@ -20,7 +20,9 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.SpeedMonitor;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -120,8 +122,8 @@ public class PD_ApiRequest {
         }
     }
 
-    //Used to get the language over server device in json format
-    public void getLanguageFromInternet(final String requestType, String url) {
+    //Used to get the language over server and Rasp Pi device in json format
+    public void getLanguageFromInternetAndRaspPi(final String requestType, String url) {
         try {
             Log.e("url : ",url);
             AndroidNetworking.get(url)
@@ -220,7 +222,7 @@ String url, JSONObject data) {
 */
 
     //Used to push data to server in zip format(zip contains json file)
-    public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data, String courseCount) {
+    public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data, String courseCount, String pushType, Context context) {
         AndroidNetworking.upload(url)
                 .addHeaders("Content-Type", "file/zip")
                 .addMultipartFile(""+uuID, new File(filepathstr + ".zip"))
@@ -231,6 +233,9 @@ String url, JSONObject data) {
                     public void onResponse(String response) {
                         Log.e("PushData", "DATA PUSH "+response);
                         new File(filepathstr + ".zip").delete();
+
+                        enterSyncLog(pushType,PD_Constant.SUCCESSFULLYPUSHED,context,courseCount);
+
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         msg.setCourseCount(courseCount);
@@ -241,6 +246,7 @@ String url, JSONObject data) {
                     @Override
                     public void onError(ANError anError) {
                         //Fail - Show dialog with failure message.
+                        enterSyncLog(pushType,PD_Constant.PUSHFAILED,context,courseCount);
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
                         EventBus.getDefault().post(msg);
@@ -252,7 +258,7 @@ String url, JSONObject data) {
     }
 
     //Used to push data to rasp_Pi device in zip format(zip contains json file)
-    public void pushDataToRaspberyPI(String url, String uuID, String filepathstr, JSONObject data, String courseCount) {
+    public void pushDataToRaspberyPI(String url, String uuID, String filepathstr, JSONObject data, String courseCount, String pushType, Context context) {
         Log.e("url :",url);
         AndroidNetworking.upload(url)
                 .addHeaders("Content-Type", "application/json")
@@ -264,6 +270,9 @@ String url, JSONObject data) {
                     public void onResponse(String response) {
                         Log.e("PushData", "DATA PUSH "+response);
                         new File(filepathstr + ".zip").delete();
+
+                        enterSyncLog(pushType,PD_Constant.SUCCESSFULLYPUSHED,context,courseCount);
+
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.SUCCESSFULLYPUSHED);
                         msg.setCourseCount(courseCount);
@@ -274,6 +283,7 @@ String url, JSONObject data) {
                     @Override
                     public void onError(ANError anError) {
                         //Fail - Show dialog with failure message.
+                        enterSyncLog(pushType,PD_Constant.PUSHFAILED,context,courseCount);
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
                         EventBus.getDefault().post(msg);
@@ -285,7 +295,7 @@ String url, JSONObject data) {
     }
 
     //Used to push database to server in zip format(zip contains database file)
-    public void pushDBToInternet(String url, String uuID, String filepathstr) {
+    public void pushDBToInternet(String url, String uuID, String filepathstr, String pushType, Context context) {
         AndroidNetworking.upload(url)
                 .addHeaders("Content-Type", "file/zip")
                 .addMultipartFile(""+uuID, new File(filepathstr + ".zip"))
@@ -296,6 +306,7 @@ String url, JSONObject data) {
                     public void onResponse(String response) {
                         Log.e("PushDataBase", "DATABASE PUSH "+response);
                         new File(filepathstr + ".zip").delete();
+                        enterSyncLog(pushType,PD_Constant.DBSUCCESSFULLYPUSHED,context,"");
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.DBSUCCESSFULLYPUSHED);
                         EventBus.getDefault().post(msg);
@@ -306,6 +317,7 @@ String url, JSONObject data) {
                         //Fail - Show dialog with failure message.
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
+                        enterSyncLog(pushType,PD_Constant.PUSHFAILED,context,"");
                         EventBus.getDefault().post(msg);
                         Log.e("Error::", anError.getErrorDetail());
                         Log.e("Error::", anError.getMessage());
@@ -315,7 +327,7 @@ String url, JSONObject data) {
     }
 
     //Used to push database to raspdevice in zip format(zip contains database file)
-    public void pushDBToRaspberryPi(String url, String uuID, String filepathstr) {
+    public void pushDBToRaspberryPi(String url, String uuID, String filepathstr, String pushType, Context context) {
         AndroidNetworking.upload(url)
                 .addHeaders("Content-Type", "file/zip")
                 .addMultipartFile("uploaded_file", new File(filepathstr + ".zip"))
@@ -326,6 +338,7 @@ String url, JSONObject data) {
                     public void onResponse(String response) {
                         Log.e("PushDataBase", "DATABASE PUSH "+response);
                         new File(filepathstr + ".zip").delete();
+                        enterSyncLog(pushType,PD_Constant.DBSUCCESSFULLYPUSHED,context,"");
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.DBSUCCESSFULLYPUSHED);
                         EventBus.getDefault().post(msg);
@@ -337,6 +350,7 @@ String url, JSONObject data) {
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
                         EventBus.getDefault().post(msg);
+                        enterSyncLog(pushType,PD_Constant.PUSHFAILED,context,"");
                         Log.e("Error1::", anError.getErrorDetail());
                         Log.e("Error2::", anError.getMessage());
                         Log.e("Error3::", anError.getResponse().toString());
@@ -563,6 +577,41 @@ String url, JSONObject data) {
             zipFile.extractAll(destination);
             new File(source).delete();
         } catch (ZipException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //Method used to enter sync status in Log table
+    public void enterSyncLog(String pushType, String pushStatus, Context context, String courseCount){
+        try {
+            String currentDateTime = PD_Utility.getCurrentDateTime();
+            Modal_Log log = new Modal_Log();
+            log.setErrorType(" ");
+            if (pushType.equalsIgnoreCase(PD_Constant.AUTO_PUSH))
+                log.setExceptionMessage("Auto_Sync");
+            else if(pushType.equalsIgnoreCase(PD_Constant.DB_PUSH))
+                log.setExceptionMessage("DB_Sync");
+            else
+                log.setExceptionMessage("Manual_Sync");
+//            log.setMethodName(""+FastSave.getInstance().getString(PD_Utility.getUUID().toString(), "na"));
+            log.setMethodName("na");
+            log.setSessionId("" + FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            log.setExceptionStackTrace("APK BUILD DATE : " + PD_Constant.apkDate);
+            log.setDeviceId("" + PD_Utility.getDeviceID());
+            log.setCurrentDateTime(currentDateTime);
+            log.setErrorType(pushStatus);
+
+            JSONObject pushStatusJson = null;
+            pushStatusJson = new JSONObject();
+            pushStatusJson.put("syncTime", currentDateTime);
+            pushStatusJson.put("coursesCount", courseCount);
+            log.setLogDetail(pushStatusJson.toString());
+
+            Log.d("PushData", "pushStatusJson JSON : " + pushStatusJson.toString());
+
+            logDao.insertLog(log);
+            BackupDatabase.backup(context);
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

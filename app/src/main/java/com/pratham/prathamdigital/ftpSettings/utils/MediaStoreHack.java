@@ -226,7 +226,7 @@ public class MediaStoreHack {
         return temporaryTrack;
     }
 
-    public static boolean mkdir(final Context context, final File file) throws IOException {
+    public static boolean mkdirs(final Context context, final File file) throws IOException {
         if (file.exists()) {
             return file.isDirectory();
         }

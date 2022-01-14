@@ -5,6 +5,7 @@ import android.os.Handler;
 
 import com.pratham.prathamdigital.models.Modal_Crl;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
+import com.pratham.prathamdigital.util.PD_Constant;
 
 import org.androidannotations.annotations.Background;
 import org.androidannotations.annotations.EBean;
@@ -18,9 +19,10 @@ import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 @EBean
 public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresenter {
     private AdminPanelContract.AdminPanelView adminPanelView;
+    Context context;
 
     public AdminPanelPresenter(Context context) {
-        Context context1 = context;
+        context = this.context;
     }
 
     @Override
@@ -59,7 +61,7 @@ public class AdminPanelPresenter implements AdminPanelContract.AdminPanelPresent
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                PrathamSmartSync.pushUsageToServer(true);
+                PrathamSmartSync.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, context);
             }
         }, 1500);
     }

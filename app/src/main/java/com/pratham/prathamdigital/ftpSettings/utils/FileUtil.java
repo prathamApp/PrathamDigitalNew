@@ -259,7 +259,7 @@ public abstract class FileUtil {
         }
 
         // Try the manual way, moving files individually.
-        if (!mkdir(target, context)) {
+        if (!mkdirs(target, context)) {
             return false;
         }
 
@@ -294,7 +294,7 @@ public abstract class FileUtil {
      * @return True if creation was successful.
      * @deprecated use {@link #mkdirs(Context, File)}
      */
-    public static boolean mkdir(final File file, Context context) {
+    public static boolean mkdirs(final File file, Context context) {
         if (file == null)
             return false;
         if (file.exists()) {
@@ -320,7 +320,7 @@ public abstract class FileUtil {
         // Try the Kitkat workaround.
         if (Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
             try {
-                return MediaStoreHack.mkdir(context, file);
+                return MediaStoreHack.mkdirs(context, file);
             } catch (IOException e) {
                 return false;
             }
@@ -331,7 +331,7 @@ public abstract class FileUtil {
 
     public static boolean mkdirs(Context context, File file) {
         boolean isSuccessful = true;
-        isSuccessful = mkdir(new File(file.getPath()), context);
+        isSuccessful = mkdirs(new File(file.getPath()), context);
         return isSuccessful;
     }
 

@@ -31,6 +31,9 @@ import com.pratham.prathamdigital.interfaces.Interface_copying;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Language;
+import com.pratham.prathamdigital.models.RaspModel.ModalRaspContentNew;
+import com.pratham.prathamdigital.models.RaspModel.Modal_RaspResult;
+import com.pratham.prathamdigital.models.RaspModel.Modal_Rasp_JsonData;
 import com.pratham.prathamdigital.ui.fragment_content.FragmentContent_;
 import com.pratham.prathamdigital.util.FileUtils;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -94,12 +97,21 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     public void initialize() {
         circular_language_reveal.setListener(this);
 
-        if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+        //languages are fetched from RaspPi
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
             showDialog();
             pd_apiRequest.setLangApiResult(this);
-            pd_apiRequest.getLanguageFromInternet(PD_Constant.BROWSE_INTERNET,
+            pd_apiRequest.getLanguageFromInternetAndRaspPi(PD_Constant.BROWSE_RASPBERRY,
+                    PD_Constant.URL.BROWSE_RASPBERRY_URL_NEW + "2000001");
+        }
+        //languages are fetched from Internet
+        else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+            showDialog();
+            pd_apiRequest.setLangApiResult(this);
+            pd_apiRequest.getLanguageFromInternetAndRaspPi(PD_Constant.BROWSE_INTERNET,
                     PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID());
         } else {
+            //languages are fetched from SD Card
             getLanguageFromAssets();
         }
 
@@ -232,17 +244,51 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
     @Override
     public void recievedLang(String header, String response) {
         dismissDialog();
-        Log.e("url api response : ", response);
-        Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
-        }.getType();
-        List<Modal_ContentDetail> languageList = gson.fromJson(response, listType);
-        for (Modal_ContentDetail language : languageList) {
-            lang.add(language.getContent_language());
-            langCode.add(language.getNodeid());
+        if(header.equalsIgnoreCase(PD_Constant.BROWSE_INTERNET)) {
+            Log.e("url api response : ", response);
+            Gson gson = new Gson();
+            Type listType = new TypeToken<ArrayList<Modal_ContentDetail>>() {
+            }.getType();
+            List<Modal_ContentDetail> languageList = gson.fromJson(response, listType);
+            for (Modal_ContentDetail language : languageList) {
+                lang.add(language.getContent_language());
+                langCode.add(language.getNodeid());
+            }
+            if (languageList.size() > 0)
+                initializeAdapter();
+        } else if (header.equalsIgnoreCase(PD_Constant.BROWSE_RASPBERRY)){
+            Log.e("url api response : ", response);
+            Gson gson = new Gson();
+            ModalRaspContentNew rasp_contents = gson.fromJson(response, ModalRaspContentNew.class);
+            rasp_contents.getModalRaspResults();
+//            Modal_Rasp_JsonData modal_rasp_jsonData;
+
+            if (rasp_contents.getModalRaspResults() != null) {
+                List<Modal_RaspResult> raspResults = new ArrayList<>();
+                for (int i = 0; i < rasp_contents.getModalRaspResults().size(); i++) {
+                    lang.add(rasp_contents.getModalRaspResults().get(i).getNodeTitle());
+                    langCode.add(rasp_contents.getModalRaspResults().get(i).getNodeId());
+                }
+//                if (rasp_contents.getCount() > 0)
+                    initializeAdapter();
+            } else {
+                Toast.makeText(getActivity(), "No Data Found in RaspPI.", Toast.LENGTH_SHORT).show();
+            }
+/*                    Modal_RaspResult modalRaspResult = new Modal_RaspResult();
+                    modalRaspResult.setAppId(rasp_contents.getModalRaspResults().get(i).getAppId());
+                    modalRaspResult.setNodeId(rasp_contents.getModalRaspResults().get(i).getNodeId());
+                    modalRaspResult.setNodeType(rasp_contents.getModalRaspResults().get(i).getNodeType());
+                    modalRaspResult.setNodeTitle(rasp_contents.getModalRaspResults().get(i).getNodeTitle());
+                    modalRaspResult.setParentId(rasp_contents.getModalRaspResults().get(i).getParentId());
+                    modalRaspResult.setJsonData(rasp_contents.getModalRaspResults().get(i).getJsonData());
+                    //raspResults.add(modalRaspResult);
+                    modal_rasp_jsonData = gson.fromJson(rasp_contents.getModalRaspResults().get(i).getJsonData(), Modal_Rasp_JsonData.class);
+                    Modal_ContentDetail detail = modalRaspResult.setContentToConfigNodeStructure(modalRaspResult, modal_rasp_jsonData);
+                    detail.setMappedApiId(detail.getNodeid());
+                    detail.setMappedParentId(mappedParentApi);
+                    detail.setContent_language(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+                    displayedContents.add(detail);*/
         }
-        if (languageList.size() > 0)
-            initializeAdapter();
     }
 
     @Override
@@ -251,6 +297,7 @@ public class FragmentLanguage extends Fragment implements ContractLanguage, Circ
         getLanguageFromAssets();
     }
 
+    //Method used to get language folders from .PraDigi folder
     public void getLanguageFromAssets() {
         ArrayList<String> dbLanguage = (ArrayList<String>) PrathamApplication.modalContentDao.getLanguagesFromDB();
 

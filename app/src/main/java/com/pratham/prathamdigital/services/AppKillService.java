@@ -23,7 +23,7 @@ public class AppKillService extends Service {
     @Override
     public void onTaskRemoved(Intent rootIntent) {
         try {
-            PrathamSmartSync.pushUsageToServer(false);
+            PrathamSmartSync.pushUsageToServer(false, PD_Constant.AUTO_PUSH, getApplicationContext());
             if (!FastSave.getInstance().getString(PD_Constant.SESSIONID, "").isEmpty()) {
                 sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
                 stopSelf();

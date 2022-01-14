@@ -160,7 +160,7 @@ public class Fragment_Enrollmentid extends Fragment {
 
     private void getStudentByEnrollmentNo(String enrollmentID){
         newEnrolledStudent = new Modal_Student();
-        String url = PD_Constant.STUDENT_ENROLLMENT_URL + et_enrollment_id.getText().toString() + "&appid=SCAPP";
+        String url = PD_Constant.STUDENT_ENROLLMENT_URL + et_enrollment_id.getText().toString() + "&appid=PRADIGILIFE";
         Log.e("URL ** : ",url);
         try {
             Gson gson = new Gson();

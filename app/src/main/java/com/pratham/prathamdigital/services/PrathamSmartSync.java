@@ -47,13 +47,14 @@ import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 public class PrathamSmartSync extends AutoSync {
     private static final String TAG = PrathamSmartSync.class.getSimpleName();
     public static String courseCount="";
+    public static String scoreCount="";
 
     @Override
     protected void onCreate(Context context) {
         super.onCreate(context);
     }
 
-    public static void pushUsageToServer(Boolean isPressed) {
+    public static void pushUsageToServer(Boolean isPressed, String pushType, Context context) {
         try {
             String programID = "";
             JSONObject rootJson = new JSONObject();
@@ -79,6 +80,7 @@ public class PrathamSmartSync extends AutoSync {
                 for (Modal_Score score : newScores) {
                     scoreArray.put(new JSONObject(gson.toJson(score)));
                 }
+                scoreCount = String.valueOf(newScores.size());
                 // fetch Session Data
                 JSONObject sessionJson = new JSONObject();
                 sessionJson.put(PD_Constant.SESSIONID, session.getSessionID());
@@ -131,7 +133,7 @@ public class PrathamSmartSync extends AutoSync {
                 rootJson.put(PD_Constant.METADATA, metadataJson);
                 rootJson.put(PD_Constant.COURSE_ENROLLED, courseArray);
                 rootJson.put(PD_Constant.COURSE_PROGRESS, progArray);
-                pushDataToServer(rootJson,courseCount);
+                pushDataToServer(rootJson,courseCount,pushType, context);
             } else {
                 if (isPressed) {
                     EventMessage msg = new EventMessage();
@@ -148,13 +150,13 @@ public class PrathamSmartSync extends AutoSync {
     public void onSync(Context context) {
         Log.d(TAG, "onSync: ");
         // Push Tab related Jsons
-        pushUsageToServer(false);
+        pushUsageToServer(false, PD_Constant.AUTO_PUSH, context);
     }
 
     //before pushing zipping the json and then pushing
-    public static void pushDataToServer(JSONObject data, String courseCount) {
+    public static void pushDataToServer(JSONObject data, String courseCount, String pushType, Context context) {
         try {
-            String uuID = "" + PD_Utility.getUUID();
+            String uuID = "PDL_" + PD_Utility.getUUID();
             String filepathstr = PrathamApplication.pradigiPath +"/"+ uuID; // file path to save
             File filepath = new File(filepathstr + ".json"); // file path to save
 
@@ -174,10 +176,10 @@ public class PrathamSmartSync extends AutoSync {
 
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
                 new PD_ApiRequest(PrathamApplication.getInstance())
-                        .pushDataToRaspberyPI(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(), uuID, filepathstr, data, courseCount);
+                        .pushDataToRaspberyPI(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(), uuID, filepathstr, data, courseCount, pushType, context);
             else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
                 new PD_ApiRequest(PrathamApplication.getInstance())
-                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data, courseCount);
+                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data, courseCount, pushType, context);
             }
         } catch (Exception e) {
             e.printStackTrace();

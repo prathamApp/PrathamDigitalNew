@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.fragment_content;
 
+import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 
@@ -67,7 +68,7 @@ public interface ContentContract {
 
         void updateFileProgress(String downloadID, Modal_FileDownloading mfd);
 
-        void onDownloadCompleted(String downloadID, Modal_ContentDetail content);
+        void onDownloadCompleted(String downloadID, Modal_ContentDetail content, Context context);
 
         void broadcast_downloadings();
 

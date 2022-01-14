@@ -234,6 +234,7 @@
         <item>Share App</item>
         <item>Sync Data</item>
         <item>Sync Database</item>
+        <item>Sync Log</item>
         <item>Exit</item>
     </string-array>
     <string-array name="admin_options">

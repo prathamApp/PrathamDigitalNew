@@ -13,14 +13,16 @@
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/date"
-            android:layout_width="@dimen/_45sdp"
+            android:layout_width="@dimen/_60sdp"
             android:layout_height="match_parent"
-            android:textSize="18sp"
+            android:textSize="13sp"
             android:textStyle="bold"
             android:textColor="@color/red"
             android:layout_marginTop="@dimen/_12sdp"
             android:paddingEnd="@dimen/_5sdp"
-            android:text="44/44"/>
+            android:text="44/44/4444"
+            android:textAlignment="textEnd"/>
+
 
         <LinearLayout
             android:id="@+id/ll_stepper"

@@ -2208,4 +2208,13 @@ public class PD_Utility {
             e.printStackTrace();
         }
     }
+
+    //This function is used to set the internal path in Documents Folder
+    public static File getStoragePath() {
+        if ((Build.VERSION.SDK_INT > Build.VERSION_CODES.Q)) {
+            return Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        } else {
+            return Environment.getExternalStorageDirectory();
+        }
+    }
 }

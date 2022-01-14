@@ -82,7 +82,7 @@ public class Fragment_AdminOptions extends Fragment implements ContractOptions.o
                 case PUSH_DATA:
                     showPushingDialog("Please wait...Pushing Data!");
                     //Necessary to add some delay or the ui will change very frequent, hard to notice
-                    new Handler().postDelayed(() -> PrathamSmartSync.pushUsageToServer(true), 1500);
+                    new Handler().postDelayed(() -> PrathamSmartSync.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, getActivity()), 1500);
                     break;
                 case ASSIGN_GROUPS:
                     Intent intent = new Intent(getActivity(), Activity_AssignGroups_.class);

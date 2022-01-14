@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
@@ -145,7 +146,13 @@ public class ReadContentDbFromSdCard {
                     detail.setAltnodeid(content_cursor.getString(content_cursor.getColumnIndex("altnodeid")));
                     detail.setVersion(content_cursor.getString(content_cursor.getColumnIndex("version")));
                     detail.setAssignment(content_cursor.getString(content_cursor.getColumnIndex("assignment")));
-                    detail.setSeq_no(content_cursor.getString(content_cursor.getColumnIndex("seq_no")));
+                    /**Made this sequence no change to resolve old db populate issue on 31 dec 2021
+                     * Here first column is checked if there or not accordingly data is populated
+                     */
+                    if(content_cursor.getColumnIndex("seq_no")==-1)
+                        Log.e("@@@","@@@");
+                    else
+                        detail.setSeq_no(content_cursor.getString(content_cursor.getColumnIndex("seq_no")));
                     detail.setDownloaded(true);
                     detail.setOnSDCard(true);
                     contents.add(detail);
@@ -155,6 +162,8 @@ public class ReadContentDbFromSdCard {
             modalContentDao.addContentList(contents);
             content_cursor.close();
         } catch (Exception e) {
+            Log.e("@@ CopyDb : ",e.getMessage());
+            Log.e("@@ CopyDb Local : ",e.getLocalizedMessage());
             e.printStackTrace();
         }
         if (FastSave.getInstance().getBoolean(PD_Constant.READ_DATA_FROM_DB, false)) {

@@ -162,7 +162,8 @@ public class PrathamApplication extends Application implements LifecycleObserver
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
         Log.e("URL B","BackGround");
-        Modal_Log log = new Modal_Log();
+        /**Commented to stop adding entry in log table for App in Background*/
+/*        Modal_Log log = new Modal_Log();
         log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
         log.setErrorType("AppInBackgroundLog");
         log.setExceptionMessage("App is in Background");
@@ -170,7 +171,7 @@ public class PrathamApplication extends Application implements LifecycleObserver
         log.setMethodName("NO_METHOD");
         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         log.setDeviceId(PD_Utility.getDeviceSerialID());
-        logDao.insertLog(log);
+        logDao.insertLog(log);*/ //commented to avoid entry in log
     }
 
     @OnLifecycleEvent(Lifecycle.Event.ON_START)

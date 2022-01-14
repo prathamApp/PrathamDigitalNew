@@ -358,7 +358,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             Gson gson = new GsonBuilder().create();
             JsonArray array = gson.toJsonTree(temp).getAsJsonArray();
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
-            if (!path.exists()) path.mkdir();
+            if (!path.exists()) path.mkdirs();
             return createJsonFileOnInternal(array,
                     path.getAbsolutePath() + "/" + detail.getNodeid());
         } catch (Exception e) {
@@ -453,7 +453,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         try {
             Gson gson = new GsonBuilder().create();
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
-            if (!path.exists()) path.mkdir();
+            if (!path.exists()) path.mkdirs();
             //create village JSON file
             List<Modal_Village> villages = villageDao.getAllVillages();
             JsonArray vill_array = gson.toJsonTree(villages).getAsJsonArray();
@@ -483,7 +483,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
         try {
             Gson gson = new GsonBuilder().create();
             File path = context.getDir(PD_Constant.PRATHAM_TEMP_FILES, Context.MODE_PRIVATE);
-            if (!path.exists()) path.mkdir();
+            if (!path.exists()) path.mkdirs();
             //create session JSON file
             List<Modal_Session> newSessions = sessionDao.getAllNewSessions();
             JsonArray session_array = gson.toJsonTree(newSessions).getAsJsonArray();

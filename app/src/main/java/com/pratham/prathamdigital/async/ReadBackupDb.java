@@ -12,6 +12,7 @@ import com.pratham.prathamdigital.models.Modal_Score;
 import com.pratham.prathamdigital.models.Modal_Session;
 import com.pratham.prathamdigital.models.Modal_Status;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class ReadBackupDb extends AsyncTask<String, String, Boolean> {
     @Override
     protected Boolean doInBackground(String... strings) {
         try {
-            File db_file = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + PrathamDatabase.DB_NAME);
+            File db_file = new File(PD_Utility.getStoragePath() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + PrathamDatabase.DB_NAME);
             if (db_file.exists()) {
                 SQLiteDatabase db = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
                 if (db == null) return false;

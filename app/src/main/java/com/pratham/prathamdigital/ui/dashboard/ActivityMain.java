@@ -70,6 +70,8 @@ import com.pratham.prathamdigital.ui.fragment_receive.FragmentReceive_;
 import com.pratham.prathamdigital.ui.fragment_share.FragmentShare_;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve;
 import com.pratham.prathamdigital.ui.fragment_share_recieve.FragmentShareRecieve_;
+import com.pratham.prathamdigital.ui.show_sync_log.FragmentSyncLog;
+import com.pratham.prathamdigital.ui.show_sync_log.FragmentSyncLog_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
@@ -113,6 +115,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int SHOW_PROFILE = 14;
     private static final int MENU_SYNC = 15;
     private static final int MENU_SYNCDB = 16;
+    private static final int MENU_SYNCLOG = 17;
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -278,7 +281,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                PrathamSmartSync.pushUsageToServer(true);
+                                PrathamSmartSync.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, ActivityMain.this);
                             }
                         }, 2500);
 
@@ -289,12 +292,15 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
 
 
                 case MENU_SYNCDB:
-                    String uuID = "" + PD_Utility.getUUID();
-                    File dbfilepath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + DB_NAME); // file path to save
-                    File zipFilePath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS); // file path in which zip created
+                    String uuID = "PDZ_" + PD_Utility.getUUID();
+//                    File dbfilepath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + DB_NAME); // file path to save
+//                    File zipFilePath = new File(Environment.getExternalStorageDirectory() + "/" + PD_Constant.PRATHAM_BACKUPS); // file path in which zip created
+                    File dbfilepath = new File(PD_Utility.getStoragePath() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + DB_NAME); // file path to save
+                    File zipFilePath = new File(PD_Utility.getStoragePath() + "/" + PD_Constant.PRATHAM_BACKUPS); // file path in which zip created
                     String filepathstr = zipFilePath.getAbsolutePath() + "/" + uuID;
                     //Checking all pradigi_db files in Folder and adding it to zip
-                    File dir = new File(Environment.getExternalStorageDirectory().toString() + "/PrathamBackups/");
+                    //File dir = new File(Environment.getExternalStorageDirectory().toString() + "/PrathamBackups/");
+                    File dir = new File(PD_Utility.getStoragePath().toString() + "/PrathamBackups/");
                     File[] db_files = dir.listFiles();
                     if (db_files != null) {
                         List<String> fileNameListStrings = new ArrayList<>();
@@ -318,7 +324,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                                 @Override
                                 public void run() {
                                     new PD_ApiRequest(PrathamApplication.getInstance())
-                                            .pushDBToRaspberryPi(PD_Constant.URL.PUSH_DBTORASP_URL.toString(), uuID, filepathstr);
+                                            .pushDBToRaspberryPi(PD_Constant.URL.PUSH_DBTORASP_URL.toString(), uuID, filepathstr, PD_Constant.DB_PUSH, ActivityMain.this);
                                 }
                             }, 2500);
                         }
@@ -328,7 +334,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                                 @Override
                                 public void run() {
                                     new PD_ApiRequest(PrathamApplication.getInstance())
-                                            .pushDBToInternet(PD_Constant.URL.PUSH_DB_URL.toString(), uuID, filepathstr);
+                                            .pushDBToInternet(PD_Constant.URL.PUSH_DB_URL.toString(), uuID, filepathstr, PD_Constant.DB_PUSH, ActivityMain.this);
                                 }
                             }, 2500);
 
@@ -337,6 +343,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             Toast.makeText(ActivityMain.this, R.string.internet_connection, Toast.LENGTH_SHORT).show();
                         }
                     }
+                    break;
+
+                case MENU_SYNCLOG:
+                    PD_Utility.showFragment(ActivityMain.this, new FragmentSyncLog_(), R.id.main_frame,
+                            null, FragmentSyncLog.class.getSimpleName());
                     break;
             }
         }
@@ -455,7 +466,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 courseCount = msg.getCourseCount();
-                tv_courseCount.setText(R.string.course_count + courseCount);
+                Log.e("url cc1 : ",courseCount);
+                tv_courseCount.setText(PD_Constant.ENROLLED_COURSE_COUNT + courseCount);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText(R.string.data_push_success);
@@ -528,7 +540,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.navigation_menu);
         int[] menus_img = {R.drawable.ic_education, R.drawable.ic_courses, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
-                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.syncdb, R.drawable.ic_backpacker};
+                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.syncdb, R.drawable.ic_sync_logs,
+                R.drawable.ic_backpacker};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -570,8 +583,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public void onStart() {
         super.onStart();
 
+        /** Commented to stop adding entry in log table of AppStarted and Exited*/
         //AppStart And Exit Log
-        String prevSessionID = FastSave.getInstance().getString("SESSION", "");
+/*        String prevSessionID = FastSave.getInstance().getString("SESSION", "");
         Log.e("URL Ses : ", prevSessionID);
         String currentSessionID = FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session");
         Log.e("URL Ses1 : ", currentSessionID);
@@ -589,7 +603,6 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             log.setSessionId(prevSessionID);
             log.setDeviceId(PD_Utility.getDeviceSerialID());
             logDao.insertLog(log);
-//            FastSave.getInstance().saveBoolean("APP_START",false);
 
             //StartLog
             log = new Modal_Log();
@@ -601,9 +614,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
             log.setDeviceId(PD_Utility.getDeviceSerialID());
             logDao.insertLog(log);
-//            FastSave.getInstance().saveBoolean("APP_START",true);
+
             BackupDatabase.backup(this);
-        }
+        }*/
         FastSave.getInstance().saveString("SESSION", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
     }
 
@@ -614,8 +627,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     .setContentView(R.layout.app_exit_dialog)
                     .bindClickListener(v -> {
                         exitDialog.dismiss();
+                        /** Commented to stop adding entry in log table of App Exited*/
                         //Modal_Log log1 = new Modal_Log();
-                        log = new Modal_Log();
+ /*                       log = new Modal_Log();
                         log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
                         log.setErrorType("AppExitLog");
                         log.setExceptionMessage("App is Exited");
@@ -624,8 +638,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
                         log.setDeviceId(PD_Utility.getDeviceSerialID());
                         logDao.insertLog(log);
-                        BackupDatabase.backup(this);
-//                        FastSave.getInstance().saveBoolean("APP_START",false);
+                        BackupDatabase.backup(this);*/
                         FastSave.getInstance().saveString("SESSION", "no_session");
                         new Handler().postDelayed((Runnable) this::finishAffinity, 200);
                     }, R.id.dialog_btn_exit)
@@ -718,6 +731,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_SYNC);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Sync Database"))
             mHandler.sendEmptyMessage(MENU_SYNCDB);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Sync Log"))
+            mHandler.sendEmptyMessage(MENU_SYNCLOG);
     }
 
     @Override

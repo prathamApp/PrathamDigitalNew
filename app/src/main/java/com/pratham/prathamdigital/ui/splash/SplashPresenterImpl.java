@@ -228,10 +228,13 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
         if (statusDao.getKey("apkType") == null) {
             statusObj.statusKey = "apkType";
+/*
             if (PrathamApplication.isTablet)
                 statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Tablet Apk";
             else
-                statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Smartphone Apk";
+*/
+//            statusObj.value = "Pratham Digital with New UI, Raspberry Pie, Smartphone & Tablet Apk";
+            statusObj.value = "Smartphone & Tablet Apk with Old DB support";
             statusDao.insert(statusObj);
         }
         if (statusDao.getKey("appName") == null) {

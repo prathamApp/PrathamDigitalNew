@@ -14,12 +14,14 @@ import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
 import com.pratham.prathamdigital.models.Modal_Rasp_Header;
@@ -45,11 +47,13 @@ import java.lang.reflect.Type;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
 
@@ -628,7 +632,7 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     }
 
     @Override
-    public void onDownloadCompleted(String downloadID, Modal_ContentDetail content) {
+    public void onDownloadCompleted(String downloadID, Modal_ContentDetail content, Context context) {
         filesDownloading.remove(downloadID);
         postAllDownloadsCompletedMessage();
         postSingleFileDownloadCompleteMessage(content);
@@ -640,6 +644,23 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 break;
             }
         }
+        //update data download channel
+        Modal_Log modal_log = new Modal_Log();
+        modal_log.setErrorType("DOWNLOAD");
+        modal_log.setExceptionMessage(content.getNodetitle());
+        modal_log.setMethodName(content.getNodeid());
+        modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+        modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        modal_log.setExceptionStackTrace("APK BUILD DATE : "+PD_Constant.apkDate);
+        modal_log.setDeviceId("" + PD_Utility.getDeviceID());
+        modal_log.setLogDetail(content.getResourcezip());
+        if(PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+            modal_log.setLogDetail("PI#"+content.getResourcezip());
+        else
+            modal_log.setLogDetail("INTERNET#"+content.getResourcezip());
+
+        logDao.insertLog(modal_log);
+        BackupDatabase.backup(context);
     }
 
     @Override
@@ -722,7 +743,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @UiThread
     public void postProgressMessage() {
-        EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
+        try {
+            EventBus.getDefault().post(new ArrayList<>(filesDownloading.values()));
+        } catch (ConcurrentModificationException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

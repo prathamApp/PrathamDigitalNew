@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.show_sync_log.FragmentSyncLog"
+    android:weightSum="2">
+
+    <RelativeLayout
+        android:id="@+id/rl_dataPushLog"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_dataSyncLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Data Push Log"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/light_orange"
+            android:textAlignment="center"
+            android:layout_marginTop="@dimen/_10sdp"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_lastSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dataSyncLog"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/rounded_border"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastsync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latest Data Synced On : "
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastSyncDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_lastsync"
+                android:textColor="@color/material_deep_teal_50"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastsynctypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sync Type : "
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_below="@id/tv_lastsync"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastSyncType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_lastsynctypeLabel"
+                android:layout_below="@id/tv_lastsync"
+                android:textColor="@color/material_deep_teal_50"/>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_dataSyncLog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/rl_lastSync"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="@dimen/_2sdp"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"/>
+
+    <RelativeLayout
+        android:id="@+id/rl_dbPushLog"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/_10sdp">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_dbSyncLog"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DB Push Log"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/light_orange"
+            android:textAlignment="center"
+            android:layout_marginTop="@dimen/_10sdp"/>
+
+        <RelativeLayout
+            android:id="@+id/rl_lastdbSync"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_dbSyncLog"
+            android:layout_marginTop="@dimen/_10sdp"
+            android:background="@drawable/rounded_border"
+            android:gravity="center"
+            android:padding="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp">
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastdbsync"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latest DB Synced On : "
+                android:textColor="@color/black"
+                android:textStyle="bold"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastdbSyncDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_lastdbsync"
+                android:textColor="@color/material_deep_teal_50"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastdbsynctypeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sync Type : "
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:layout_below="@id/tv_lastdbsync"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_lastdbSyncType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/tv_lastdbsynctypeLabel"
+                android:layout_below="@id/tv_lastdbsync"
+                android:textColor="@color/material_deep_teal_50"/>
+
+        </RelativeLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_dbSyncLog"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/rl_lastdbSync"
+            android:layout_marginTop="@dimen/_5sdp"/>
+
+    </RelativeLayout>
+
+</LinearLayout>

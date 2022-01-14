@@ -207,7 +207,7 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setGroupName("SmartPhone");
         modal_student.setFirstName(et_child_name.getText().toString());
         modal_student.setMiddleName(et_child_name.getText().toString());
-        modal_student.setLastName(et_child_name.getText().toString());
+        modal_student.setLastName("");
         modal_student.setStud_Class(spinner_class.getSelectedItem().toString());
         modal_student.setAge(String.valueOf(FastSave.getInstance().getInt(PD_Constant.STUDENT_PROFILE_AGE, 0)));
         modal_student.setGender("M");

@@ -32,12 +32,14 @@ import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
 import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
+import com.pratham.prathamdigital.view_holders.CourseChildViewHolder;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Background;
@@ -56,12 +58,14 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
@@ -81,8 +85,11 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     Button btn_submit_assignment;
     @ViewById(R.id.play_all_content_serially)
     Button btn_playAll;
+    @ViewById(R.id.download_all_content_serially)
+    Button btn_downloadAll;
 
     CourseDetailAdapter adapter;
+    CourseChildViewHolder courseChildViewHolder;
     private Model_CourseEnrollment enrollment;
     private List<Modal_ContentDetail> childs;
     private List<Modal_ContentDetail> childs1;
@@ -102,7 +109,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @Bean(ZipDownloader.class)
     ZipDownloader zipDownloader;
 
-    boolean assessmentToastFlag=false;
+    boolean assessmentToastFlag = false;
 
     @SuppressLint("SetTextI18n")
     @AfterViews
@@ -112,6 +119,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             course_name.setText(Objects.requireNonNull(getArguments()).getString("NODE_TITLE"));
             course_detail.setText(getArguments().getString("NODE_DESC"));
             levelContents = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT_LEVEL);
+//            btn_downloadAll.setVisibility(View.VISIBLE);
         }
         //else screen open via Course navigation item click
         else {
@@ -120,7 +128,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             course_name.setText(enrollment.getCourseDetail().getNodetitle());
             course_detail.setText(enrollment.getCourseDetail().getNodedesc());
             btn_playAll.setVisibility(View.VISIBLE);
-            assessmentToastFlag=true;
+            assessmentToastFlag = true;
         }
         initializeAdapter();
         pd_apiRequest.setApiResult(CourseDetailFragment.this);
@@ -149,7 +157,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         if (childs == null || childs.isEmpty()) {
             childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
             childs1 = Objects.requireNonNull(getArguments()).getParcelableArrayList("course_update");
-            if(childs1!=null && !Objects.requireNonNull(childs1).isEmpty()) {
+            if (childs1 != null && !Objects.requireNonNull(childs1).isEmpty()) {
                 for (Modal_ContentDetail detail1 : childs) {
                     for (Modal_ContentDetail detail : childs1) {
                         if (detail.getNodeid().equalsIgnoreCase(detail1.getNodeid())) {
@@ -176,11 +184,12 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                         return (Integer.compare(s1, s2));
                     }
                 });
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
+        courseChildViewHolder = new CourseChildViewHolder(Objects.requireNonNull(getView()));
         adapter = new CourseDetailAdapter(getActivity(), this);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
         flexboxLayoutManager.setJustifyContent(JustifyContent.FLEX_START);
@@ -197,6 +206,48 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         EventBus.getDefault().post(message);
     }
 
+    /**
+     * This function is used to download all course item on single click.*/
+    @Click(R.id.download_all_content_serially)
+    public void downloadAllCourse() {
+        if (FastSave.getInstance().getBoolean(PD_Constant.STORAGE_ASKED, false)) {
+            for (Modal_ContentDetail dispContent : dispchilds) {
+                if (dispContent.getResourcetype().equalsIgnoreCase("Video") ||
+                        dispContent.getResourcetype().equalsIgnoreCase("Audio") ||
+                        dispContent.getResourcetype().equalsIgnoreCase("PDF")) {
+
+                    if (dispContent.isDownloaded() || dispContent.isOnSDCard()) {
+                        //Log.e("Course : ", dispContent.getNodetitle());
+                    } else {
+                        Log.e("Course : ", dispContent.getNodetitle());
+                        int itemPosition = Integer.parseInt(dispContent.getSeq_no());
+                        courseChildViewHolder.downloadAll(dispContent, this, itemPosition);
+                        //break;
+                    }
+                }
+            }
+        } else {
+            download_builder = new BlurPopupWindow.Builder(getActivity())
+                    .setContentView(R.layout.download_alert_dialog)
+                    .bindClickListener(v -> {
+                        FastSave.getInstance().saveBoolean(PD_Constant.STORAGE_ASKED, true);
+                        downloadAllCourse();
+                        download_builder.dismiss();
+                    }, R.id.btn_okay)
+                    .bindClickListener(v -> download_builder.dismiss(), R.id.txt_download_cancel)
+                    .setGravity(Gravity.CENTER)
+                    .setDismissOnClickBack(true)
+                    .setDismissOnTouchBackground(true)
+                    .setScaleRatio(0.2f)
+                    .setBlurRadius(8)
+                    .setTintColor(0x30000000)
+                    .build();
+            TextView tv = download_builder.findViewById(R.id.txt_download_alert);
+            tv.append(" " + PD_Constant.STORING_IN);
+            download_builder.show();
+        }
+    }
+
     @Override
     public void onChildItemClicked(Modal_ContentDetail modal_contentDetail) {
         EventMessage message = new EventMessage();
@@ -208,8 +259,8 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     @Override
     public void onAssessmentItemClicked(Modal_ContentDetail contentDetail) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileOrWifiNetwork()) {
-            if(!assessmentToastFlag)
-            saveAssessment(contentDetail);
+            if (!assessmentToastFlag)
+                saveAssessment(contentDetail);
         }
 
         new MaterialAlertDialogBuilder(Objects.requireNonNull(getActivity()))
@@ -257,11 +308,11 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             mBundle.putString("examId", contentDetail.getNodekeywords());
             Log.e("exam id : ", contentDetail.getNodekeywords());
 //                mBundle.putString("subjectId", "89");
-            mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
+            mBundle.putString("currentSessionId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
             intent.putExtras(mBundle);
-            startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
+            startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
             sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
-            Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            Log.d("url :", FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
             BackupDatabase.backup(getActivity());
         } else {
             final CharSequence[] charSequenceItems = studname.toArray(new CharSequence[studname.size()]);
@@ -278,10 +329,10 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                         mBundle.putString("examId", contentDetail.getNodekeywords());
                         //mBundle.putString("subjectId", "89");
                         intent.putExtras(mBundle);
-                        mBundle.putString("currentSessionId",FastSave.getInstance().getString(PD_Constant.SESSIONID,"no_session"));
-                        startActivityForResult(intent,REQUEST_CODE_ASSESSMENT_BACK);
+                        mBundle.putString("currentSessionId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
+                        startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
                         sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
-                        Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+                        Log.d("url :", FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
                         BackupDatabase.backup(getActivity());
                     })
                     .show();
@@ -289,7 +340,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     }
 
     //saving the assessment nodetype in db
-    public void saveAssessment(Modal_ContentDetail contentDetail){
+    public void saveAssessment(Modal_ContentDetail contentDetail) {
         ArrayList<Modal_ContentDetail> temp = new ArrayList<>(levelContents);
         Modal_ContentDetail content = contentDetail;//Objects.requireNonNull(filesContentDownloading.get(downloadId)).getContentDetail();
         content.setContentType("file");
@@ -347,18 +398,26 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 try {
 //                    String url = contentDetail.getResourcezip();
-                    String url="";
+                    String url = "";
                     String filename = URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8")
                             .substring(URLDecoder.decode(contentDetail.getResourcezip(), "UTF-8").lastIndexOf('/') + 1);
                     String foldername = contentDetail.getResourcetype();
-                    if(foldername.equalsIgnoreCase("pdf")){
-                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/docs/" + filename;
-                    }else if(foldername.equalsIgnoreCase("game")){
-                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/zips/" + filename;
-                    }else if(foldername.equalsIgnoreCase("video")){
-                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL+ "/videos/mp4/" + filename;
-                    }else if(foldername.equalsIgnoreCase("audio")) {
-                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/mp3/" + filename;
+                    String fileFormat = contentDetail.getResourcepath().substring(contentDetail.getResourcepath().lastIndexOf("."));
+                    if (foldername.equalsIgnoreCase("pdf")) {
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/docs/" + filename;
+                    } else if (foldername.equalsIgnoreCase("game")) {
+                        url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/zips/" + filename;
+                    } else if (foldername.equalsIgnoreCase("video")) {
+                        if (fileFormat.equalsIgnoreCase(".mp4"))
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/videos/mp4/" + filename;
+                        else
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/videos/m4v/" + filename;
+
+                    } else if (foldername.equalsIgnoreCase("audio")) {
+                        if (fileFormat.equalsIgnoreCase(".mp3"))
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/mp3/" + filename;
+                        else
+                            url = PD_Constant.RASP_IP + PD_Constant.RASP_LOCAL_URL + "/audios/wav/" + filename;
                     }
                     Log.e("**URL:", url);
                     zipDownloader.initializeforCourse(CourseDetailFragment.this
@@ -427,7 +486,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 String fileName = download_content.getDownloadurl()
                         .substring(download_content.getDownloadurl().lastIndexOf('/') + 1);
                 zipDownloader.initializeforCourse(CourseDetailFragment.this, download_content.getDownloadurl(),
-                        download_content.getFoldername(), fileName, contentDetail, levelContents,"");
+                        download_content.getFoldername(), fileName, contentDetail, levelContents, "");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -522,6 +581,24 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 break;
             }
         }
+
+        //update data download channel
+        Modal_Log modal_log = new Modal_Log();
+        modal_log.setErrorType("DOWNLOAD");
+        modal_log.setExceptionMessage(content.getNodetitle());
+        modal_log.setMethodName(content.getNodeid());
+        modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+        modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        modal_log.setExceptionStackTrace("APK BUILD DATE : "+PD_Constant.apkDate);
+        modal_log.setDeviceId("" + PD_Utility.getDeviceID());
+        modal_log.setLogDetail(content.getResourcezip());
+        if(PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+            modal_log.setLogDetail("PI#"+content.getResourcezip());
+        else
+            modal_log.setLogDetail("INTERNET#"+content.getResourcezip());
+
+        logDao.insertLog(modal_log);
+        BackupDatabase.backup(getActivity());
     }
 
     public void ondownloadError(String downloadId) {
@@ -583,7 +660,11 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
     @UiThread
     public void postProgressMessage() {
-        EventBus.getDefault().post(new ArrayList<>(filesContentDownloading.values()));
+        try {
+            EventBus.getDefault().post(new ArrayList<>(filesContentDownloading.values()));
+        } catch (ConcurrentModificationException e) {
+            e.printStackTrace();
+        }
     }
 
     public void eventOnDownloadCompleted(EventMessage message) {
@@ -674,7 +755,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_ASSESSMENT_BACK) {
             sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
-            Log.d("url :",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            Log.d("url :", FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
             BackupDatabase.backup(getActivity());
         }
     }

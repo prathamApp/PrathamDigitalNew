@@ -177,7 +177,7 @@ public class Profile_Fragment extends Fragment implements ProfileContract.Profil
                     date = dateWise.getStartDate();
                 }
             }
-            Modal_ProfileDetails details = new Modal_ProfileDetails(date.substring(0, 5), vcnt, gcnt, pcnt);
+            Modal_ProfileDetails details = new Modal_ProfileDetails(date.substring(0, 10), vcnt, gcnt, pcnt);
             detailsList.add(details);
             vcnt = "0";
             gcnt = "0";

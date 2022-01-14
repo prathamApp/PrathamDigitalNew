@@ -69,8 +69,12 @@ public class DownloadListAdapter extends RecyclerView.Adapter<DownloadListAdapte
         Objects.requireNonNull(holder.download_remaining_time).setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getRemaining_time());
         Objects.requireNonNull(holder.content_title).setText(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getFilename());
         Objects.requireNonNull(holder.number_progress).setProgress(mDiffer.getCurrentList().get(holder.getAdapterPosition()).getProgress());
-        Objects.requireNonNull(holder.download_delete).setOnClickListener(v -> dowloadContract.deleteDownload(holder.getAdapterPosition(),
-                mDiffer.getCurrentList().get(holder.getAdapterPosition()).getDownloadId()));
+        try {
+            Objects.requireNonNull(holder.download_delete).setOnClickListener(v -> dowloadContract.deleteDownload(holder.getAdapterPosition(),
+                    mDiffer.getCurrentList().get(holder.getAdapterPosition()).getDownloadId()));
+        } catch (ArrayIndexOutOfBoundsException e){
+            e.printStackTrace();
+        }
     }
 
     @Override

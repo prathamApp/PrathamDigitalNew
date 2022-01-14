@@ -281,7 +281,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FAST_DOWNLOAD_UPDATE)) {
                 contentPresenter.updateFileProgress(message.getDownloadId(), message.getModal_fileDownloading());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FAST_DOWNLOAD_COMPLETE)) {
-                contentPresenter.onDownloadCompleted(message.getDownloadId(), message.getContentDetail());
+                contentPresenter.onDownloadCompleted(message.getDownloadId(), message.getContentDetail(),getActivity());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FAST_DOWNLOAD_ERROR)) {
                 contentPresenter.ondownloadError(message.getDownloadId());
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.FILE_DOWNLOAD_COMPLETE)) {

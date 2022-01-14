@@ -48,6 +48,7 @@ public class Fragment_WebView extends Fragment implements VideoListener {
         try {
             webView.loadUrl("file:///" + GamePath);
             webView.getSettings().setAllowContentAccess(true);
+            webView.getSettings().setAllowFileAccess(true);
             webView.getSettings().setJavaScriptEnabled(true);
             webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
             webView.getSettings().setMediaPlaybackRequiresUserGesture(false);
