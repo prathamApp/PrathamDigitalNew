@@ -134,9 +134,13 @@ public class Fragment_EnrolledCourses extends Fragment implements PlanningContra
     @Override
     public void verifiedSuccessfully(Model_CourseEnrollment model_courseEnrollment) {
         if (model_courseEnrollment != null) {
-            Uri capturedImageUri = Uri.fromFile(new File(model_courseEnrollment.getCoachImage()));
-            coach_image.setImageURI(capturedImageUri);
-            coach_image.setVisibility(View.VISIBLE);
+            try {
+                Uri capturedImageUri = Uri.fromFile(new File(model_courseEnrollment.getCoachImage()));
+                coach_image.setImageURI(capturedImageUri);
+                coach_image.setVisibility(View.VISIBLE);
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
         rl_verify_coach.setBackground(getResources().getDrawable(R.drawable.button_green_selector));
         txt_verify_status.setText("Verified By Coach");

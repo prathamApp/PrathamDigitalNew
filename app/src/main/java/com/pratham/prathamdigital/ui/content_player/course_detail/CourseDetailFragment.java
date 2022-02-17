@@ -289,19 +289,23 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
         ArrayList<String> studname = new ArrayList<>();
         ArrayList<String> studID = new ArrayList<>();
+        ArrayList<String> studGrpID = new ArrayList<>();
         List<Attendance> newAttendance = attendanceDao.getNewAttendances(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no session"));
         for (Attendance att : newAttendance) {
             List<Modal_Student> newStudent = studentDao.getAllStudent(att.getStudentID());
             for (Modal_Student stud : newStudent) {
                 studname.add(stud.getFullName());
                 studID.add(stud.getStudentId());
+                studGrpID.add(stud.getGroupId());
             }
         }
 
         if (studname.size() == 1) {
+            String groupId = studGrpID.get(0).replace("_SmartPhone","");
             mBundle.putString("studentId", studID.get(0));
             mBundle.putString("appName", getResources().getString(R.string.app_name));
             mBundle.putString("studentName", studname.get(0));
+            mBundle.putString("studentGroupId", groupId);
             mBundle.putString("subjectName", contentDetail.getSubject());
             mBundle.putString("subjectLanguage", contentDetail.getContent_language());
 //                mBundle.putString("subjectLevel", "1");
@@ -323,6 +327,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                         mBundle.putString("studentId", studID.get(which));
                         mBundle.putString("appName", getResources().getString(R.string.app_name));
                         mBundle.putString("studentName", studname.get(which));
+                        mBundle.putString("studentGroupId", studGrpID.get(which));
                         mBundle.putString("subjectName", contentDetail.getSubject());
                         mBundle.putString("subjectLanguage", contentDetail.getContent_language());
                         //mBundle.putString("subjectLevel", "1");

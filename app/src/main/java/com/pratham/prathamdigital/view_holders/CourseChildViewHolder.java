@@ -76,10 +76,10 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
         course_child_title.setText(contentDetail.getNodetitle());
         Log.e("url", contentDetail.getNodeid() + " | " + String.valueOf(contentDetail.getIsViewed()));
          if (contentDetail.isDownloaded()) {
-            if (!PrathamApplication.isTablet)
+/*            if (!PrathamApplication.isTablet)
                 Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
-            else Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
-
+            else Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);*/
+            Objects.requireNonNull(item_courseFile_delete).setVisibility(View.GONE);
             Objects.requireNonNull(rl_courseReveal).setVisibility(View.GONE);
             if (contentDetail.getNodeserverimage() != null && !contentDetail.getNodeserverimage().isEmpty()) {
                 Uri imgUri;
@@ -201,8 +201,12 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
             // TODO : Further Functionality when download clicked
             rl_courseDownload.setOnClickListener(v -> {//
                 Log.e("rl click dwnld: ", "in");
-                if (rl_courseReveal != null) rl_courseReveal.setVisibility(View.INVISIBLE);
-                courseDetailAdapterClick.onDownloadClicked(pos, contentDetail, rl_courseReveal, rl_courseDownload);
+                if (contentDetail.getNodetype().equalsIgnoreCase(PD_Constant.ASSESSMENT))
+                    courseDetailAdapterClick.onAssessmentItemClicked(contentDetail);
+                else {
+                    if (rl_courseReveal != null) rl_courseReveal.setVisibility(View.INVISIBLE);
+                    courseDetailAdapterClick.onDownloadClicked(pos, contentDetail, rl_courseReveal, rl_courseDownload);
+                }
             });
             Objects.requireNonNull(content_courseCard_file).setOnClickListener(null);
 
@@ -210,7 +214,7 @@ public class CourseChildViewHolder extends RecyclerView.ViewHolder {
                 Objects.requireNonNull(img_content_type).setVisibility(View.GONE);
                 course_child_title.setText(contentDetail.getNodetitle());
 //                course_child_image.setImageResource(R.drawable.assessment_logo);
-                rl_courseDownload.setEnabled(false);
+                //rl_courseDownload.setEnabled(false);
             } else {
                 Objects.requireNonNull(img_content_type).setVisibility(View.VISIBLE);
             }

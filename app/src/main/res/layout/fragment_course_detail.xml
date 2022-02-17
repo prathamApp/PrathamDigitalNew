@@ -111,5 +111,7 @@
         android:id="@+id/rv_course_childs"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight=".7" />
+        android:layout_weight=".7"
+        android:scrollbars="vertical"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 </LinearLayout>
