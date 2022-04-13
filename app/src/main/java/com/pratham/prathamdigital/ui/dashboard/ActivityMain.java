@@ -357,9 +357,17 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @AfterViews
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
-        mHandler.sendEmptyMessage(SHOW_MENU);
-        mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
-        versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
+        try {
+            if(Objects.requireNonNull(getIntent().getStringExtra(PD_Constant.OPEN_COURSES)).equalsIgnoreCase(PD_Constant.OPEN_COURSES)){
+                mHandler.sendEmptyMessage(MENU_COURSES);
+                versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
+            }
+        } catch (Exception e){
+            mHandler.sendEmptyMessage(SHOW_MENU);
+            mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
+            versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
+            e.printStackTrace();
+        }
     }
 
     private void initializeDrawer() {

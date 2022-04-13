@@ -380,7 +380,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         intent.putExtra(PD_Constant.WEEK, "WEEK_1");
                         intent.putExtra("NODE_TITLE", nodeTitle);
                         intent.putExtra("NODE_DESC", nodeDesc);
-                        //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
+                        intent.putExtra(PD_Constant.CONTENT_PARENT, contentDetail);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
                         //intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
@@ -409,7 +409,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
                         intent.putExtra(PD_Constant.WEEK, "WEEK_1");
                         intent.putExtra("NODE_TITLE", nodeTitle);
                         intent.putExtra("NODE_DESC", nodeDesc);
-                        //intent.putExtra(PD_Constant.COURSE_PARENT, contentDetail);
+                        intent.putExtra(PD_Constant.CONTENT_PARENT, contentDetail);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
                         intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
                         intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);

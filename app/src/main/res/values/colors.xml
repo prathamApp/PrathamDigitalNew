@@ -85,6 +85,7 @@
     <color name="att_unselected">#F5FFCA75</color>
     <color name="att_selected">#F8A306</color>
     <color name="aks_selected">#fa7e0a</color>
+    <color name="transparent">#00FFFFFF</color>
 
 <!--    vertical stepper view-->
     <color name="vertical_stepper_form_background_color_disabled_elements">#c8c8c8</color>

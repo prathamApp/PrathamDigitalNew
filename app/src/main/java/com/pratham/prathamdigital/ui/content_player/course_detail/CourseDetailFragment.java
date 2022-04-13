@@ -3,16 +3,22 @@ package com.pratham.prathamdigital.ui.content_player.course_detail;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.archit.calendardaterangepicker.customviews.DateRangeCalendarView;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.gson.Gson;
 import com.liulishuo.okdownload.DownloadTask;
@@ -25,6 +31,8 @@ import com.pratham.prathamdigital.custom.flexbox.FlexDirection;
 import com.pratham.prathamdigital.custom.flexbox.FlexboxLayoutManager;
 import com.pratham.prathamdigital.custom.flexbox.JustifyContent;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.custom.view_animators.Animate;
+import com.pratham.prathamdigital.custom.view_animators.Techniques;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.Attendance;
@@ -35,8 +43,10 @@ import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
+import com.pratham.prathamdigital.models.Model_CourseExperience;
 import com.pratham.prathamdigital.ui.content_player.ContentPlayerContract;
-import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain;
+import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.view_holders.CourseChildViewHolder;
@@ -56,8 +66,8 @@ import org.json.JSONObject;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.List;
@@ -69,8 +79,10 @@ import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.villageDao;
 import static com.pratham.prathamdigital.custom.file_picker.FilePickerActivity.TAG;
 
+@SuppressLint("NonConstantResourceId")
 @EFragment(R.layout.fragment_course_detail)
 public class CourseDetailFragment extends Fragment implements ContentPlayerContract.courseDetailAdapterClick, ApiResult {
 
@@ -87,6 +99,12 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     Button btn_playAll;
     @ViewById(R.id.download_all_content_serially)
     Button btn_downloadAll;
+    @ViewById(R.id.tv_enroll_course)
+    TextView tv_enroll_course;
+    @ViewById(R.id.tv_goto_course)
+    TextView tv_goto_course;
+    @ViewById(R.id.rg_assessment)
+    RadioGroup rg_assessment;
 
     CourseDetailAdapter adapter;
     CourseChildViewHolder courseChildViewHolder;
@@ -94,6 +112,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
     private List<Modal_ContentDetail> childs;
     private List<Modal_ContentDetail> childs1;
     private List<Modal_ContentDetail> dispchilds = new ArrayList<>();
+    private List<Modal_ContentDetail> assessmentNode = new ArrayList<>();
 
     private final Map<String, Integer> filesDownloading = new HashMap<>();
     private final Map<String, Modal_FileDownloading> filesContentDownloading = new HashMap<>();
@@ -111,15 +130,68 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
     boolean assessmentToastFlag = false;
 
+    /**Below fields added to enroll course directly from seekho section*/
+    Modal_ContentDetail mcd;
+    private HashMap<String, List<Model_CourseEnrollment>> coursesPerWeek = new HashMap<>();
+    boolean isCourseAlreadyEnrolled = false;
+
+    //calender fields
+    private Calendar startDate;
+    private Calendar endDate;
+    @ViewById(R.id.rl_calendar_view)
+    RelativeLayout rl_calendar_view;
+    @ViewById(R.id.course_date_picker)
+    DateRangeCalendarView course_date_picker;
+
+    private static final int SHOW_DATE_PICKER = 1;
+    private static final int HIDE_DATE_PICKER = 2;
+
+    Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case SHOW_DATE_PICKER:
+                    Animate.with(Techniques.BounceInUp)
+                            .duration(700)
+                            .onStart(animator -> rl_calendar_view.setVisibility(View.VISIBLE))
+                            .playOn(rl_calendar_view);
+                    initializeCalendar();
+                    break;
+                case HIDE_DATE_PICKER:
+                    Animate.with(Techniques.SlideOutDown)
+                            .duration(700)
+                            .onEnd(animator -> rl_calendar_view.setVisibility(View.GONE))
+                            .playOn(rl_calendar_view);
+                    break;
+            }
+        }
+    };
+
+    /**till here*/
+
+
     @SuppressLint("SetTextI18n")
     @AfterViews
     public void init() {
         //if screen open via node click
         if (Objects.requireNonNull(Objects.requireNonNull(getArguments()).getString("NODE_CALL")).equalsIgnoreCase("CALL_FROM_NODE")) {
+            mcd = Objects.requireNonNull(getArguments().getParcelable(PD_Constant.CONTENT_PARENT));
+            Log.e("MYC : ", mcd.getNodetitle()+" | "+mcd.getNodedesc()+" | "+mcd.getNodetype());
             course_name.setText(Objects.requireNonNull(getArguments()).getString("NODE_TITLE"));
             course_detail.setText(getArguments().getString("NODE_DESC"));
             levelContents = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT_LEVEL);
-//            btn_downloadAll.setVisibility(View.VISIBLE);
+            //btn_downloadAll.setVisibility(View.VISIBLE);
+
+            /**First check whether course is already enrolled or not*/
+            checkCourseAlreadyEnrolled(mcd,"WEEK_1");
+            if(isCourseAlreadyEnrolled){
+                tv_enroll_course.setVisibility(View.GONE);
+                tv_goto_course.setVisibility(View.VISIBLE);
+            } else {
+                tv_enroll_course.setVisibility(View.VISIBLE);
+                tv_goto_course.setVisibility(View.GONE);
+            };
         }
         //else screen open via Course navigation item click
         else {
@@ -128,10 +200,29 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             course_name.setText(enrollment.getCourseDetail().getNodetitle());
             course_detail.setText(enrollment.getCourseDetail().getNodedesc());
             btn_playAll.setVisibility(View.VISIBLE);
+            tv_enroll_course.setVisibility(View.GONE);
+            btn_downloadAll.setVisibility(View.GONE);
             assessmentToastFlag = true;
         }
-        initializeAdapter();
+
+        getCourseContent();
+
         pd_apiRequest.setApiResult(CourseDetailFragment.this);
+
+        /**Assessment toggle switch*/
+        rg_assessment.setOnCheckedChangeListener((group, checkedId) ->
+                {
+                    switch (checkedId){
+                        case R.id.rb_content :
+                            getCourseContent();
+                            break;
+
+                        case R.id.rb_assessment :
+                            getfinalAssessment(childs);
+                            break;
+                    }
+                }
+                );
     }
 
     @Override
@@ -151,8 +242,9 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         return date_split[1] + " " + date_split[2] + " " + date_split[3] + "," + date_split[6];
     }
 
-    private void initializeAdapter() {
 
+    /**This function gets the whole content of respective course*/
+    private void getCourseContent(){
         //check if update available for content
         if (childs == null || childs.isEmpty()) {
             childs = Objects.requireNonNull(getArguments()).getParcelableArrayList(PD_Constant.CONTENT);
@@ -188,7 +280,22 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 e.printStackTrace();
             }
         }
+        initializeAdapter(dispchilds);
+    }
 
+    /**This function gets only assessments of the respective course*/
+    private void getfinalAssessment(List<Modal_ContentDetail> childs) {
+        assessmentNode.clear();
+        for(Modal_ContentDetail contentDetail: childs){
+            if(contentDetail.getNodetype().equalsIgnoreCase("Assessment")){
+                assessmentNode.add(contentDetail);
+            }
+        }
+        initializeAdapter(assessmentNode);
+    }
+
+
+    private void initializeAdapter(List<Modal_ContentDetail> dispchilds) {
         courseChildViewHolder = new CourseChildViewHolder(Objects.requireNonNull(getView()));
         adapter = new CourseDetailAdapter(getActivity(), this);
         FlexboxLayoutManager flexboxLayoutManager = new FlexboxLayoutManager(getActivity(), FlexDirection.ROW);
@@ -197,6 +304,65 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         rv_course_childs.setAdapter(adapter);
         adapter.submitList(dispchilds);
     }
+
+    private void initializeCalendar() {
+        Calendar startSelectionDate = Calendar.getInstance();
+        startSelectionDate.add(Calendar.MONTH, -1);
+        Calendar endSelectionDate = (Calendar) startSelectionDate.clone();
+        endSelectionDate.add(Calendar.DATE, 4);
+        course_date_picker.setSelectedDateRange(startSelectionDate, endSelectionDate);
+        course_date_picker.setCalendarListener(new DateRangeCalendarView.CalendarListener() {
+            @Override
+            public void onFirstDateSelected(Calendar startDate) {
+
+            }
+
+            @Override
+            public void onDateRangeSelected(Calendar s_Date, Calendar e_Date) {
+                startDate = s_Date;
+                endDate = e_Date;
+            }
+        });
+    }
+
+
+    @Click(R.id.tv_enroll_course)
+    public void enrollCourse(){
+        /**Check whether the content related to the course is available in database.*/
+        Modal_ContentDetail modal_contentDetail = PrathamApplication.modalContentDao.getContent(mcd.getNodeid(),
+                FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        if(modal_contentDetail==null){
+            Toast.makeText(getActivity(), "You must download atleast one Resource first!", Toast.LENGTH_LONG).show();
+        } else{
+            mHandler.sendEmptyMessage(SHOW_DATE_PICKER);
+        }
+    }
+
+    /**Moving from current fragment to course fragment*/
+    @Click(R.id.tv_goto_course)
+    public void openCourseSection(){
+        Intent courseintent = new Intent(getActivity(), ActivityMain_.class);
+        courseintent.putExtra(PD_Constant.OPEN_COURSES, PD_Constant.OPEN_COURSES);
+        startActivity(courseintent);
+    }
+
+    @Click(R.id.iv_close_calendar)
+    public void setCloseCalendar() {
+        mHandler.sendEmptyMessage(HIDE_DATE_PICKER);
+    }
+
+    @Click(R.id.btn_course_time_select)
+    public void onCourseTimeSelected() {
+        if (endDate == null || startDate == null) {
+            Toast.makeText(getActivity(), R.string.select_correct_timeline, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        mHandler.sendEmptyMessage(HIDE_DATE_PICKER);
+        addCourseToDb("WEEK_1", mcd, startDate, endDate);
+        tv_goto_course.setVisibility(View.VISIBLE);
+        tv_enroll_course.setVisibility(View.GONE);
+    }
+
 
     @Click(R.id.play_all_content_serially)
     public void playCourse() {
@@ -301,7 +467,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         }
 
         if (studname.size() == 1) {
-            String groupId = studGrpID.get(0).replace("_SmartPhone","");
+            String groupId = studGrpID.get(0).replace("_SmartPhone", "");
             mBundle.putString("studentId", studID.get(0));
             mBundle.putString("appName", getResources().getString(R.string.app_name));
             mBundle.putString("studentName", studname.get(0));
@@ -314,6 +480,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 //                mBundle.putString("subjectId", "89");
             mBundle.putString("currentSessionId", FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
             intent.putExtras(mBundle);
+            Log.e("assessment fields : ", mBundle.toString());
             startActivityForResult(intent, REQUEST_CODE_ASSESSMENT_BACK);
             sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
             Log.d("url :", FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
@@ -503,6 +670,95 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         Toast.makeText(getActivity(), header, Toast.LENGTH_SHORT).show();
     }
 
+
+    /**Add course to db while enrolling from seekho section*/
+    //todo: move to presenter in future
+    public void addCourseToDb(String week, Modal_ContentDetail selectedCourse, Calendar startDate, Calendar endDate) {
+        String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group");
+        checkCourseAlreadyEnrolled(selectedCourse, week);
+        if (!isCourseAlreadyEnrolled) {
+            Model_CourseEnrollment courseEnrollment = new Model_CourseEnrollment();
+            courseEnrollment.setCoachVerificationDate("");
+            courseEnrollment.setCoachVerified(false);
+            //add experience as json object string in db
+            Model_CourseExperience model_courseExperience = new Model_CourseExperience();
+            model_courseExperience.setAssignments(null);
+            model_courseExperience.setWords_learnt("");
+            model_courseExperience.setAssignments_completed("");
+            model_courseExperience.setAssignments_description("");
+            model_courseExperience.setCoach_comments("");
+            model_courseExperience.setCoach_verification_date("");
+            model_courseExperience.setCoach_image("");
+            model_courseExperience.setAssignment_submission_date(PD_Utility.getCurrentDateTime());
+            model_courseExperience.setStatus(PD_Constant.COURSE_NOT_VERIFIED);
+
+            courseEnrollment.setCourseExperience(new Gson().toJson(model_courseExperience));
+            courseEnrollment.setCourseDetail(selectedCourse);
+            courseEnrollment.setCourseId(selectedCourse.getNodeid());
+            courseEnrollment.setGroupId(groupId);
+            courseEnrollment.setPlanFromDate(week + " " + startDate.getTime().toString());
+            courseEnrollment.setPlanToDate(week + " " + endDate.getTime().toString());
+            courseEnrollment.setSentFlag(0);
+            courseEnrollment.setLanguage(FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            //add @courseEnrollment in hashmap and db
+            List<Model_CourseEnrollment> enrollments;
+            if (coursesPerWeek.containsKey(week)) {
+                enrollments = new ArrayList<>(Objects.requireNonNull(coursesPerWeek.get(week)));
+                enrollments.add(courseEnrollment);
+            } else {
+                enrollments = new ArrayList<>();
+                enrollments.add(courseEnrollment);
+            }
+            coursesPerWeek.put(week, enrollments);
+            PrathamApplication.courseDao.insertCourse(courseEnrollment);
+            Toast.makeText(getActivity(),"Course Added!", Toast.LENGTH_SHORT).show();
+        } else {
+            //course is already added in that particular week
+            Toast.makeText(getActivity(), R.string.course_already_enrolled, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**Getting already enrolled courses from db*/
+    private List<Model_CourseEnrollment> enrolledCoursesFromDb(String week, String groupId) {
+        coursesPerWeek.remove(week);
+        List<Model_CourseEnrollment> courseEnrollments = PrathamApplication.courseDao.
+                fetchEnrolledCourses(groupId, week, FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+        if (courseEnrollments == null) return null;
+        List<Model_CourseEnrollment> temp = new ArrayList<>();
+        for (Model_CourseEnrollment ce : courseEnrollments) {
+            Model_CourseExperience courseExperience = new Gson().fromJson(ce.getCourseExperience(), Model_CourseExperience.class);
+            if (!courseExperience.getStatus().equalsIgnoreCase(PD_Constant.FEEDBACK_GIVEN)) {
+                ce.setCourseDetail(PrathamApplication.modalContentDao.getContent(ce.getCourseId(),
+                        FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI)));
+                ce.setProgressCompleted(isCourseProgressCompleted(ce, week));
+                temp.add(ce);
+            }
+        }
+        if (temp.size() > 0)
+            coursesPerWeek.put(week, temp);
+        return temp;
+    }
+
+    /**Check whether the course is completed or not*/
+    private boolean isCourseProgressCompleted(Model_CourseEnrollment ce, String week) {
+        String progress = PrathamApplication.contentProgressDao.getCourseProgress(ce.getGroupId(), ce.getCourseId(), week);
+        //considering the case if the progress is not complete 100%
+        if (progress != null) {
+            return Integer.parseInt(progress) > 95;
+        } else return false;
+    }
+
+    public void checkCourseAlreadyEnrolled(Modal_ContentDetail selectedCourse, String week){
+        String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group");
+        List<Model_CourseEnrollment> courseEnrollments = enrolledCoursesFromDb(week, groupId);
+        for (Model_CourseEnrollment cen : Objects.requireNonNull(courseEnrollments)) {
+            if (selectedCourse.getNodeid().equalsIgnoreCase(cen.getCourseDetail().getNodeid())) {
+                isCourseAlreadyEnrolled = true;
+                break;
+            }
+        }
+    }
+
     @Subscribe(threadMode = ThreadMode.BACKGROUND)
     public void onMainBackPressed(EventMessage message) {
         if (message != null) {
@@ -594,13 +850,13 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
         modal_log.setMethodName(content.getNodeid());
         modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
         modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        modal_log.setExceptionStackTrace("APK BUILD DATE : "+PD_Constant.apkDate);
+        modal_log.setExceptionStackTrace("APK BUILD DATE : " + PD_Constant.apkDate);
         modal_log.setDeviceId("" + PD_Utility.getDeviceID());
         modal_log.setLogDetail(content.getResourcezip());
-        if(PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-            modal_log.setLogDetail("PI#"+content.getResourcezip());
+        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+            modal_log.setLogDetail("PI#" + content.getResourcezip());
         else
-            modal_log.setLogDetail("INTERNET#"+content.getResourcezip());
+            modal_log.setLogDetail("INTERNET#" + content.getResourcezip());
 
         logDao.insertLog(modal_log);
         BackupDatabase.backup(getActivity());

@@ -6,9 +6,9 @@ apply plugin: 'kotlin-android-extensions'
  Increment the MAJOR after the MINOR version achieved the number 9*/
 ext.versionMajor = 4
 /*Minor Version : While adding a functionality , minor changes like color change or icon changes*/
-ext.versionMinor = 6
+ext.versionMinor = 7
 /*Patch : Bug fixing*/
-ext.versionPatch = 9
+ext.versionPatch = 0
 ext.minSdkVersion = 21
 android {
     compileSdkVersion 30
@@ -17,7 +17,7 @@ android {
         minSdkVersion project.ext.minSdkVersion
         targetSdkVersion 30
         versionCode generateVersionCode()
-        versionName "4.6.9"
+        versionName "4.7.0"
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

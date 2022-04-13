@@ -33,5 +33,25 @@
     "language": "Odia",
     "main_language": "Odia",
     "language_id": 86000
+  },
+  {
+    "language": "Bengali",
+    "main_language": "Bengali",
+    "language_id": 86046
+  },
+  {
+    "language": "Telugu",
+    "main_language": "Telugu",
+    "language_id": 86013
+  },
+  {
+    "language": "Tamil",
+    "main_language": "Tamil",
+    "language_id": 86024
+  },
+  {
+    "language": "Gujarati",
+    "main_language": "Gujarati",
+    "language_id": 86035
   }
 ]
