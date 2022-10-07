@@ -194,7 +194,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
          if(studentsSmartPhone.size()!=0) {
               for (Modal_Student stu : studentsSmartPhone) {
                     Modal_Groups groups1 = new Modal_Groups();
-                    groups1.setGroupId(stu.getGroupId());
+                    groups1.setGroupId(stu.getStudentId()+"_SmartPhone");
                     groups1.setGroupName(stu.getFullName());
                     groups1.setVillageId(stu.getStudentId());
                     groups1.setProgramId(0);
@@ -245,7 +245,10 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
     public void setNext(View v, Modal_Groups modal_groups) {
         if(modal_groups.getGroupId().contains("SmartPhone")){
             PrathamApplication.bubble_mp.start();
-            ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getGroupwiseStudentsLike(modal_groups.getGroupId()));
+            String individualId = modal_groups.GroupId.split("_")[0];
+            Log.e("tempGrp : ", individualId);
+            ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getAllStudent(individualId));
+            Log.e("tempStud : ", students.toString());
             int[] outLocation = new int[2];
             v.getLocationOnScreen(outLocation);
             outLocation[0] += v.getWidth() / 2;

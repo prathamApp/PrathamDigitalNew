@@ -67,5 +67,11 @@
             android:layout_marginTop="@dimen/_10sdp"
             android:layout_marginEnd="@dimen/_25sdp"/>
 
+        <com.pratham.prathamdigital.custom.search_view.SearchView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:visibility="gone"/>
+
     </RelativeLayout>
 </com.pratham.prathamdigital.custom.CircularRevelLayout>

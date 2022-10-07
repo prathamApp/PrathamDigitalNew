@@ -5,12 +5,12 @@ import androidx.annotation.NonNull;
 public class PD_Constant {
 
 
-    public static final String apkDate = "12-04-2022";//
+    public static final String apkDate = "27-09-2022";//
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
     public static final String STUDENT_ENROLLMENT_URL = "http://www.devtab.openiscool.org/api/Enrollement/Get?enrollmentno=";
-
+    public static final String SEARCH_CONTENT = "https://devposapi.prathamopenschool.org/api/content/SearchByNode?repoid=pradigilife&word=";
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
@@ -254,6 +254,8 @@ public class PD_Constant {
     public static final String KOLIBRI_VILLAGE = ",villageid:";
     public static final String SERVER_VILLAGE = "&villageId=";
     public static final String SERVER_STATECODE = "&statecode=";
+    public static final String SERVER_NODEID = "&nodeid=";
+    public static final String SERVER_DEVICEID = "&deviceid=";
 
     //In-App Update Constants
     public static final String CHECK_UPDATE = "CHECK_UPDATE";
@@ -273,12 +275,12 @@ public class PD_Constant {
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
         RASPBERRY_FACILITY_URL(RASP_IP + "/api/content/session/"),
-        //        GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
+        //GET_RASPBERRY_HEADER(RASP_IP + "/api/contentnode?content_id=f9da12749d995fa197f8b4c0192e7b2c"),
         GET_RASPBERRY_HEADER(RASP_IP + "/api/content/channel/"),
         POST_SMART_INTERNET_URL("http://devprodigi.openiscool.org/api/PRADIGILIFE/PushFiles"),
-//        POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
+        //POST_SMART_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatasmartphone/post/"),
         POST_TAB_INTERNET_URL("http://devprodigi.openiscool.org/api/PRADIGILIFE/PushFiles"),
-//        POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
+        //POST_TAB_INTERNET_URL("http://www.rpi.prathamskills.org/api/pushdatapradigi/post/"),
         AAJ_KA_SAWAL_URL("http://rpi.prathamskills.org/aajkasawaal/"),
         PULL_PROGRAMS("http://swap.prathamcms.org/api/program"),
         pullVillagesKolibriURL(RASP_IP + "/pratham/datastore/?table_name=village&filter_name=programid:"),

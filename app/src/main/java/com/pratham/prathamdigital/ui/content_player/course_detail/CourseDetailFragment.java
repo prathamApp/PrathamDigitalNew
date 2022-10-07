@@ -192,6 +192,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
                 tv_enroll_course.setVisibility(View.VISIBLE);
                 tv_goto_course.setVisibility(View.GONE);
             };
+//            btn_downloadAll.setVisibility(View.VISIBLE);
         }
         //else screen open via Course navigation item click
         else {
@@ -201,7 +202,6 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             course_detail.setText(enrollment.getCourseDetail().getNodedesc());
             btn_playAll.setVisibility(View.VISIBLE);
             tv_enroll_course.setVisibility(View.GONE);
-            btn_downloadAll.setVisibility(View.GONE);
             assessmentToastFlag = true;
         }
 

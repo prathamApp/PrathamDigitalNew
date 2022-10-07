@@ -61,12 +61,21 @@ public interface ScoreDao {
     List<Modal_JoinScoreContentTable> getUsedResources(String studentid);
 
     //Query for getting DateWise Resource Count
-    @Query("select st.sId as StudentID, st.sdt as startDate, st.rt as resourceType, count(st.rt) as count\n" +
+    @Query("select st.studentId as StudentID, st.dates as startDate, st.resourceType, count(st.resourceType) as count\n" +
+            "from (\n" +
+            "select Score.studentId as studentId, substr(Score.EndDateTime,1,10) as dates, TableContent.resourceType as resourceType, score.ResourceID\n" +
+            "from Score,TableContent\n" +
+            "where Score.ResourceID = TableContent.resourceid and Score.StudentID=:studentid\n" +
+            "group by dates, Score.resourceid) as st\n" +
+            "group by st.dates, st.resourceType")
+    List<Modal_dateWiseResourceCount> getDateWiseResourceCount(String studentid);
+
+/*    @Query("select st.sId as StudentID, st.sdt as startDate, st.rt as resourceType, count(st.rt) as count\n" +
             "from (select s.studentId as sId, substr(s.EndDateTime,1,10) sdt, r.resourceType as rt\n" +
             "from score s, TableContent r\n" +
             "where s.resourceid = r.resourceid\n" +
             "group by substr(s.EndDateTime,1,10), r.resourceid) st\n" +
             "where st.sId =:studentid\n" +
             "group by st.sdt, st.rt;")
-    List<Modal_dateWiseResourceCount> getDateWiseResourceCount(String studentid);
+    List<Modal_dateWiseResourceCount> getDateWiseResourceCount(String studentid);*/
 }
