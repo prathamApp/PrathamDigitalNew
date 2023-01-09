@@ -3,7 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/ic_crash">
+    android:background="@drawable/ic_crash"
+    android:keepScreenOn="true">
 
     <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
         android:id="@+id/txt_crash_1"

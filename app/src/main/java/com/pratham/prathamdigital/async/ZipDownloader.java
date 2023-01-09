@@ -15,14 +15,17 @@ import com.liulishuo.okdownload.core.cause.ResumeFailedCause;
 import com.liulishuo.okdownload.core.listener.DownloadListener3;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
+import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.ui.content_player.course_detail.CourseDetailFragment;
 import com.pratham.prathamdigital.ui.fragment_content.ContentContract;
 import com.pratham.prathamdigital.ui.fragment_content.ContentPresenterImpl;
 import com.pratham.prathamdigital.util.PD_Constant;
+import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.SpeedMonitor;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -38,6 +41,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
+import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
 
 @EBean
@@ -46,6 +50,8 @@ public class ZipDownloader {
     @Bean(PD_ApiRequest.class)
     PD_ApiRequest pd_apiRequest;
     private String filename;
+
+    long bytes_downloaded, bytes_total;
 
     ZipDownloader(Context context) {
         Context context1 = context;
@@ -58,7 +64,7 @@ public class ZipDownloader {
         createFolderAndStartDownload(url, foldername, f_name, contentDetail, contentPresenter, levelContents, isRaspPi);
     }
 
-    //created for download functioanlity in course fragment
+    /**created for download functionality in course fragment*/
     public void initializeforCourse(CourseDetailFragment courseDetailFragment, String url,
                             String foldername, String f_name, Modal_ContentDetail contentDetail,
                             ArrayList<Modal_ContentDetail> levelContents, String isRaspPi) {
@@ -138,7 +144,7 @@ public class ZipDownloader {
         }
     }
 
-    //created for download functioanlity in course fragment
+    /**created for download functionality in course fragment*/
     @Background
     public void createFolderAndStartDownloadforCourse(String url, String foldername, String f_name,
                                              Modal_ContentDetail contentDetail,
@@ -205,17 +211,6 @@ public class ZipDownloader {
             task.enqueue(listener);
             courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);
         }
-
-/*        //download Thumbnail image first
-        downloadImages(modal_download, modal_download.getLevelContents());
-        DownloadTask task = new DownloadTask.Builder(url, new File(modal_download.getDir_path()))
-                .setFilename(modal_download.getF_name())
-                // the minimal interval millisecond for callback progress
-                .setMinIntervalMillisCallbackProcess(30)
-                .build();
-        task.setTag(modal_download);
-        task.enqueue(listener);
-        courseDetailFragment.currentDownloadRunning(contentDetail.getNodeid(), task);*/
     }
 
     private com.liulishuo.okdownload.DownloadListener listener = new DownloadListener3() {
@@ -236,7 +231,22 @@ public class ZipDownloader {
 
         @Override
         protected void error(@NonNull DownloadTask task, @NonNull Exception e) {
+            /**From android 10 and above this library creates issue. While downloading the resource library calls this error method
+             * without any issue. So the download gets cancelled. For downloading complete resource need to click download multiple
+             * times.
+             *
+             * For resolving that issue, below condition is added. As observed below exception is thrown even the resource is 100%
+             * downloaded. Currently this fix is working correctly, tested by me and jay on multiple os versions 10, 11 & 12.
+            */
+            Log.d("error:::", ((Modal_Download) task.getTag()).getF_name());
+            Log.d("error Message:::", (e.getMessage()));
+
+            if(!e.getMessage().contains("The current offset on block-info isn't update correct"))
             notifyError((Modal_Download) task.getTag());
+            else {
+                Log.d("bypass:::", String.valueOf(bytes_downloaded+" | "+bytes_total));
+                notifyDownloadSuccess((Modal_Download) task.getTag());
+            }
         }
 
         @Override
@@ -257,10 +267,21 @@ public class ZipDownloader {
 
         @Override
         public void progress(@NonNull DownloadTask task, long currentOffset, long totalLength) {
-            Modal_Download modal_download = (Modal_Download) task.getTag();
-            if (totalLength <= 0)
-                totalLength = (modal_download.getContent().getLevel() > 0) ? modal_download.getContent().getLevel() : 1;
-            updateProgress(modal_download, totalLength, currentOffset);
+            bytes_downloaded = currentOffset;
+            bytes_total = totalLength;
+            /**
+             * Here resource download sized is checked. If complete resource is downloaded then success method is called else update
+             * method is called. As noticed above on os version 10 even after downloading resource 100% default complete method is not
+             * called, here we call success method after checking.
+             */
+            if(currentOffset==totalLength){
+                notifyDownloadSuccess((Modal_Download) task.getTag());
+            } else {
+                Modal_Download modal_download = (Modal_Download) task.getTag();
+                if (totalLength <= 0)
+                    totalLength = (modal_download.getContent().getLevel() > 0) ? modal_download.getContent().getLevel() : 1;
+                updateProgress(modal_download, totalLength, currentOffset);
+            }
         }
     };
 

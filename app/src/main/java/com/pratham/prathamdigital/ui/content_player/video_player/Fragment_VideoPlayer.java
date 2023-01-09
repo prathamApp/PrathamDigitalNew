@@ -199,33 +199,37 @@ public class Fragment_VideoPlayer extends Fragment {
 
     @Background
     public void addScoreToDB() {
-        String endTime = PD_Utility.getCurrentDateTime();
-        Modal_Score modalScore = new Modal_Score();
-        modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        if (PrathamApplication.isTablet) {
-            modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
-            modalScore.setStudentID("");
-        } else {
-            modalScore.setGroupID("");
-            modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+        try {
+            String endTime = PD_Utility.getCurrentDateTime();
+            Modal_Score modalScore = new Modal_Score();
+            modalScore.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            if (PrathamApplication.isTablet) {
+                modalScore.setGroupID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_group"));
+                modalScore.setStudentID("");
+            } else {
+                modalScore.setGroupID("");
+                modalScore.setStudentID(FastSave.getInstance().getString(PD_Constant.GROUPID, "no_student"));
+            }
+            modalScore.setDeviceID(PD_Utility.getDeviceID());
+            modalScore.setResourceID(resId);
+            modalScore.setQuestionId(0);
+            modalScore.setScoredMarks((int) PD_Utility.getTimeDifference(startTime, endTime));
+            modalScore.setTotalMarks((int) videoDuration);
+            modalScore.setStartDateTime(startTime);
+            modalScore.setEndDateTime(endTime);
+            modalScore.setLevel(0);
+            modalScore.setLabel("_");
+            modalScore.setSentFlag(0);
+            scoreDao.insert(modalScore);
+            //Calculate the percentage of video watched
+            int vidDuration = (int) videoView.getPlayer().getDuration();
+            int vidWatchedDuration = (int) videoView.getPlayer().getCurrentPosition();
+            float percentage = ((float) vidWatchedDuration / (float) vidDuration) * 100;
+            int watchedPercent = (int) percentage;
+            addContentProgress(watchedPercent, "videoProgress");
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        modalScore.setDeviceID(PD_Utility.getDeviceID());
-        modalScore.setResourceID(resId);
-        modalScore.setQuestionId(0);
-        modalScore.setScoredMarks((int) PD_Utility.getTimeDifference(startTime, endTime));
-        modalScore.setTotalMarks((int) videoDuration);
-        modalScore.setStartDateTime(startTime);
-        modalScore.setEndDateTime(endTime);
-        modalScore.setLevel(0);
-        modalScore.setLabel("_");
-        modalScore.setSentFlag(0);
-        scoreDao.insert(modalScore);
-        //Calculate the percentage of video watched
-        int vidDuration = (int) videoView.getPlayer().getDuration();
-        int vidWatchedDuration = (int) videoView.getPlayer().getCurrentPosition();
-        float percentage = ((float) vidWatchedDuration /(float) vidDuration) * 100;
-        int watchedPercent = (int) percentage;
-        addContentProgress(watchedPercent,"videoProgress");
     }
 
     private void addContentProgress(int perc, String label) {

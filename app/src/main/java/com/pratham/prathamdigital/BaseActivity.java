@@ -191,9 +191,9 @@ public class BaseActivity extends AppCompatActivity {
                                     statusObj.setValue(Build.getSerial());
                                     statusDao.insert(statusObj);
                                 }*/
-                                /*EventMessage msg1 = new EventMessage();
+                                EventMessage msg1 = new EventMessage();
                                 msg1.setMessage(PD_Constant.PERMISSIONS_GRANTED);
-                                EventBus.getDefault().post(msg1);*/
+                                EventBus.getDefault().post(msg1);
                             })
                             .onForeverDenied(permissionResult -> {
                                 Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();

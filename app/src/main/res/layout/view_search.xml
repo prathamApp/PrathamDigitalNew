@@ -2,7 +2,9 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="@dimen/_40sdp"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/fl_search"
+    android:layout_alignParentBottom="true">
 
     <RelativeLayout
         android:id="@+id/search_closed_view"
@@ -51,7 +53,7 @@
             android:background="@drawable/ic_close_black_24dp" />
 
         <EditText
-            android:id="@+id/search_input_text"
+            android:id="@+id/et_search_text"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:paddingStart="@dimen/_15sdp"

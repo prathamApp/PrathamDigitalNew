@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:background="@color/white"
     tools:context=".ui.dashboard.ActivityMain"
-    tools:openDrawer="start">
+    tools:openDrawer="start"
+    android:keepScreenOn="true">
 
     <include layout="@layout/main_navigation_drawer" />
 

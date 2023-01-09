@@ -5,12 +5,11 @@ import androidx.annotation.NonNull;
 public class PD_Constant {
 
 
-    public static final String apkDate = "27-09-2022";//
+    public static final String apkDate = "09-01-2023";//
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
     public static final String STUDENT_ENROLLMENT_URL = "http://www.devtab.openiscool.org/api/Enrollement/Get?enrollmentno=";
-    public static final String SEARCH_CONTENT = "https://devposapi.prathamopenschool.org/api/content/SearchByNode?repoid=pradigilife&word=";
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
@@ -267,7 +266,7 @@ public class PD_Constant {
 
         //BROWSE_BY_ID(BASE_URL + "get?id="),//req
         BROWSE_BY_ID(BASE_URL_NEW + "browse?id="),//req
-        SEARCH_BY_KEYWORD(BASE_URL + "GetSearchList?"),
+        SEARCH_BY_NODE(BASE_URL_NEW + "SearchByNode?repoid=pradigilife&word="),//req
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
         GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
         //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),//req

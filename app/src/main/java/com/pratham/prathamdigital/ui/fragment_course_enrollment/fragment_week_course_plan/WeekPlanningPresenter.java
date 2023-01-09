@@ -243,7 +243,9 @@ public class WeekPlanningPresenter implements PlanningContract.weekOnePlanningPr
     @Override
     public void fetchCourseChilds(Model_CourseEnrollment c_enrolled) {
         Modal_ContentDetail detail = c_enrolled.getCourseDetail();
-        List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
+        //List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParent(detail.getNodeid(), detail.getAltnodeid(), detail.getContent_language());
+        //TODO Ketan Changes for altnode id issue
+        List<Modal_ContentDetail> childs = PrathamApplication.modalContentDao.getChildsOfParentNEW(detail.getNodeid(), detail.getContent_language());
         Collections.sort(childs, (o1, o2) -> {
             if(o1.seq_no==null)
                 return o1.getNodeid().compareToIgnoreCase(o2.getNodeid());

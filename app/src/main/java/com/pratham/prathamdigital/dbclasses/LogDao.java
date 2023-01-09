@@ -52,4 +52,8 @@ public interface LogDao {
    @Query("select * from Logs WHERE errorType = 'db_successfully_pushed' " +
            "ORDER By substr(currentDateTime,7,4)||\"-\"||substr(currentDateTime,4,2)||\"-\"||substr(currentDateTime,1,2)||\" \"||substr(currentDateTime,12,2)||\":\"||substr(currentDateTime,15,2)||\":\"||substr(currentDateTime,18,2) DESC LIMIT 1")
     Modal_Log getLastDbSyncLog();
+
+   //Query to check whether the resource is entered in db or not
+   @Query("select * from Logs where exceptionMessage=:nodeTitle and methodName=:nodeId")
+    Modal_Log checkResourceLog(String nodeTitle, String nodeId);
 }

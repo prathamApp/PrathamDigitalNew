@@ -1,6 +1,7 @@
 package com.pratham.prathamdigital.ui.content_player.course_detail;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,6 +35,7 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.view_animators.Animate;
 import com.pratham.prathamdigital.custom.view_animators.Techniques;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
+import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
@@ -170,6 +172,7 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
 
     /**till here*/
 
+    Modal_Log resource_log=null;
 
     @SuppressLint("SetTextI18n")
     @AfterViews
@@ -843,24 +846,48 @@ public class CourseDetailFragment extends Fragment implements ContentPlayerContr
             }
         }
 
-        //update data download channel
-        Modal_Log modal_log = new Modal_Log();
-        modal_log.setErrorType("DOWNLOAD");
-        modal_log.setExceptionMessage(content.getNodetitle());
-        modal_log.setMethodName(content.getNodeid());
-        modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
-        modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        modal_log.setExceptionStackTrace("APK BUILD DATE : " + PD_Constant.apkDate);
-        modal_log.setDeviceId("" + PD_Utility.getDeviceID());
-        modal_log.setLogDetail(content.getResourcezip());
-        if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-            modal_log.setLogDetail("PI#" + content.getResourcezip());
-        else
-            modal_log.setLogDetail("INTERNET#" + content.getResourcezip());
-
-        logDao.insertLog(modal_log);
-        BackupDatabase.backup(getActivity());
+        /**
+         Issue : This method is called twice within seconds. So downloaded resource is entered twice in logs table.
+         Fix : To avoid the duplication, entry is checked in db first, if not present then value is entered in table else not.
+         As entry is made very quickly, one second delay is added before entering second entry. So the value is checked for
+         duplication first and then entered.
+         */
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                resource_log = PrathamDatabase.getDatabaseInstance(getActivity()).getLogDao().checkResourceLog(content.getNodetitle(), content.getNodeid());
+                addToLog(content, resource_log);
+            }
+        }, 1000);
     }
+
+    private void addToLog(Modal_ContentDetail content, Modal_Log modal_logg){
+        //update data download channel
+        if(modal_logg==null) {
+            Modal_Log modal_log = new Modal_Log();
+            modal_log.setErrorType("DOWNLOAD");
+            modal_log.setExceptionMessage(content.getNodetitle());
+            modal_log.setMethodName(content.getNodeid());
+            modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+            modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            modal_log.setExceptionStackTrace("APK BUILD DATE : " + PD_Constant.apkDate);
+            modal_log.setDeviceId("" + PD_Utility.getDeviceID());
+            modal_log.setLogDetail(content.getResourcezip());
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+                modal_log.setLogDetail("PI#" + content.getResourcezip());
+            else
+                modal_log.setLogDetail("INTERNET#" + content.getResourcezip());
+
+            logDao.insertLog(modal_log);
+            BackupDatabase.backup(getActivity());
+        } else {
+            Log.e("Duplicate : ", content.getNodetitle());
+        }
+
+    }
+
 
     public void ondownloadError(String downloadId) {
         Modal_ContentDetail content = Objects.requireNonNull(filesContentDownloading.get(downloadId)).getContentDetail();

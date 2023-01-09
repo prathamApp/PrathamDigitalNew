@@ -3,6 +3,8 @@ package com.pratham.prathamdigital.ui.fragment_content;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -15,12 +17,14 @@ import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.async.ZipDownloader;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
+import com.pratham.prathamdigital.dbclasses.PrathamDatabase;
 import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.interfaces.DownloadedContents;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_DownloadContent;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
+import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_RaspFacility;
 import com.pratham.prathamdigital.models.Modal_Rasp_Content;
@@ -80,6 +84,9 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
     ContentPresenterImpl(Context context) {
         Context context1 = context;
     }
+
+    private String searchWord="";
+    Modal_Log resource_log=null;
 
     @Override
     public void setView(ContentContract.contentView context) {
@@ -149,6 +156,16 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
 
     @Background
     @Override
+    public void getSearchContent(String SearchText) {
+        searchWord=SearchText;
+        getDownloadedContents(FastSave.getInstance().getString(PD_Constant.CONTENT_PARENT,null), null);
+        searchWord="";
+        //FastSave.getInstance().deleteValue(PD_Constant.CONTENT_PARENT);
+    }
+
+
+    @Background
+    @Override
     public void checkConnectionForRaspberry() {
         if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
@@ -164,16 +181,21 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
-    private void checkConnectivity(ArrayList<Modal_ContentDetail> contentList, String parentId) {
+    public void checkConnectivity(ArrayList<Modal_ContentDetail> contentList, String parentId, String search) {
         if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-            callOnlineContentAPI(contentList, parentId);
+            if(search.equalsIgnoreCase("SEARCH")){ searchOnlineContentAPI(contentList, parentId, searchWord); }
+            else { callOnlineContentAPI(contentList, parentId); }
         } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
             if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT)) {
                 if (FastSave.getInstance().getString(PD_Constant.FACILITY_ID, "").isEmpty())
                     checkConnectionForRaspberry();
                 callKolibriAPI(contentList, parentId);
             } else {
-                callOnlineContentAPI(contentList, parentId);
+                if(search.equalsIgnoreCase("SEARCH")){
+                    searchOnlineContentAPI(contentList, parentId, searchWord);
+                } else {
+                    callOnlineContentAPI(contentList, parentId);
+                }
             }
         } else {
             if (contentList.isEmpty()) {
@@ -234,8 +256,8 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             /*            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
                     PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID(), contentList);*/
 
-//            String url = PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID();
-//            Log.e("URL TOP: ", url);
+/*            String url = PD_Constant.URL.BROWSE_BY_ID + "2000001" + "&deviceid=" + PD_Utility.getDeviceID();
+           Log.e("URL TOP: ", url);*/
 
 
             //new pradigi for life api top levelapi
@@ -251,6 +273,29 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                         PD_Constant.URL.BROWSE_BY_ID + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID(), contentList);
                 String url = PD_Constant.URL.BROWSE_BY_ID + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID();
                 Log.e("URL BROWSE : ", url);
+            } catch (Exception e) {
+                Log.e("ERROR : ", e.getMessage());
+            }
+        }
+    }
+
+    /**Function to search entered resource online*/
+    private void searchOnlineContentAPI(ArrayList<Modal_ContentDetail> contentList, String parentId, String searchText) {
+        if (parentId == null || parentId.equalsIgnoreCase("0") || parentId.isEmpty()) {
+            pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                    PD_Constant.URL.SEARCH_BY_NODE + searchText +PD_Constant.SERVER_NODEID+FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672") + PD_Constant.SERVER_DEVICEID + PD_Utility.getDeviceID(), contentList);
+            String url = PD_Constant.URL.SEARCH_BY_NODE + searchText +PD_Constant.SERVER_NODEID+FastSave.getInstance().getString(PD_Constant.LANGUAGE_CODE, "78672") + PD_Constant.SERVER_DEVICEID + PD_Utility.getDeviceID();
+            //String url = PD_Constant.URL.SEARCH_BY_NODE + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID();
+            Log.e("URL TOP SEARCH : ", url);
+        }
+        else
+        {
+            try {
+                pd_apiRequest.getContentFromInternet(PD_Constant.BROWSE_INTERNET,
+                        PD_Constant.URL.SEARCH_BY_NODE + searchText +PD_Constant.SERVER_NODEID+((mappedParentApi != null) ? mappedParentApi : parentId) + PD_Constant.SERVER_DEVICEID + PD_Utility.getDeviceID(), contentList);
+                String url = PD_Constant.URL.SEARCH_BY_NODE + searchText +PD_Constant.SERVER_NODEID+ ((mappedParentApi != null) ? mappedParentApi : parentId) + PD_Constant.SERVER_DEVICEID + PD_Utility.getDeviceID();
+                //String url = PD_Constant.URL.SEARCH_BY_NODE + ((mappedParentApi != null) ? mappedParentApi : parentId) + "&deviceid=" + PD_Utility.getDeviceID();
+                Log.e("URL SEARCH : ", url);
             } catch (Exception e) {
                 Log.e("ERROR : ", e.getMessage());
             }
@@ -571,13 +616,18 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         }
     }
 
+    //Method used before Ketan solution
+/*
+
     private ArrayList<Modal_ContentDetail> removeDownloadedContents(ArrayList<Modal_ContentDetail> dbContents
             , ArrayList<Modal_ContentDetail> onlineContents) {
         String parentid = null;
         if (!dbContents.isEmpty())
             parentid = dbContents.get(0).getParentid();
         for (int i = 0; i < onlineContents.size(); i++) {
-            /** replaced altnodeid with nodeid*/
+
+// replaced altnodeid with nodeid
+
             Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getNodeid(),
                     FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
             if (content != null) {
@@ -605,6 +655,63 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
         if (dbContents.size() > 0) onlineContents.addAll(dbContents);
         return onlineContents;
     }
+
+*/
+
+//TODO Ketan Changes for altnodeid
+private ArrayList<Modal_ContentDetail> removeDownloadedContents(ArrayList<Modal_ContentDetail> dbContents
+        , ArrayList<Modal_ContentDetail> onlineContents) {
+    String parentid = null;
+    int dwPos=0;
+    ArrayList<Modal_ContentDetail> newContents = new ArrayList<>();
+    boolean contentFound = false;
+    for(int i=0; i<onlineContents.size(); i++){
+        for(int k=0; k<dbContents.size(); k++){
+            if(dbContents.get(k).getNodeid().equalsIgnoreCase(onlineContents.get(i).getNodeid())) {
+                contentFound = true;
+                dwPos = k;
+                break;
+            }
+        }
+        if (contentFound)
+            newContents.add(dbContents.get(dwPos));
+        else
+            newContents.add(onlineContents.get(i));
+        contentFound = false;
+    }
+    return newContents;
+/*        if (!dbContents.isEmpty())
+            parentid = dbContents.get(0).getParentid();
+        for (int i = 0; i < onlineContents.size(); i++) {
+            //replaced altnodeid with nodeid
+            Modal_ContentDetail content = modalContentDao.getContentFromAltNodeId(onlineContents.get(i).getNodeid(),
+                    FastSave.getInstance().getString(PD_Constant.LANGUAGE, PD_Constant.HINDI));
+            if (content != null) {
+                if (onlineContents.get(i).isNodeUpdate()) {
+                    content.setNodeUpdate(true);
+                    content.setVersion(onlineContents.get(i).getVersion());
+                }
+
+                content.setMappedApiId(onlineContents.get(i).getNodeid());
+                content.setMappedParentId(mappedParentApi);
+                onlineContents.set(i, content);
+            } else {
+                if (parentid != null) onlineContents.get(i).setParentid(parentid);
+                onlineContents.get(i).setMappedParentId(mappedParentApi);
+            }
+            int pos = -1;
+            for (int j = 0; j < dbContents.size(); j++) {
+                if (dbContents.get(j).getNodeid().equalsIgnoreCase(onlineContents.get(i).getNodeid())) {
+                    pos = j;
+                    break;
+                }
+            }
+            if (pos != -1) dbContents.remove(pos);
+        }
+        if (dbContents.size() > 0) onlineContents.addAll(dbContents);
+        return onlineContents;*/
+}
+
 
     @Override
     public void recievedError(String header, ArrayList<Modal_ContentDetail> contentList) {
@@ -644,23 +751,47 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                 break;
             }
         }
-        //update data download channel
-        Modal_Log modal_log = new Modal_Log();
-        modal_log.setErrorType("DOWNLOAD");
-        modal_log.setExceptionMessage(content.getNodetitle());
-        modal_log.setMethodName(content.getNodeid());
-        modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
-        modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
-        modal_log.setExceptionStackTrace("APK BUILD DATE : "+PD_Constant.apkDate);
-        modal_log.setDeviceId("" + PD_Utility.getDeviceID());
-        modal_log.setLogDetail(content.getResourcezip());
-        if(PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
-            modal_log.setLogDetail("PI#"+content.getResourcezip());
-        else
-            modal_log.setLogDetail("INTERNET#"+content.getResourcezip());
 
-        logDao.insertLog(modal_log);
-        BackupDatabase.backup(context);
+        /**
+         Issue : This method is called twice within seconds. So downloaded resource is entered twice in logs table.
+         Fix : To avoid the duplication, entry is checked in db first, if not present then value is entered in table else not.
+         As entry is made very quickly, one second delay is added before entering second entry. So the value is checked for
+         duplication first and then entered.
+         */
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 100ms
+                resource_log = PrathamDatabase.getDatabaseInstance(context).getLogDao().checkResourceLog(content.getNodetitle(), content.getNodeid());
+                addToLog(content, resource_log, context);
+            }
+        }, 1000);
+    }
+
+    private void addToLog(Modal_ContentDetail content, Modal_Log modal_logg, Context context){
+        //update data download channel
+        if(modal_logg==null) {
+            Modal_Log modal_log = new Modal_Log();
+            modal_log.setErrorType("DOWNLOAD");
+            modal_log.setExceptionMessage(content.getNodetitle());
+            modal_log.setMethodName(content.getNodeid());
+            modal_log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
+            modal_log.setSessionId(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+            modal_log.setExceptionStackTrace("APK BUILD DATE : " + PD_Constant.apkDate);
+            modal_log.setDeviceId("" + PD_Utility.getDeviceID());
+            modal_log.setLogDetail(content.getResourcezip());
+            if (PrathamApplication.wiseF.isDeviceConnectedToSSID(PD_Constant.PRATHAM_KOLIBRI_HOTSPOT))
+                modal_log.setLogDetail("PI#" + content.getResourcezip());
+            else
+                modal_log.setLogDetail("INTERNET#" + content.getResourcezip());
+
+            logDao.insertLog(modal_log);
+//            BackupDatabase.backup(context);
+        } else {
+            Log.e("Duplicate : ", content.getNodetitle());
+        }
+
     }
 
     @Override
@@ -841,6 +972,11 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
             getDownloadedContents(contentDetail.getParentid(), ""); //altnodeId is sent blank coz it points to its same node,
             // that's why their will be no child nodes
 //            new GetDownloadedContent(ContentPresenterImpl.this, contentDetail.getParentid()).execute();
+
+            //Used for search functionality
+            FastSave.getInstance().deleteValue(PD_Constant.CONTENT_PARENT);
+            FastSave.getInstance().saveString(PD_Constant.CONTENT_PARENT,mappedParentApi);
+
         }
     }
 
@@ -1025,7 +1161,10 @@ public class ContentPresenterImpl implements ContentContract.contentPresenter, D
                     childsOfParent = modalContentDao.getAbovePrimaryAgeParentHeaders(lang);
             }
         }
-        checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId);
+        Log.e("URL COP Count: ", String.valueOf(childsOfParent.size()));
+        if(searchWord.isEmpty())
+        checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId, "");
+        else checkConnectivity((ArrayList<Modal_ContentDetail>) childsOfParent, parentId, "SEARCH");
     }
 
     private ArrayList<Modal_ContentDetail> getFinalListWithHeader(ArrayList<Modal_ContentDetail> contentList) {

@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
@@ -104,6 +105,15 @@ public class FragmentContent extends Fragment implements ContentContract.content
     ImageView iv_wifi_status;
     @ViewById(R.id.iv_updateApp)
     ImageView iv_updateApp;
+
+    //Search View
+    @ViewById(R.id.search_closed_view)
+    RelativeLayout rl_searchClosedView;
+    @ViewById(R.id.search_open_view)
+    RelativeLayout rl_searchOpenView;
+    @ViewById(R.id.et_search_text)
+    EditText et_searchText;
+
 
     @Bean(ContentPresenterImpl.class)
     ContentContract.contentPresenter contentPresenter;
@@ -222,6 +232,33 @@ public class FragmentContent extends Fragment implements ContentContract.content
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
         } catch (android.content.ActivityNotFoundException anfe) {
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+        }
+    }
+
+    @Click(R.id.open_search_button)
+    public void openSearchView(){
+        rl_searchOpenView.setVisibility(View.VISIBLE);
+        rl_searchClosedView.setVisibility(View.GONE);
+    }
+
+    @Click(R.id.close_search_button)
+    public void closeSearchButton(){
+        rl_searchOpenView.setVisibility(View.GONE);
+        rl_searchClosedView.setVisibility(View.VISIBLE);
+    }
+
+    @Click(R.id.execute_search_button)
+    public void executeSearchButton(){
+        if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+            if (et_searchText.getText().toString().isEmpty()) {
+                Toast.makeText(getActivity(), "Enter text to search", Toast.LENGTH_SHORT).show();
+            } else {
+                rl_searchOpenView.setVisibility(View.GONE);
+                rl_searchClosedView.setVisibility(View.VISIBLE);
+                contentPresenter.getSearchContent(et_searchText.getText().toString());
+            }
+        } else {
+            Toast.makeText(getActivity(), getString(R.string.internet_connection), Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -366,29 +403,33 @@ public class FragmentContent extends Fragment implements ContentContract.content
 
     @Override
     public void displayContentsInCourse(Modal_ContentDetail contentDetail, List<Modal_ContentDetail> childs) {
-        if (courseFlag == IS_COURSE) {
-            String courseID = contentDetail.getAltnodeid();
-            String nodeTitle = contentDetail.getNodetitle();
-            String nodeDesc = contentDetail.getNodedesc();
-            KotlinPermissions.with(Objects.requireNonNull(getActivity()))
-                    .permissions(Manifest.permission.RECORD_AUDIO)
-                    .onAccepted(permissionResult -> {
-                        Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
-                        intent.putExtra("NODE_CALL", "CALL_FROM_NODE");
-                        intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
-                        intent.putExtra(PD_Constant.COURSE_ID, courseID);
-                        intent.putExtra(PD_Constant.WEEK, "WEEK_1");
-                        intent.putExtra("NODE_TITLE", nodeTitle);
-                        intent.putExtra("NODE_DESC", nodeDesc);
-                        intent.putExtra(PD_Constant.CONTENT_PARENT, contentDetail);
-                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
-                        //intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
-                        intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
-                        Log.e("URL", String.valueOf(temp_levels.size()));
-                        startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
-                        getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
-                    })
-                    .ask();
+        try {
+            if (courseFlag == IS_COURSE) {
+                String courseID = contentDetail.getAltnodeid();
+                String nodeTitle = contentDetail.getNodetitle();
+                String nodeDesc = contentDetail.getNodedesc();
+                KotlinPermissions.with(Objects.requireNonNull(getActivity()))
+                        .permissions(Manifest.permission.RECORD_AUDIO)
+                        .onAccepted(permissionResult -> {
+                            Intent intent = new Intent(getActivity(), Activity_ContentPlayer_.class);
+                            intent.putExtra("NODE_CALL", "CALL_FROM_NODE");
+                            intent.putExtra(PD_Constant.CONTENT_TYPE, PD_Constant.COURSE);
+                            intent.putExtra(PD_Constant.COURSE_ID, courseID);
+                            intent.putExtra(PD_Constant.WEEK, "WEEK_1");
+                            intent.putExtra("NODE_TITLE", nodeTitle);
+                            intent.putExtra("NODE_DESC", nodeDesc);
+                            intent.putExtra(PD_Constant.CONTENT_PARENT, contentDetail);
+                            intent.putParcelableArrayListExtra(PD_Constant.CONTENT, (ArrayList<? extends Parcelable>) childs);
+                            //intent.putParcelableArrayListExtra("course_update", (ArrayList<? extends Parcelable>) childs1);
+                            intent.putParcelableArrayListExtra(PD_Constant.CONTENT_LEVEL, temp_levels);
+                            Log.e("URL", String.valueOf(temp_levels.size()));
+                            startActivityForResult(intent, REQUEST_CODE_COURSE_BACK);
+                            getActivity().overridePendingTransition(R.anim.shrink_enter, R.anim.nothing);
+                        })
+                        .ask();
+            }
+        } catch (Exception e){
+            e.printStackTrace();
         }
     }
 
@@ -443,6 +484,7 @@ public class FragmentContent extends Fragment implements ContentContract.content
     public void onfolderClicked(int position, Modal_ContentDetail contentDetail) {
         PrathamApplication.bubble_mp.start();
         showDialog();
+        FastSave.getInstance().saveString(PD_Constant.CONTENT_PARENT,contentDetail.getNodeid());
         contentPresenter.getContent(contentDetail, "");
     }
 

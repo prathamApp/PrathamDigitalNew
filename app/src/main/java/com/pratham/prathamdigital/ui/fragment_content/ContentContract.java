@@ -89,6 +89,8 @@ public interface ContentContract {
         List<Modal_ContentDetail> getContentList();
 
         boolean isFilesDownloading();
+
+        void getSearchContent(String SearchText);
     }
 
     interface contentClick {
