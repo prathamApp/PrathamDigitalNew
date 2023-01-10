@@ -123,18 +123,18 @@ class RevealSwitch @JvmOverloads constructor(
         anim.duration = animDuration.toLong()
         anim.start()
         anim.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 revealSwitchContainer.background.setColorFilter(enabledTrackColor, PorterDuff.Mode.SRC_ATOP)
             }
         })
@@ -154,19 +154,19 @@ class RevealSwitch @JvmOverloads constructor(
         anim.duration = animDuration.toLong()
         anim.start()
         anim.addListener(object : Animator.AnimatorListener {
-            override fun onAnimationRepeat(animation: Animator?) {
+            override fun onAnimationRepeat(animation: Animator) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onAnimationEnd(animation: Animator?) {
+            override fun onAnimationEnd(animation: Animator) {
                 revealSwitchContainer.background.setColorFilter(disabledTrackColor, PorterDuff.Mode.SRC_ATOP)
             }
 
-            override fun onAnimationCancel(animation: Animator?) {
+            override fun onAnimationCancel(animation: Animator) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onAnimationStart(animation: Animator?) {
+            override fun onAnimationStart(animation: Animator) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         })

@@ -6,19 +6,19 @@ private class AnimationListenerInternal(private val start: () -> Unit = {},
                                         private val end: () -> Unit = {},
                                         private val cancel: () -> Unit = {}) : Animator.AnimatorListener {
 
-    override fun onAnimationEnd(animation: Animator?) {
+    override fun onAnimationEnd(animation: Animator) {
         end()
     }
 
-    override fun onAnimationCancel(animation: Animator?) {
+    override fun onAnimationCancel(animation: Animator) {
         cancel()
     }
 
-    override fun onAnimationStart(animation: Animator?) {
+    override fun onAnimationStart(animation: Animator) {
         start()
     }
 
-    override fun onAnimationRepeat(animation: Animator?) {
+    override fun onAnimationRepeat(animation: Animator) {
     }
 }
 
