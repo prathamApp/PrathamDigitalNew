@@ -111,8 +111,10 @@ public class Fragment_AAJ_KA_SAWAL extends Fragment {
 
     @AfterViews
     public void init() {
-        wrong_mp = MediaPlayer.create(getActivity(), R.raw.wrong_buzzer);
-        correct_mp = MediaPlayer.create(getActivity(), R.raw.applause);
+//        wrong_mp = MediaPlayer.create(getActivity(), R.raw.wrong_buzzer); //removed this audio files for reducing apk size
+//        correct_mp = MediaPlayer.create(getActivity(), R.raw.applause);
+        wrong_mp = MediaPlayer.create(getActivity(), R.raw.bubble_pop);
+        correct_mp = MediaPlayer.create(getActivity(), R.raw.bubble_pop);
         correct_mp.setOnCompletionListener(applauseCompletionListener);
         wrong_mp.setOnCompletionListener(applauseCompletionListener);
         startTime = PD_Utility.getCurrentDateTime();

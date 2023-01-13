@@ -143,7 +143,7 @@ public class PrathamFirebaseMessagingService extends FirebaseMessagingService {
 
         String channelId = getString(R.string.default_notification_channel_id);
         Uri defaultSoundUri = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE + "://" +
-                getApplicationContext().getPackageName() + "/" + R.raw.softbells);
+                getApplicationContext().getPackageName() + "/" + R.raw.bubble_pop);
         NotificationCompat.Builder notificationBuilder =
                 new NotificationCompat.Builder(this, channelId)
                         .setSmallIcon(R.drawable.ic_app_logo_)

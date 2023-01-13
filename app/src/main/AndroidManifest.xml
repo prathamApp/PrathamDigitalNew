@@ -82,7 +82,7 @@
         android:usesCleartextTraffic="true"
         tools:ignore="GoogleAppIndexingWarning"
         tools:replace="android:allowBackup"
-        tools:targetApi="q">
+        android:preserveLegacyExternalStorage="true">
 
         <activity
             android:name=".ui.splash.ActivitySplash_"
@@ -90,10 +90,10 @@
             android:parentActivityName=".BaseActivity"
             android:resizeableActivity="false"
             android:screenOrientation="sensorLandscape"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter android:autoVerify="true">
@@ -221,7 +221,8 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-        <service android:name=".services.PrathamFirebaseMessagingService">
+        <service android:name=".services.PrathamFirebaseMessagingService"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
@@ -229,8 +230,11 @@
         <service
             android:name=".services.AppKillService"
             android:enabled="true"
-            android:stopWithTask="false" />
-        <service android:name=".ftpSettings.FsService" />
+            android:stopWithTask="false"
+            android:exported="false"/>
+
+        <service android:name=".ftpSettings.FsService"
+            android:exported="false"/>
 
         <receiver
             android:name=".ftpSettings.FsNotification"
@@ -242,7 +246,8 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".ftpSettings.NsdService" />
+        <service android:name=".ftpSettings.NsdService"
+            android:exported="false"/>
 
         <receiver
             android:name=".ftpSettings.NsdService$StartStopReceiver"
@@ -265,7 +270,8 @@
             android:name=".ftpSettings.FsTileService"
             android:icon="@mipmap/ic_launcher_"
             android:label="@string/swiftp_name"
-            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE" />
             </intent-filter>
@@ -295,7 +301,7 @@
             android:exported="false" />
         <service
             android:name=".gpsLogger.GpsLoggingService"
-            android:exported="true"
+            android:exported="false"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.pratham.prathamdigital.gpsLogger.GpsLoggingService" />
@@ -308,7 +314,8 @@
             android:exported="false" />
         <receiver
             android:name=".services.OTGListener"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED" />
                 <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED" />
