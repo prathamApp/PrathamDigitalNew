@@ -28,6 +28,15 @@
             android:scaleType="centerInside"
             app:srcCompat="@drawable/ic_att_back" />
 
+        <ImageView
+            android:id="@+id/iv_addProfile"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:scaleType="centerInside"
+            app:srcCompat="@drawable/ic_addprofile"
+            android:layout_alignParentEnd="true"/>
+
         <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
             android:id="@+id/btn_group_next"
             android:layout_width="@dimen/_150sdp"

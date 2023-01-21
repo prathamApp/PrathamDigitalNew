@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 public class PD_Constant {
 
 
-    public static final String apkDate = "11-01-2023";//
+    public static final String apkDate = "20-01-2023";//
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
@@ -86,6 +86,7 @@ public class PD_Constant {
     public static final String ASSESSMENT = "assessment";
     public static final String SESSIONID = "sessionid";
     public static final String GROUPID = "groupid";
+    public static final String GROUPID_DASHBOARD = "groupid_dashb";
     public static final String CONTENT_BACK = "content_back";
     public static final String STUDENT_ADDED = "STUDENT_ADDED";
     public static final String STUDENT_LIST = "STUDENT_LIST";

@@ -22,6 +22,8 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.models.Modal_Groups;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.AppKillService;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
+import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.dashboard.ActivityMain_;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance;
 import com.pratham.prathamdigital.ui.fragment_child_attendance.FragmentChildAttendance_;
@@ -241,11 +243,21 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
         }
     }
 
+    @Click(R.id.iv_addProfile)
+    public void addNewProfile() {
+        Bundle bundle = new Bundle();
+        bundle.putInt(PD_Constant.REVEALX, 0);
+        bundle.putInt(PD_Constant.REVEALY, 0);
+        bundle.putBoolean(PD_Constant.SHOW_BACK, true);
+        PD_Utility.showFragment(getActivity(), new Fragment_SelectAvatar_(), R.id.frame_attendance,
+                bundle, Fragment_SelectAvatar.class.getSimpleName());
+    }
+
     @UiThread
     public void setNext(View v, Modal_Groups modal_groups) {
         if(modal_groups.getGroupId().contains("SmartPhone")){
             PrathamApplication.bubble_mp.start();
-            String individualId = modal_groups.GroupId.split("_")[0];
+            String individualId = modal_groups.GroupId.split("_SmartPhone")[0];
             Log.e("tempGrp : ", individualId);
             ArrayList<Modal_Student> students = new ArrayList<>(studentDao.getAllStudent(individualId));
             Log.e("tempStud : ", students.toString());

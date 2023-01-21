@@ -8,7 +8,8 @@
     android:background="@color/white"
     tools:context=".ui.dashboard.ActivityMain"
     tools:openDrawer="start"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:screenOrientation="landscape">
 
     <include layout="@layout/main_navigation_drawer" />
 

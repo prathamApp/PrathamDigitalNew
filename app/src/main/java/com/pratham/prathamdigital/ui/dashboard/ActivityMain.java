@@ -116,6 +116,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private static final int MENU_SYNC = 15;
     private static final int MENU_SYNCDB = 16;
     private static final int MENU_SYNCLOG = 17;
+    private static final int MENU_DASHBOARD = 18;
+
     @ViewById(R.id.download_notification)
     NotificationBadge download_notification;
     @ViewById(R.id.download_badge)
@@ -219,6 +221,16 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     PD_Utility.showFragment(ActivityMain.this, new FragmentShareRecieve_(), R.id.main_frame,
                             bundle3, FragmentShareRecieve.class.getSimpleName());
                     break;
+
+                case MENU_DASHBOARD:
+                    String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID_DASHBOARD,"");
+                    groupId = groupId.split("_SmartPhone")[0];
+                    //Toast.makeText(ActivityMain.this, groupId, Toast.LENGTH_SHORT).show();
+                    String dasboardURL = "https://powerbi.pradigi.org/chhattisgarh?groupId="+groupId;
+                    Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dasboardURL));
+                    startActivity(browserIntent);
+                    break;
+
                 case MENU_SHARE_APP:
                     KotlinPermissions.with(ActivityMain.this)
                             .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -548,8 +560,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         ArrayList<Modal_NavigationMenu> navigationMenus = new ArrayList<>();
         String[] menus = getResources().getStringArray(R.array.navigation_menu);
         int[] menus_img = {R.drawable.ic_education, R.drawable.ic_courses, R.drawable.ic_abc_blocks, R.drawable.ic_wifi,
-                R.drawable.ic_folder, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.syncdb, R.drawable.ic_sync_logs,
-                R.drawable.ic_backpacker};
+                R.drawable.ic_folder, R.drawable.ic_dashboard_64, R.drawable.ic_app_sharing, R.drawable.ic_sync, R.drawable.syncdb,
+                R.drawable.ic_sync_logs, R.drawable.ic_backpacker};
         for (int i = 0; i < menus.length; i++) {
             Modal_NavigationMenu nav = new Modal_NavigationMenu();
             nav.setMenu_name(menus[i]);
@@ -729,6 +741,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             mHandler.sendEmptyMessage(MENU_CONNECT_WIFI);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Share OR Receive"))
             mHandler.sendEmptyMessage(MENU_SHARE);
+        else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Dashboard"))
+            mHandler.sendEmptyMessage(MENU_DASHBOARD);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Share App"))
             mHandler.sendEmptyMessage(MENU_SHARE_APP);
         else if (modal_navigationMenu.getMenu_name().equalsIgnoreCase("Exit"))

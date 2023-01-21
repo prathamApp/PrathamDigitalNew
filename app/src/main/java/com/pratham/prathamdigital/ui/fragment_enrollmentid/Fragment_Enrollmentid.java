@@ -383,8 +383,10 @@ public class Fragment_Enrollmentid extends Fragment {
         newEnrolledStudent.setAvatarName("avatars/dino_dance.json");
         Modal_Student student = PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().getStudent(newEnrolledStudent.getStudentId());
         if (student != null) {
+            FastSave.getInstance().saveString(PD_Constant.GROUPID_DASHBOARD, student.getGroupId());
             Toast.makeText(getActivity(), R.string.profile_already_saved, Toast.LENGTH_SHORT).show();
         } else {
+            FastSave.getInstance().saveString(PD_Constant.GROUPID_DASHBOARD, newEnrolledStudent.getGroupId());
             studentDao.insertStudent(newEnrolledStudent);
             BackupDatabase.backup(getActivity());
             Toast.makeText(getActivity(), R.string.profile_created_success, Toast.LENGTH_SHORT).show();
