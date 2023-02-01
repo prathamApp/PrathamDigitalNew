@@ -11,11 +11,11 @@ ext.versionMinor = 8
 ext.versionPatch = 2
 ext.minSdkVersion = 21
 android {
-    compileSdkVersion 33
+    compileSdkVersion 32
     defaultConfig {
         applicationId "com.pratham.prathamdigital"
         minSdkVersion project.ext.minSdkVersion
-        targetSdkVersion 33
+        targetSdkVersion 32
         versionCode generateVersionCode()
         versionName "4.8.2"
         vectorDrawables.useSupportLibrary = true

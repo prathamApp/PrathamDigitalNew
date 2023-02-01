@@ -213,6 +213,9 @@ public class Fragment_SelectAvatar extends Fragment implements AvatarContract.av
         modal_student.setGender("M");
         modal_student.setSentFlag(0);
         modal_student.setAvatarName(avatar_selected);
+        modal_student.setEnrollmentId("NA");
+        modal_student.setRegDate(PD_Utility.getCurrentDateTime());
+        modal_student.setDeviceId(PD_Utility.getDeviceID());
         studentDao.insertStudent(modal_student);
         FastSave.getInstance().saveString(PD_Constant.GROUPID, modal_student.getStudentId());
         FastSave.getInstance().saveString(PD_Constant.SESSIONID, PD_Utility.getUUID().toString());

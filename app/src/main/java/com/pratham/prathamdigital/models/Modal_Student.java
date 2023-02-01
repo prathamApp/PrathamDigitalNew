@@ -38,8 +38,11 @@ public class Modal_Student implements Comparable, Parcelable {
     public String StudentId;
 
     public String VillageName;
-
     public String avatarName;
+    public String enrollmentId;
+    public String regDate;
+    public String deviceId;
+
     @Ignore
     private transient boolean isChecked = false;
 
@@ -56,6 +59,9 @@ public class Modal_Student implements Comparable, Parcelable {
         sentFlag = in.readInt();
         StudentId = in.readString();
         avatarName = in.readString();
+        enrollmentId = in.readString();
+        regDate = in.readString();
+        deviceId = in.readString();
         isChecked = in.readByte() != 0;
     }
 
@@ -193,6 +199,18 @@ public class Modal_Student implements Comparable, Parcelable {
         VillageName = villageName;
     }
 
+    public String getEnrollmentId() { return enrollmentId; }
+
+    public void setEnrollmentId(String enrollmentId) { this.enrollmentId = enrollmentId; }
+
+    public String getRegDate() { return regDate; }
+
+    public void setRegDate(String regDate) { this.regDate = regDate; }
+
+    public String getDeviceId() { return deviceId; }
+
+    public void setDeviceId(String deviceId) { this.deviceId = deviceId; }
+
     @Override
     public int compareTo(@NonNull Object o) {
         Modal_Student compare = (Modal_Student) o;
@@ -220,6 +238,9 @@ public class Modal_Student implements Comparable, Parcelable {
         dest.writeInt(sentFlag);
         dest.writeString(StudentId);
         dest.writeString(avatarName);
+        dest.writeString(enrollmentId);
+        dest.writeString(regDate);
+        dest.writeString(deviceId);
         dest.writeByte((byte) (isChecked ? 1 : 0));
     }
 }

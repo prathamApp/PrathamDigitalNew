@@ -203,6 +203,7 @@ public class FragmentSelectGroup extends Fragment implements ContractGroup, Circ
                     groups1.setGroupCode("");
                     groups1.setSchoolName("");
                     groups1.setDeviceId(PD_Utility.getDeviceID());
+                    groups1.setRegDate(PD_Utility.getCurrentDateTime());
                     Log.e("URL : ", String.valueOf(groups1));
                     groups.add(groups1);
                 }

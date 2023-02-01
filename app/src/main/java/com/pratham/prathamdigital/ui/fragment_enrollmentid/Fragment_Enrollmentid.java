@@ -229,6 +229,9 @@ public class Fragment_Enrollmentid extends Fragment {
                 newEnrolledStudent.setGender(enrollmentModel.getLstStudent().get(0).getGender());
                 newEnrolledStudent.setGroupId(enrollmentModel.getLstStudent().get(0).getGroupId()+"_SmartPhone");
                 newEnrolledStudent.setGroupName(enrollmentModel.getLstStudent().get(0).getGroupName());
+                newEnrolledStudent.setEnrollmentId(enrollmentModel.getLstStudent().get(0).getStudentEnrollment());
+                newEnrolledStudent.setRegDate(PD_Utility.getCurrentDateTime());
+                newEnrolledStudent.setDeviceId(PD_Utility.getDeviceID());
                 rl_enroll_grp_details.setVisibility(View.GONE);
                 setResponse(newEnrolledStudent);
 
@@ -244,6 +247,7 @@ public class Fragment_Enrollmentid extends Fragment {
                 groups.setSchoolName(enrollmentModel.getGroupEnrollment());
                 groups.setVIllageName(enrollmentModel.getVIllageName());
                 groups.setDeviceId(PD_Utility.getDeviceID());
+                groups.setRegDate(PD_Utility.getCurrentDateTime());
                 grpID=enrollmentModel.getGroupId();
 
                 studentList = new ArrayList<>();
@@ -260,6 +264,9 @@ public class Fragment_Enrollmentid extends Fragment {
                     student.setGroupId(enrollmentModel.getLstStudent().get(i).getGroupId());
                     student.setGroupName(enrollmentModel.getLstStudent().get(i).getGroupName());
                     student.setAvatarName("avatars/dino_dance.json");
+                    student.setEnrollmentId(enrollmentModel.getLstStudent().get(i).getStudentEnrollment());
+                    student.setRegDate(PD_Utility.getCurrentDateTime());
+                    student.setDeviceId(PD_Utility.getDeviceID());
                     //student.setDeviceId(deviceID);
                     studentList.add(student);
                     studentListTemp.add(enrollmentModel.getLstStudent().get(i).getFullName());

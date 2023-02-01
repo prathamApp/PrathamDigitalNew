@@ -1,15 +1,21 @@
 package com.pratham.prathamdigital.ui.show_sync_log;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.WindowManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.pratham.prathamdigital.R;
+import com.pratham.prathamdigital.custom.BlurPopupDialog.BlurPopupWindow;
 import com.pratham.prathamdigital.models.Modal_Log;
+import com.pratham.prathamdigital.ui.content_player.Activity_ContentPlayer;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Bean;
@@ -18,9 +24,10 @@ import org.androidannotations.annotations.UiThread;
 import org.androidannotations.annotations.ViewById;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @EFragment(R.layout.fragment_sync_log)
-public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.ShowSyncLogView {
+public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.ShowSyncLogView, CheckSyncDetailsClick {
 
     @Bean(ShowSyncLogPresenter.class)
     ShowSyncLogContract.ShowSyncLogPresenter presenter;
@@ -48,6 +55,7 @@ public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.Sho
 
     ShowSyncLogAdapter syncDataLogAdapter, syncDbLogAdapter;
 
+    public BlurPopupWindow audioDialog;
 
     public FragmentSyncLog() {
         // Required empty public constructor
@@ -70,7 +78,7 @@ public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.Sho
         Log.e("%%%%%%%%%%%#", String.valueOf(syncDbLog.size()));
 
         if (syncDataLogAdapter == null) {
-            syncDataLogAdapter = new ShowSyncLogAdapter(getActivity(), syncDataLog);
+            syncDataLogAdapter = new ShowSyncLogAdapter(getActivity(), syncDataLog, FragmentSyncLog.this);
             RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
             rv_dataSyncLog.setLayoutManager(mLayoutManager);
             rv_dataSyncLog.setNestedScrollingEnabled(false);
@@ -79,7 +87,7 @@ public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.Sho
             syncDataLogAdapter.notifyDataSetChanged();
 
         if (syncDbLogAdapter == null) {
-            syncDbLogAdapter = new ShowSyncLogAdapter(getActivity(), syncDbLog);
+            syncDbLogAdapter = new ShowSyncLogAdapter(getActivity(), syncDbLog, FragmentSyncLog.this);
             RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getActivity(), 1);
             rv_dbSyncLog.setLayoutManager(mLayoutManager);
             rv_dbSyncLog.setNestedScrollingEnabled(false);
@@ -104,5 +112,22 @@ public class FragmentSyncLog extends Fragment implements ShowSyncLogContract.Sho
             tv_lastdbSyncDate.setText(lastSyncDb.currentDateTime);
             tv_lastdbSyncType.setText(lastSyncDb.exceptionMessage);
         }
+    }
+
+    @Override
+    public void checkSyncDetails() {
+        audioDialog = new BlurPopupWindow.Builder(getActivity())
+                .setContentView(R.layout.dialog_new_sync_details)
+//                .bindClickListener(v -> {
+//                }, R.id.tv_courseCount)
+                .setGravity(Gravity.CENTER)
+                .setDismissOnTouchBackground(false)
+                .setDismissOnClickBack(true)
+                .setScaleRatio(0.2f)
+                .setBlurRadius(10)
+                .setTintColor(0x30000000)
+                .build();
+//        iv_playIcon = audioDialog.findViewById(R.id.iv_playIcon);
+        audioDialog.show();
     }
 }

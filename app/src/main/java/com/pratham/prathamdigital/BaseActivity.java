@@ -377,7 +377,7 @@ public class BaseActivity extends AppCompatActivity {
                 mHandler.sendEmptyMessage(GET_LOCATION_PERMISSION);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.WRITE_PERMISSION)) {
                 mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
-            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CHECK_UPDATE)){
+            } else if (message.getMessage().equalsIgnoreCase(PD_Constant.CHECK_UPDATE)) {
                 mHandler.sendEmptyMessage(CHECK_UPDATE);
             } else if (message.getMessage().equalsIgnoreCase(PD_Constant.START_UPDATE)) {
                 startUpdate();
@@ -426,8 +426,8 @@ public class BaseActivity extends AppCompatActivity {
             Log.e("##########  ->", "Fake");
         } else {
 */
-            appUpdateManager = AppUpdateManagerFactory.create(this);
-            Log.e("##########  ->", "Original");
+        appUpdateManager = AppUpdateManagerFactory.create(this);
+        Log.e("##########  ->", "Original");
 //        }
         // Before starting an update, register a listener for updates.
         appUpdateManager.registerListener(installStateUpdatedListener);
@@ -455,14 +455,14 @@ public class BaseActivity extends AppCompatActivity {
             InstallStateUpdatedListener() {
                 @Override
                 public void onStateUpdate(InstallState state) {
-                    if (state.installStatus() == InstallStatus.DOWNLOADED){
+                    if (state.installStatus() == InstallStatus.DOWNLOADED) {
                         //CHECK THIS if AppUpdateType.FLEXIBLE, otherwise you can skip
                         //send message if update is downloaded
                         Log.e("#", "InstallStateUpdated: state: " + state.installStatus());
                         appUpdateManager.completeUpdate();
-                    } else if (state.installStatus() == InstallStatus.INSTALLED){
+                    } else if (state.installStatus() == InstallStatus.INSTALLED) {
                         Log.e("#", "InstallStateInstalled: state: " + state.installStatus());
-                        if (appUpdateManager != null){
+                        if (appUpdateManager != null) {
                             appUpdateManager.unregisterListener(installStateUpdatedListener);
                         }
 
@@ -472,7 +472,7 @@ public class BaseActivity extends AppCompatActivity {
                 }
             };
 
-    public void startUpdate(){
+    public void startUpdate() {
         // Start an update.
         try {
             appUpdateManager.startUpdateFlowForResult(

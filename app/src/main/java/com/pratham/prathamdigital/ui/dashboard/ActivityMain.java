@@ -52,6 +52,7 @@ import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
+import com.pratham.prathamdigital.services.PrathamSmartSyncNew;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar_;
 import com.pratham.prathamdigital.ui.connect_dialog.ConnectDialog;
@@ -293,7 +294,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
-                                PrathamSmartSync.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, ActivityMain.this);
+                                PrathamSmartSyncNew.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, ActivityMain.this);
                             }
                         }, 2500);
 

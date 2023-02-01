@@ -202,7 +202,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
             @Override
             public void onStart() {
-                PrathamSmartSync.pushUsageToServer(false,PD_Constant.AUTO_PUSH, ActivitySplash.this); //comment while dev
+                //PrathamSmartSync.pushUsageToServer(false,PD_Constant.AUTO_PUSH, ActivitySplash.this); //comment while dev
                 playerLoaded = true;
                 //Read intent till the video completes
                 if (getIntent().getExtras() != null)

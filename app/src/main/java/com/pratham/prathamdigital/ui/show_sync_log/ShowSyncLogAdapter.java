@@ -29,18 +29,20 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
     List<Modal_Log> showSyncLogList;
     Context context;
     SyncLogDataModel syncLogDataModel;
+    CheckSyncDetailsClick checkSyncDetailsClick;
     //private final ReplaceTabItemClick replaceTabItemClick;
 
-    public ShowSyncLogAdapter(Context context, List showSyncLogList){//}, ReplaceTabItemClick replaceTabItemClick) {
+    public ShowSyncLogAdapter(Context context, List showSyncLogList, CheckSyncDetailsClick checkSyncDetailsClick){//}, ReplaceTabItemClick replaceTabItemClick) {
         this.showSyncLogList=showSyncLogList;
         this.context=context;
+        this.checkSyncDetailsClick = checkSyncDetailsClick;
 //        this.replaceTabItemClick = replaceTabItemClick;
     }
 
     @NonNull
     @Override
     public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sync_datalog, parent, false);
+        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_sync_datalog_new, parent, false);
         return new MyViewHolder(itemView);
     }
 
@@ -57,8 +59,11 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
             holder.ll_success.setVisibility(View.VISIBLE);
             holder.ll_fail.setVisibility(View.GONE);
 
-            if(showSyncLogList.get(position).getExceptionMessage().equalsIgnoreCase("DB_Sync"))
+            if(showSyncLogList.get(position).getExceptionMessage().equalsIgnoreCase("DB_Sync")){
                 holder.tv_courseCount.setVisibility(View.GONE);
+                holder.tv_fileId.setVisibility(View.GONE);
+                holder.tv_pushId.setVisibility(View.GONE);
+            }
             else holder.tv_courseCount.setVisibility(View.VISIBLE);
 
             try {
@@ -67,7 +72,7 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
                 Gson gson = new Gson();
                 syncLogDataModel = gson.fromJson(jsonObj.toString(), SyncLogDataModel.class);
                 if(syncLogDataModel!=null){
-                    holder.tv_courseCount.setText("Course Synced : "+syncLogDataModel.getCoursesCount());
+                    //holder.tv_courseCount.setText("Course Synced : "+syncLogDataModel.getCoursesCount());
                 }
             } catch (Exception e){
                 e.printStackTrace();
@@ -78,7 +83,16 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
             holder.ll_fail.setVisibility(View.VISIBLE);
             holder.ll_success.setVisibility(View.GONE);
             holder.tv_courseCount.setVisibility(View.GONE);
+            if(showSyncLogList.get(position).getExceptionMessage().equalsIgnoreCase("DB_Sync")){
+                holder.tv_courseCount.setVisibility(View.GONE);
+                holder.tv_fileId.setVisibility(View.GONE);
+                holder.tv_pushId.setVisibility(View.GONE);
+            }
         }
+
+        holder.tv_courseCount.setOnClickListener(view -> {
+            checkSyncDetailsClick.checkSyncDetails();
+        });
 
 /*        if(deviseList.get(position).getStatus()!=null && deviseList.get(position).getStatus().contains("Pending"))
             holder.serialID.setTextColor(context.getResources().getColor(R.color.red));
@@ -103,6 +117,8 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
         TextView tv_pushDate;
         TextView tv_pushType;
         TextView tv_courseCount;
+        TextView tv_fileId;
+        TextView tv_pushId;
         LinearLayout ll_success;
         LinearLayout ll_fail;
 
@@ -111,6 +127,8 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
             tv_pushDate = itemView.findViewById(R.id.tv_pushDate);
             tv_pushType = itemView.findViewById(R.id.tv_pushType);
             tv_courseCount = itemView.findViewById(R.id.tv_courseCount);
+            tv_fileId = itemView.findViewById(R.id.tv_fileId);
+            tv_pushId = itemView.findViewById(R.id.tv_pushId);
             ll_success = itemView.findViewById(R.id.ll_success);
             ll_fail = itemView.findViewById(R.id.ll_fail);
         }

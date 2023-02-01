@@ -31,7 +31,7 @@ import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 */
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class,
         Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class,
-        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 6, exportSchema = false)
+        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 7, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi_db";
@@ -60,7 +60,7 @@ public abstract class PrathamDatabase extends RoomDatabase {
         if (INSTANCE == null) {
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                     PrathamDatabase.class, DB_NAME)
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
                     .allowMainThreadQueries() // SHOULD NOT BE USED IN PRODUCTION !!!
                     .build();
         }
@@ -109,6 +109,17 @@ public abstract class PrathamDatabase extends RoomDatabase {
         @Override
         public void migrate(SupportSQLiteDatabase database) {
             database.execSQL("ALTER TABLE TableContent ADD COLUMN isViewed BOOLEAN DEFAULT 0");
+        }
+    };
+
+    //
+    private static Migration MIGRATION_6_7 = new Migration(6, 7) {
+        @Override
+        public void migrate(SupportSQLiteDatabase database) {
+            database.execSQL("ALTER TABLE Students ADD COLUMN enrollmentId TEXT");
+            database.execSQL("ALTER TABLE Students ADD COLUMN regDate TEXT");
+            database.execSQL("ALTER TABLE Students ADD COLUMN deviceId TEXT");
+            database.execSQL("ALTER TABLE Groups ADD COLUMN regDate TEXT");
         }
     };
 

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/log_card_main"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/_10sdp"
+    android:layout_marginTop="@dimen/_2sdp"
+    android:layout_marginEnd="@dimen/_10sdp"
+    android:layout_marginBottom="8dp"
+    android:elevation="5dp"
+    app:cardBackgroundColor="@color/white"
+    app:cardCornerRadius="@dimen/_10sdp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_pushDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="25-11-2021"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="@dimen/_10sdp"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"/>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_pushType"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:text="Auto_Push"
+            android:textColor="@color/light_green"
+            android:textSize="@dimen/_10sdp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_5sdp"/>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_fileId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_pushDate"
+            android:layout_toStartOf="@id/ll_success"
+            android:text="PDL_436621a3-6137-4ec1-9272-a343684c3dfa-l;;dslglasgb"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/_10sdp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:ellipsize="marquee"
+            android:gravity="center_vertical"
+            android:fadingEdge="horizontal"
+            android:marqueeRepeatLimit="marquee_forever"
+            android:scrollHorizontally="true"
+            android:singleLine="true"/>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:id="@+id/tv_pushId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tv_fileId"
+            android:text="85479"
+            android:textColor="@color/text_color"
+            android:textSize="@dimen/_10sdp"
+            android:textStyle="bold"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginStart="@dimen/_10sdp"/>
+
+        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/tv_courseCount"
+            android:text="Check Sync"
+            android:textColor="@color/material_deep_teal_50"
+            android:layout_below="@+id/tv_pushId"
+            android:background="@drawable/click_here_round_bkgd"
+            android:layout_centerHorizontal="true"
+            android:paddingStart="@dimen/_10sdp"
+            android:paddingEnd="@dimen/_10sdp"
+            android:paddingTop="@dimen/_2sdp"
+            android:paddingBottom="@dimen/_2sdp"
+            android:layout_margin="@dimen/_5sdp"/>
+
+        <LinearLayout
+            android:id="@+id/ll_success"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:visibility="visible"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/tv_pushType">
+
+            <ImageView
+                android:id="@+id/iv_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_ok"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Success"
+                android:textColor="@color/colorBtnGreenDark"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/ll_fail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/_5sdp"
+            android:layout_marginEnd="@dimen/_12sdp"
+            android:layout_marginBottom="@dimen/_5sdp"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/iv_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_cancel" />
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fail"
+                android:textColor="@color/red"
+                android:textAlignment="center"/>
+        </LinearLayout>
+
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

@@ -168,6 +168,7 @@ public class PD_Constant {
     public static final String SESSION = "session";
     public static final String LOGS = "logs";
     public static final String STUDENTS = "students";
+    public static final String GROUPS = "groups";
     public static final String METADATA = "metadata";
     public static final String USAGEDATA = "USAGEDATA";
     public static final String DOWNLOAD_STARTED = "download_started";

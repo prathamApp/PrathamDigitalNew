@@ -27,6 +27,8 @@ public class Modal_Groups implements Comparable {
     public String VIllageName;
     @SerializedName("DeviceId")
     public String DeviceId;
+
+    public String regDate;
     @Ignore
     private
     boolean isSelected = false;
@@ -111,6 +113,10 @@ public class Modal_Groups implements Comparable {
     public void setSelected(boolean selected) {
         isSelected = selected;
     }
+
+    public String getRegDate() { return regDate; }
+
+    public void setRegDate(String regDate) { this.regDate = regDate; }
 
     @Override
     public int compareTo(Object o) {
