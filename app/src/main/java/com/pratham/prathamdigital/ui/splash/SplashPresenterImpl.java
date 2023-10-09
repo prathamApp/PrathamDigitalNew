@@ -25,6 +25,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -57,11 +58,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         Log.d("version::", "Current version = $currentVersion");
         FastSave.getInstance().saveString(PD_Constant.APP_VERSION, latestVersion);
         try {
-            if (latestVersion != null && !latestVersion
-                    .isEmpty() && (Float.parseFloat(currentVersion) < Float.parseFloat(latestVersion)))
-                splashview.showAppUpdateDialog();
-            else
-                readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
+            readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
         } catch (Exception e) {
             e.printStackTrace();
             readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
@@ -228,13 +225,7 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
         }
         if (statusDao.getKey("apkType") == null) {
             statusObj.statusKey = "apkType";
-/*
-            if (PrathamApplication.isTablet)
-                statusObj.value = "Pratham Digital with New UI, Kolibri, Raspberry Pie, Tablet Apk";
-            else
-*/
-//            statusObj.value = "Pratham Digital with New UI, Raspberry Pie, Smartphone & Tablet Apk";
-            statusObj.value = "Smartphone & Tablet Apk with Old DB support";
+            statusObj.value = "Smartphone & Tablet Apk with Old DB support & New Sync Process.";
             statusDao.insert(statusObj);
         }
         if (statusDao.getKey("appName") == null) {
@@ -242,12 +233,12 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
             statusObj.value = PD_Utility.getApplicationName(context);
             statusDao.insert(statusObj);
         }
-        if (statusDao.getKey("apkVersion") == null) {
+        if (statusDao.getKey("apkVersion") == null || !Objects.equals(statusDao.getValue("apkVersion"), PD_Utility.getCurrentVersion(context))) {
             statusObj.statusKey = "apkVersion";
             statusObj.value = PD_Utility.getCurrentVersion(context);
             statusDao.insert(statusObj);
         }
-        if(statusDao.getKey("apkDate")==null) {
+        if(statusDao.getKey("apkDate")==null || !Objects.equals(statusDao.getValue("apkDate"), PD_Constant.apkDate)) {
             statusObj.statusKey = "apkDate";
             statusObj.value = PD_Constant.apkDate;
             statusDao.insert(statusObj);
@@ -257,15 +248,6 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
     @Background
     @Override
     public void checkConnectivity() {
-//        if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
-//            getVersion();
-//        } else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-//            getVersion();
-//        } else {
-//            if (!FastSave.getInstance().getString(PD_Constant.APP_VERSION, "").isEmpty())
-//                checkVersion(FastSave.getInstance().getString(PD_Constant.APP_VERSION, ""));
-//            else
-//        checkStudentList();
         readContentDbFromSdCard.doInBackground(SplashPresenterImpl.this);
     }
 
@@ -375,13 +357,6 @@ public class SplashPresenterImpl implements SplashContract.splashPresenter,
 
     @Override
     public void checkPrathamCode() {
-        if (PrathamApplication.isTablet) {
-            if (statusDao.getValue("prathamCode") == null || statusDao.getValue("prathamCode").isEmpty())
-                splashview.showEnterPrathamCodeDialog();
-            else
-                splashview.loadSplash();
-        } else {
             splashview.loadSplash();
-        }
     }
 }

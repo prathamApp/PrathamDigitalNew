@@ -24,6 +24,7 @@ import com.pratham.prathamdigital.models.Modal_Student;
 import com.pratham.prathamdigital.models.Modal_Village;
 import com.pratham.prathamdigital.models.Model_ContentProgress;
 import com.pratham.prathamdigital.models.Model_CourseEnrollment;
+import com.pratham.prathamdigital.models.Model_NewSyncLog;
 
 /*
     always update the version number,
@@ -31,7 +32,8 @@ import com.pratham.prathamdigital.models.Model_CourseEnrollment;
 */
 @Database(entities = {Attendance.class, Modal_ContentDetail.class, Modal_Crl.class, Modal_Groups.class,
         Modal_Score.class, Modal_Session.class, Modal_Status.class, Modal_Student.class, Modal_Village.class,
-        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class}, version = 7, exportSchema = false)
+        Modal_Log.class, Model_CourseEnrollment.class, Model_ContentProgress.class, Model_NewSyncLog.class},
+        version = 7, exportSchema = false)
 public abstract class PrathamDatabase extends RoomDatabase {
     private static PrathamDatabase INSTANCE;
     public static final String DB_NAME = "pradigi_db";
@@ -55,6 +57,9 @@ public abstract class PrathamDatabase extends RoomDatabase {
     public abstract VillageDao getVillageDao();
 
     public abstract LogDao getLogDao();
+
+    public abstract SyncLogDao getSyncLogDao();
+    //public abstract SyncStatusLogDao getSyncStatusLogDao();
 
     public static PrathamDatabase getDatabaseInstance(final Context context) {
         if (INSTANCE == null) {
@@ -120,6 +125,26 @@ public abstract class PrathamDatabase extends RoomDatabase {
             database.execSQL("ALTER TABLE Students ADD COLUMN regDate TEXT");
             database.execSQL("ALTER TABLE Students ADD COLUMN deviceId TEXT");
             database.execSQL("ALTER TABLE Groups ADD COLUMN regDate TEXT");
+            database.execSQL("ALTER TABLE Groups ADD COLUMN enrollmentId TEXT");
+            database.execSQL("ALTER TABLE Groups ADD COLUMN sentFlag TEXT");
+            database.execSQL("CREATE TABLE IF NOT EXISTS SyncLog ('uuid' TEXT PRIMARY KEY NOT NULL," +
+                    "'pushDate' TEXT ,'pushId' INTEGER NOT NULL,'error' TEXT ," +
+                    "'status' TEXT ,'pushType' TEXT ,'sentFlag' INTEGER NOT NULL)");
+
+/*            database.execSQL("CREATE TABLE IF NOT EXISTS SyncStatusLog ('syncStatusId' INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL," +
+                    "'SyncId' INTEGER NOT NULL, 'uuid' TEXT, 'PushId' INTEGER NOT NULL, 'PushDate' TEXT," +
+                    "'PushStatus' TEXT, 'DeviceId' TEXT," +
+                    "'ScorePushed' INTEGER NOT NULL, 'ScoreSynced' INTEGER NOT NULL, 'ScoreError' INTEGER NOT NULL," +
+                    "'AttendancePushed' INTEGER NOT NULL, 'AttendanceSynced' INTEGER NOT NULL, 'AttendanceError' INTEGER NOT NULL," +
+                    "'StudentPushed' INTEGER NOT NULL, 'StudentSynced' INTEGER NOT NULL, 'StudentError' INTEGER NOT NULL," +
+                    "'SessionCount' INTEGER NOT NULL, 'SessionSynced' INTEGER NOT NULL, 'SessionError' INTEGER NOT NULL," +
+                    "'cpCount' INTEGER NOT NULL, 'cpSynced' INTEGER NOT NULL, 'cpError' INTEGER NOT NULL," +
+                    "'logsCount' INTEGER NOT NULL, 'logsSynced' INTEGER NOT NULL, 'logsError' INTEGER NOT NULL," +
+                    "'KeywordsCount' INTEGER NOT NULL, 'KeywordsSynced' INTEGER NOT NULL, 'KeywordsError' INTEGER NOT NULL," +
+                    "'CourseEnrollmentCount' INTEGER NOT NULL, 'CourseEnrollmentSynced' INTEGER NOT NULL, 'CourseEnrollmentError' INTEGER NOT NULL," +
+                    "'GroupsDataCount' INTEGER NOT NULL, 'GroupsDataSynced' INTEGER NOT NULL, 'GroupsDataError' INTEGER NOT NULL," +
+                    "'LastChecked' TEXT, 'Error' TEXT, " +
+                    "'sentFlag' INTEGER NOT NULL DEFAULT 0)");*/
         }
     };
 

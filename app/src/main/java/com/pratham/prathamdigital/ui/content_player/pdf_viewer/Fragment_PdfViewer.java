@@ -1,5 +1,6 @@
 package com.pratham.prathamdigital.ui.content_player.pdf_viewer;
 
+import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.media.MediaPlayer;
 
@@ -45,6 +46,8 @@ public class Fragment_PdfViewer extends Fragment implements PDFContract.pdf_View
         startTime = PD_Utility.getCurrentDateTime();
         resId = Objects.requireNonNull(getArguments()).getString("resId");
         pdf_presenter.generateImageFromPdf(getArguments().getString("pdfPath"));
+        //Added for screen rotation for pdf
+        Objects.requireNonNull(getActivity()).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
     }
 
     @UiThread

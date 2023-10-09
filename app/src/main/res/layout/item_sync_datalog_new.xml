@@ -20,24 +20,12 @@
             android:id="@+id/tv_pushDate"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="25-11-2021"
             android:textColor="@color/black"
             android:textStyle="bold"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_9sdp"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_10sdp"/>
 
-        <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
-            android:id="@+id/tv_pushType"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:text="Auto_Push"
-            android:textColor="@color/light_green"
-            android:textSize="@dimen/_10sdp"
-            android:textStyle="bold"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:layout_marginEnd="@dimen/_5sdp"/>
 
         <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
             android:id="@+id/tv_fileId"
@@ -45,9 +33,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_pushDate"
             android:layout_toStartOf="@id/ll_success"
-            android:text="PDL_436621a3-6137-4ec1-9272-a343684c3dfa-l;;dslglasgb"
             android:textColor="@color/text_color"
-            android:textSize="@dimen/_10sdp"
+            android:textSize="@dimen/_9sdp"
             android:textStyle="bold"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_10sdp"
@@ -64,9 +51,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/tv_fileId"
-            android:text="85479"
-            android:textColor="@color/text_color"
-            android:textSize="@dimen/_10sdp"
+            android:textColor="@color/blue"
+            android:textSize="@dimen/_9sdp"
             android:textStyle="bold"
             android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_10sdp"/>
@@ -75,7 +61,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/tv_courseCount"
-            android:text="Check Sync"
+            android:text="@string/check_sync"
+            android:textSize="@dimen/_9sdp"
             android:textColor="@color/material_deep_teal_50"
             android:layout_below="@+id/tv_pushId"
             android:background="@drawable/click_here_round_bkgd"
@@ -92,27 +79,36 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_5sdp"
             android:layout_marginEnd="@dimen/_10sdp"
-            android:layout_marginBottom="@dimen/_5sdp"
-            android:visibility="visible"
-            android:layout_centerInParent="true"
-            android:layout_below="@+id/tv_pushType">
-
-            <ImageView
-                android:id="@+id/iv_ok"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_ok"/>
+            android:layout_marginBottom="@dimen/_5sdp">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_pushType"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:text="Success"
-                android:textColor="@color/colorBtnGreenDark"/>
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_green"/>
 
+
+            <ImageView
+                android:id="@+id/iv_status"
+                android:layout_width="@dimen/_40sdp"
+                android:layout_height="@dimen/_40sdp"
+                android:src="@drawable/ic_pending_40px"
+                android:layout_gravity="center"/>
+
+            <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
+                android:id="@+id/tv_status"
+                android:layout_width="@dimen/_60sdp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/light_green"
+                android:textSize="@dimen/_9sdp"
+                android:textAlignment="center"/>
         </LinearLayout>
 
 
+<!--
         <LinearLayout
             android:id="@+id/ll_fail"
             android:layout_width="wrap_content"
@@ -139,6 +135,7 @@
                 android:textColor="@color/red"
                 android:textAlignment="center"/>
         </LinearLayout>
+-->
 
 
     </RelativeLayout>

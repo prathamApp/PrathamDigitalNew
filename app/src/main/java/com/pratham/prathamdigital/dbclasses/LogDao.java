@@ -24,10 +24,14 @@ public interface LogDao {
     List<Modal_Log> getAllLogs(String s_id);
 
     @Query("select * from Logs where sentFlag=0")
-    List<Modal_Log> getAllLogs();
+    List<Modal_Log> getAllNewLogs();
 
     @Query("UPDATE Logs SET sentFlag=1 WHERE SessionID=:s_id")
     void updateSentFlag(String s_id);
+
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE Logs SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
 
     @Query("UPDATE Logs SET sentFlag=1")
     void updateAllSentFlag();

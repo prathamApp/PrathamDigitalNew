@@ -463,7 +463,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray crl_array = gson.toJsonTree(crLs).getAsJsonArray();
             createJsonFileOnInternal(crl_array, path.getAbsolutePath() + "/crls");
             //create groups JSON file
-            List<Modal_Groups> groups = groupDao.getAllGroups();
+            List<Modal_Groups> groups = groupDao.getNewGroups();
             JsonArray grp_array = gson.toJsonTree(groups).getAsJsonArray();
             createJsonFileOnInternal(grp_array, path.getAbsolutePath() + "/groups");
             //create students JSON file
@@ -489,7 +489,7 @@ public class SharePresenter implements DownloadedContents, ContractShare.sharePr
             JsonArray session_array = gson.toJsonTree(newSessions).getAsJsonArray();
             createJsonFileOnInternal(session_array, path.getAbsolutePath() + "/sessions");
             //create logs JSON file
-            List<Modal_Log> allLogs = logDao.getAllLogs();
+            List<Modal_Log> allLogs = logDao.getAllNewLogs();
             JsonArray log_array = gson.toJsonTree(allLogs).getAsJsonArray();
             createJsonFileOnInternal(log_array, path.getAbsolutePath() + "/logs");
             //create attendance JSON file

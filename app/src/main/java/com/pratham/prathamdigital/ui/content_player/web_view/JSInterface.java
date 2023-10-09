@@ -24,7 +24,10 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -51,6 +54,9 @@ public class JSInterface {
     private String audio_directory_path = "";
     private String path;
     private Audio recordAudio;
+
+    String str_dateTime;
+
 
     JSInterface(Context c, WebView w, String gamePath, String resId, boolean isOnSdCard, VideoListener videoListener, Activity activity) {
         ttspeech = BaseActivity.ttsService;
@@ -305,6 +311,7 @@ public class JSInterface {
     }
 
     private void addScore(String tempResId, String piStudId, int questionId, int scorefromGame, int totalMarks, int level, String startTime, String label) {
+        changeStartDateTimeFormat(startTime);
         Modal_Score modal_score = new Modal_Score();
         modal_score.setSessionID(FastSave.getInstance().getString(PD_Constant.SESSIONID, "no_session"));
         if (PrathamApplication.isTablet) {
@@ -319,12 +326,22 @@ public class JSInterface {
         modal_score.setQuestionId(questionId);
         modal_score.setScoredMarks(scorefromGame);
         modal_score.setTotalMarks(totalMarks);
-        modal_score.setStartDateTime(startTime);
+        modal_score.setStartDateTime(str_dateTime);
         modal_score.setEndDateTime(PD_Utility.getCurrentDateTime());
         modal_score.setLevel(level);
         modal_score.setLabel(piStudId + "," + label);
         modal_score.setSentFlag(0);
         scoreDao.insert(modal_score);
+    }
+
+    public void changeStartDateTimeFormat(String startDateTime){
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        try {
+            Date startDate = format.parse(startDateTime);
+            str_dateTime = format.format(startDate);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @JavascriptInterface

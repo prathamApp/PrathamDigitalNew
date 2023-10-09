@@ -4,8 +4,6 @@ import android.location.Location;
 
 public interface SplashContract {
     interface splashview {
-        void showAppUpdateDialog();
-
         void redirectToDashboard();
 
         void redirectToAvatar();
@@ -15,8 +13,6 @@ public interface SplashContract {
 //        void googleSignInFailed();
 
         void loadSplash();
-
-        void showEnterPrathamCodeDialog();
 
         void checkPermissions();
     }

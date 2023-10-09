@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 import com.pratham.prathamdigital.R;
 import com.pratham.prathamdigital.models.Modal_Log;
+import com.pratham.prathamdigital.models.Model_NewSyncLog;
 import com.pratham.prathamdigital.models.SyncLogDataModel;
 import com.pratham.prathamdigital.util.PD_Constant;
 
@@ -26,13 +28,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.MyViewHolder> {
-    List<Modal_Log> showSyncLogList;
+    List<Model_NewSyncLog> showSyncLogList;
     Context context;
     SyncLogDataModel syncLogDataModel;
     CheckSyncDetailsClick checkSyncDetailsClick;
     //private final ReplaceTabItemClick replaceTabItemClick;
 
-    public ShowSyncLogAdapter(Context context, List showSyncLogList, CheckSyncDetailsClick checkSyncDetailsClick){//}, ReplaceTabItemClick replaceTabItemClick) {
+    public ShowSyncLogAdapter(Context context, List<Model_NewSyncLog> showSyncLogList, CheckSyncDetailsClick checkSyncDetailsClick){//}, ReplaceTabItemClick replaceTabItemClick) {
         this.showSyncLogList=showSyncLogList;
         this.context=context;
         this.checkSyncDetailsClick = checkSyncDetailsClick;
@@ -49,12 +51,40 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-//        if(deviseList.get(position).getPratham_ID()!=null)
-        holder.tv_pushDate.setText(showSyncLogList.get(position).getCurrentDateTime());
-        holder.tv_pushType.setText(showSyncLogList.get(position).getExceptionMessage());
-        Log.e("kkkkkk : ",showSyncLogList.get(position).getCurrentDateTime());
+        holder.tv_pushDate.setText(showSyncLogList.get(position).getPushDate());
+        holder.tv_fileId.setText(showSyncLogList.get(position).getUuid());
 
-        if(showSyncLogList.get(position).getErrorType()!=null && showSyncLogList.get(position).getErrorType().contains("success")) {
+        holder.tv_pushType.setText(showSyncLogList.get(position).getPushType());
+        holder.tv_pushId.setText(String.valueOf(showSyncLogList.get(position).getPushId()));
+        holder.tv_status.setText(showSyncLogList.get(position).getStatus());
+
+        if(showSyncLogList.get(position).getPushType().equalsIgnoreCase(PD_Constant.DB_PUSH)){
+            holder.tv_courseCount.setVisibility(View.GONE);
+            holder.tv_pushId.setVisibility(View.GONE);
+            holder.tv_pushType.setVisibility(View.GONE);
+        } else {
+            holder.tv_courseCount.setVisibility(View.VISIBLE);
+            holder.tv_pushId.setVisibility(View.VISIBLE);
+            holder.tv_pushType.setVisibility(View.VISIBLE);
+        }
+
+        if(showSyncLogList.get(position).getStatus().equalsIgnoreCase(PD_Constant.PENDING)){
+            holder.img_status.setImageResource(R.drawable.ic_pending_40px);
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.light_orange));
+        } else if (showSyncLogList.get(position).getStatus().contains(PD_Constant.SUCCESS) ||
+                showSyncLogList.get(position).getStatus().equalsIgnoreCase(PD_Constant.COMPLETED)) {
+            holder.img_status.setImageResource(R.drawable.ic_ok);
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.light_green));
+        } else {
+            holder.img_status.setImageResource(R.drawable.ic_cancel);
+            holder.tv_status.setTextColor(context.getResources().getColor(R.color.red));
+        }
+
+        holder.tv_courseCount.setOnClickListener(view -> {
+            checkSyncDetailsClick.checkSyncDetails(showSyncLogList.get(position).getPushId());
+        });
+
+/*        if(showSyncLogList.get(position).getPushType()!=null && showSyncLogList.get(position).getPushType().contains("success")) {
             holder.tv_pushType.setTextColor(context.getResources().getColor(R.color.colorBtnGreenDark));
             holder.ll_success.setVisibility(View.VISIBLE);
             holder.ll_fail.setVisibility(View.GONE);
@@ -120,7 +150,9 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
         TextView tv_fileId;
         TextView tv_pushId;
         LinearLayout ll_success;
-        LinearLayout ll_fail;
+        ImageView img_status;
+        TextView tv_status;
+        //LinearLayout ll_fail;
 
         public MyViewHolder(View itemView) {
             super(itemView);
@@ -130,11 +162,13 @@ public class ShowSyncLogAdapter extends RecyclerView.Adapter<ShowSyncLogAdapter.
             tv_fileId = itemView.findViewById(R.id.tv_fileId);
             tv_pushId = itemView.findViewById(R.id.tv_pushId);
             ll_success = itemView.findViewById(R.id.ll_success);
-            ll_fail = itemView.findViewById(R.id.ll_fail);
+            img_status = itemView.findViewById(R.id.iv_status);
+            tv_status = itemView.findViewById(R.id.tv_status);
+            //ll_fail = itemView.findViewById(R.id.ll_fail);
         }
     }
 
-    public void filterList(ArrayList<Modal_Log> filterdNames) {
+    public void filterList(ArrayList<Model_NewSyncLog> filterdNames) {
         this.showSyncLogList=filterdNames;
         notifyDataSetChanged();
     }

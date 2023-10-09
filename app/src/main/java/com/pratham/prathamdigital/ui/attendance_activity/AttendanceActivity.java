@@ -41,10 +41,12 @@ public class AttendanceActivity extends BaseActivity {
 
     @AfterViews
     public void initialize() {
+/*
         if (PrathamApplication.isTablet) {
             PD_Utility.showFragment(this, new FragmentSelectAgeGroup_(), R.id.frame_attendance,
                     null, FragmentSelectAgeGroup.class.getSimpleName());
         } else {
+*/
 //            if (getIntent().getBooleanExtra(PD_Constant.DEEP_LINK, false)) {
 //                bundle.putBoolean(PD_Constant.DEEP_LINK, true);
 //                bundle.putString(PD_Constant.DEEP_LINK_CONTENT, getIntent().getStringExtra(PD_Constant.DEEP_LINK_CONTENT));
@@ -70,7 +72,7 @@ public class AttendanceActivity extends BaseActivity {
                         bundle, Fragment_SelectAvatar.class.getSimpleName());
             }
         }
-    }
+    //}
 
     @Override
     public void onBackPressed() {

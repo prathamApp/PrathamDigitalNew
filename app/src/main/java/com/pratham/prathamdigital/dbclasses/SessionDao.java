@@ -27,6 +27,10 @@ public interface SessionDao {
     @Query("UPDATE Session SET sentFlag = 1")
     int updateAllFlag();
 
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE Session SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
+
     @Delete
     void delete(Modal_Session session);
 

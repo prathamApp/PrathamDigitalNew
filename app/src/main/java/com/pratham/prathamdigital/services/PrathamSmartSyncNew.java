@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.async.PD_ApiRequest;
 import com.pratham.prathamdigital.models.Attendance;
@@ -46,8 +47,8 @@ import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
 public class PrathamSmartSyncNew extends AutoSync {
     private static final String TAG = PrathamSmartSyncNew.class.getSimpleName();
-    public static String courseCount = "";
-    public static String scoreCount = "";
+    public static Gson gson;
+    public static String courseCount;
 
     @Override
     protected void onCreate(Context context) {
@@ -58,7 +59,10 @@ public class PrathamSmartSyncNew extends AutoSync {
         try {
             String programID = "";
             JSONObject rootJson = new JSONObject();
-            Gson gson = new Gson();
+            gson = new GsonBuilder()
+                    .setPrettyPrinting()
+                    .serializeNulls()
+                    .create();
 
             // fetch Session Data
             JSONArray sessionArray = new JSONArray();
@@ -69,7 +73,7 @@ public class PrathamSmartSyncNew extends AutoSync {
 
             //fetch all logs
             JSONArray logArray = new JSONArray();
-            List<Modal_Log> allLogs = logDao.getAllLogs();
+            List<Modal_Log> allLogs = logDao.getAllNewLogs();
             for (Modal_Log log : allLogs)
                 logArray.put(new JSONObject(gson.toJson(log)));
 
@@ -86,19 +90,16 @@ public class PrathamSmartSyncNew extends AutoSync {
             for (Modal_Score score : newScores) {
                 scoreArray.put(new JSONObject(gson.toJson(score)));
             }
-            scoreCount = String.valueOf(newScores.size());
 
             //fetch Students & convert to Json Array
             JSONArray studentArray = new JSONArray();
-            if (!PrathamApplication.isTablet) {
-                List<Modal_Student> newStudents = studentDao.getAllNewStudents();
-                for (Modal_Student std : newStudents)
-                    studentArray.put(new JSONObject(gson.toJson(std)));
-            }
+            List<Modal_Student> newStudents = studentDao.getAllNewStudents();
+            for (Modal_Student std : newStudents)
+                studentArray.put(new JSONObject(gson.toJson(std)));
 
             //fetch groups & convert to Json Array
             JSONArray groupArray = new JSONArray();
-            List<Modal_Groups> newgroups = groupDao.getAllGroups();
+            List<Modal_Groups> newgroups = groupDao.getNewGroups();
             for (Modal_Groups grp : newgroups) groupArray.put(new JSONObject(gson.toJson(grp)));
 
             //fetch enrolled courses
@@ -149,7 +150,14 @@ public class PrathamSmartSyncNew extends AutoSync {
 
             Log.e("Root : ", rootJson.toString());
 
-            pushDataToServer(rootJson, courseCount, pushType, context);
+            if(studentArray.length()==0 && groupArray.length()==0 && sessionArray.length()==0 &&
+            attendanceArray.length()==0 && scoreArray.length()==0 && logArray.length()==0 &&
+            courseArray.length()==0 && progArray.length()==0) {
+                Log.e(TAG,"No data to push.");
+                EventMessage msg = new EventMessage();
+                msg.setMessage(PD_Constant.NODATATOPUSH);
+                EventBus.getDefault().post(msg);
+            } else pushDataToServer(rootJson, courseCount, pushType, context);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -171,6 +179,7 @@ public class PrathamSmartSyncNew extends AutoSync {
     //before pushing zipping the json and then pushing
     public static void pushDataToServer(JSONObject data, String courseCount, String pushType, Context context) {
         try {
+            Log.e(TAG,"Data to push.");
             String uuID = "PDL_" + PD_Utility.getUUID();
             String filepathstr = PrathamApplication.pradigiPath + "/" + uuID; // file path to save
             File filepath = new File(filepathstr + ".json"); // file path to save
@@ -193,8 +202,11 @@ public class PrathamSmartSyncNew extends AutoSync {
                 new PD_ApiRequest(PrathamApplication.getInstance())
                         .pushDataToRaspberyPI(PD_Constant.URL.DATASTORE_RASPBERY_URL.toString(), uuID, filepathstr, data, courseCount, pushType, context);
             else if (PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork() || PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork()) {
+/*                new PD_ApiRequest(PrathamApplication.getInstance())
+                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data, courseCount, pushType, context);*/
+                //New Sync Process
                 new PD_ApiRequest(PrathamApplication.getInstance())
-                        .pushDataToInternet(PD_Constant.URL.POST_SMART_INTERNET_URL.toString(), uuID, filepathstr, data, courseCount, pushType, context);
+                        .pushDataToInternetNewSync(PD_Constant.PUSH_ZIP_NEW_SYNC_API, uuID, filepathstr, data, courseCount, pushType, context);
             }
         } catch (Exception e) {
             e.printStackTrace();

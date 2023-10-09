@@ -56,12 +56,13 @@ public class Fragment_VideoPlayer extends Fragment {
 //    PlayerControlView player_control_view;
 
     private String videoPath;
-    private String startTime = "no_resource";
+    private String startTime = "null";
     private String resId;
     private long videoDuration = 0;
     private Modal_AajKaSawal videoSawal = null;
     private boolean initialized = false;
     private boolean isVideoEnded = false;
+    private String label = "video_error";
 
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -135,6 +136,7 @@ public class Fragment_VideoPlayer extends Fragment {
             public void onStart() {
                 if (!initialized) {
                     startTime = PD_Utility.getCurrentDateTime();
+                    label = "-";
                     videoDuration = videoView.getPlayer().getDuration();
                     initialized = true;
                 }
@@ -218,7 +220,7 @@ public class Fragment_VideoPlayer extends Fragment {
             modalScore.setStartDateTime(startTime);
             modalScore.setEndDateTime(endTime);
             modalScore.setLevel(0);
-            modalScore.setLabel("_");
+            modalScore.setLabel(label);
             modalScore.setSentFlag(0);
             scoreDao.insert(modalScore);
             //Calculate the percentage of video watched

@@ -4,18 +4,29 @@ import androidx.annotation.NonNull;
 
 public class PD_Constant {
 
-
-    public static final String apkDate = "20-01-2023";//
+    public static final String apkDate = "07-10-2023";//
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
-    private static final String BASE_URL_NEW = "http://devposapi.prathamopenschool.org/api/content/"; //new api
-    public static final String STUDENT_ENROLLMENT_URL = "http://www.devtab.openiscool.org/api/Enrollement/Get?enrollmentno=";
+    private static final String BASE_URL_NEW = " https://devposapi.prathamopenschool.org/api/content/"; //new api
+    public static final String STUDENT_ENROLLMENT_URL = "https://devtab.openiscool.org/api/Enrollement/Get?enrollmentno=";
+
+    /**
+     * New Sync process API's
+     */
+
+    //Check Sync API status API
+    public static final String CHECK_SYNC_API = "https://appsync.prathamyouthnet.org/pfl/v5.0.0/dbcheck_api_status.php";
+    public static final String PUSH_ZIP_NEW_SYNC_API = "https://appsync.prathamyouthnet.org/pfl/v5.0.0/dbpush.php";
+    public static final String SYNC_PUSH_DATA = "https://appsync.prathamyouthnet.org/pfl/v5.0.0/dbsync-individual.php?PushId=";
+
+    public static final String CHECK_SYNC_DETAILS = "checkSyncDetails";
 
     public static final String NOTIFICATION_RECIEVED = "notification_recieved";
     public static final String YOUTUBE_LINK = "youtube";
     public static final String INTRO_SHOWN = "intro_shown";
     public static final String CLOSE_CONTENT_ACTIVITY = "close_content_activity";
     public static final String PUSH_NOTI_VALUE = "push_noti_value";
+
     public static final String PUSH_NOTI_KEY = "push_noti_key";
     public static final String PERMISSIONS_GRANTED = "permissions_granted";
     public static final String CHECK_PERMISSIONS = "check_permissions";
@@ -209,8 +220,12 @@ public class PD_Constant {
     public static String HOTSPOT_PASSWORD = "";
     public static String STORING_IN = "";
     public static final String SUCCESSFULLYPUSHED = "successfully_pushed";
+    public static final String NODATATOPUSH = "no_data_to_push";
+    public static final String SUCCESS = "SUCCESS";
+    public static final String SUCCESSFULLYPUSHEDNEW = "successfully_pushed_new";
     public static final String DBSUCCESSFULLYPUSHED = "db_successfully_pushed";
     public static final String PUSHFAILED = "push_failed";
+    public static final String FAILED = "FAILED";
     public static final String PRATHAM_KOLIBRI_HOTSPOT = "prathamDigital";
     public static final String RASPBERRY_HEADER = "RASPBERRY_HEADER";
     public static final String OTG_INSERTED = "OTG_INSERTED";
@@ -219,12 +234,14 @@ public class PD_Constant {
     public static final String EDIT_PROFILE = "edit_profile";
     public static final String EDIT_SUCCESS = "edit_success";
     public static final String EDIT_BACK = "edit_back";
-    public static final String AUTO_PUSH = "AUTO_PUSH";
-    public static final String MANUAL_PUSH = "MANUAL_PUSH";
+    public static final String AUTO_PUSH = "Auto";
+    public static final String MANUAL_PUSH = "Manual";
     public static final String DB_PUSH = "DB_PUSH";
     public static final String ENROL_TYPE = "ENROLL_TYPE";
     public static final String ENROLLED_COURSE_COUNT = "Course Enrolled : ";
     public static final String OPEN_COURSES = "open_courses";
+    public static final String COMPLETED = "COMPLETED";
+    public static final String PENDING = "PENDING";
 
     //languages
     public static String HINDI = "Hindi";
@@ -263,6 +280,7 @@ public class PD_Constant {
     public static final String START_UPDATE = "START_UPDATE";
     public static final String UPDATE_DIALOG = "UPDATE_DIALOG";
     public static final String UPDATE_AVAILABLE = "UPDATE_AVAILABLE";
+    public static final String CHECK_API = "CHECK_NEW_SYNC_API";
 
     public enum URL {
 
@@ -270,9 +288,9 @@ public class PD_Constant {
         BROWSE_BY_ID(BASE_URL_NEW + "browse?id="),//req
         SEARCH_BY_NODE(BASE_URL_NEW + "SearchByNode?repoid=pradigilife&word="),//req
         POST_GOOGLE_DATA(BASE_URL + "PostGoogleSignIn"),
-        GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),//req
-        //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),//req
-        DATASTORE_RASPBERY_URL(RASP_IP + "/api/usagedata/"),//pushapi
+        GET_TOP_LEVEL_NODE(BASE_URL + "GetTopLevelNode?lang="),
+        //GET_TOP_LEVEL_NODE(BASE_URL_NEW + "browse?id=2000001"),
+        DATASTORE_RASPBERY_URL(RASP_IP + "/api/usagedata/"),//req pushapi for pi
         DATASTORE_RASPBERY_PROGRAM_STATE_URL(RASP_IP + "/pratham/datastore/?table_name=ProgramState"),
         BROWSE_RASPBERRY_URL(RASP_IP + "/api/content/contentnode?parent="),
         RASPBERRY_FACILITY_URL(RASP_IP + "/api/content/session/"),
@@ -295,7 +313,7 @@ public class PD_Constant {
         //DOWNLOAD_RESOURCE(BASE_URL + "DownloadResource?resid=");//req
         DOWNLOAD_RESOURCE(BASE_URL_NEW + "download?id="),//req
         BROWSE_RASPBERRY_URL_NEW(RASP_IP + "/api/channel/AppNodeDetailListByNode/?ParentId="),//req
-        PUSH_DB_URL("http://devprodigi.openiscool.org/api/PradigiLifeDB/PushFiles"),//req
+        PUSH_DB_URL("https://devprodigi.openiscool.org/api/PradigiLifeDB/PushFiles"),//req
         PUSH_DBTORASP_URL(RASP_IP + "/api/dbpushdata/?table_name=DBPUSHDATA");//req
         private final String name;
 

@@ -37,9 +37,12 @@ public class Modal_Student implements Comparable, Parcelable {
     @SerializedName("StudentId")
     public String StudentId;
 
+    @SerializedName("StudentEnrollment")
+    public String enrollmentId;
+
     public String VillageName;
     public String avatarName;
-    public String enrollmentId;
+
     public String regDate;
     public String deviceId;
 

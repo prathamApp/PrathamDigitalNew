@@ -44,4 +44,9 @@ public interface CourseDao {
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     void updateCourse(Model_CourseEnrollment enrollment);
+
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE CourseEnrolled SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
+
 }

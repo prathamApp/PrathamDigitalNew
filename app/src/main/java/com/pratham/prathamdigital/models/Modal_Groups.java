@@ -28,7 +28,12 @@ public class Modal_Groups implements Comparable {
     @SerializedName("DeviceId")
     public String DeviceId;
 
+    @SerializedName("GroupEnrollment")
+    public String enrollmentId;
+
     public String regDate;
+    public String sentFlag;
+
     @Ignore
     private
     boolean isSelected = false;
@@ -117,6 +122,22 @@ public class Modal_Groups implements Comparable {
     public String getRegDate() { return regDate; }
 
     public void setRegDate(String regDate) { this.regDate = regDate; }
+
+    public String getEnrollmentId() {
+        return enrollmentId;
+    }
+
+    public void setEnrollmentId(String enrollmentId) {
+        this.enrollmentId = enrollmentId;
+    }
+
+    public String getSentFlag() {
+        return sentFlag;
+    }
+
+    public void setSentFlag(String sentFlag) {
+        this.sentFlag = sentFlag;
+    }
 
     @Override
     public int compareTo(Object o) {

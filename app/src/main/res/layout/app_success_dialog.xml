@@ -58,10 +58,20 @@
         android:visibility="gone" />
 
     <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
-        android:id="@+id/btn_ok"
+        android:id="@+id/btn_done"
         android:layout_width="@dimen/_80sdp"
         android:layout_height="@dimen/_30sdp"
         android:text="@string/done"
+        android:textColor="@color/white"
+        android:background="@drawable/button_orange_selector"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:visibility="gone"/>
+
+    <com.pratham.prathamdigital.custom.buttons.IndieFlowerButton
+        android:id="@+id/btn_ok"
+        android:layout_width="@dimen/_80sdp"
+        android:layout_height="@dimen/_30sdp"
+        android:text="@string/Okay"
         android:textColor="@color/white"
         android:background="@drawable/button_orange_selector"
         android:layout_marginTop="@dimen/_10sdp"

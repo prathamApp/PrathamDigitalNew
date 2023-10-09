@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.StateListDrawable;
 import android.location.Address;
@@ -42,6 +43,8 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
@@ -369,6 +372,26 @@ public class PD_Utility {
 
         Toast.makeText(mContext, str_Message, Toast.LENGTH_SHORT).show();
 
+    }
+
+    public static void showLoadingDialog(Context context) {
+
+        if (dialog == null) {
+            dialog = new Dialog(context);
+            dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+            dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+            dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            dialog.setCancelable(true);
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setContentView(R.layout.cat_loading_dialog);
+        }
+        dialog.show();
+    }
+
+    public static void dismissLoadingDialog() {
+        if (dialog != null)
+            dialog.dismiss();
     }
 
     public static String getCurrentDateTime() {
@@ -1175,7 +1198,7 @@ public class PD_Utility {
     public static Uri getImageUri(Context context, Bitmap photo) {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
-        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photo, "Title", null);
+        String path = MediaStore.Images.Media.insertImage(context.getContentResolver(), photo, "IMG_", null);
         return Uri.parse(path);
     }
 

@@ -20,8 +20,8 @@ public interface GroupDao {
     @Query("DELETE FROM Groups")
     void deleteAllGroups();
 
-    @Query("SELECT * FROM Groups ")
-    List<Modal_Groups> getAllGroups();
+    @Query("SELECT * FROM Groups WHERE sentFlag=0")
+    List<Modal_Groups> getNewGroups();
 
     @Query("SELECT * FROM Groups WHERE VillageID=:vID ORDER BY GroupName ASC")
     List<Modal_Groups> GetGroups(int vID);
@@ -38,4 +38,7 @@ public interface GroupDao {
     @Query("select SchoolName from Groups WHERE GroupId=:grpID")
     String getEnrollmentId(String grpID);
 
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE Groups SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
 }

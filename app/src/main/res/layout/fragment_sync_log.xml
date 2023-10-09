@@ -16,11 +16,11 @@
             android:id="@+id/tv_dataSyncLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Data Push Log"
+            android:text="Data Sync Log"
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/light_orange"
             android:textAlignment="center"
-            android:layout_marginTop="@dimen/_15sdp"/>
+            android:layout_marginTop="@dimen/_18sdp"/>
 
         <RelativeLayout
             android:id="@+id/rl_lastSync"
@@ -75,7 +75,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/rl_lastSync"
-            android:layout_marginTop="@dimen/_5sdp"/>
+            android:layout_marginTop="@dimen/_8sdp"/>
 
     </RelativeLayout>
 
@@ -101,7 +101,7 @@
             android:textSize="@dimen/_15sdp"
             android:textColor="@color/light_orange"
             android:textAlignment="center"
-            android:layout_marginTop="@dimen/_10sdp"/>
+            android:layout_marginTop="@dimen/_18sdp"/>
 
         <RelativeLayout
             android:id="@+id/rl_lastdbSync"
@@ -113,7 +113,8 @@
             android:gravity="center"
             android:padding="@dimen/_5sdp"
             android:layout_marginStart="@dimen/_10sdp"
-            android:layout_marginEnd="@dimen/_10sdp">
+            android:layout_marginEnd="@dimen/_10sdp"
+            android:visibility="gone">
 
             <com.pratham.prathamdigital.custom.textviews.IndieFlowerTextView
                 android:id="@+id/tv_lastdbsync"
@@ -155,7 +156,7 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/rl_lastdbSync"
-            android:layout_marginTop="@dimen/_5sdp"/>
+            android:layout_marginTop="@dimen/_8sdp"/>
 
     </RelativeLayout>
 

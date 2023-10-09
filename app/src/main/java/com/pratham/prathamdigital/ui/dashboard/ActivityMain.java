@@ -8,7 +8,6 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -30,7 +29,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.slidingpanelayout.widget.SlidingPaneLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.BaseActivity;
 import com.pratham.prathamdigital.BuildConfig;
 import com.pratham.prathamdigital.PrathamApplication;
@@ -46,11 +46,14 @@ import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.custom.spotlight.SpotlightView;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
 import com.pratham.prathamdigital.ftpSettings.FsService;
+import com.pratham.prathamdigital.interfaces.ApiResult;
 import com.pratham.prathamdigital.models.Attendance;
 import com.pratham.prathamdigital.models.EventMessage;
+import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.models.Modal_NavigationMenu;
 import com.pratham.prathamdigital.models.Modal_Student;
+import com.pratham.prathamdigital.models.Model_CheckSyncAPI;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
 import com.pratham.prathamdigital.services.PrathamSmartSyncNew;
 import com.pratham.prathamdigital.ui.avatar.Fragment_SelectAvatar;
@@ -77,6 +80,7 @@ import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 
 import org.androidannotations.annotations.AfterViews;
+import org.androidannotations.annotations.Bean;
 import org.androidannotations.annotations.Click;
 import org.androidannotations.annotations.EActivity;
 import org.androidannotations.annotations.UiThread;
@@ -86,6 +90,7 @@ import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -99,7 +104,7 @@ import static com.pratham.prathamdigital.dbclasses.PrathamDatabase.DB_NAME;
 
 @EActivity(R.layout.main_activity)
 public class ActivityMain extends BaseActivity implements ContentContract.mainView, ContractMenu,
-        SlidingPaneLayout.PanelSlideListener {
+        SlidingPaneLayout.PanelSlideListener, ApiResult {
 
     private static final String TAG = ActivityMain.class.getSimpleName();
     private static final int INITILIZE_DRAWER = 1;
@@ -140,6 +145,9 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @ViewById(R.id.versionNum)
     TextView versionNum;
 
+    @Bean(PD_ApiRequest.class)
+    PD_ApiRequest pd_apiRequest;
+
     private boolean isChecked;
     private BlurPopupWindow exitDialog;
     private BlurPopupWindow syncDataDialog;
@@ -154,7 +162,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     private TextView txt_push_error;
     private TextView tv_courseCount;
     private TextView tv_scoreCount;
-    private Button btn_done;
+    private Button btn_done, btn_okay;
 
     public String courseCount;
 
@@ -224,10 +232,10 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     break;
 
                 case MENU_DASHBOARD:
-                    String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID_DASHBOARD,"");
+                    String groupId = FastSave.getInstance().getString(PD_Constant.GROUPID_DASHBOARD, "");
                     groupId = groupId.split("_SmartPhone")[0];
                     //Toast.makeText(ActivityMain.this, groupId, Toast.LENGTH_SHORT).show();
-                    String dasboardURL = "https://powerbi.pradigi.org/chhattisgarh?groupId="+groupId;
+                    String dasboardURL = "https://powerbi.pradigi.org/chhattisgarh?groupId=" + groupId;
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(dasboardURL));
                     startActivity(browserIntent);
                     break;
@@ -289,15 +297,17 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                     break;
 
                 case MENU_SYNC:
+                    //TODO : Need to check RaspPi push
                     if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
-                        showPushingDialog("Please wait...Pushing Data!");
+                        pd_apiRequest.setApiResult(ActivityMain.this);
+                        pd_apiRequest.checkSyncAPIStatus(PD_Constant.CHECK_SYNC_API, PD_Constant.CHECK_API);
+/*                        showPushingDialog("Please wait...Pushing Data!");
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 PrathamSmartSyncNew.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, ActivityMain.this);
                             }
-                        }, 2500);
-
+                        }, 2500);*/
                     } else {
                         Toast.makeText(ActivityMain.this, R.string.internet_connection, Toast.LENGTH_SHORT).show();
                     }
@@ -340,8 +350,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                                             .pushDBToRaspberryPi(PD_Constant.URL.PUSH_DBTORASP_URL.toString(), uuID, filepathstr, PD_Constant.DB_PUSH, ActivityMain.this);
                                 }
                             }, 2500);
-                        }
-                        else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
+                        } else if (PrathamApplication.wiseF.isDeviceConnectedToWifiNetwork() || PrathamApplication.wiseF.isDeviceConnectedToMobileNetwork()) {
                             showPushingDialog("Please wait...Pushing Database!");
                             new Handler().postDelayed(new Runnable() {
                                 @Override
@@ -351,8 +360,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                                 }
                             }, 2500);
 
-                        }
-                        else {
+                        } else {
                             Toast.makeText(ActivityMain.this, R.string.internet_connection, Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -371,11 +379,11 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     public void initialize() {
         mHandler.sendEmptyMessage(INITILIZE_DRAWER);
         try {
-            if(Objects.requireNonNull(getIntent().getStringExtra(PD_Constant.OPEN_COURSES)).equalsIgnoreCase(PD_Constant.OPEN_COURSES)){
+            if (Objects.requireNonNull(getIntent().getStringExtra(PD_Constant.OPEN_COURSES)).equalsIgnoreCase(PD_Constant.OPEN_COURSES)) {
                 mHandler.sendEmptyMessage(MENU_COURSES);
                 versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             mHandler.sendEmptyMessage(SHOW_MENU);
             mHandler.sendEmptyMessage(CHECK_AAJ_KA_SAWAL);
             versionNum.setText("Version : " + PD_Utility.getCurrentVersion(this));
@@ -395,7 +403,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     }
 
     @Click(R.id.versionNum)
-    public void showApkDate(){
+    public void showApkDate() {
         Toast.makeText(this, PD_Constant.apkDate, Toast.LENGTH_SHORT).show();
     }
 
@@ -474,7 +482,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     @Subscribe
     public void onMessageReceived(EventMessage message) {
         if (message != null)
-            if (message.getMessage().equalsIgnoreCase(PD_Constant.EDIT_SUCCESS)){
+            if (message.getMessage().equalsIgnoreCase(PD_Constant.EDIT_SUCCESS)) {
                 drawer_profile_lottie.setAnimation(FastSave.getInstance().getString(PD_Constant.AVATAR,
                         "avatars/dino_dance.json"));
                 drawer_profile_name.setText(FastSave.getInstance().getString(PD_Constant.PROFILE_NAME, "No Name"));
@@ -487,7 +495,7 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
         if (msg != null) {
             if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHED)) {
                 courseCount = msg.getCourseCount();
-                Log.e("url cc1 : ",courseCount);
+                Log.e("url cc1 : ", courseCount);
                 tv_courseCount.setText(PD_Constant.ENROLLED_COURSE_COUNT + courseCount);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
@@ -495,11 +503,21 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 tv_courseCount.setVisibility(View.VISIBLE);
                 tv_scoreCount.setVisibility(View.GONE);
                 btn_done.setVisibility(View.VISIBLE);
+                btn_okay.setVisibility(View.GONE);
                 //new Handler().postDelayed(() -> pushDialog.dismiss(), 2500);
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.SUCCESSFULLYPUSHEDNEW)) { // Created for new sync process
+                push_lottie.setAnimation("success.json");
+                push_lottie.playAnimation();
+                txt_push_dialog_msg.setText(R.string.data_push_success);
+                tv_courseCount.setVisibility(View.GONE);
+                tv_scoreCount.setVisibility(View.GONE);
+                btn_done.setVisibility(View.VISIBLE);
+                btn_okay.setVisibility(View.GONE);
             } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.DBSUCCESSFULLYPUSHED)) {
                 tv_courseCount.setVisibility(View.GONE);
                 tv_scoreCount.setVisibility(View.GONE);
                 btn_done.setVisibility(View.GONE);
+                btn_okay.setVisibility(View.VISIBLE);
                 push_lottie.setAnimation("success.json");
                 push_lottie.playAnimation();
                 txt_push_dialog_msg.setText(R.string.db_push_success);
@@ -509,6 +527,12 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                 txt_push_dialog_msg.setText(R.string.data_push_fail);
                 txt_push_error.setVisibility(View.VISIBLE);
                 new Handler().postDelayed(() -> pushDialog.dismiss(), 1500);
+            } else if (msg.getMessage().equalsIgnoreCase(PD_Constant.NODATATOPUSH)) {
+                push_lottie.setAnimation("error_cross.json");
+                push_lottie.playAnimation();
+                txt_push_dialog_msg.setText(R.string.no_new_data_to_push);
+                btn_done.setVisibility(View.GONE);
+                btn_okay.setVisibility(View.VISIBLE);
             }
         }
     }
@@ -528,14 +552,21 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
                             tv_courseCount.setVisibility(View.GONE);
                             tv_scoreCount.setVisibility(View.GONE);
                             btn_done.setVisibility(View.GONE);
+                            btn_okay.setVisibility(View.GONE);
                             push_lottie.setAnimation("success.json");
-                        } catch (Exception e){
+                        } catch (Exception e) {
                             Log.e("url : ", e.getMessage());
                             tv_courseCount.setVisibility(View.GONE);
                             tv_scoreCount.setVisibility(View.GONE);
                             btn_done.setVisibility(View.GONE);
+                            btn_okay.setVisibility(View.GONE);
                             push_lottie.setAnimation("success.json");
                         }
+                    }, R.id.btn_done)
+                    .bindClickListener(v -> {
+                        pushDialog.dismiss();
+                        btn_done.setVisibility(View.GONE);
+                        btn_okay.setVisibility(View.GONE);
                     }, R.id.btn_ok)
                     .setGravity(Gravity.CENTER)
                     .setScaleRatio(0.2f)
@@ -549,7 +580,8 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
             txt_push_error = pushDialog.findViewById(R.id.txt_push_error);
             tv_courseCount = pushDialog.findViewById(R.id.tv_courseCount);
             tv_scoreCount = pushDialog.findViewById(R.id.tv_scoreCount);
-            btn_done = pushDialog.findViewById(R.id.btn_ok);
+            btn_done = pushDialog.findViewById(R.id.btn_done);
+            btn_okay = pushDialog.findViewById(R.id.btn_ok);
         }
         push_lottie.setAnimation("loading.json");
         txt_push_dialog_msg.setText(msg);
@@ -811,10 +843,39 @@ public class ActivityMain extends BaseActivity implements ContentContract.mainVi
     }
 
     @Override
-    public void onDestroy(){
+    public void onDestroy() {
         super.onDestroy();
         sessionDao.UpdateToDate(FastSave.getInstance().getString(PD_Constant.SESSIONID, ""), PD_Utility.getCurrentDateTime());
         BackupDatabase.backup(this);
-        Log.d("url : ",FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+        Log.d("url : ", FastSave.getInstance().getString(PD_Constant.SESSIONID, ""));
+    }
+
+    @Override
+    public void recievedContent(String header, String response, ArrayList<Modal_ContentDetail> contentList) {
+        //Check whether the server is running or not.
+        if (header.equalsIgnoreCase(PD_Constant.CHECK_API)) {
+            Log.e("NewSyncApiResponse:", response);
+            Gson gson = new Gson();
+            Type type = new TypeToken<Model_CheckSyncAPI>() {
+            }.getType();
+            Model_CheckSyncAPI model_checkSyncAPI = gson.fromJson(response, type);
+            Log.e("SyncAPI Message : ", model_checkSyncAPI.getStatusCode());
+            if (model_checkSyncAPI.getStatusCode().equalsIgnoreCase("0")) {
+                showPushingDialog("Please wait...Pushing Data!");
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        PrathamSmartSyncNew.pushUsageToServer(true, PD_Constant.MANUAL_PUSH, ActivityMain.this);
+                    }
+                }, 2500);
+            } else {
+                Toast.makeText(this, model_checkSyncAPI.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void recievedError(String header, ArrayList<Modal_ContentDetail> contentList) {
+
     }
 }

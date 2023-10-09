@@ -406,10 +406,15 @@
     <string name="group_name">Group name : </string>
     <string name="no_stud_found">Student not found.\n Check Enrollment ID again.</string>
     <string name="save_profile">Save Profile</string>
+    <string name="check_sync">Check Sync</string>
+    <string name="details">Details</string>
+    <string name="no_new_data_to_push">Data Already Pushed!</string>
 
 
     //All Toast Messages
     <string name="grant_storage_permission">Kindly grant storage permission and restart the app.</string>
+    <string name="grant_location_permission">Kindly grant location permission and restart the app.</string>
+    <string name="grant_phonestate_permission">Kindly grant phone state permission and restart the app.</string>
     <string name="enter_name">Please enter name</string>
     <string name="permission_not_given">Permission Not Given</string>
     <string name="invalid_input">Input Is Invalid</string>

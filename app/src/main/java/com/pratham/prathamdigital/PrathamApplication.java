@@ -2,6 +2,7 @@ package com.pratham.prathamdigital;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.media.MediaPlayer;
 import android.os.StrictMode;
 import android.util.Log;
@@ -31,6 +32,8 @@ import com.pratham.prathamdigital.dbclasses.ScoreDao;
 import com.pratham.prathamdigital.dbclasses.SessionDao;
 import com.pratham.prathamdigital.dbclasses.StatusDao;
 import com.pratham.prathamdigital.dbclasses.StudentDao;
+import com.pratham.prathamdigital.dbclasses.SyncLogDao;
+import com.pratham.prathamdigital.dbclasses.SyncStatusLogDao;
 import com.pratham.prathamdigital.dbclasses.VillageDao;
 import com.pratham.prathamdigital.models.Modal_Log;
 import com.pratham.prathamdigital.util.PD_Constant;
@@ -72,6 +75,8 @@ public class PrathamApplication extends Application implements LifecycleObserver
     public static LogDao logDao;
     public static CourseDao courseDao;
     public static ContentProgressDao contentProgressDao;
+    public static SyncLogDao syncLogDao;
+    //public static SyncStatusLogDao syncStatusLogDao;
     public static boolean wasInBackground;
 
 
@@ -154,14 +159,31 @@ public class PrathamApplication extends Application implements LifecycleObserver
         logDao = db.getLogDao();
         courseDao = db.getCourseDao();
         contentProgressDao = db.getContentProgressDao();
-        if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false))
-            new ReadBackupDb().execute();
+        syncLogDao = db.getSyncLogDao();
+        //syncStatusLogDao = db.getSyncStatusLogDao();
+        //added below code to avoid data duplicacy in tables.
+        try {
+            File db_file = new File(PD_Utility.getStoragePath() + "/" + PD_Constant.PRATHAM_BACKUPS + "/" + PrathamDatabase.DB_NAME);
+            if (db_file.exists()) {
+                SQLiteDatabase sqlsb = SQLiteDatabase.openDatabase(db_file.getAbsolutePath(), null, SQLiteDatabase.OPEN_READWRITE);
+                if (sqlsb != null) {
+                    if (!FastSave.getInstance().getBoolean(PD_Constant.BACKUP_DB_COPIED, false)) {
+                        new ReadBackupDb().execute();
+                    }
+                    FastSave.getInstance().saveBoolean(PD_Constant.BACKUP_DB_COPIED, true);
+                }
+            } else {
+                FastSave.getInstance().saveBoolean(PD_Constant.BACKUP_DB_COPIED, true);
+            }
+        } catch (Exception e){
+            e.printStackTrace();
+            FastSave.getInstance().saveBoolean(PD_Constant.BACKUP_DB_COPIED, true);
+        }
     }
 
     //when app goes in background log entry is made
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void onAppBackgrounded() {
-        Log.e("URL B","BackGround");
         /**Commented to stop adding entry in log table for App in Background*/
 /*        Modal_Log log = new Modal_Log();
         log.setCurrentDateTime(PD_Utility.getCurrentDateTime());
@@ -177,8 +199,6 @@ public class PrathamApplication extends Application implements LifecycleObserver
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onAppForegrounded() {
         wasInBackground=true;
-        Log.e("URL F","FourGround");
-        // App in foreground
     }
 }
 

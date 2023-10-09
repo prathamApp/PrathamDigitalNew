@@ -153,10 +153,10 @@ public class BaseActivity extends AppCompatActivity {
                             .permissions(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                             .onAccepted(permissionResult -> {
                                 BackupDatabase.backup(BaseActivity.this);
-                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
+//                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .onDenied(permissionResult -> {
-                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
+//                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .onForeverDenied(permissionResult -> {
                                 Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
@@ -169,13 +169,13 @@ public class BaseActivity extends AppCompatActivity {
                                     Manifest.permission.ACCESS_FINE_LOCATION)
                             .onAccepted(permissionResult -> {
                                 new LocationService(BaseActivity.this).checkLocation();
-                                mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .onDenied(permissionResult -> {
-                                mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+                                mHandler.sendEmptyMessage(GET_READ_PHONE_STATE);
                             })
                             .onForeverDenied(permissionResult -> {
-                                Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.grant_location_permission, Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;
@@ -194,9 +194,13 @@ public class BaseActivity extends AppCompatActivity {
 /*                                EventMessage msg1 = new EventMessage();
                                 msg1.setMessage(PD_Constant.PERMISSIONS_GRANTED);
                                 EventBus.getDefault().post(msg1);*/
+
+                                if(Build.VERSION.SDK_INT<33){
+                                    mHandler.sendEmptyMessage(REQUEST_WRITE_PERMISSION);
+                                }
                             })
                             .onForeverDenied(permissionResult -> {
-                                Toast.makeText(BaseActivity.this, R.string.grant_storage_permission, Toast.LENGTH_SHORT).show();
+                                Toast.makeText(BaseActivity.this, R.string.grant_phonestate_permission, Toast.LENGTH_SHORT).show();
                             })
                             .ask();
                     break;

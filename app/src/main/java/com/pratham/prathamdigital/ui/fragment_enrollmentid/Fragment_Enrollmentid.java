@@ -194,6 +194,8 @@ public class Fragment_Enrollmentid extends Fragment {
 
                         @Override
                         public void onError(ANError anError) {
+                            Log.e("EnrolAPI Er Detail: ", anError.getErrorDetail());
+                            Log.e("EnrolAPI Er Code: ", String.valueOf(anError.getErrorCode()));
                             progressDialog.dismiss();
                         }
 
@@ -223,7 +225,6 @@ public class Fragment_Enrollmentid extends Fragment {
                 newEnrolledStudent = new Modal_Student();
                 newEnrolledStudent.setStudentId(enrollmentModel.getLstStudent().get(0).getStudentId());
                 newEnrolledStudent.setFullName(enrollmentModel.getLstStudent().get(0).getFullName());
-                newEnrolledStudent.setLastName(enrollmentModel.getLstStudent().get(0).getStudentEnrollment());
                 newEnrolledStudent.setStud_Class(enrollmentModel.getLstStudent().get(0).getClasss());
                 newEnrolledStudent.setAge(enrollmentModel.getLstStudent().get(0).getAge());
                 newEnrolledStudent.setGender(enrollmentModel.getLstStudent().get(0).getGender());
@@ -244,10 +245,12 @@ public class Fragment_Enrollmentid extends Fragment {
                 groups.setVillageId(enrollmentModel.getVillageId());
                 groups.setProgramId(enrollmentModel.getProgramId());
                 groups.setGroupCode(enrollmentModel.getGroupCode());
-                groups.setSchoolName(enrollmentModel.getGroupEnrollment());
+                groups.setSchoolName(enrollmentModel.getSchoolName());
                 groups.setVIllageName(enrollmentModel.getVIllageName());
                 groups.setDeviceId(PD_Utility.getDeviceID());
                 groups.setRegDate(PD_Utility.getCurrentDateTime());
+                groups.setEnrollmentId(enrollmentModel.getGroupEnrollment());
+                groups.setSentFlag("0");
                 grpID=enrollmentModel.getGroupId();
 
                 studentList = new ArrayList<>();
@@ -257,7 +260,6 @@ public class Fragment_Enrollmentid extends Fragment {
                     student = new Modal_Student();
                     student.setStudentId(enrollmentModel.getLstStudent().get(i).getStudentId());
                     student.setFullName(enrollmentModel.getLstStudent().get(i).getFullName());
-                    student.setLastName(enrollmentModel.getLstStudent().get(i).getStudentEnrollment());
                     student.setStud_Class(enrollmentModel.getLstStudent().get(i).getClasss());
                     student.setAge(enrollmentModel.getLstStudent().get(i).getAge());
                     student.setGender(enrollmentModel.getLstStudent().get(i).getGender());
@@ -386,6 +388,7 @@ public class Fragment_Enrollmentid extends Fragment {
         FastSave.getInstance().saveString(PD_Constant.PROFILE_NAME, tv_enrolled_student_name.getText().toString());
         newEnrolledStudent.setFirstName("");
         newEnrolledStudent.setMiddleName("");
+        newEnrolledStudent.setLastName("");
         newEnrolledStudent.setSentFlag(0);
         newEnrolledStudent.setAvatarName("avatars/dino_dance.json");
         Modal_Student student = PrathamDatabase.getDatabaseInstance(getActivity()).getStudentDao().getStudent(newEnrolledStudent.getStudentId());

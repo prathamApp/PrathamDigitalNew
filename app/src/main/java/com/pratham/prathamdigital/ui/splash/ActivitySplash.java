@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -30,6 +33,7 @@ import com.pratham.prathamdigital.custom.video_player.CustomExoPlayerView;
 import com.pratham.prathamdigital.custom.video_player.ExoPlayerCallBack;
 import com.pratham.prathamdigital.models.EventMessage;
 import com.pratham.prathamdigital.services.PrathamSmartSync;
+import com.pratham.prathamdigital.services.PrathamSmartSyncNew;
 import com.pratham.prathamdigital.ui.attendance_activity.AttendanceActivity_;
 import com.pratham.prathamdigital.ui.fragment_enrollmentid.Fragment_Enrollmentid;
 import com.pratham.prathamdigital.ui.fragment_enrollmentid.Fragment_Enrollmentid_;
@@ -50,15 +54,10 @@ import org.greenrobot.eventbus.Subscribe;
 @EActivity(R.layout.splash_activity)
 public class ActivitySplash extends BaseActivity implements SplashContract.splashview {
 
-    private static final int GOOGLE_SIGN_IN = 1;
     private static final String TAG = ActivitySplash.class.getSimpleName();
     private static final int LIGHT_ANIMATION = 2;
-    private static final int UPDATE_DIALOG = 3;
     private static final int REDIRECT_TO_DASHBOARD = 4;
     private static final int REDIRECT_TO_AVATAR = 5;
-    private static final int REDIRECT_TO_ATTENDANCE = 6;
-    private static final int ENTER_CODE_QR_DIALOG = 7;
-
     @ViewById(R.id.splash_video)
     CustomExoPlayerView splash_video;
     @ViewById(R.id.btn_createProfile)
@@ -76,7 +75,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     private String noti_key = null;
     private String noti_value = null;
     private boolean playerLoaded = false;
-    private boolean ended = false;
 
     private final TextWatcher codeTextWatcher = new TextWatcher() {
         @Override
@@ -105,45 +103,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             switch (msg.what) {
                 case LIGHT_ANIMATION:
                     loadVideo();
-                    break;
-                case UPDATE_DIALOG:
-                    new BlurPopupWindow.Builder(mContext)
-                            .setContentView(R.layout.app_update_dialog)
-                            .bindClickListener(v -> {
-                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.pratham.prathamdigital"));
-                                startActivity(intent);
-                            }, R.id.btn_update)
-                            .setGravity(Gravity.CENTER)
-                            .setDismissOnTouchBackground(false)
-                            .setDismissOnClickBack(false)
-                            .setScaleRatio(0.2f)
-                            .setBlurRadius(10)
-                            .setTintColor(0x30000000)
-                            .build()
-                            .show();
-                    break;
-                case ENTER_CODE_QR_DIALOG:
-                    dialog_code = new BlurPopupWindow.Builder(mContext)
-                            .setContentView(R.layout.dialog_enter_tab_qr_code)
-                            .bindClickListener(v -> {
-                                if (!et_qr_code.getText().toString().isEmpty()) {
-                                    splashPresenter.savePrathamCode(et_qr_code.getText().toString().trim());
-                                    dialog_code.dismiss();
-                                    new Handler().postDelayed(() -> loadSplash(), 1000);
-                                } else {
-                                    et_qr_code.setError("Please enter Tablet QR Code here");
-                                }
-                            }, R.id.dialog_qr_submit)
-                            .setGravity(Gravity.CENTER)
-                            .setDismissOnTouchBackground(false)
-                            .setDismissOnClickBack(false)
-                            .setScaleRatio(0.2f)
-                            .setBlurRadius(10)
-                            .setTintColor(0x30000000)
-                            .build();
-                    et_qr_code = dialog_code.findViewById(R.id.et_tab_qr_code);
-                    et_qr_code.addTextChangedListener(codeTextWatcher);
-                    dialog_code.show();
                     break;
                 case REDIRECT_TO_DASHBOARD:
                     Intent intent = new Intent(ActivitySplash.this, AttendanceActivity_.class);
@@ -181,12 +140,16 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
     @Click(R.id.btn_createProfile)
     public void createProfile(){
+        //getExternalStoragePermission();
+        //Above method is used to allow external storage permission on android 11 and above.
+        //But playstore doesnot support this.
         splashPresenter.checkPrathamCode();
-        ended = true;
+        //ended = true;
     }
 
     @Click(R.id.btn_enterEnrollID)
     public void setBtn_enterEnrollID(){
+        //getExternalStoragePermission();
         checkPermissionss();
         PD_Utility.showFragment(ActivitySplash.this, new Fragment_Enrollmentid_(), R.id.splash_frame,
                 null, Fragment_Enrollmentid.class.getSimpleName());
@@ -202,7 +165,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
             @Override
             public void onStart() {
-                //PrathamSmartSync.pushUsageToServer(false,PD_Constant.AUTO_PUSH, ActivitySplash.this); //comment while dev
+                PrathamSmartSyncNew.pushUsageToServer(false,PD_Constant.AUTO_PUSH, ActivitySplash.this); //comment while dev
                 playerLoaded = true;
                 //Read intent till the video completes
                 if (getIntent().getExtras() != null)
@@ -215,19 +178,26 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
 
             @Override
             public void onEnded() {
-                if (!PrathamApplication.isTablet) {
-                    btn_enterEnrollID.setVisibility(View.VISIBLE);
-                    btn_createProfile.setVisibility(View.VISIBLE);
-                } else {
-                    //this method is called more than once? No reason. Might be library bug
-                    if (!ended)
-                        splashPresenter.checkPrathamCode();
-                    ended = true;
-                }
+                btn_enterEnrollID.setVisibility(View.VISIBLE);
+                btn_createProfile.setVisibility(View.VISIBLE);
             }
         });
     }
 
+/*    public void getExternalStoragePermission(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                loadSplash();
+            } else { //request for the permission
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent,46);
+            }
+        } else {
+            loadSplash();
+        }
+    }*/
     @Override
     protected void onPause() {
         super.onPause();
@@ -247,12 +217,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         splashPresenter.clearPreviousBuildData();
         splashPresenter.populateDefaultDB();
         mhandler.sendEmptyMessage(LIGHT_ANIMATION);
-//        new Handler().postDelayed(() -> splashPresenter.checkPrathamCode(), 2200);
-    }
-
-    @Override
-    public void showEnterPrathamCodeDialog() {
-        new Handler().postDelayed(() -> mhandler.sendEmptyMessage(ENTER_CODE_QR_DIALOG), 1200);
     }
 
     @Override
@@ -261,12 +225,6 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
             splashPresenter.startGpsTimer();
         else
             splashPresenter.checkIfContentinSDCard();
-    }
-
-    @UiThread
-    @Override
-    public void showAppUpdateDialog() {
-        mhandler.sendEmptyMessage(UPDATE_DIALOG);
     }
 
     @UiThread
@@ -284,24 +242,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == GOOGLE_SIGN_IN) {
-//            if (resultCode == RESULT_OK)
-//            splashPresenter.validateSignIn(data);
-        } else {
-            // Google Sign In failed, update UI appropriately
-            Log.d(TAG, "Login Unsuccessful.");
-            splashPresenter.checkIfContentinSDCard();
-        }
     }
 
-/*
-    @UiThread
-    @Override
-    public void googleSignInFailed() {
-        Toast.makeText(mContext, "Error connecting to Google. Please check your Internet connection or try with different ID", Toast.LENGTH_SHORT).show();
-        signInUsingGoogle();
-    }
-*/
 
     @Subscribe
     public void onMessageReceived(EventMessage message) {
@@ -326,8 +268,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     public void checkPermissions() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED || /*ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || */ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
             dialog_permission = new BlurPopupWindow.Builder(ActivitySplash.this)
                     .setContentView(R.layout.permission_detail_dialog)
@@ -354,8 +296,8 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
     public void checkPermissionss() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
+                != PackageManager.PERMISSION_GRANTED || /*ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED || */ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)
                 != PackageManager.PERMISSION_GRANTED) {
             dialog_permission = new BlurPopupWindow.Builder(ActivitySplash.this)
                     .setContentView(R.layout.permission_detail_dialog)

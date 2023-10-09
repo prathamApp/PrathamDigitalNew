@@ -39,6 +39,10 @@ public interface StudentDao {
     @Query("update Students set sentFlag=1 where StudentId=:s_id")
     void updateSentStudentFlags(String s_id);
 
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE Students SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
+
     @Query("update Students set avatarName=:avatar_path where StudentId=:studentID")
     void updateStudentAvatar(String studentID, String avatar_path);
 

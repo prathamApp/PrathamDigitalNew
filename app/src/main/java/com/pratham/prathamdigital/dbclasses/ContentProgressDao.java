@@ -36,4 +36,9 @@ public interface ContentProgressDao {
     @Query("select max(CAST(progressPercentage as INT)) from ContentProgress\n" +
             "WHERE studentId = :studId and resourceid = :resId")
     String progressPercent(String studId, String resId);
+
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE ContentProgress SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
+
 }

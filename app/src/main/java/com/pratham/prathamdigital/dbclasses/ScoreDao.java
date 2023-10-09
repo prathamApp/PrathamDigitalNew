@@ -25,6 +25,10 @@ public interface ScoreDao {
     @Query("UPDATE Score SET sentFlag = 1 where SessionID = :s_id")
     int updateFlag(String s_id);
 
+    /** Update sent flag to 1 after push success for new Sync Process*/
+    @Query("UPDATE Score SET sentFlag = 1 where sentFlag = 0")
+    int updateSentFlag();
+
     @Query("UPDATE Score SET sentFlag = 1")
     int updateAllFlag();
 

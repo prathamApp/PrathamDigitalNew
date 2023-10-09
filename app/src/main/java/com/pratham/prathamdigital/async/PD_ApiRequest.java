@@ -12,6 +12,7 @@ import com.androidnetworking.interfaces.JSONArrayRequestListener;
 import com.androidnetworking.interfaces.JSONObjectRequestListener;
 import com.androidnetworking.interfaces.StringRequestListener;
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.pratham.prathamdigital.PrathamApplication;
 import com.pratham.prathamdigital.custom.shared_preference.FastSave;
 import com.pratham.prathamdigital.dbclasses.BackupDatabase;
@@ -21,6 +22,8 @@ import com.pratham.prathamdigital.models.Modal_ContentDetail;
 import com.pratham.prathamdigital.models.Modal_Download;
 import com.pratham.prathamdigital.models.Modal_FileDownloading;
 import com.pratham.prathamdigital.models.Modal_Log;
+import com.pratham.prathamdigital.models.Model_CheckSyncAPI;
+import com.pratham.prathamdigital.models.Model_NewSyncLog;
 import com.pratham.prathamdigital.util.PD_Constant;
 import com.pratham.prathamdigital.util.PD_Utility;
 import com.pratham.prathamdigital.util.SpeedMonitor;
@@ -39,12 +42,21 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 
+import static com.pratham.prathamdigital.PrathamApplication.attendanceDao;
+import static com.pratham.prathamdigital.PrathamApplication.contentProgressDao;
+import static com.pratham.prathamdigital.PrathamApplication.courseDao;
+import static com.pratham.prathamdigital.PrathamApplication.groupDao;
 import static com.pratham.prathamdigital.PrathamApplication.logDao;
 import static com.pratham.prathamdigital.PrathamApplication.modalContentDao;
+import static com.pratham.prathamdigital.PrathamApplication.scoreDao;
+import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
+import static com.pratham.prathamdigital.PrathamApplication.studentDao;
+import static com.pratham.prathamdigital.PrathamApplication.syncLogDao;
 
 /**
  * Created by HP on 30-12-2016.
@@ -104,8 +116,7 @@ public class PD_ApiRequest {
                     .getAsString(new StringRequestListener() {
                         @Override
                         public void onResponse(String response) {
-                            if (apiResult != null)
-                            apiResult.recievedContent(requestType, response, contentList);
+                            if (apiResult != null) apiResult.recievedContent(requestType, response, contentList);
                             Log.e("url api response : ", response);
                         }
 
@@ -114,6 +125,7 @@ public class PD_ApiRequest {
                             if (apiResult != null)
                                 apiResult.recievedError(requestType, contentList);
                             Log.d("Error:", anError.getErrorDetail());
+                            Log.d("ErrorCode:", String.valueOf(anError.getErrorCode()));
                             Log.d("Error::", anError.getResponse().toString());
                         }
                     });
@@ -142,7 +154,8 @@ public class PD_ApiRequest {
                             if (languageResult != null)
                                 languageResult.recievedLangError(requestType);
                             Log.d("Error:", anError.getErrorDetail());
-                            Log.d("Error::", anError.getResponse().toString());
+                            Log.d("ErrorCodeLng:", String.valueOf(anError.getErrorCode()));
+                            Log.d("Error::", anError.getErrorBody());
                         }
                     });
         } catch (Exception e) {
@@ -221,6 +234,36 @@ String url, JSONObject data) {
     }
 */
 
+    /** Used to check whether the server is running or not.*/
+    public void checkSyncAPIStatus(String url, String requestType) {
+        try {
+            Log.e("CheckSyncStatusAPI : ",url);
+            AndroidNetworking.get(url)
+                    .addHeaders("Content-Type", "application/json")
+                    .build()
+                    .getAsString(new StringRequestListener() {
+                        @Override
+                        public void onResponse(String response) {
+                            if (apiResult != null)
+                                apiResult.recievedContent(requestType, response,null);
+                        }
+
+                        @Override
+                        public void onError(ANError anError) {
+                            if (apiResult != null)
+                                apiResult.recievedError(requestType, null);
+                            Log.e("Check API Error Code::", String.valueOf(anError.getErrorCode()));
+                            Log.e("Check API Error:", anError.getErrorDetail());
+                            Log.e("Check API ErrorMsg:", anError.getMessage());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
     //Used to push data to server in zip format(zip contains json file)
     public void pushDataToInternet(String url, String uuID, String filepathstr, JSONObject data, String courseCount, String pushType, Context context) {
         AndroidNetworking.upload(url)
@@ -256,6 +299,55 @@ String url, JSONObject data) {
                     }
                 });
     }
+
+    /** Used to push data to server in zip format(zip contains json file)
+     * for new API given by afzal.*/
+    public void pushDataToInternetNewSync(String url, String uuID, String filepathstr, JSONObject data, String courseCount, String pushType, Context context) {
+        AndroidNetworking.upload(url)
+                .addHeaders("Content-Type", "file/zip")
+                .addMultipartFile("fileJson", new File(filepathstr + ".zip"))
+                .setPriority(Priority.HIGH)
+                .build()
+                .getAsString(new StringRequestListener() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.e("PushDataResponse", "DATA PUSH "+response);
+                        new File(filepathstr + ".zip").delete();
+
+                        enterNewSyncLog(pushType,PD_Constant.SUCCESSFULLYPUSHEDNEW,context,response);
+                        setPushFlag();
+
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.SUCCESSFULLYPUSHEDNEW);
+                        EventBus.getDefault().post(msg);
+                    }
+
+                    @Override
+                    public void onError(ANError anError) {
+                        //Fail - Show dialog with failure message.
+                        enterNewSyncLog(pushType,PD_Constant.FAILED,context,anError.getErrorDetail());
+                        EventMessage msg = new EventMessage();
+                        msg.setMessage(PD_Constant.PUSHFAILED);
+                        EventBus.getDefault().post(msg);
+                        Log.e("New Sync Error Code::", String.valueOf(anError.getErrorCode()));
+                        Log.e("New Sync Error::", anError.getErrorDetail());
+                        Log.e("New Sync Error::", anError.getMessage());
+                    }
+                });
+    }
+
+    /** Update all sent flags to 1 once zip is successfully pushed to server.*/
+    public void setPushFlag(){
+        studentDao.updateSentFlag();
+        groupDao.updateSentFlag();
+        sessionDao.updateSentFlag();
+        attendanceDao.updateSentFlag();
+        scoreDao.updateSentFlag();
+        logDao.updateSentFlag();
+        courseDao.updateSentFlag();
+        contentProgressDao.updateSentFlag();
+    }
+
 
     //Used to push data to rasp_Pi device in zip format(zip contains json file)
     public void pushDataToRaspberyPI(String url, String uuID, String filepathstr, JSONObject data, String courseCount, String pushType, Context context) {
@@ -306,7 +398,7 @@ String url, JSONObject data) {
                     public void onResponse(String response) {
                         Log.e("PushDataBase", "DATABASE PUSH "+response);
                         new File(filepathstr + ".zip").delete();
-                        enterSyncLog(pushType,PD_Constant.DBSUCCESSFULLYPUSHED,context,"");
+                        enterDBSyncLog(pushType,PD_Constant.SUCCESS,context,uuID);
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.DBSUCCESSFULLYPUSHED);
                         EventBus.getDefault().post(msg);
@@ -317,11 +409,11 @@ String url, JSONObject data) {
                         //Fail - Show dialog with failure message.
                         EventMessage msg = new EventMessage();
                         msg.setMessage(PD_Constant.PUSHFAILED);
-                        enterSyncLog(pushType,PD_Constant.PUSHFAILED,context,"");
+                        enterDBSyncLog(pushType,PD_Constant.FAILED,context,uuID);
                         EventBus.getDefault().post(msg);
-                        Log.e("Error::", anError.getErrorDetail());
-                        Log.e("Error::", anError.getMessage());
-                        Log.e("Error::", anError.getResponse().toString());
+                        Log.e("Error 1::", anError.getErrorDetail());
+                        Log.e("Error 2::", anError.getMessage());
+                        Log.e("Error 3::", anError.getResponse().toString());
                     }
                 });
     }
@@ -614,5 +706,45 @@ String url, JSONObject data) {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /** Method used to enter data sync status in newly created SyncLog table.*/
+    public void enterNewSyncLog(String pushType, String pushStatus, Context context, String response){
+        try {
+            Model_NewSyncLog modelNewSyncLog;
+            if(pushStatus.equalsIgnoreCase(PD_Constant.FAILED)){
+                modelNewSyncLog = new Model_NewSyncLog();
+                modelNewSyncLog.setUuid("-");
+                modelNewSyncLog.setError(response);
+                modelNewSyncLog.setPushType(pushType);
+                modelNewSyncLog.setSentFlag(0);
+                syncLogDao.insertLog(modelNewSyncLog);
+            } else {
+                Gson gson = new Gson();
+                Type type = new TypeToken<Model_NewSyncLog>() {
+                }.getType();
+                modelNewSyncLog = gson.fromJson(response, type);
+                modelNewSyncLog.setPushType(pushType);
+                modelNewSyncLog.setSentFlag(0);
+                syncLogDao.insertLog(modelNewSyncLog);
+            }
+                BackupDatabase.backup(context);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** Method used to enter all db sync status in newly created SyncLog table.*/
+    public void enterDBSyncLog(String pushType, String pushStatus, Context context, String uuID){
+        Model_NewSyncLog model_newSyncLog = new Model_NewSyncLog();
+        model_newSyncLog.setPushType(pushType);
+        model_newSyncLog.setPushId(0);
+        model_newSyncLog.setPushDate(PD_Utility.getCurrentDateTime());
+        model_newSyncLog.setUuid(uuID);
+        model_newSyncLog.setError("");
+        model_newSyncLog.setStatus(pushStatus);
+        model_newSyncLog.setSentFlag(0);
+        syncLogDao.insertLog(model_newSyncLog);
+        BackupDatabase.backup(context);
     }
 }

@@ -238,8 +238,8 @@ public class ZipDownloader {
              * For resolving that issue, below condition is added. As observed below exception is thrown even the resource is 100%
              * downloaded. Currently this fix is working correctly, tested by me and jay on multiple os versions 10, 11 & 12.
             */
-            Log.d("error:::", ((Modal_Download) task.getTag()).getF_name());
-            Log.d("error Message:::", (e.getMessage()));
+            Log.d("OKdwnldError:", ((Modal_Download) task.getTag()).getF_name());
+            Log.d("OKdwnldErrorMsg:", (e.getMessage()));
 
             if(!e.getMessage().contains("The current offset on block-info isn't update correct"))
             notifyError((Modal_Download) task.getTag());
