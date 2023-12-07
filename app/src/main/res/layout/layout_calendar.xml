@@ -19,7 +19,7 @@
     <com.archit.calendardaterangepicker.customviews.DateRangeCalendarView
         android:id="@+id/course_date_picker"
         android:layout_width="@dimen/_300sdp"
-        android:layout_height="@dimen/_250sdp"
+        android:layout_height="@dimen/_270sdp"
         android:layout_centerHorizontal="true"
         android:background="@color/white"
         custom:disable_date_color="#ABABAB"

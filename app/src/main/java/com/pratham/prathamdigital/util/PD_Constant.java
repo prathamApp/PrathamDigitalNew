@@ -4,7 +4,7 @@ import androidx.annotation.NonNull;
 
 public class PD_Constant {
 
-    public static final String apkDate = "07-10-2023";//
+    public static final String apkDate = "23-11-2023";//
     //        public static final String BASE_URL = "http://devprodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL = "http://prodigi.openiscool.org/api/posv2/";
     private static final String BASE_URL_NEW = " https://devposapi.prathamopenschool.org/api/content/"; //new api
