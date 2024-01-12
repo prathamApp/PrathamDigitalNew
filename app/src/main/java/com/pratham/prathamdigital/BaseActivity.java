@@ -77,6 +77,7 @@ import static com.pratham.prathamdigital.PrathamApplication.sessionDao;
 import static com.pratham.prathamdigital.PrathamApplication.statusDao;
 import static com.pratham.prathamdigital.PrathamApplication.studentDao;
 
+//Created Copy for issue resolving
 public class BaseActivity extends AppCompatActivity {
     private static final String TAG = BaseActivity.class.getSimpleName();
     private static final int UPDATE_CONNECTION = 1;
