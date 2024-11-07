@@ -143,6 +143,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         //getExternalStoragePermission();
         //Above method is used to allow external storage permission on android 11 and above.
         //But playstore doesnot support this.
+        //below method is not called when all above method is used.
         splashPresenter.checkPrathamCode();
         //ended = true;
     }
@@ -184,6 +185,7 @@ public class ActivitySplash extends BaseActivity implements SplashContract.splas
         });
     }
 
+    //Below method is used to give all file access
 /*    public void getExternalStoragePermission(){
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
